@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PDF &amp; Image Tools</string>
+
+    <string name="section_create_pdf">Create PDF</string>
+    <string name="section_reduce_size">Reduce size</string>
+    <string name="section_convert">Convert</string>
+
+    <string name="tool_image_to_pdf">Image to PDF</string>
+    <string name="tool_image_to_pdf_desc">Combine photos into a single PDF</string>
+    <string name="tool_merge_pdf">Merge PDF</string>
+    <string name="tool_merge_pdf_desc">Combine multiple PDFs into one</string>
+    <string name="tool_split_pdf">Split PDF</string>
+    <string name="tool_split_pdf_desc">Extract pages into separate files</string>
+    <string name="tool_compress_pdf">Compress PDF</string>
+    <string name="tool_compress_pdf_desc">Shrink a PDF file size</string>
+    <string name="tool_compress_image">Compress image</string>
+    <string name="tool_compress_image_desc">Reduce photo file size</string>
+    <string name="tool_pdf_to_image">PDF to image</string>
+    <string name="tool_pdf_to_image_desc">Save PDF pages as pictures</string>
+    <string name="tool_jpg_to_png">JPG to PNG</string>
+    <string name="tool_jpg_to_png_desc">Convert JPG photos to PNG</string>
+    <string name="tool_png_to_jpg">PNG to JPG</string>
+    <string name="tool_png_to_jpg_desc">Convert PNG photos to JPG</string>
+
+    <string name="recent_files">Recent files</string>
+    <string name="settings">Settings</string>
+
+    <string name="notification_channel_saves">File saves</string>
+    <string name="notification_channel_saves_desc">Notifies when a processed file has been saved</string>
+    <string name="notification_file_saved_title">File saved</string>
+
+    <string name="exit_dialog_title">Exit app?</string>
+    <string name="exit_dialog_message">Are you sure you want to close PDF &amp; Image Tools?</string>
+    <string name="exit_dialog_continue">Continue</string>
+    <string name="exit_dialog_exit">Exit</string>
+</resources>
