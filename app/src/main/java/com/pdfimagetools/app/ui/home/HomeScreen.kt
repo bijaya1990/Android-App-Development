@@ -1,6 +1,5 @@
 package com.pdfimagetools.app.ui.home
 
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,19 +8,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.CallSplit
@@ -40,7 +38,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Transform
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -70,6 +67,7 @@ import com.pdfimagetools.app.data.RecentFileEntry
 import com.pdfimagetools.app.navigation.Screen
 import com.pdfimagetools.app.ui.components.BannerAdView
 import com.pdfimagetools.app.ui.components.NativeAdCard
+import com.pdfimagetools.app.ui.components.Pressable3DButton
 import com.pdfimagetools.app.ui.components.QuickActionChip
 import com.pdfimagetools.app.ui.components.SectionHeader
 import com.pdfimagetools.app.ui.theme.Accent
@@ -95,7 +93,7 @@ private val quickActions = listOf(
     QuickAction("Settings", Icons.Filled.Settings, Screen.Settings.route)
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(navController: NavHostController, onExitApp: () -> Unit) {
     var showExitDialog by remember { mutableStateOf(false) }
@@ -129,97 +127,84 @@ fun HomeScreen(navController: NavHostController, onExitApp: () -> Unit) {
         },
         bottomBar = { BannerAdView() }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            item {
-                Button(
-                    onClick = { navController.navigate(Screen.QuickScan.route) },
-                    modifier = Modifier.fillMaxWidth().height(64.dp),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Icon(Icons.Filled.DocumentScanner, contentDescription = null, modifier = Modifier.size(26.dp))
-                    Text("  Quick Scan", style = MaterialTheme.typography.titleMedium)
-                }
+            Pressable3DButton(
+                onClick = { navController.navigate(Screen.QuickScan.route) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Icon(Icons.Filled.DocumentScanner, contentDescription = null, modifier = Modifier.size(26.dp))
+                Text("  Quick Scan", style = MaterialTheme.typography.titleMedium)
             }
 
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                    OutlinedButton(
-                        onClick = { openPdfLauncher.launch(arrayOf("application/pdf")) },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(Icons.Filled.FolderOpen, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Text("  Open PDF", modifier = Modifier.padding(start = 4.dp))
-                    }
-                    OutlinedButton(
-                        onClick = { navController.navigate(Screen.ImageToPdf.route) },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(Icons.Filled.AddPhotoAlternate, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Text("  Import images", modifier = Modifier.padding(start = 4.dp))
-                    }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    onClick = { openPdfLauncher.launch(arrayOf("application/pdf")) },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Filled.FolderOpen, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Text("  Open PDF", modifier = Modifier.padding(start = 4.dp))
+                }
+                OutlinedButton(
+                    onClick = { navController.navigate(Screen.ImageToPdf.route) },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Filled.AddPhotoAlternate, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Text("  Import images", modifier = Modifier.padding(start = 4.dp))
                 }
             }
 
             val newestEntry = recentEntries.firstOrNull()
             if (newestEntry != null) {
-                item {
-                    Column {
-                        SectionHeader("Continue working")
-                        RecentEntryCard(entry = newestEntry, context = context)
-                    }
+                Column {
+                    SectionHeader("Continue working")
+                    RecentEntryCard(entry = newestEntry, context = context)
                 }
             }
 
             if (recentEntries.isNotEmpty()) {
-                item {
-                    Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            SectionHeader("Recent documents")
-                            TextButton(onClick = { navController.navigate(Screen.RecentFiles.route) }) {
-                                Text("See all")
-                            }
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SectionHeader("Recent documents")
+                        TextButton(onClick = { navController.navigate(Screen.RecentFiles.route) }) {
+                            Text("See all")
                         }
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            recentEntries.take(3).forEach { entry ->
-                                RecentEntryCard(entry = entry, context = context)
-                            }
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        recentEntries.take(3).forEach { entry ->
+                            RecentEntryCard(entry = entry, context = context)
                         }
                     }
                 }
             }
 
-            item { NativeAdCard() }
+            NativeAdCard()
 
-            item {
-                Column {
-                    SectionHeader("Quick actions")
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(4),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height((((quickActions.size + 3) / 4) * 84).dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        userScrollEnabled = false
-                    ) {
-                        items(items = quickActions) { action ->
-                            QuickActionChip(
-                                title = action.title,
-                                icon = action.icon,
-                                onClick = { navController.navigate(action.route) }
-                            )
-                        }
+            Column {
+                SectionHeader("Quick actions")
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    quickActions.forEach { action ->
+                        QuickActionChip(
+                            title = action.title,
+                            icon = action.icon,
+                            onClick = { navController.navigate(action.route) },
+                            modifier = Modifier.width(80.dp)
+                        )
                     }
                 }
             }

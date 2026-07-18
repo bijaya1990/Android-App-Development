@@ -88,9 +88,11 @@ dependencies {
     // Google Mobile Ads
     implementation("com.google.android.gms:play-services-ads:23.6.0")
 
-    // AI document scanner (real edge detection / auto-crop / perspective correction,
-    // powered by Google Play services)
-    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0")
+    // Custom camera-based document scanner
+    implementation("androidx.camera:camera-core:1.6.0")
+    implementation("androidx.camera:camera-camera2:1.6.0")
+    implementation("androidx.camera:camera-lifecycle:1.6.0")
+    implementation("androidx.camera:camera-view:1.6.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
