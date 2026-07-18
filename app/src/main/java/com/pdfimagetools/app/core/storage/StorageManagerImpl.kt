@@ -75,7 +75,7 @@ class StorageManagerImpl(private val context: Context) : StorageManager {
         }
         val relativePath = when (target) {
             SaveTarget.DOWNLOADS -> Environment.DIRECTORY_DOWNLOADS
-            SaveTarget.PICTURES -> Environment.DIRECTORY_PICTURES + "/PDF Image Tools"
+            SaveTarget.PICTURES -> Environment.DIRECTORY_PICTURES + "/Z Scanner"
         }
         val values = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
@@ -104,7 +104,7 @@ class StorageManagerImpl(private val context: Context) : StorageManager {
             SaveTarget.DOWNLOADS -> Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             SaveTarget.PICTURES -> File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "PDF Image Tools"
+                "Z Scanner"
             )
         }
         publicDir.mkdirs()

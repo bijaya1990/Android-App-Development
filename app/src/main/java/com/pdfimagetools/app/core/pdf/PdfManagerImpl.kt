@@ -12,6 +12,8 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPage
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.common.PDRectangle
+import com.tom_roush.pdfbox.pdmodel.encryption.AccessPermission
+import com.tom_roush.pdfbox.pdmodel.encryption.StandardProtectionPolicy
 import com.tom_roush.pdfbox.pdmodel.graphics.image.JPEGFactory
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject
 import com.tom_roush.pdfbox.rendering.ImageType
@@ -218,6 +220,82 @@ class PdfManagerImpl(private val context: Context) : PdfManager {
             }
         }
         results
+    }
+
+    override suspend fun renderPageThumbnails(pdfUri: Uri, maxDimension: Int): List<Bitmap> =
+        withContext(Dispatchers.IO) {
+            val thumbnails = mutableListOf<Bitmap>()
+            openInput(pdfUri).use { input ->
+                PDDocument.load(input).use { document ->
+                    val renderer = PDFRenderer(document)
+                    for (pageIndex in 0 until document.numberOfPages) {
+                        val pageBox = document.getPage(pageIndex).mediaBox
+                        val longestSidePoints = maxOf(pageBox.width, pageBox.height)
+                        val scale = (maxDimension / longestSidePoints).coerceIn(0.1f, 2f)
+                        thumbnails.add(renderer.renderImage(pageIndex, scale, ImageType.RGB))
+                    }
+                }
+            }
+            thumbnails
+        }
+
+    override suspend fun rotatePdf(pdfUri: Uri, degrees: Int, outputFile: File): File =
+        withContext(Dispatchers.IO) {
+            openInput(pdfUri).use { input ->
+                PDDocument.load(input).use { document ->
+                    for (pageIndex in 0 until document.numberOfPages) {
+                        val page = document.getPage(pageIndex)
+                        val normalized = ((page.rotation + degrees) % 360 + 360) % 360
+                        page.rotation = normalized
+                    }
+                    document.save(outputFile)
+                }
+            }
+            outputFile
+        }
+
+    override suspend fun extractPages(pdfUri: Uri, pageIndices: List<Int>, outputFile: File): File =
+        withContext(Dispatchers.IO) {
+            require(pageIndices.isNotEmpty()) { "Select at least one page" }
+            openInput(pdfUri).use { input ->
+                PDDocument.load(input).use { source ->
+                    val output = PDDocument()
+                    try {
+                        pageIndices.forEach { index -> output.importPage(source.getPage(index)) }
+                        output.save(outputFile)
+                    } finally {
+                        output.close()
+                    }
+                }
+            }
+            outputFile
+        }
+
+    override suspend fun protectPdf(
+        pdfUri: Uri,
+        ownerPassword: String,
+        userPassword: String,
+        allowPrinting: Boolean,
+        allowCopy: Boolean,
+        outputFile: File
+    ): File = withContext(Dispatchers.IO) {
+        openInput(pdfUri).use { input ->
+            PDDocument.load(input).use { document ->
+                val permissions = AccessPermission().apply {
+                    setCanPrint(allowPrinting)
+                    setCanPrintFaithful(allowPrinting)
+                    setCanExtractContent(allowCopy)
+                    setCanExtractForAccessibility(allowCopy)
+                }
+                val policy = StandardProtectionPolicy(ownerPassword, userPassword, permissions).apply {
+                    encryptionKeyLength = 256
+                    isPreferAES = true
+                }
+                document.protect(policy)
+                document.save(outputFile)
+            }
+        }
+        outputFile
     }
 
     companion object {

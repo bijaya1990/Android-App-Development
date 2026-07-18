@@ -121,7 +121,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                     SettingsRow(
                         icon = Icons.Filled.StarRate,
                         title = "Rate this app",
-                        subtitle = "Enjoying PDF & Image Tools? Leave a review",
+                        subtitle = "Enjoying Z Scanner? Leave a review",
                         onClick = {
                             val uri = Uri.parse("market://details?id=${context.packageName}")
                             try {

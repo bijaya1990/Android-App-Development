@@ -14,18 +14,35 @@ import com.pdfimagetools.app.ui.convertformat.ConvertFormatScreen
 import com.pdfimagetools.app.ui.home.HomeScreen
 import com.pdfimagetools.app.ui.imagetopdf.ImageToPdfScreen
 import com.pdfimagetools.app.ui.mergepdf.MergePdfScreen
+import com.pdfimagetools.app.ui.organizepages.OrganizePagesScreen
 import com.pdfimagetools.app.ui.pdftoimage.PdfToImageScreen
+import com.pdfimagetools.app.ui.protectpdf.ProtectPdfScreen
+import com.pdfimagetools.app.ui.quickscan.QuickScanScreen
 import com.pdfimagetools.app.ui.recent.RecentFilesScreen
+import com.pdfimagetools.app.ui.rotatepdf.RotatePdfScreen
 import com.pdfimagetools.app.ui.settings.SettingsScreen
+import com.pdfimagetools.app.ui.splash.SplashScreen
 import com.pdfimagetools.app.ui.splitpdf.SplitPdfScreen
 
 @Composable
 fun AppNavGraph(onExitApp: () -> Unit) {
     val navController: NavHostController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                onFinished = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(Screen.Home.route) {
             HomeScreen(navController = navController, onExitApp = onExitApp)
+        }
+        composable(Screen.QuickScan.route) {
+            QuickScanScreen(onBack = { navController.popBackStack() })
         }
         composable(Screen.ImageToPdf.route) {
             ImageToPdfScreen(onBack = { navController.popBackStack() })
@@ -44,6 +61,15 @@ fun AppNavGraph(onExitApp: () -> Unit) {
         }
         composable(Screen.PdfToImage.route) {
             PdfToImageScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.RotatePdf.route) {
+            RotatePdfScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.OrganizePages.route) {
+            OrganizePagesScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.ProtectPdf.route) {
+            ProtectPdfScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Screen.ConvertFormat.route,

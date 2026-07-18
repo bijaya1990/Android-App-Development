@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PDF &amp; Image Tools</string>
+    <string name="app_name">Z Scanner</string>
+    <string name="app_tagline">Scan • Edit • Protect • Share</string>
 
     <string name="section_create_pdf">Create PDF</string>
     <string name="section_reduce_size">Reduce size</string>
