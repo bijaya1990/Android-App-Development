@@ -96,8 +96,14 @@ dependencies {
     // PDF processing
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
-    // Google Mobile Ads
-    implementation("com.google.android.gms:play-services-ads:23.6.0")
+    // Google Mobile Ads. AdMob pulls in Guava's empty "listenablefuture" stub module (a
+    // deliberate placeholder Guava publishes so real com.google.guava:guava - which bundles
+    // its own real ListenableFuture class - wins dependency resolution). If that empty stub
+    // lands on the classpath ahead of the real Guava jar, CameraX's use of ListenableFuture
+    // becomes unresolvable, so it's excluded here to guarantee only the real class exists.
+    implementation("com.google.android.gms:play-services-ads:23.6.0") {
+        exclude(group = "com.google.guava", module = "listenablefuture")
+    }
 
     // Custom camera-based document scanner
     implementation("androidx.camera:camera-core:1.6.0")
