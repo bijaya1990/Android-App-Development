@@ -56,6 +56,17 @@ android {
     }
 }
 
+// AdMob pulls in a Guava dependency that resolves to the empty
+// "9999.0-empty-to-avoid-conflict-with-guava" listenablefuture stub, which wins Gradle's
+// version arbitration over the real jar CameraX needs (com.google.common.util.concurrent
+// .ListenableFuture becomes unresolvable). Forcing a single real Guava version for every
+// configuration makes both AdMob and CameraX resolve against the same real classes.
+configurations.all {
+    resolutionStrategy {
+        force("com.google.guava:guava:33.6.0-android")
+    }
+}
+
 dependencies {
     // Core / Kotlin
     implementation("androidx.core:core-ktx:1.15.0")
