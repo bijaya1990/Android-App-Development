@@ -24,7 +24,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,14 +41,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfimagetools.app.core.di.ServiceLocator
 import com.pdfimagetools.app.core.di.SimpleViewModelFactory
 import com.pdfimagetools.app.data.RecentFileEntry
-import com.pdfimagetools.app.ui.components.AppTopBar
-import com.pdfimagetools.app.ui.components.BannerAdView
 import com.pdfimagetools.app.ui.components.EmptyPickState
 import com.pdfimagetools.app.ui.theme.TextSecondary
 import com.pdfimagetools.app.util.FileUtils
 
+/** Body for the "Files" tab — no Scaffold/top bar of its own; MainScaffold supplies those. */
 @Composable
-fun RecentFilesScreen(onBack: () -> Unit) {
+fun RecentFilesContent(modifier: Modifier = Modifier) {
     val viewModel: RecentFilesViewModel = viewModel(
         factory = SimpleViewModelFactory { RecentFilesViewModel(ServiceLocator.recentFilesStore, ServiceLocator.storageManager) }
     )
@@ -57,41 +55,36 @@ fun RecentFilesScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     var pendingDelete by remember { mutableStateOf<RecentFileEntry?>(null) }
 
-    Scaffold(
-        topBar = { AppTopBar(title = "Recent files", onBack = onBack) },
-        bottomBar = { BannerAdView() }
-    ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            if (entries.isEmpty()) {
-                EmptyPickState(
-                    icon = Icons.Filled.History,
-                    title = "No files yet",
-                    description = "Files you create or convert will show up here.",
-                    buttonText = "Back to tools",
-                    onClick = onBack
-                )
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(items = entries, key = { it.id }) { entry ->
-                        RecentFileRow(
-                            entry = entry,
-                            onOpen = {
-                                val uri = Uri.parse(entry.uriString)
-                                val intent = ServiceLocator.storageManager.openFileIntent(uri, entry.mimeType)
-                                runCatching { context.startActivity(intent) }
-                            },
-                            onShare = {
-                                val uri = Uri.parse(entry.uriString)
-                                val intent = ServiceLocator.storageManager.shareFilesIntent(listOf(uri), entry.mimeType)
-                                runCatching { context.startActivity(Intent.createChooser(intent, "Share")) }
-                            },
-                            onDelete = { pendingDelete = entry },
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
+    Box(modifier = modifier.fillMaxSize()) {
+        if (entries.isEmpty()) {
+            EmptyPickState(
+                icon = Icons.Filled.History,
+                title = "No files yet",
+                description = "Files you create or convert will show up here.",
+                buttonText = "Start a scan",
+                onClick = {}
+            )
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(items = entries, key = { it.id }) { entry ->
+                    RecentFileRow(
+                        entry = entry,
+                        onOpen = {
+                            val uri = Uri.parse(entry.uriString)
+                            val intent = ServiceLocator.storageManager.openFileIntent(uri, entry.mimeType)
+                            runCatching { context.startActivity(intent) }
+                        },
+                        onShare = {
+                            val uri = Uri.parse(entry.uriString)
+                            val intent = ServiceLocator.storageManager.shareFilesIntent(listOf(uri), entry.mimeType)
+                            runCatching { context.startActivity(Intent.createChooser(intent, "Share")) }
+                        },
+                        onDelete = { pendingDelete = entry },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
                 }
             }
         }

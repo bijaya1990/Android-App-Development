@@ -21,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +34,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfimagetools.app.core.di.ServiceLocator
 import com.pdfimagetools.app.core.di.SimpleViewModelFactory
 import com.pdfimagetools.app.core.storage.SaveTarget
-import com.pdfimagetools.app.ui.components.AppTopBar
-import com.pdfimagetools.app.ui.components.BannerAdView
 import com.pdfimagetools.app.ui.components.SectionHeader
 import com.pdfimagetools.app.ui.theme.TextSecondary
 import com.pdfimagetools.app.util.FileUtils
@@ -44,8 +41,9 @@ import com.pdfimagetools.app.util.FileUtils
 // TODO: replace with the app's real, hosted privacy policy URL before release.
 private const val PRIVACY_POLICY_URL = "https://www.pdfimagetools.app/privacy-policy"
 
+/** Body for the "Account" tab — no Scaffold/top bar of its own; MainScaffold supplies those. */
 @Composable
-fun SettingsScreen(onBack: () -> Unit) {
+fun SettingsContent(modifier: Modifier = Modifier) {
     val viewModel: SettingsViewModel = viewModel(
         factory = SimpleViewModelFactory { SettingsViewModel(ServiceLocator.settingsStore, ServiceLocator.storageManager) }
     )
@@ -53,96 +51,91 @@ fun SettingsScreen(onBack: () -> Unit) {
     val cacheSize by viewModel.cacheSizeBytes.collectAsState()
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = { AppTopBar(title = "Settings", onBack = onBack) },
-        bottomBar = { BannerAdView() }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item {
-                Column {
-                    SectionHeader("Default save location")
-                    Text(
-                        "Where compressed and converted photos are saved. PDFs always save to Downloads.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
-                        modifier = Modifier.padding(bottom = 12.dp)
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        item {
+            Column {
+                SectionHeader("Default save location")
+                Text(
+                    "Where compressed and converted photos are saved. PDFs always save to Downloads.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(
+                        selected = settings.defaultImageSaveTarget == SaveTarget.PICTURES,
+                        onClick = { viewModel.setDefaultImageSaveTarget(SaveTarget.PICTURES) },
+                        label = { Text("Pictures") }
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilterChip(
-                            selected = settings.defaultImageSaveTarget == SaveTarget.PICTURES,
-                            onClick = { viewModel.setDefaultImageSaveTarget(SaveTarget.PICTURES) },
-                            label = { Text("Pictures") }
-                        )
-                        FilterChip(
-                            selected = settings.defaultImageSaveTarget == SaveTarget.DOWNLOADS,
-                            onClick = { viewModel.setDefaultImageSaveTarget(SaveTarget.DOWNLOADS) },
-                            label = { Text("Downloads") }
-                        )
+                    FilterChip(
+                        selected = settings.defaultImageSaveTarget == SaveTarget.DOWNLOADS,
+                        onClick = { viewModel.setDefaultImageSaveTarget(SaveTarget.DOWNLOADS) },
+                        label = { Text("Downloads") }
+                    )
+                }
+            }
+        }
+
+        item {
+            Column {
+                SectionHeader("Default output quality")
+                Text(
+                    "${settings.defaultQualityPercent}% — used as the starting quality for Compress image.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+                Slider(
+                    value = settings.defaultQualityPercent.toFloat(),
+                    onValueChange = { viewModel.setDefaultQuality(it.toInt()) },
+                    valueRange = 10f..100f,
+                    steps = 8
+                )
+            }
+        }
+
+        item {
+            Column {
+                SectionHeader("Storage")
+                SettingsRow(
+                    icon = Icons.Filled.CleaningServices,
+                    title = "Clear cache",
+                    subtitle = "Frees ${FileUtils.readableSize(cacheSize)} of temporary work files",
+                    onClick = { viewModel.clearCache() }
+                )
+            }
+        }
+
+        item {
+            Column {
+                SectionHeader("About")
+                SettingsRow(
+                    icon = Icons.Filled.StarRate,
+                    title = "Rate this app",
+                    subtitle = "Enjoying Z Scanner? Leave a review",
+                    onClick = {
+                        val uri = Uri.parse("market://details?id=${context.packageName}")
+                        try {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                        } catch (e: ActivityNotFoundException) {
+                            val webUri = Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
+                            context.startActivity(Intent(Intent.ACTION_VIEW, webUri))
+                        }
                     }
-                }
-            }
-
-            item {
-                Column {
-                    SectionHeader("Default output quality")
-                    Text(
-                        "${settings.defaultQualityPercent}% — used as the starting quality for Compress image.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
-                    )
-                    Slider(
-                        value = settings.defaultQualityPercent.toFloat(),
-                        onValueChange = { viewModel.setDefaultQuality(it.toInt()) },
-                        valueRange = 10f..100f,
-                        steps = 8
-                    )
-                }
-            }
-
-            item {
-                Column {
-                    SectionHeader("Storage")
-                    SettingsRow(
-                        icon = Icons.Filled.CleaningServices,
-                        title = "Clear cache",
-                        subtitle = "Frees ${FileUtils.readableSize(cacheSize)} of temporary work files",
-                        onClick = { viewModel.clearCache() }
-                    )
-                }
-            }
-
-            item {
-                Column {
-                    SectionHeader("About")
-                    SettingsRow(
-                        icon = Icons.Filled.StarRate,
-                        title = "Rate this app",
-                        subtitle = "Enjoying Z Scanner? Leave a review",
-                        onClick = {
-                            val uri = Uri.parse("market://details?id=${context.packageName}")
-                            try {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
-                            } catch (e: ActivityNotFoundException) {
-                                val webUri = Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
-                                context.startActivity(Intent(Intent.ACTION_VIEW, webUri))
-                            }
+                )
+                SettingsRow(
+                    icon = Icons.Filled.PrivacyTip,
+                    title = "Privacy policy",
+                    subtitle = PRIVACY_POLICY_URL,
+                    onClick = {
+                        runCatching {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)))
                         }
-                    )
-                    SettingsRow(
-                        icon = Icons.Filled.PrivacyTip,
-                        title = "Privacy policy",
-                        subtitle = PRIVACY_POLICY_URL,
-                        onClick = {
-                            runCatching {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)))
-                            }
-                        }
-                    )
-                }
+                    }
+                )
             }
         }
     }

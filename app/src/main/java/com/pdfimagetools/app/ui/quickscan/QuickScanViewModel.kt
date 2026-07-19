@@ -31,20 +31,25 @@ import java.util.UUID
 
 data class ScannedPage(val id: String, val file: File)
 
+/** A just-captured photo awaiting the user's crop confirmation, with a detected starting quad. */
+data class CaptureReview(val rawFile: File, val bitmap: Bitmap, val quad: CropQuad)
+
 data class QuickScanUiState(
     val phase: ToolPhase = ToolPhase.PICK,
     val pages: List<ScannedPage> = emptyList(),
     val isProcessingCapture: Boolean = false,
+    val reviewingCapture: CaptureReview? = null,
     val result: ToolResult? = null,
     val errorMessage: String? = null
 )
 
 /**
  * Fully custom capture flow (CameraX), replacing the earlier Google-scanner-UI integration.
- * Deliberately has no live edge-tracking overlay: each shot is captured, then deterministically
- * margin-cropped and contrast-enhanced, which is far more predictable/stable than a hand-rolled
- * real-time detector that can't be verified without a physical device. The camera reopens
- * automatically after every capture so the user can keep scanning pages back-to-back.
+ * Deliberately has no live edge-tracking overlay: each shot is captured, the document outline is
+ * detected once on the still image, and the user reviews/adjusts that recommendation on
+ * [CropAdjustScreen] before it's applied — far more predictable than either a fixed silent crop
+ * or a hand-rolled real-time tracker that can't be verified without a physical device. The camera
+ * reopens automatically after every confirmed page so the user can keep scanning back-to-back.
  */
 class QuickScanViewModel(
     private val pdfManager: PdfManager,
@@ -60,18 +65,41 @@ class QuickScanViewModel(
         viewModelScope.launch {
             runCatching {
                 withContext(Dispatchers.Default) {
-                    val original = decodeSampledBitmap(rawFile, MAX_CAPTURE_DIMENSION)
+                    val bitmap = decodeSampledBitmap(rawFile, MAX_CAPTURE_DIMENSION)
                         ?: error("Couldn't read the captured photo")
-                    val processed = enhanceAndCrop(original)
+                    val quad = DocumentEdgeDetector.detect(bitmap)
+                    bitmap to quad
+                }
+            }.onSuccess { (bitmap, quad) ->
+                _uiState.update {
+                    it.copy(isProcessingCapture = false, reviewingCapture = CaptureReview(rawFile, bitmap, quad))
+                }
+            }.onFailure { throwable ->
+                rawFile.delete()
+                _uiState.update { it.copy(isProcessingCapture = false, errorMessage = throwable.message ?: "Couldn't process that page") }
+            }
+        }
+    }
+
+    /** User confirmed (possibly adjusted) the crop outline: warp, enhance, and store the page. */
+    fun confirmCrop(quad: CropQuad) {
+        val review = _uiState.value.reviewingCapture ?: return
+        _uiState.update { it.copy(isProcessingCapture = true, reviewingCapture = null) }
+        viewModelScope.launch {
+            runCatching {
+                withContext(Dispatchers.Default) {
+                    val warped = DocumentEdgeDetector.perspectiveWarp(review.bitmap, quad)
+                    val enhanced = enhanceContrast(warped)
                     val outputFile = storageManager.newWorkFile("scan_page", "jpg")
                     FileOutputStream(outputFile).use { out ->
-                        processed.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                        enhanced.compress(Bitmap.CompressFormat.JPEG, 90, out)
                     }
-                    processed.recycle()
+                    enhanced.recycle()
                     outputFile
                 }
             }.onSuccess { processedFile ->
-                rawFile.delete()
+                review.bitmap.recycle()
+                review.rawFile.delete()
                 _uiState.update { state ->
                     state.copy(
                         isProcessingCapture = false,
@@ -79,10 +107,19 @@ class QuickScanViewModel(
                     )
                 }
             }.onFailure { throwable ->
-                rawFile.delete()
+                review.bitmap.recycle()
+                review.rawFile.delete()
                 _uiState.update { it.copy(isProcessingCapture = false, errorMessage = throwable.message ?: "Couldn't process that page") }
             }
         }
+    }
+
+    /** User discarded a pending review capture and wants to reshoot that page. */
+    fun retakeCapture() {
+        val review = _uiState.value.reviewingCapture ?: return
+        review.bitmap.recycle()
+        review.rawFile.delete()
+        _uiState.update { it.copy(reviewingCapture = null) }
     }
 
     fun onCaptureError(message: String) {
@@ -159,16 +196,9 @@ class QuickScanViewModel(
         return BitmapFactory.decodeFile(file.absolutePath, decodeOptions)
     }
 
-    /** Trims a small margin (typical background/hand around a held document) and lifts
-     * contrast/brightness for a cleaner "scanned" look — deterministic, no detection guesswork. */
-    private fun enhanceAndCrop(source: Bitmap): Bitmap {
-        val marginX = (source.width * 0.03f).toInt()
-        val marginY = (source.height * 0.03f).toInt()
-        val width = (source.width - 2 * marginX).coerceAtLeast(1)
-        val height = (source.height - 2 * marginY).coerceAtLeast(1)
-        val cropped = Bitmap.createBitmap(source, marginX, marginY, width, height)
-
-        val enhanced = Bitmap.createBitmap(cropped.width, cropped.height, Bitmap.Config.ARGB_8888)
+    /** Lifts contrast/brightness for a cleaner "scanned" look on an already-cropped page. */
+    private fun enhanceContrast(source: Bitmap): Bitmap {
+        val enhanced = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(enhanced)
         val contrast = 1.12f
         val translate = (-0.5f * contrast + 0.5f) * 255f
@@ -181,15 +211,18 @@ class QuickScanViewModel(
             )
         )
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { colorFilter = ColorMatrixColorFilter(colorMatrix) }
-        canvas.drawBitmap(cropped, 0f, 0f, paint)
+        canvas.drawBitmap(source, 0f, 0f, paint)
 
-        if (cropped !== source) cropped.recycle()
         source.recycle()
         return enhanced
     }
 
     override fun onCleared() {
         _uiState.value.pages.forEach { it.file.delete() }
+        _uiState.value.reviewingCapture?.let {
+            it.bitmap.recycle()
+            it.rawFile.delete()
+        }
         super.onCleared()
     }
 

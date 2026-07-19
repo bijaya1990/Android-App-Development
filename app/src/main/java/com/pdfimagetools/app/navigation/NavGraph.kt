@@ -11,16 +11,14 @@ import com.pdfimagetools.app.core.image.ImageFormat
 import com.pdfimagetools.app.ui.compressimage.CompressImageScreen
 import com.pdfimagetools.app.ui.compresspdf.CompressPdfScreen
 import com.pdfimagetools.app.ui.convertformat.ConvertFormatScreen
-import com.pdfimagetools.app.ui.home.HomeScreen
 import com.pdfimagetools.app.ui.imagetopdf.ImageToPdfScreen
+import com.pdfimagetools.app.ui.main.MainScaffold
 import com.pdfimagetools.app.ui.mergepdf.MergePdfScreen
 import com.pdfimagetools.app.ui.organizepages.OrganizePagesScreen
 import com.pdfimagetools.app.ui.pdftoimage.PdfToImageScreen
 import com.pdfimagetools.app.ui.protectpdf.ProtectPdfScreen
 import com.pdfimagetools.app.ui.quickscan.QuickScanScreen
-import com.pdfimagetools.app.ui.recent.RecentFilesScreen
 import com.pdfimagetools.app.ui.rotatepdf.RotatePdfScreen
-import com.pdfimagetools.app.ui.settings.SettingsScreen
 import com.pdfimagetools.app.ui.splash.SplashScreen
 import com.pdfimagetools.app.ui.splitpdf.SplitPdfScreen
 
@@ -39,7 +37,7 @@ fun AppNavGraph(onExitApp: () -> Unit) {
             )
         }
         composable(Screen.Home.route) {
-            HomeScreen(navController = navController, onExitApp = onExitApp)
+            MainScaffold(navController = navController, onExitApp = onExitApp)
         }
         composable(Screen.QuickScan.route) {
             QuickScanScreen(onBack = { navController.popBackStack() })
@@ -78,12 +76,6 @@ fun AppNavGraph(onExitApp: () -> Unit) {
             val target = backStackEntry.arguments?.getString(Screen.ConvertFormat.ARG_TARGET)
             val format = if (target == Screen.ConvertFormat.TARGET_PNG) ImageFormat.PNG else ImageFormat.JPEG
             ConvertFormatScreen(targetFormat = format, onBack = { navController.popBackStack() })
-        }
-        composable(Screen.RecentFiles.route) {
-            RecentFilesScreen(onBack = { navController.popBackStack() })
-        }
-        composable(Screen.Settings.route) {
-            SettingsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

@@ -13,8 +13,6 @@ sealed class Screen(val route: String) {
     data object RotatePdf : Screen("rotate_pdf")
     data object OrganizePages : Screen("organize_pages")
     data object ProtectPdf : Screen("protect_pdf")
-    data object RecentFiles : Screen("recent_files")
-    data object Settings : Screen("settings")
 
     data object ConvertFormat : Screen("convert_format/{target}") {
         const val ARG_TARGET = "target"

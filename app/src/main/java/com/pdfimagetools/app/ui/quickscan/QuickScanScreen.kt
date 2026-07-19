@@ -122,14 +122,24 @@ fun QuickScanScreen(onBack: () -> Unit) {
                             onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }
                         )
                     } else {
-                        CameraCaptureContent(
-                            state = state,
-                            onBack = onBack,
-                            onCaptured = viewModel::onPhotoCaptured,
-                            onCaptureError = viewModel::onCaptureError,
-                            onRemovePage = viewModel::removePage,
-                            onFinish = viewModel::finishScanning
-                        )
+                        val review = state.reviewingCapture
+                        if (review != null) {
+                            CropAdjustScreen(
+                                bitmap = review.bitmap,
+                                initialQuad = review.quad,
+                                onConfirm = viewModel::confirmCrop,
+                                onRetake = viewModel::retakeCapture
+                            )
+                        } else {
+                            CameraCaptureContent(
+                                state = state,
+                                onBack = onBack,
+                                onCaptured = viewModel::onPhotoCaptured,
+                                onCaptureError = viewModel::onCaptureError,
+                                onRemovePage = viewModel::removePage,
+                                onFinish = viewModel::finishScanning
+                            )
+                        }
                     }
                 }
             }
