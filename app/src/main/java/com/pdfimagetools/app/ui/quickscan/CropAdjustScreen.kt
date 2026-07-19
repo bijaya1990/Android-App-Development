@@ -46,29 +46,56 @@ import androidx.compose.ui.unit.dp
 import com.pdfimagetools.app.ui.theme.Primary
 import kotlin.math.roundToInt
 
+private enum class PageSelection { FULL_SPREAD, LEFT_PAGE, RIGHT_PAGE }
+
 /**
  * Shows the just-captured photo with the detected document outline overlaid as a draggable
  * quadrilateral. The user can drag any of the four corners to correct the recommendation before
  * confirming — there is no live tracking here, only a static image the user has full control
  * over, which is what makes this reliable regardless of how good the initial detection was.
+ *
+ * When [gutterFraction] is non-null (the capture looked like an open book spread), the screen
+ * defaults to just one page — auto-selected — with chips to switch to the other page or keep
+ * both; otherwise it behaves exactly like a single-page crop.
  */
 @Composable
 fun CropAdjustScreen(
     bitmap: Bitmap,
     initialQuad: CropQuad,
+    gutterFraction: Float?,
     onConfirm: (CropQuad, ScanFilter) -> Unit,
     onRetake: () -> Unit
 ) {
     val imageBitmap = remember(bitmap) { bitmap.asImageBitmap() }
     val density = LocalDensity.current
-    var selectedFilter by remember { mutableStateOf(ScanFilter.COLOR) }
+    var selectedFilter by remember { mutableStateOf(ScanFilter.BLACK_AND_WHITE) }
     val previewColorFilter = remember(selectedFilter) {
         ColorFilter.colorMatrix(ColorMatrix(selectedFilter.colorMatrixValues()))
+    }
+    val hasSpread = gutterFraction != null
+    var pageSelection by remember(gutterFraction) {
+        mutableStateOf(if (hasSpread) PageSelection.RIGHT_PAGE else PageSelection.FULL_SPREAD)
+    }
+    val activeQuad = remember(initialQuad, gutterFraction, pageSelection) {
+        if (gutterFraction != null) {
+            val (left, right) = initialQuad.splitAtFraction(gutterFraction)
+            when (pageSelection) {
+                PageSelection.LEFT_PAGE -> left
+                PageSelection.RIGHT_PAGE -> right
+                PageSelection.FULL_SPREAD -> initialQuad
+            }
+        } else {
+            initialQuad
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize().background(Color.Black).statusBarsPadding()) {
         Text(
-            text = "Drag the corners to match the document edges",
+            text = if (hasSpread) {
+                "Looks like an open book — pick a page, or keep both"
+            } else {
+                "Drag the corners to match the document edges"
+            },
             color = Color.White,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.fillMaxWidth().padding(16.dp)
@@ -88,7 +115,7 @@ fun CropAdjustScreen(
             fun bitmapToDisplay(p: Offset) = Offset(p.x * fitScale + offsetXPx, p.y * fitScale + offsetYPx)
             fun displayToBitmap(p: Offset) = Offset((p.x - offsetXPx) / fitScale, (p.y - offsetYPx) / fitScale)
 
-            var quad by remember(initialQuad) { mutableStateOf(initialQuad.map(::bitmapToDisplay)) }
+            var quad by remember(activeQuad) { mutableStateOf(activeQuad.map(::bitmapToDisplay)) }
 
             Image(
                 bitmap = imageBitmap,
@@ -127,6 +154,28 @@ fun CropAdjustScreen(
                     .navigationBarsPadding()
                     .padding(16.dp)
             ) {
+                if (hasSpread) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                    ) {
+                        FilterChip(
+                            selected = pageSelection == PageSelection.LEFT_PAGE,
+                            onClick = { pageSelection = PageSelection.LEFT_PAGE },
+                            label = { Text("Left page") }
+                        )
+                        FilterChip(
+                            selected = pageSelection == PageSelection.RIGHT_PAGE,
+                            onClick = { pageSelection = PageSelection.RIGHT_PAGE },
+                            label = { Text("Right page") }
+                        )
+                        FilterChip(
+                            selected = pageSelection == PageSelection.FULL_SPREAD,
+                            onClick = { pageSelection = PageSelection.FULL_SPREAD },
+                            label = { Text("Both pages") }
+                        )
+                    }
+                }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)

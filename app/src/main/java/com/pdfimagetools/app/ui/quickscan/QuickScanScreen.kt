@@ -10,6 +10,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +52,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -71,6 +77,9 @@ import com.pdfimagetools.app.ui.components.ResultSection
 import com.pdfimagetools.app.ui.components.rememberToolResultActions
 import com.pdfimagetools.app.util.findActivity
 import java.util.concurrent.Executor
+
+/** Width:height of the framing guide shown before capture — roughly an A4/Letter portrait page. */
+private const val PAGE_GUIDE_ASPECT_RATIO = 0.72f
 
 @Composable
 fun QuickScanScreen(onBack: () -> Unit) {
@@ -129,6 +138,7 @@ fun QuickScanScreen(onBack: () -> Unit) {
                             CropAdjustScreen(
                                 bitmap = review.bitmap,
                                 initialQuad = review.quad,
+                                gutterFraction = review.gutterFraction,
                                 onConfirm = viewModel::confirmCrop,
                                 onRetake = viewModel::retakeCapture
                             )
@@ -189,6 +199,37 @@ private fun CameraCaptureContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
+
+        // Framing guide: shown before capture so the user knows where to hold the page. This is
+        // a static guide, not a live tracker — positioning the page inside it is what makes the
+        // post-capture auto-detection reliable, since the document then fills a predictable
+        // region of the frame instead of an arbitrary one.
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val guideWidth = size.width * 0.84f
+            val guideHeight = (guideWidth / PAGE_GUIDE_ASPECT_RATIO).coerceAtMost(size.height * 0.72f)
+            val left = (size.width - guideWidth) / 2f
+            val top = (size.height - guideHeight) / 2f
+            drawRoundRect(
+                color = Color.White.copy(alpha = 0.9f),
+                topLeft = Offset(left, top),
+                size = Size(guideWidth, guideHeight),
+                cornerRadius = CornerRadius(16.dp.toPx()),
+                style = Stroke(width = 2.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 14f)))
+            )
+        }
+
+        if (state.errorMessage == null) {
+            Text(
+                text = "Fit the page inside the frame",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 64.dp)
+                    .background(Color.Black.copy(alpha = 0.45f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            )
+        }
 
         // Top bar overlay
         Row(

@@ -27,8 +27,9 @@ import java.util.UUID
 
 data class ScannedPage(val id: String, val file: File)
 
-/** A just-captured photo awaiting the user's crop confirmation, with a detected starting quad. */
-data class CaptureReview(val rawFile: File, val bitmap: Bitmap, val quad: CropQuad)
+/** A just-captured photo awaiting the user's crop confirmation, with a detected starting quad and
+ * — if the shot looks like an open book spread — the x-fraction of the detected spine/gutter. */
+data class CaptureReview(val rawFile: File, val bitmap: Bitmap, val quad: CropQuad, val gutterFraction: Float?)
 
 data class QuickScanUiState(
     val phase: ToolPhase = ToolPhase.PICK,
@@ -64,11 +65,16 @@ class QuickScanViewModel(
                     val bitmap = decodeSampledBitmap(rawFile, MAX_CAPTURE_DIMENSION)
                         ?: error("Couldn't read the captured photo")
                     val quad = DocumentEdgeDetector.detect(bitmap)
-                    bitmap to quad
+                    // Straighten just to look for a book spine; this preview copy is discarded,
+                    // the real warp happens once the user confirms a crop in confirmCrop().
+                    val straightPreview = DocumentEdgeDetector.perspectiveWarp(bitmap, quad)
+                    val gutterFraction = DocumentEdgeDetector.findBookGutterFraction(straightPreview)
+                    straightPreview.recycle()
+                    Triple(bitmap, quad, gutterFraction)
                 }
-            }.onSuccess { (bitmap, quad) ->
+            }.onSuccess { (bitmap, quad, gutterFraction) ->
                 _uiState.update {
-                    it.copy(isProcessingCapture = false, reviewingCapture = CaptureReview(rawFile, bitmap, quad))
+                    it.copy(isProcessingCapture = false, reviewingCapture = CaptureReview(rawFile, bitmap, quad, gutterFraction))
                 }
             }.onFailure { throwable ->
                 rawFile.delete()
