@@ -115,6 +115,11 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.6.0")
     implementation("androidx.camera:camera-view:1.6.0")
 
+    // OpenCV: real Canny edge detection + contour/polygon analysis for document corner
+    // detection (Maven Central distribution since 4.9.0 — no separate SDK import needed, the
+    // native .so libraries for every ABI ship inside this AAR).
+    implementation("org.opencv:opencv:4.11.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
