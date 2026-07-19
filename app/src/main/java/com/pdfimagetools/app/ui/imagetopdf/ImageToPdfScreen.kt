@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,7 +71,7 @@ fun ImageToPdfScreen(onBack: () -> Unit) {
 
     Scaffold(
         topBar = { AppTopBar(title = "Image to PDF", onBack = onBack) },
-        bottomBar = { BannerAdView() }
+        bottomBar = { BannerAdView(modifier = Modifier.navigationBarsPadding()) }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (state.phase) {

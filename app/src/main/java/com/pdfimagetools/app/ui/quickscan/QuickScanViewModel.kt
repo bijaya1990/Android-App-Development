@@ -3,10 +3,6 @@ package com.pdfimagetools.app.ui.quickscan
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pdfimagetools.app.core.pdf.PdfManager
@@ -81,20 +77,21 @@ class QuickScanViewModel(
         }
     }
 
-    /** User confirmed (possibly adjusted) the crop outline: warp, enhance, and store the page. */
-    fun confirmCrop(quad: CropQuad) {
+    /** User confirmed (possibly adjusted) the crop outline and picked a look: warp, apply the
+     * chosen filter, and store the page. */
+    fun confirmCrop(quad: CropQuad, filter: ScanFilter) {
         val review = _uiState.value.reviewingCapture ?: return
         _uiState.update { it.copy(isProcessingCapture = true, reviewingCapture = null) }
         viewModelScope.launch {
             runCatching {
                 withContext(Dispatchers.Default) {
                     val warped = DocumentEdgeDetector.perspectiveWarp(review.bitmap, quad)
-                    val enhanced = enhanceContrast(warped)
+                    val filtered = applyScanFilter(warped, filter)
                     val outputFile = storageManager.newWorkFile("scan_page", "jpg")
                     FileOutputStream(outputFile).use { out ->
-                        enhanced.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                        filtered.compress(Bitmap.CompressFormat.JPEG, 90, out)
                     }
-                    enhanced.recycle()
+                    filtered.recycle()
                     outputFile
                 }
             }.onSuccess { processedFile ->
@@ -194,27 +191,6 @@ class QuickScanViewModel(
 
         val decodeOptions = BitmapFactory.Options().apply { inSampleSize = sampleSize }
         return BitmapFactory.decodeFile(file.absolutePath, decodeOptions)
-    }
-
-    /** Lifts contrast/brightness for a cleaner "scanned" look on an already-cropped page. */
-    private fun enhanceContrast(source: Bitmap): Bitmap {
-        val enhanced = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(enhanced)
-        val contrast = 1.12f
-        val translate = (-0.5f * contrast + 0.5f) * 255f
-        val colorMatrix = ColorMatrix(
-            floatArrayOf(
-                contrast, 0f, 0f, 0f, translate,
-                0f, contrast, 0f, 0f, translate,
-                0f, 0f, contrast, 0f, translate,
-                0f, 0f, 0f, 1f, 0f
-            )
-        )
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { colorFilter = ColorMatrixColorFilter(colorMatrix) }
-        canvas.drawBitmap(source, 0f, 0f, paint)
-
-        source.recycle()
-        return enhanced
     }
 
     override fun onCleared() {

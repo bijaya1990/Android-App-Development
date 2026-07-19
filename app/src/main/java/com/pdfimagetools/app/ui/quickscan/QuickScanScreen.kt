@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -92,7 +94,7 @@ fun QuickScanScreen(onBack: () -> Unit) {
     ) { granted -> hasCameraPermission = granted }
 
     Scaffold(
-        bottomBar = { if (state.phase != ToolPhase.PICK) BannerAdView() }
+        bottomBar = { if (state.phase != ToolPhase.PICK) BannerAdView(modifier = Modifier.navigationBarsPadding()) }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(if (state.phase == ToolPhase.PICK) androidx.compose.foundation.layout.PaddingValues(0.dp) else padding)) {
             when (state.phase) {
@@ -193,6 +195,7 @@ private fun CameraCaptureContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.Black.copy(alpha = 0.35f))
+                .statusBarsPadding()
                 .padding(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -244,6 +247,7 @@ private fun CameraCaptureContent(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .background(Color.Black.copy(alpha = 0.35f))
+                .navigationBarsPadding()
                 .padding(bottom = 24.dp, top = 12.dp)
         ) {
             if (state.pages.isNotEmpty()) {

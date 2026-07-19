@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -30,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -51,13 +56,17 @@ import kotlin.math.roundToInt
 fun CropAdjustScreen(
     bitmap: Bitmap,
     initialQuad: CropQuad,
-    onConfirm: (CropQuad) -> Unit,
+    onConfirm: (CropQuad, ScanFilter) -> Unit,
     onRetake: () -> Unit
 ) {
     val imageBitmap = remember(bitmap) { bitmap.asImageBitmap() }
     val density = LocalDensity.current
+    var selectedFilter by remember { mutableStateOf(ScanFilter.COLOR) }
+    val previewColorFilter = remember(selectedFilter) {
+        ColorFilter.colorMatrix(ColorMatrix(selectedFilter.colorMatrixValues()))
+    }
 
-    Column(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Column(modifier = Modifier.fillMaxSize().background(Color.Black).statusBarsPadding()) {
         Text(
             text = "Drag the corners to match the document edges",
             color = Color.White,
@@ -85,6 +94,7 @@ fun CropAdjustScreen(
                 bitmap = imageBitmap,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
+                colorFilter = previewColorFilter,
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -109,19 +119,36 @@ fun CropAdjustScreen(
             CornerHandle(point = quad.bottomRight) { delta -> quad = quad.copy(bottomRight = clamped(quad.bottomRight + delta)) }
             CornerHandle(point = quad.bottomLeft) { delta -> quad = quad.copy(bottomLeft = clamped(quad.bottomLeft + delta)) }
 
-            Row(
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Color.Black.copy(alpha = 0.55f))
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .navigationBarsPadding()
+                    .padding(16.dp)
             ) {
-                OutlinedButton(onClick = onRetake, modifier = Modifier.weight(1f)) {
-                    Text("Retake")
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                ) {
+                    ScanFilter.entries.forEach { filter ->
+                        FilterChip(
+                            selected = filter == selectedFilter,
+                            onClick = { selectedFilter = filter },
+                            label = { Text(filter.label) }
+                        )
+                    }
                 }
-                Button(onClick = { onConfirm(quad.map(::displayToBitmap)) }, modifier = Modifier.weight(1f)) {
-                    Text("Use this crop")
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedButton(onClick = onRetake, modifier = Modifier.weight(1f)) {
+                        Text("Retake")
+                    }
+                    Button(
+                        onClick = { onConfirm(quad.map(::displayToBitmap), selectedFilter) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Use this crop")
+                    }
                 }
             }
         }
