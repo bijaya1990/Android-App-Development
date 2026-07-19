@@ -8,24 +8,33 @@ Built with Kotlin and Jetpack Compose.
 
 ## Status
 
-This is a working foundation and core end-to-end flow, not the full product vision. It covers:
+This is a working foundation and core end-to-end flow, not the full product vision. The UI follows
+a dedicated "Academic Blue" design system (Corporate Modernism / document-centric utility — white
+"paper canvas" surfaces, restrained borders instead of heavy shadows, serif type for the printed
+paper content, sans-serif for UI chrome). It covers:
 
-- **Home** — recent papers, search, create/duplicate/delete
+- **Splash** — brand mark and mission quote, auto-advances into the app
+- **Home** — recent papers with subject-accent cards, search, create/duplicate/delete, bottom
+  navigation (Templates/Question Bank/Settings are visible but explicitly "coming soon")
 - **Paper Details** — institution, exam metadata, academic info, instructions (only Exam Name,
-  Subject and Maximum Marks are required; everything else is optional, per-country flexible)
+  Subject and Maximum Marks are required; everything else is optional, per-country flexible;
+  secondary fields collapse behind "More Details" so the common path stays short)
 - **Paper Layout** — page size, orientation, margins, header/footer style, page numbering,
   signature area, watermark
 - **Section Builder** — unlimited sections, per-section numbering style and instructions,
-  add/reorder/delete questions and sections
+  add/reorder/delete questions and sections, floating "Add Question" action
 - **Question Entry** — Multiple Choice, Fill in the Blank, Short/Long Answer, Essay, Case Study,
   Numerical, Practical, and more, plus fully custom types; sub-questions, internal choice
-  ("OR" questions), and options editor for MCQ/True-False
+  ("OR" questions), single-select options editor for MCQ/True-False, and an optional "student
+  working area" (a blank ruled box reserved in the PDF) for numerical/practical/long-form questions
 - **Auto-numbering & marks engine** — numbers and totals recompute instantly on every edit,
   never leaving gaps or manual arithmetic
 - **Live Preview** — renders the *actual* generated PDF (via `PdfRenderer`) so preview and
   export can never visually drift apart
-- **PDF export, print & share** — automatic page breaks, header/footer, watermark, page
-  numbering; print via the system print dialog, share via any installed app
+- **PDF export, print & share** — automatic page breaks, serif document typography, a bordered
+  bulleted instructions box, watermark, page numbering; print via the system print dialog, share
+  via any installed app
+- **Export Success** — confirmation screen with Open/Share/Print actions once a PDF is generated
 - **Autosave** — every edit is persisted to a local Room database with no explicit save step
 
 Deferred to future work (see the original product spec for full scope): DOCX export, reusable
@@ -54,7 +63,8 @@ app/src/main/java/com/questionpapermaker/app/
 ├── engine/           # Numbering / marks / validation (pure Kotlin, unit tested)
 ├── pdf/               # PdfDocument-based export, print adapter, page metrics
 ├── navigation/     # NavHost + route definitions
-└── ui/                  # One package per screen (home, paperdetails, layout, sections, preview)
+└── ui/                  # One package per screen (splash, home, paperdetails, layout, sections,
+                          # preview, exportsuccess) plus ui/common (shared components) and ui/theme
 ```
 
 ## Building

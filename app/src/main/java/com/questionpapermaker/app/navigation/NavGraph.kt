@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.questionpapermaker.app.data.AppContainer
+import com.questionpapermaker.app.ui.exportsuccess.ExportSuccessScreen
+import com.questionpapermaker.app.ui.exportsuccess.ExportSuccessViewModel
 import com.questionpapermaker.app.ui.home.HomeScreen
 import com.questionpapermaker.app.ui.home.HomeViewModel
 import com.questionpapermaker.app.ui.layout.PaperLayoutScreen
@@ -18,6 +20,7 @@ import com.questionpapermaker.app.ui.preview.PreviewScreen
 import com.questionpapermaker.app.ui.preview.PreviewViewModel
 import com.questionpapermaker.app.ui.sections.SectionBuilderScreen
 import com.questionpapermaker.app.ui.sections.SectionBuilderViewModel
+import com.questionpapermaker.app.ui.splash.SplashScreen
 import com.questionpapermaker.app.util.GenericViewModelFactory
 
 private val paperIdArgument: List<NamedNavArgument> = listOf(
@@ -28,7 +31,17 @@ private val paperIdArgument: List<NamedNavArgument> = listOf(
 fun QuestionPaperMakerNavHost(container: AppContainer) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Destination.Home.route) {
+    NavHost(navController = navController, startDestination = Destination.Splash.route) {
+        composable(Destination.Splash.route) {
+            SplashScreen(
+                onTimeout = {
+                    navController.navigate(Destination.Home.route) {
+                        popUpTo(Destination.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Destination.Home.route) {
             val viewModel: HomeViewModel = viewModel(
                 factory = GenericViewModelFactory { HomeViewModel(container.paperRepository) }
@@ -93,7 +106,20 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
             PreviewScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
-                onDone = {
+                onExported = {
+                    navController.navigate(Destination.ExportSuccess.createRoute(paperId))
+                }
+            )
+        }
+
+        composable(Destination.ExportSuccess.route, arguments = paperIdArgument) { backStackEntry ->
+            val paperId = backStackEntry.arguments?.getString(Destination.ARG_PAPER_ID) ?: return@composable
+            val viewModel: ExportSuccessViewModel = viewModel(
+                factory = GenericViewModelFactory { ExportSuccessViewModel(paperId, container.paperRepository) }
+            )
+            ExportSuccessScreen(
+                viewModel = viewModel,
+                onBackToHome = {
                     navController.popBackStack(Destination.Home.route, inclusive = false)
                 }
             )

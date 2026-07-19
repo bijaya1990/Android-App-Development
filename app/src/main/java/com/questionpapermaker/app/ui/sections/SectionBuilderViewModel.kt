@@ -53,8 +53,8 @@ class SectionBuilderViewModel(
         viewModelScope.launch { repository.reorderSections(paperId, reordered.map { it.id }) }
     }
 
-    fun addQuestion(section: SectionEntity) {
-        viewModelScope.launch { repository.addQuestion(section) }
+    fun addQuestion(section: SectionEntity, onCreated: (String) -> Unit = {}) {
+        viewModelScope.launch { onCreated(repository.addQuestion(section).id) }
     }
 
     fun updateQuestion(question: QuestionEntity) {

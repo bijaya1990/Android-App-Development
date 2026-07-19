@@ -2,6 +2,8 @@ package com.questionpapermaker.app.navigation
 
 /** Every screen the app can navigate to, keyed by a stable route so deep-linking stays simple. */
 sealed class Destination(val route: String) {
+    data object Splash : Destination("splash")
+
     data object Home : Destination("home")
 
     data object PaperDetails : Destination("paper_details/{paperId}") {
@@ -18,6 +20,10 @@ sealed class Destination(val route: String) {
 
     data object Preview : Destination("preview/{paperId}") {
         fun createRoute(paperId: String) = "preview/$paperId"
+    }
+
+    data object ExportSuccess : Destination("export_success/{paperId}") {
+        fun createRoute(paperId: String) = "export_success/$paperId"
     }
 
     companion object {

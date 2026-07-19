@@ -15,7 +15,7 @@ import com.questionpapermaker.app.data.database.entity.SectionEntity
 
 @Database(
     entities = [PaperEntity::class, SectionEntity::class, QuestionEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -37,7 +37,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     DATABASE_NAME
-                ).build().also { instance = it }
+                )
+                    // Pre-release app, no migration history to preserve yet -- recreate on schema bumps.
+                    .fallbackToDestructiveMigration()
+                    .build().also { instance = it }
             }
     }
 }

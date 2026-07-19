@@ -8,9 +8,11 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,17 +20,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,13 +57,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.questionpapermaker.app.engine.ValidationSeverity
 import com.questionpapermaker.app.pdf.PdfPrintAdapter
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviewScreen(
     viewModel: PreviewViewModel,
     onBack: () -> Unit,
-    onDone: () -> Unit
+    onExported: () -> Unit
 ) {
     val pageBitmaps by viewModel.pageBitmaps.collectAsState()
     val isRendering by viewModel.isRendering.collectAsState()
@@ -65,10 +74,11 @@ fun PreviewScreen(
 
     var zoomPercent by remember { mutableFloatStateOf(100f) }
     var showBlockingIssuesDialog by remember { mutableStateOf(false) }
+    var moreMenuExpanded by remember { mutableStateOf(false) }
 
     val hasBlockingErrors = issues.any { it.severity == ValidationSeverity.ERROR }
 
-    fun shareOrPrint(action: (java.io.File) -> Unit) {
+    fun withExportedFile(action: (File) -> Unit) {
         if (hasBlockingErrors) {
             showBlockingIssuesDialog = true
         } else {
@@ -79,20 +89,31 @@ fun PreviewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Preview") },
+                title = { Text("Question Paper Maker") },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Back") }
                 },
                 actions = {
-                    IconButton(onClick = { zoomPercent = (zoomPercent - 25f).coerceAtLeast(25f) }) {
-                        Icon(Icons.Default.ZoomOut, contentDescription = "Zoom out")
-                    }
-                    Text("${zoomPercent.toInt()}%", modifier = Modifier.padding(top = 16.dp))
-                    IconButton(onClick = { zoomPercent = (zoomPercent + 25f).coerceAtMost(200f) }) {
-                        Icon(Icons.Default.ZoomIn, contentDescription = "Zoom in")
-                    }
-                    IconButton(onClick = {
-                        shareOrPrint { file ->
+                    com.questionpapermaker.app.ui.common.DraftSavedIndicator(modifier = Modifier.padding(end = 12.dp))
+                }
+            )
+        },
+        bottomBar = {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Button(
+                    onClick = { withExportedFile { onExported() } },
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.height(18.dp))
+                    Text("  PDF")
+                }
+                OutlinedButton(
+                    onClick = {
+                        withExportedFile { file ->
                             val printManager = context.getSystemService(android.content.Context.PRINT_SERVICE) as PrintManager
                             printManager.print(
                                 file.nameWithoutExtension,
@@ -100,31 +121,46 @@ fun PreviewScreen(
                                 PrintAttributes.Builder().build()
                             )
                         }
-                    }) {
-                        Icon(Icons.Default.Print, contentDescription = "Print")
+                    },
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(Icons.Default.Print, contentDescription = null, modifier = Modifier.height(18.dp))
+                    Text("  Print")
+                }
+                Box {
+                    OutlinedButton(onClick = { moreMenuExpanded = true }, shape = MaterialTheme.shapes.small) {
+                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
                     }
-                    IconButton(onClick = {
-                        shareOrPrint { file ->
-                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-                            val intent = Intent(Intent.ACTION_SEND).apply {
-                                type = "application/pdf"
-                                putExtra(Intent.EXTRA_STREAM, uri)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    DropdownMenu(expanded = moreMenuExpanded, onDismissRequest = { moreMenuExpanded = false }) {
+                        DropdownMenuItem(
+                            text = { Text("Share PDF") },
+                            leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                            onClick = {
+                                moreMenuExpanded = false
+                                withExportedFile { file ->
+                                    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "application/pdf"
+                                        putExtra(Intent.EXTRA_STREAM, uri)
+                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    }
+                                    context.startActivity(Intent.createChooser(intent, "Share Question Paper"))
+                                }
                             }
-                            context.startActivity(Intent.createChooser(intent, "Share Question Paper"))
-                        }
-                    }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Zoom In") },
+                            leadingIcon = { Icon(Icons.Default.ZoomIn, contentDescription = null) },
+                            onClick = { moreMenuExpanded = false; zoomPercent = (zoomPercent + 25f).coerceAtMost(200f) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Zoom Out") },
+                            leadingIcon = { Icon(Icons.Default.ZoomOut, contentDescription = null) },
+                            onClick = { moreMenuExpanded = false; zoomPercent = (zoomPercent - 25f).coerceAtLeast(25f) }
+                        )
                     }
                 }
-            )
-        },
-        bottomBar = {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = onDone) { Text("Done") }
             }
         }
     ) { padding ->
@@ -140,8 +176,8 @@ fun PreviewScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(pageBitmaps.size) { index ->
                         val bitmap = pageBitmaps[index]

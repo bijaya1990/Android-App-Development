@@ -1,5 +1,7 @@
 package com.questionpapermaker.app.ui.sections
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,23 +13,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.WarningAmber
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.questionpapermaker.app.data.database.entity.SectionEntity
@@ -82,12 +88,36 @@ fun SectionBuilderScreen(
         }
     }
 
+    fun expand(id: String) {
+        expandedIds = expandedIds + id
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Build Sections") },
+                title = { Text("Question Editor") },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Back") }
+                },
+                actions = {
+                    OutlinedButton(onClick = onNext, modifier = Modifier.padding(end = 8.dp), shape = MaterialTheme.shapes.large) {
+                        Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.height(18.dp))
+                        Text("  Live Preview")
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = { Text("Add Question") },
+                icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                onClick = {
+                    val targetSection = numberedSections.lastOrNull()?.section
+                    if (targetSection != null) {
+                        viewModel.addQuestion(targetSection) { newId -> expand(newId) }
+                    } else {
+                        viewModel.addSection()
+                    }
                 }
             )
         },
@@ -100,10 +130,12 @@ fun SectionBuilderScreen(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    OutlinedButton(onClick = onBack) { Text("Back") }
-                    Button(onClick = onNext) {
-                        Icon(Icons.Default.Visibility, contentDescription = null)
-                        Text("  Preview")
+                    OutlinedButton(onClick = onBack, shape = MaterialTheme.shapes.small) {
+                        Text("Back to Layout")
+                    }
+                    androidx.compose.material3.Button(onClick = onNext, shape = MaterialTheme.shapes.small) {
+                        Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.height(18.dp))
+                        Text("  Preview PDF")
                     }
                 }
             }
@@ -150,21 +182,35 @@ fun SectionBuilderScreen(
                             onMoveDown = { viewModel.moveQuestion(row.numbered.question, 1) }
                         )
 
-                        is SectionRow.AddQuestionButton -> TextButton(onClick = { viewModel.addQuestion(row.section) }) {
-                            Icon(Icons.Default.Add, contentDescription = null)
-                            Text("  Add Question")
+                        is SectionRow.AddQuestionButton -> Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                                    RoundedCornerShape(8.dp)
+                                )
+                        ) {
+                            TextButton(
+                                onClick = { viewModel.addQuestion(row.section) { newId -> expand(newId) } },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = null)
+                                Text("  Add another question to ${row.section.title.ifBlank { "this section" }}")
+                            }
                         }
                     }
                 }
                 item {
                     OutlinedButton(
                         onClick = viewModel::addSection,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Text("  Add Section")
                     }
                 }
+                item { Spacer(modifier = Modifier.height(72.dp)) }
             }
         }
     }
@@ -199,14 +245,22 @@ private fun SectionHeaderCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
                     value = section.title,
                     onValueChange = { onUpdate(section.copy(title = it)) },
-                    label = { Text("Section Title") },
+                    textStyle = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                    ),
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
@@ -224,9 +278,15 @@ private fun SectionHeaderCard(
             OutlinedTextField(
                 value = section.instruction.orEmpty(),
                 onValueChange = { onUpdate(section.copy(instruction = it)) },
-                label = { Text("Instruction (e.g. Answer any five)") },
+                placeholder = { Text("Answer all questions in this section.") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                ),
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
             Row(
@@ -247,6 +307,7 @@ private fun SectionHeaderCard(
                     onValueChange = { raw -> onUpdate(section.copy(defaultMarksPerQuestion = raw.toDoubleOrNull())) },
                     label = { Text("Marks/Q") },
                     singleLine = true,
+                    shape = MaterialTheme.shapes.small,
                     modifier = Modifier.width(100.dp)
                 )
             }
@@ -255,6 +316,7 @@ private fun SectionHeaderCard(
                 text = breakdown,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }

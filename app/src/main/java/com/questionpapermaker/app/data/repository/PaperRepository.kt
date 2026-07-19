@@ -37,6 +37,8 @@ class PaperRepository(
 
     suspend fun getPaper(paperId: String): PaperEntity? = paperDao.getPaper(paperId)
 
+    fun observePaper(paperId: String): Flow<PaperEntity?> = paperDao.observePaper(paperId)
+
     /** Creates a fresh draft paper pre-filled with the teacher's saved defaults. */
     suspend fun createDraftPaper(): PaperEntity {
         val defaults: TeacherDefaults = defaultsRepository.getDefaults()

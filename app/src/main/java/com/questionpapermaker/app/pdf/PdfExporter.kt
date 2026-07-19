@@ -75,10 +75,17 @@ private class PageRenderer(
     private val subTextSize = 10.5f
 
     private val titlePaint = textPaint(15f, bold = true)
-    private val examLinePaint = textPaint(12.5f, bold = true)
-    private val metaLinePaint = textPaint(10.5f, color = Color.DKGRAY)
+    private val examTitlePaint = textPaint(19f, bold = true)
+    private val subjectPaint = textPaint(13f, color = Color.DKGRAY)
+    private val metaLinePaint = textPaint(11f, bold = true)
     private val dividerPaint = Paint().apply { color = Color.BLACK; strokeWidth = 0.75f }
-    private val instructionPaint = textPaint(10f, italic = true, color = Color.DKGRAY)
+    private val boxBorderPaint = Paint().apply {
+        color = Color.DKGRAY
+        style = Paint.Style.STROKE
+        strokeWidth = 1f
+    }
+    private val instructionLabelPaint = textPaint(10.5f, bold = true)
+    private val instructionBodyPaint = textPaint(10.5f)
     private val sectionTitlePaint = textPaint(13f, bold = true)
     private val sectionInstructionPaint = textPaint(10.5f, italic = true, color = Color.DKGRAY)
     private val sectionMarksPaint = textPaint(10.5f, bold = true)
@@ -144,50 +151,66 @@ private class PageRenderer(
             cursorY += drawCenteredLine(it, titlePaint)
         }
 
-        val examLine = listOfNotNull(
-            paper.examType?.takeIf { it.isNotBlank() },
-            paper.examName.takeIf { it.isNotBlank() }
-        ).joinToString(" — ")
-        if (examLine.isNotBlank()) cursorY += drawCenteredLine(examLine, examLinePaint)
+        val examLine = paper.examName.takeIf { it.isNotBlank() }?.uppercase()
+        if (examLine != null) cursorY += drawCenteredLine(examLine, examTitlePaint)
 
         val subjectLine = listOfNotNull(
+            paper.examType?.takeIf { it.isNotBlank() },
             paper.subject.takeIf { it.isNotBlank() },
             paper.courseCode?.takeIf { it.isNotBlank() },
             paper.programme?.takeIf { it.isNotBlank() },
             paper.department?.takeIf { it.isNotBlank() },
             paper.className?.takeIf { it.isNotBlank() },
             paper.semester?.takeIf { it.isNotBlank() }
-        ).joinToString("   |   ")
-        if (subjectLine.isNotBlank()) cursorY += drawCenteredLine(subjectLine, metaLinePaint)
+        ).joinToString("   •   ")
+        if (subjectLine.isNotBlank()) cursorY += drawCenteredLine(subjectLine, subjectPaint)
 
-        val left = listOfNotNull(
+        val metaParts = listOfNotNull(
             paper.examDate?.takeIf { it.isNotBlank() }?.let { "Date: $it" },
-            paper.duration?.takeIf { it.isNotBlank() }?.let { "Duration: $it" }
-        ).joinToString("     ")
-        val right = paper.maxMarks.takeIf { it.isNotBlank() }?.let { "Maximum Marks: $it" }.orEmpty()
-        if (left.isNotBlank() || right.isNotBlank()) {
-            cursorY += 4f
-            if (left.isNotBlank()) canvas.drawText(left, metrics.contentLeft, cursorY + metaLinePaint.textSize, metaLinePaint)
-            if (right.isNotBlank()) {
-                val w = metaLinePaint.measureText(right)
-                canvas.drawText(right, metrics.contentRight - w, cursorY + metaLinePaint.textSize, metaLinePaint)
-            }
-            cursorY += metaLinePaint.textSize + 6f
+            paper.duration?.takeIf { it.isNotBlank() }?.let { "Time Allowed: $it" },
+            paper.maxMarks.takeIf { it.isNotBlank() }?.let { "Total Marks: $it" }
+        )
+        if (metaParts.isNotEmpty()) {
+            cursorY += 6f
+            cursorY += drawCenteredLine(metaParts.joinToString("      "), metaLinePaint)
         }
 
-        cursorY += 4f
+        cursorY += 6f
         canvas.drawLine(metrics.contentLeft, cursorY, metrics.contentRight, cursorY, dividerPaint)
-        cursorY += 10f
+        cursorY += 14f
 
         paper.generalInstructions?.takeIf { it.isNotBlank() }?.let { instructions ->
-            val layout = buildLayout("Instructions: $instructions", instructionPaint, metrics.contentWidth.toInt())
-            ensureSpace(layout.height.toFloat())
-            drawLayout(layout, metrics.contentLeft)
-            cursorY += layout.height + 8f
+            drawInstructionsBox(instructions)
+            cursorY += 10f
+        }
+    }
+
+    private fun drawInstructionsBox(instructions: String) {
+        val innerWidth = (metrics.contentWidth - 24f).toInt().coerceAtLeast(50)
+        val lines = instructions.split("\n").map { it.trim() }.filter { it.isNotBlank() }
+        val bulletLayouts = lines.map { buildHangingLayout("•  ", it, instructionBodyPaint, innerWidth) }
+
+        val labelHeight = instructionLabelPaint.textSize + 8f
+        val bodyHeight = bulletLayouts.sumOf { (it.height + 4f).toDouble() }.toFloat()
+        val boxHeight = 12f + labelHeight + bodyHeight + 8f
+
+        ensureSpace(boxHeight)
+        val boxTop = cursorY
+        canvas.drawRect(metrics.contentLeft, boxTop, metrics.contentRight, boxTop + boxHeight, boxBorderPaint)
+
+        var y = boxTop + 12f
+        canvas.drawText("INSTRUCTIONS:", metrics.contentLeft + 12f, y + instructionLabelPaint.textSize, instructionLabelPaint)
+        y += labelHeight
+
+        bulletLayouts.forEach { layout ->
+            canvas.save()
+            canvas.translate(metrics.contentLeft + 12f, y)
+            layout.draw(canvas)
+            canvas.restore()
+            y += layout.height + 4f
         }
 
-        canvas.drawLine(metrics.contentLeft, cursorY, metrics.contentRight, cursorY, dividerPaint)
-        cursorY += 12f
+        cursorY = boxTop + boxHeight
     }
 
     // ---------- Sections ----------
@@ -242,6 +265,9 @@ private class PageRenderer(
             optionLayout
         }
 
+        val workingAreaHeight = if (question.showWorkingArea) 70f else 0f
+        if (question.showWorkingArea) blockHeight += workingAreaHeight + 6f
+
         var orLayout: StaticLayout? = null
         if (question.hasInternalChoice && !question.alternativeText.isNullOrBlank()) {
             blockHeight += orLabelPaint.textSize + 6f
@@ -267,6 +293,12 @@ private class PageRenderer(
             cursorY += 2f
             drawLayout(optionLayout, metrics.contentLeft)
             cursorY += optionLayout.height
+        }
+
+        if (question.showWorkingArea) {
+            cursorY += 6f
+            canvas.drawRect(metrics.contentLeft, cursorY, metrics.contentRight, cursorY + workingAreaHeight, boxBorderPaint)
+            cursorY += workingAreaHeight
         }
 
         if (orLayout != null) {
@@ -338,15 +370,19 @@ private class PageRenderer(
 
     // ---------- Text helpers ----------
 
+    /**
+     * The printed page uses a serif face throughout (per the design system: the UI is
+     * sans-serif, but the actual exam paper content should read like a typeset document).
+     */
     private fun textPaint(size: Float, bold: Boolean = false, italic: Boolean = false, color: Int = Color.BLACK) =
         TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = size
             this.color = color
             typeface = when {
-                bold && italic -> Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)
-                bold -> Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-                italic -> Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-                else -> Typeface.DEFAULT
+                bold && italic -> Typeface.create(Typeface.SERIF, Typeface.BOLD_ITALIC)
+                bold -> Typeface.create(Typeface.SERIF, Typeface.BOLD)
+                italic -> Typeface.create(Typeface.SERIF, Typeface.ITALIC)
+                else -> Typeface.SERIF
             }
         }
 

@@ -37,5 +37,7 @@ data class QuestionEntity(
     val imageUri: String? = null,
     val hasInternalChoice: Boolean = false,
     val alternativeText: String? = null,
-    val alternativeMarks: Double? = null
+    val alternativeMarks: Double? = null,
+    /** Reserves a blank ruled box under the question in the PDF for the student's working/answer. */
+    val showWorkingArea: Boolean = false
 )
