@@ -72,6 +72,7 @@ object DocumentEdgeDetector {
     private const val HOUGH_MIN_LINE_LENGTH_FRACTION = 0.25
     private const val HOUGH_MAX_LINE_GAP = 20.0
     private const val HOUGH_ANGLE_TOLERANCE_DEGREES = 20.0
+    private const val MIN_BOUNDING_DIMENSION_FRACTION = 0.25
 
     // Reused across every call instead of allocated per-detection; lives for the process lifetime.
     private val dilateKernel: Mat by lazy { Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(3.0, 3.0)) }
@@ -123,7 +124,9 @@ object DocumentEdgeDetector {
         // several broken segments.
         Imgproc.morphologyEx(dilated, dilated, Imgproc.MORPH_CLOSE, closeKernel)
 
-        val analysisArea = resized.rows().toDouble() * resized.cols()
+        val resizedWidth = resized.cols()
+        val resizedHeight = resized.rows()
+        val analysisArea = resizedHeight.toDouble() * resizedWidth
         resized.release()
 
         // A resized photo's own border is a perfectly straight, perfectly closed rectangle —
@@ -153,8 +156,11 @@ object DocumentEdgeDetector {
                 contour2f.release()
 
                 if (approx.total() == 4L && area > bestArea) {
-                    bestArea = area
-                    bestCorners = approx.toArray()
+                    val candidate = approx.toArray()
+                    if (isPlausibleDocumentQuad(candidate, resizedWidth, resizedHeight)) {
+                        bestArea = area
+                        bestCorners = candidate
+                    }
                 }
                 approx.release()
             }
@@ -247,6 +253,8 @@ object DocumentEdgeDetector {
         val bottomLeft = intersect(bottom, left) ?: return null
         val bottomRight = intersect(bottom, right) ?: return null
 
+        if (!isPlausibleDocumentQuad(arrayOf(topLeft, topRight, bottomRight, bottomLeft), width, height)) return null
+
         val invScale = 1f / scale.toFloat()
         fun toOriginal(p: Point) = Offset(
             (p.x * invScale).toFloat().coerceIn(0f, bitmap.width.toFloat()),
@@ -259,6 +267,29 @@ object DocumentEdgeDetector {
             bottomRight = toOriginal(bottomRight),
             bottomLeft = toOriginal(bottomLeft)
         )
+    }
+
+    /**
+     * Rejects degenerate "detections" before they're ever compared by area: a busy, high-contrast
+     * background (patterned fabric, tiled floor, printed wallpaper) generates edges everywhere,
+     * and Canny+contour search can close a spurious loop into a 4-point polygon that happens to
+     * clear the area thresholds despite being a thin, useless sliver nowhere near the real
+     * document — exactly what a self-intersecting or squashed-bounding-box quad looks like. This
+     * checks the candidate is a simple convex polygon (via [Imgproc.isContourConvex]) and that its
+     * bounding box actually spans a sane fraction of the frame in *both* directions, not just one.
+     */
+    private fun isPlausibleDocumentQuad(corners: Array<Point>, frameWidth: Int, frameHeight: Int): Boolean {
+        if (corners.size != 4) return false
+
+        val asMat = MatOfPoint(*corners)
+        val convex = Imgproc.isContourConvex(asMat)
+        asMat.release()
+        if (!convex) return false
+
+        val boundingWidth = corners.maxOf { it.x } - corners.minOf { it.x }
+        val boundingHeight = corners.maxOf { it.y } - corners.minOf { it.y }
+        return boundingWidth >= frameWidth * MIN_BOUNDING_DIMENSION_FRACTION &&
+            boundingHeight >= frameHeight * MIN_BOUNDING_DIMENSION_FRACTION
     }
 
     /** Sorts 4 unordered polygon corners into [topLeft, topRight, bottomRight, bottomLeft] by
