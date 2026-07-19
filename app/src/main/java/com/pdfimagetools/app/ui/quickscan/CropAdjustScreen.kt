@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -147,13 +148,3 @@ private fun CornerHandle(point: Offset, onDrag: (Offset) -> Unit) {
             }
     )
 }
-
-private fun Modifier.offset(offset: () -> IntOffset): Modifier = this.then(
-    androidx.compose.ui.layout.layout { measurable, constraints ->
-        val placeable = measurable.measure(constraints)
-        layout(placeable.width, placeable.height) {
-            val o = offset()
-            placeable.place(o.x, o.y)
-        }
-    }
-)
