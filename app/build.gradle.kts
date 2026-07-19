@@ -56,14 +56,22 @@ android {
     }
 }
 
-// AdMob pulls in a Guava dependency that resolves to the empty
-// "9999.0-empty-to-avoid-conflict-with-guava" listenablefuture stub, which wins Gradle's
-// version arbitration over the real jar CameraX needs (com.google.common.util.concurrent
-// .ListenableFuture becomes unresolvable). Forcing a single real Guava version for every
-// configuration makes both AdMob and CameraX resolve against the same real classes.
+// Guava publishes ListenableFuture two ways: bundled inside the real "guava" jar, and as a
+// tiny standalone "listenablefuture" module (real class at version 1.0, or a deliberately
+// EMPTY placeholder at version 9999.0-empty-to-avoid-conflict-with-guava — used whenever real
+// Guava is also present, so the two don't both define the same class). CameraX depends on the
+// real listenablefuture:1.0; AdMob's dependency chain pulls in the empty 9999.0 stub. Plain
+// exclude()/force() only cover paths this project's authors can see in the graph, and can miss
+// a transitive path buried inside Play Services. Dependency substitution is unconditional: it
+// rewrites EVERY request for "listenablefuture", from anywhere, into the real Guava artifact,
+// so com.google.common.util.concurrent.ListenableFuture is guaranteed to resolve to a real class.
 configurations.all {
     resolutionStrategy {
-        force("com.google.guava:guava:33.6.0-android")
+        dependencySubstitution {
+            substitute(module("com.google.guava:listenablefuture"))
+                .using(module("com.google.guava:guava:33.6.0-android"))
+                .because("Both real Guava and the standalone listenablefuture module define the same ListenableFuture class; redirecting every request to real Guava avoids the empty 9999.0 placeholder shadowing it.")
+        }
     }
 }
 
@@ -96,14 +104,9 @@ dependencies {
     // PDF processing
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
-    // Google Mobile Ads. AdMob pulls in Guava's empty "listenablefuture" stub module (a
-    // deliberate placeholder Guava publishes so real com.google.guava:guava - which bundles
-    // its own real ListenableFuture class - wins dependency resolution). If that empty stub
-    // lands on the classpath ahead of the real Guava jar, CameraX's use of ListenableFuture
-    // becomes unresolvable, so it's excluded here to guarantee only the real class exists.
-    implementation("com.google.android.gms:play-services-ads:23.6.0") {
-        exclude(group = "com.google.guava", module = "listenablefuture")
-    }
+    // Google Mobile Ads. (See the dependency substitution above for why a plain implementation()
+    // here would otherwise leave ListenableFuture unresolvable for CameraX.)
+    implementation("com.google.android.gms:play-services-ads:23.6.0")
 
     // Custom camera-based document scanner
     implementation("androidx.camera:camera-core:1.6.0")
