@@ -12,6 +12,7 @@ import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint
 import org.opencv.core.MatOfPoint2f
 import org.opencv.core.Point
+import org.opencv.core.RotatedRect
 import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -78,12 +79,22 @@ object DocumentEdgeDetector {
     private val dilateKernel: Mat by lazy { Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(3.0, 3.0)) }
     private val closeKernel: Mat by lazy { Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(7.0, 7.0)) }
 
+    private data class ScoredQuad(val quad: CropQuad, val score: Double)
+
+    /** Runs every detection method and keeps the best-scoring result, rather than stopping at the
+     * first one that finds anything: a busy background can make the primary scale return a
+     * technically-plausible but mediocre quad while the secondary scale or the Hough fallback
+     * would have found the real, more rectangular document edge. Score is contour area times
+     * rectangularity (how closely the shape matches its own minimum-area bounding rectangle), so
+     * a large, clean rectangle always beats a smaller or more irregular candidate. */
     fun detect(bitmap: Bitmap): CropQuad {
         return try {
-            detectWithOpenCv(bitmap, ANALYSIS_WIDTH)
-                ?: detectWithOpenCv(bitmap, ANALYSIS_WIDTH_SECONDARY)
-                ?: detectWithHoughLines(bitmap)
-                ?: fallbackQuad(bitmap.width, bitmap.height)
+            val candidates = listOfNotNull(
+                detectWithOpenCv(bitmap, ANALYSIS_WIDTH),
+                detectWithOpenCv(bitmap, ANALYSIS_WIDTH_SECONDARY),
+                detectWithHoughLines(bitmap)
+            )
+            candidates.maxByOrNull { it.score }?.quad ?: fallbackQuad(bitmap.width, bitmap.height)
         } catch (_: Throwable) {
             // OpenCV missing/failed to load on this device/ABI, or a pathological input image —
             // never let a detection failure break the capture flow.
@@ -91,10 +102,23 @@ object DocumentEdgeDetector {
         }
     }
 
+    /** How closely [corners] matches its own minimum-area rotated bounding rectangle (1.0 =
+     * perfect fit). A real document quad, even photographed at a steep angle, hugs its own
+     * tightest rotated rectangle closely; a spurious quad from background clutter typically
+     * doesn't, which is what makes this a useful tie-breaker beyond raw area. */
+    private fun rectangularity(corners: Array<Point>, contourArea: Double): Double {
+        val points2f = MatOfPoint2f(*corners)
+        val rotatedRect: RotatedRect = Imgproc.minAreaRect(points2f)
+        points2f.release()
+        val rectArea = rotatedRect.size.width * rotatedRect.size.height
+        if (rectArea <= 0.0) return 0.0
+        return (contourArea / rectArea).coerceIn(0.0, 1.0)
+    }
+
     /** Primary detection pass at a given analysis scale — trying a second, different scale when
      * the first finds nothing is a cheap way to recover from a contour that only closes cleanly
      * at one resolution (a real risk with JPEG noise/compression artifacts). */
-    private fun detectWithOpenCv(bitmap: Bitmap, analysisWidth: Double): CropQuad? {
+    private fun detectWithOpenCv(bitmap: Bitmap, analysisWidth: Double): ScoredQuad? {
         val source = Mat()
         Utils.bitmapToMat(bitmap, source)
 
@@ -144,7 +168,7 @@ object DocumentEdgeDetector {
         hierarchy.release()
 
         var bestCorners: Array<Point>? = null
-        var bestArea = 0.0
+        var bestScore = 0.0
 
         for (contour in contours) {
             val area = Imgproc.contourArea(contour)
@@ -155,11 +179,14 @@ object DocumentEdgeDetector {
                 Imgproc.approxPolyDP(contour2f, approx, APPROX_EPSILON_FRACTION * perimeter, true)
                 contour2f.release()
 
-                if (approx.total() == 4L && area > bestArea) {
+                if (approx.total() == 4L) {
                     val candidate = approx.toArray()
                     if (isPlausibleDocumentQuad(candidate, resizedWidth, resizedHeight)) {
-                        bestArea = area
-                        bestCorners = candidate
+                        val score = area * rectangularity(candidate, area)
+                        if (score > bestScore) {
+                            bestScore = score
+                            bestCorners = candidate
+                        }
                     }
                 }
                 approx.release()
@@ -171,12 +198,15 @@ object DocumentEdgeDetector {
         val ordered = orderCorners(corners)
         val invScale = 1f / scale.toFloat()
         fun toOriginal(p: Point) = Offset(((p.x - BORDER_SIZE) * invScale).toFloat(), ((p.y - BORDER_SIZE) * invScale).toFloat())
-        return CropQuad(
+        val quad = CropQuad(
             topLeft = toOriginal(ordered[0]),
             topRight = toOriginal(ordered[1]),
             bottomRight = toOriginal(ordered[2]),
             bottomLeft = toOriginal(ordered[3])
         )
+        // Normalize score to a 0..1-ish scale (fraction of analysis frame area) so it's
+        // comparable against candidates found at a different analysis scale or via Hough lines.
+        return ScoredQuad(quad, bestScore / analysisArea)
     }
 
     private data class LineSegment(val x1: Double, val y1: Double, val x2: Double, val y2: Double) {
@@ -190,7 +220,7 @@ object DocumentEdgeDetector {
      * intersects adjacent pairs of lines to get the corners. More forgiving than the contour path
      * when the page's edges are individually clear but never form one unbroken outline (e.g. a
      * gap where the edge crosses a similarly-lit background). */
-    private fun detectWithHoughLines(bitmap: Bitmap): CropQuad? {
+    private fun detectWithHoughLines(bitmap: Bitmap): ScoredQuad? {
         val source = Mat()
         Utils.bitmapToMat(bitmap, source)
 
@@ -253,7 +283,11 @@ object DocumentEdgeDetector {
         val bottomLeft = intersect(bottom, left) ?: return null
         val bottomRight = intersect(bottom, right) ?: return null
 
-        if (!isPlausibleDocumentQuad(arrayOf(topLeft, topRight, bottomRight, bottomLeft), width, height)) return null
+        val quadPoints = arrayOf(topLeft, topRight, bottomRight, bottomLeft)
+        if (!isPlausibleDocumentQuad(quadPoints, width, height)) return null
+
+        val area = polygonArea(quadPoints)
+        val score = area * rectangularity(quadPoints, area) / (width.toDouble() * height)
 
         val invScale = 1f / scale.toFloat()
         fun toOriginal(p: Point) = Offset(
@@ -261,12 +295,25 @@ object DocumentEdgeDetector {
             (p.y * invScale).toFloat().coerceIn(0f, bitmap.height.toFloat())
         )
 
-        return CropQuad(
+        val quad = CropQuad(
             topLeft = toOriginal(topLeft),
             topRight = toOriginal(topRight),
             bottomRight = toOriginal(bottomRight),
             bottomLeft = toOriginal(bottomLeft)
         )
+        return ScoredQuad(quad, score)
+    }
+
+    /** Shoelace-formula polygon area, for the Hough-fallback quad which has no OpenCV contour to
+     * call [Imgproc.contourArea] on. */
+    private fun polygonArea(points: Array<Point>): Double {
+        var sum = 0.0
+        for (i in points.indices) {
+            val p1 = points[i]
+            val p2 = points[(i + 1) % points.size]
+            sum += p1.x * p2.y - p2.x * p1.y
+        }
+        return abs(sum) / 2.0
     }
 
     /**
