@@ -39,14 +39,36 @@ fun ScanFilter.colorMatrixValues(): FloatArray {
     )
 }
 
-/** Applies [filter] to a full-resolution page bitmap. Recycles [source]. */
+/**
+ * Applies [filter] to a full-resolution page bitmap and recycles [source]. COLOR and
+ * BLACK_AND_WHITE route through [ImageEnhancer]'s real OpenCV pipeline (CLAHE, and background
+ * illumination correction + adaptive threshold, respectively) for a genuinely enhanced result;
+ * ORIGINAL/GRAYSCALE stay on the cheap [colorMatrixValues] path since there's nothing more to
+ * compute for them. The live preview in [CropAdjustScreen] always uses the fast ColorMatrix
+ * approximation for every filter — including COLOR/B&W — so it stays responsive; only the
+ * final saved page pays for the heavier OpenCV processing.
+ */
 fun applyScanFilter(source: Bitmap, filter: ScanFilter): Bitmap {
-    val output = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(output)
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        colorFilter = ColorMatrixColorFilter(filter.colorMatrixValues())
+    return when (filter) {
+        ScanFilter.COLOR -> {
+            val result = ImageEnhancer.claheEnhance(source)
+            source.recycle()
+            result
+        }
+        ScanFilter.BLACK_AND_WHITE -> {
+            val result = ImageEnhancer.adaptiveThresholdDocument(source)
+            source.recycle()
+            result
+        }
+        ScanFilter.ORIGINAL, ScanFilter.GRAYSCALE -> {
+            val output = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(output)
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                colorFilter = ColorMatrixColorFilter(filter.colorMatrixValues())
+            }
+            canvas.drawBitmap(source, 0f, 0f, paint)
+            source.recycle()
+            output
+        }
     }
-    canvas.drawBitmap(source, 0f, 0f, paint)
-    source.recycle()
-    return output
 }

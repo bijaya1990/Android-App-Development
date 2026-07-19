@@ -27,9 +27,18 @@ import java.util.UUID
 
 data class ScannedPage(val id: String, val file: File)
 
-/** A just-captured photo awaiting the user's crop confirmation, with a detected starting quad and
- * — if the shot looks like an open book spread — the x-fraction of the detected spine/gutter. */
-data class CaptureReview(val rawFile: File, val bitmap: Bitmap, val quad: CropQuad, val gutterFraction: Float?)
+/** A just-captured photo awaiting the user's crop confirmation, with a detected starting quad,
+ * a blur-sharpness warning, and — if the shot looks like an open book spread — the x-fraction of
+ * the detected spine/gutter. */
+data class CaptureReview(
+    val rawFile: File,
+    val bitmap: Bitmap,
+    val quad: CropQuad,
+    val gutterFraction: Float?,
+    val isBlurry: Boolean
+)
+
+private data class CaptureAnalysis(val bitmap: Bitmap, val quad: CropQuad, val gutterFraction: Float?, val isBlurry: Boolean)
 
 data class QuickScanUiState(
     val phase: ToolPhase = ToolPhase.PICK,
@@ -69,12 +78,16 @@ class QuickScanViewModel(
                     // the real warp happens once the user confirms a crop in confirmCrop().
                     val straightPreview = DocumentEdgeDetector.perspectiveWarp(bitmap, quad)
                     val gutterFraction = DocumentEdgeDetector.findBookGutterFraction(straightPreview)
+                    val isBlurry = ImageEnhancer.isBlurry(straightPreview)
                     straightPreview.recycle()
-                    Triple(bitmap, quad, gutterFraction)
+                    CaptureAnalysis(bitmap, quad, gutterFraction, isBlurry)
                 }
-            }.onSuccess { (bitmap, quad, gutterFraction) ->
+            }.onSuccess { analysis ->
                 _uiState.update {
-                    it.copy(isProcessingCapture = false, reviewingCapture = CaptureReview(rawFile, bitmap, quad, gutterFraction))
+                    it.copy(
+                        isProcessingCapture = false,
+                        reviewingCapture = CaptureReview(rawFile, analysis.bitmap, analysis.quad, analysis.gutterFraction, analysis.isBlurry)
+                    )
                 }
             }.onFailure { throwable ->
                 rawFile.delete()
@@ -83,16 +96,26 @@ class QuickScanViewModel(
         }
     }
 
-    /** User confirmed (possibly adjusted) the crop outline and picked a look: warp, apply the
-     * chosen filter, and store the page. */
-    fun confirmCrop(quad: CropQuad, filter: ScanFilter) {
+    /** User confirmed (possibly adjusted) the crop outline and picked a look: warp, run any
+     * opt-in cleanup the user enabled, apply the chosen filter, and store the page. */
+    fun confirmCrop(quad: CropQuad, filter: ScanFilter, flattenCurve: Boolean = false, removeFingers: Boolean = false) {
         val review = _uiState.value.reviewingCapture ?: return
         _uiState.update { it.copy(isProcessingCapture = true, reviewingCapture = null) }
         viewModelScope.launch {
             runCatching {
                 withContext(Dispatchers.Default) {
-                    val warped = DocumentEdgeDetector.perspectiveWarp(review.bitmap, quad)
-                    val filtered = applyScanFilter(warped, filter)
+                    var page = DocumentEdgeDetector.perspectiveWarp(review.bitmap, quad)
+                    if (removeFingers) {
+                        val cleaned = ImageEnhancer.removeFingersAtEdges(page)
+                        page.recycle()
+                        page = cleaned
+                    }
+                    if (flattenCurve) {
+                        val flattened = ImageEnhancer.flattenPageCurve(page)
+                        page.recycle()
+                        page = flattened
+                    }
+                    val filtered = applyScanFilter(page, filter)
                     val outputFile = storageManager.newWorkFile("scan_page", "jpg")
                     FileOutputStream(outputFile).use { out ->
                         filtered.compress(Bitmap.CompressFormat.JPEG, 90, out)

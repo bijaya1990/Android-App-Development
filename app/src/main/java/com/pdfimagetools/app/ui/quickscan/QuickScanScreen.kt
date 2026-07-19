@@ -139,6 +139,7 @@ fun QuickScanScreen(onBack: () -> Unit) {
                                 bitmap = review.bitmap,
                                 initialQuad = review.quad,
                                 gutterFraction = review.gutterFraction,
+                                isBlurry = review.isBlurry,
                                 onConfirm = viewModel::confirmCrop,
                                 onRetake = viewModel::retakeCapture
                             )

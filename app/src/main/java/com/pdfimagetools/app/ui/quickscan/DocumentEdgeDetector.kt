@@ -3,6 +3,8 @@ package com.pdfimagetools.app.ui.quickscan
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.hypot
 import kotlin.math.sqrt
 import org.opencv.android.Utils
 import org.opencv.core.Core
@@ -57,6 +59,7 @@ private fun distance(a: Offset, b: Offset): Float {
 object DocumentEdgeDetector {
 
     private const val ANALYSIS_WIDTH = 700.0
+    private const val ANALYSIS_WIDTH_SECONDARY = 500.0
     private const val MIN_CONTOUR_AREA_FRACTION = 0.15
     private const val MAX_CONTOUR_AREA_FRACTION = 0.94
     private const val APPROX_EPSILON_FRACTION = 0.02
@@ -65,13 +68,21 @@ object DocumentEdgeDetector {
     private const val GUTTER_ANALYSIS_WIDTH = 400
     private const val GUTTER_SEARCH_BAND_FRACTION = 0.30f
     private const val GUTTER_MIN_PEAK_RATIO = 2.2f
+    private const val HOUGH_THRESHOLD = 60
+    private const val HOUGH_MIN_LINE_LENGTH_FRACTION = 0.25
+    private const val HOUGH_MAX_LINE_GAP = 20.0
+    private const val HOUGH_ANGLE_TOLERANCE_DEGREES = 20.0
 
     // Reused across every call instead of allocated per-detection; lives for the process lifetime.
     private val dilateKernel: Mat by lazy { Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(3.0, 3.0)) }
+    private val closeKernel: Mat by lazy { Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(7.0, 7.0)) }
 
     fun detect(bitmap: Bitmap): CropQuad {
         return try {
-            detectWithOpenCv(bitmap) ?: fallbackQuad(bitmap.width, bitmap.height)
+            detectWithOpenCv(bitmap, ANALYSIS_WIDTH)
+                ?: detectWithOpenCv(bitmap, ANALYSIS_WIDTH_SECONDARY)
+                ?: detectWithHoughLines(bitmap)
+                ?: fallbackQuad(bitmap.width, bitmap.height)
         } catch (_: Throwable) {
             // OpenCV missing/failed to load on this device/ABI, or a pathological input image —
             // never let a detection failure break the capture flow.
@@ -79,13 +90,16 @@ object DocumentEdgeDetector {
         }
     }
 
-    private fun detectWithOpenCv(bitmap: Bitmap): CropQuad? {
+    /** Primary detection pass at a given analysis scale — trying a second, different scale when
+     * the first finds nothing is a cheap way to recover from a contour that only closes cleanly
+     * at one resolution (a real risk with JPEG noise/compression artifacts). */
+    private fun detectWithOpenCv(bitmap: Bitmap, analysisWidth: Double): CropQuad? {
         val source = Mat()
         Utils.bitmapToMat(bitmap, source)
 
-        val scale = ANALYSIS_WIDTH / source.cols()
+        val scale = analysisWidth / source.cols()
         val resized = Mat()
-        Imgproc.resize(source, resized, Size(ANALYSIS_WIDTH, source.rows() * scale))
+        Imgproc.resize(source, resized, Size(analysisWidth, source.rows() * scale))
         source.release()
 
         val gray = Mat()
@@ -102,6 +116,12 @@ object DocumentEdgeDetector {
         val dilated = Mat()
         Imgproc.dilate(edges, dilated, dilateKernel)
         edges.release()
+
+        // Morphological closing (dilate-then-erode as one step, over a larger kernel) bridges
+        // small gaps left in the edge map — e.g. where the page edge briefly loses contrast
+        // against the background — so the contour search sees one closed outline instead of
+        // several broken segments.
+        Imgproc.morphologyEx(dilated, dilated, Imgproc.MORPH_CLOSE, closeKernel)
 
         val analysisArea = resized.rows().toDouble() * resized.cols()
         resized.release()
@@ -150,6 +170,94 @@ object DocumentEdgeDetector {
             topRight = toOriginal(ordered[1]),
             bottomRight = toOriginal(ordered[2]),
             bottomLeft = toOriginal(ordered[3])
+        )
+    }
+
+    private data class LineSegment(val x1: Double, val y1: Double, val x2: Double, val y2: Double) {
+        val angleDegrees: Double get() = Math.toDegrees(atan2(y2 - y1, x2 - x1))
+        val length: Double get() = hypot(x2 - x1, y2 - y1)
+    }
+
+    /** Last-resort fallback when contour search finds no clean 4-sided outline at either scale:
+     * Hough line detection finds straight segments directly, groups them into roughly-horizontal
+     * and roughly-vertical, picks the longest candidate near each of the four sides, and
+     * intersects adjacent pairs of lines to get the corners. More forgiving than the contour path
+     * when the page's edges are individually clear but never form one unbroken outline (e.g. a
+     * gap where the edge crosses a similarly-lit background). */
+    private fun detectWithHoughLines(bitmap: Bitmap): CropQuad? {
+        val source = Mat()
+        Utils.bitmapToMat(bitmap, source)
+
+        val scale = ANALYSIS_WIDTH / source.cols()
+        val resized = Mat()
+        Imgproc.resize(source, resized, Size(ANALYSIS_WIDTH, source.rows() * scale))
+        source.release()
+
+        val gray = Mat()
+        Imgproc.cvtColor(resized, gray, Imgproc.COLOR_RGBA2GRAY)
+        val width = resized.cols()
+        val height = resized.rows()
+        resized.release()
+
+        val blurred = Mat()
+        Imgproc.GaussianBlur(gray, blurred, Size(5.0, 5.0), 0.0)
+        gray.release()
+
+        val edges = Mat()
+        Imgproc.Canny(blurred, edges, 50.0, 150.0)
+        blurred.release()
+
+        val lines = Mat()
+        Imgproc.HoughLinesP(edges, lines, 1.0, Math.PI / 180, HOUGH_THRESHOLD, width * HOUGH_MIN_LINE_LENGTH_FRACTION, HOUGH_MAX_LINE_GAP)
+        edges.release()
+
+        val segments = mutableListOf<LineSegment>()
+        for (i in 0 until lines.rows()) {
+            val row = lines.get(i, 0)
+            segments += LineSegment(row[0], row[1], row[2], row[3])
+        }
+        lines.release()
+        if (segments.isEmpty()) return null
+
+        fun isHorizontal(s: LineSegment) = abs(s.angleDegrees).let { it < HOUGH_ANGLE_TOLERANCE_DEGREES || it > 180 - HOUGH_ANGLE_TOLERANCE_DEGREES }
+        fun isVertical(s: LineSegment) = abs(abs(s.angleDegrees) - 90) < HOUGH_ANGLE_TOLERANCE_DEGREES
+        fun midY(s: LineSegment) = (s.y1 + s.y2) / 2
+        fun midX(s: LineSegment) = (s.x1 + s.x2) / 2
+
+        val horizontals = segments.filter(::isHorizontal)
+        val verticals = segments.filter(::isVertical)
+
+        val top = horizontals.filter { midY(it) < height * 0.5 }.maxByOrNull { it.length } ?: return null
+        val bottom = horizontals.filter { midY(it) >= height * 0.5 }.maxByOrNull { it.length } ?: return null
+        val left = verticals.filter { midX(it) < width * 0.5 }.maxByOrNull { it.length } ?: return null
+        val right = verticals.filter { midX(it) >= width * 0.5 }.maxByOrNull { it.length } ?: return null
+
+        fun intersect(a: LineSegment, b: LineSegment): Point? {
+            val denom = (a.x1 - a.x2) * (b.y1 - b.y2) - (a.y1 - a.y2) * (b.x1 - b.x2)
+            if (abs(denom) < 1e-6) return null
+            val aCross = a.x1 * a.y2 - a.y1 * a.x2
+            val bCross = b.x1 * b.y2 - b.y1 * b.x2
+            val px = (aCross * (b.x1 - b.x2) - (a.x1 - a.x2) * bCross) / denom
+            val py = (aCross * (b.y1 - b.y2) - (a.y1 - a.y2) * bCross) / denom
+            return Point(px, py)
+        }
+
+        val topLeft = intersect(top, left) ?: return null
+        val topRight = intersect(top, right) ?: return null
+        val bottomLeft = intersect(bottom, left) ?: return null
+        val bottomRight = intersect(bottom, right) ?: return null
+
+        val invScale = 1f / scale.toFloat()
+        fun toOriginal(p: Point) = Offset(
+            (p.x * invScale).toFloat().coerceIn(0f, bitmap.width.toFloat()),
+            (p.y * invScale).toFloat().coerceIn(0f, bitmap.height.toFloat())
+        )
+
+        return CropQuad(
+            topLeft = toOriginal(topLeft),
+            topRight = toOriginal(topRight),
+            bottomRight = toOriginal(bottomRight),
+            bottomLeft = toOriginal(bottomLeft)
         )
     }
 

@@ -56,14 +56,16 @@ private enum class PageSelection { FULL_SPREAD, LEFT_PAGE, RIGHT_PAGE }
  *
  * When [gutterFraction] is non-null (the capture looked like an open book spread), the screen
  * defaults to just one page — auto-selected — with chips to switch to the other page or keep
- * both; otherwise it behaves exactly like a single-page crop.
+ * both; otherwise it behaves exactly like a single-page crop. When [isBlurry] is true, a warning
+ * banner suggests retaking the shot rather than silently accepting a soft/out-of-focus capture.
  */
 @Composable
 fun CropAdjustScreen(
     bitmap: Bitmap,
     initialQuad: CropQuad,
     gutterFraction: Float?,
-    onConfirm: (CropQuad, ScanFilter) -> Unit,
+    isBlurry: Boolean,
+    onConfirm: (CropQuad, ScanFilter, Boolean, Boolean) -> Unit,
     onRetake: () -> Unit
 ) {
     val imageBitmap = remember(bitmap) { bitmap.asImageBitmap() }
@@ -72,6 +74,8 @@ fun CropAdjustScreen(
     val previewColorFilter = remember(selectedFilter) {
         ColorFilter.colorMatrix(ColorMatrix(selectedFilter.colorMatrixValues()))
     }
+    var flattenCurve by remember { mutableStateOf(false) }
+    var removeFingers by remember { mutableStateOf(false) }
     val hasSpread = gutterFraction != null
     var pageSelection by remember(gutterFraction) {
         mutableStateOf(if (hasSpread) PageSelection.RIGHT_PAGE else PageSelection.FULL_SPREAD)
@@ -100,6 +104,18 @@ fun CropAdjustScreen(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.fillMaxWidth().padding(16.dp)
         )
+
+        if (isBlurry) {
+            Text(
+                text = "This looks a little soft — consider retaking for a sharper scan",
+                color = Color.White,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.error)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
 
         BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxWidth()) {
             val containerWidthPx = with(density) { maxWidth.toPx() }
@@ -188,12 +204,27 @@ fun CropAdjustScreen(
                         )
                     }
                 }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                ) {
+                    FilterChip(
+                        selected = flattenCurve,
+                        onClick = { flattenCurve = !flattenCurve },
+                        label = { Text("Flatten curve") }
+                    )
+                    FilterChip(
+                        selected = removeFingers,
+                        onClick = { removeFingers = !removeFingers },
+                        label = { Text("Remove fingers") }
+                    )
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedButton(onClick = onRetake, modifier = Modifier.weight(1f)) {
                         Text("Retake")
                     }
                     Button(
-                        onClick = { onConfirm(quad.map(::displayToBitmap), selectedFilter) },
+                        onClick = { onConfirm(quad.map(::displayToBitmap), selectedFilter, flattenCurve, removeFingers) },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text("Use this crop")
