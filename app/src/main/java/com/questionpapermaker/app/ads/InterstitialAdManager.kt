@@ -7,44 +7,49 @@ import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 
 /**
- * Loads one interstitial ahead of time and shows it before a download completes. The user's
- * actual task (getting their PDF) is never blocked on the ad: if nothing is loaded yet or the
- * ad fails for any reason, [showThenRun] just runs [onComplete] immediately.
+ * Loads one rewarded-interstitial ad ahead of time and shows it before a download completes.
+ * The ad unit is configured as "Rewarded Interstitial" in AdMob rather than a plain
+ * "Interstitial" -- functionally it's shown full-screen and dismissed the same way, we just
+ * ignore the earned-reward callback since there's no in-app reward to grant.
+ *
+ * The user's actual task (getting their PDF) is never blocked on the ad: if nothing is loaded
+ * yet or the ad fails for any reason, [showThenRun] just runs [onComplete] immediately.
  */
 class InterstitialAdManager(private val appContext: Context) {
 
-    private var interstitialAd: InterstitialAd? = null
+    private var rewardedInterstitialAd: RewardedInterstitialAd? = null
     private var isLoading = false
 
     fun preload() {
-        if (interstitialAd != null || isLoading) return
+        if (rewardedInterstitialAd != null || isLoading) return
         isLoading = true
-        InterstitialAd.load(
+        RewardedInterstitialAd.load(
             appContext,
             AdConfig.INTERSTITIAL_AD_UNIT_ID,
             AdRequest.Builder().build(),
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
+            object : RewardedInterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: RewardedInterstitialAd) {
                     isLoading = false
-                    interstitialAd = ad
+                    rewardedInterstitialAd = ad
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     isLoading = false
-                    interstitialAd = null
-                    Log.d(TAG, "Interstitial failed to load: ${error.message}")
+                    rewardedInterstitialAd = null
+                    Log.d(TAG, "Rewarded interstitial failed to load: ${error.message}")
                 }
             }
         )
     }
 
-    /** Shows the preloaded interstitial (if any) on [activity], then always calls [onComplete] exactly once. */
+    /** Shows the preloaded ad (if any) on [activity], then always calls [onComplete] exactly once. */
     fun showThenRun(activity: Activity, onComplete: () -> Unit) {
-        val ad = interstitialAd
+        val ad = rewardedInterstitialAd
         if (ad == null) {
             preload()
             onComplete()
@@ -53,18 +58,19 @@ class InterstitialAdManager(private val appContext: Context) {
 
         ad.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
-                interstitialAd = null
+                rewardedInterstitialAd = null
                 preload()
                 onComplete()
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                interstitialAd = null
+                rewardedInterstitialAd = null
                 preload()
                 onComplete()
             }
         }
-        ad.show(activity)
+        // We don't grant any in-app reward -- the listener only exists to satisfy the SDK's show() signature.
+        ad.show(activity, OnUserEarnedRewardListener { })
     }
 
     private companion object {
