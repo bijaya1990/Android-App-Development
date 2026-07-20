@@ -29,7 +29,9 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Redo
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Card
@@ -86,6 +88,8 @@ fun SectionBuilderScreen(
 ) {
     val numberedSections by viewModel.numberedSections.collectAsState()
     val issues by viewModel.validationIssues.collectAsState()
+    val canUndo by viewModel.canUndo.collectAsState()
+    val canRedo by viewModel.canRedo.collectAsState()
     var expandedIds by remember { mutableStateOf(setOf<String>()) }
 
     // While a question is being dragged, its section's question order is driven by this local
@@ -203,6 +207,12 @@ fun SectionBuilderScreen(
                             Icon(Icons.Default.Close, contentDescription = "Close search")
                         }
                     } else {
+                        IconButton(onClick = viewModel::undo, enabled = canUndo) {
+                            Icon(Icons.Default.Undo, contentDescription = "Undo")
+                        }
+                        IconButton(onClick = viewModel::redo, enabled = canRedo) {
+                            Icon(Icons.Default.Redo, contentDescription = "Redo")
+                        }
                         IconButton(onClick = { searchActive = true }) {
                             Icon(Icons.Default.Search, contentDescription = "Search questions")
                         }

@@ -316,6 +316,31 @@ class PaperRepository(
         return newSections
     }
 
+    // ---------- Undo / Redo ----------
+
+    /**
+     * Restores a paper's sections/questions to exactly match [sections] -- a snapshot captured
+     * earlier by a caller (see [com.questionpapermaker.app.ui.sections.SectionBuilderViewModel]'s
+     * undo/redo stack). Anything not present in the snapshot is deleted; everything present is
+     * upserted so field values (not just structure) are restored too.
+     */
+    suspend fun replaceContent(paperId: String, sections: List<SectionWithQuestions>) {
+        val existingSections = sectionDao.getSections(paperId)
+        val targetSectionIds = sections.map { it.section.id }.toSet()
+
+        existingSections.filter { it.id !in targetSectionIds }.forEach { sectionDao.delete(it) }
+        if (sections.isNotEmpty()) sectionDao.upsertAll(sections.map { it.section })
+
+        sections.forEach { swq ->
+            val existingQuestions = questionDao.observeQuestions(swq.section.id).first()
+            val targetQuestionIds = swq.questions.map { it.id }.toSet()
+            existingQuestions.filter { it.id !in targetQuestionIds }.forEach { questionDao.delete(it) }
+            if (swq.questions.isNotEmpty()) questionDao.upsertAll(swq.questions)
+        }
+
+        touchPaper(paperId)
+    }
+
     private suspend fun renumberSection(sectionId: String) {
         val remaining = questionDao.observeQuestions(sectionId).first().sortedBy { it.orderIndex }
             .mapIndexed { index, q -> q.copy(orderIndex = index) }
