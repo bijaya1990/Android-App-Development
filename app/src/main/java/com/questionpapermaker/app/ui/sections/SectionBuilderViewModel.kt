@@ -79,4 +79,9 @@ class SectionBuilderViewModel(
         val reordered = sectionQuestions.toMutableList().apply { add(target, removeAt(index)) }
         viewModelScope.launch { repository.reorderQuestions(question.sectionId, reordered.map { it.id }, paperId) }
     }
+
+    /** Commits a drag-and-drop reorder: [orderedQuestionIds] is the section's full, final question order. */
+    fun reorderQuestions(sectionId: String, orderedQuestionIds: List<String>) {
+        viewModelScope.launch { repository.reorderQuestions(sectionId, orderedQuestionIds, paperId) }
+    }
 }

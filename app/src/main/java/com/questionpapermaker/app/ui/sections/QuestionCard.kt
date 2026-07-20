@@ -74,7 +74,8 @@ fun QuestionCard(
     onDelete: () -> Unit,
     onDuplicate: () -> Unit,
     onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit
+    onMoveDown: () -> Unit,
+    dragHandleModifier: Modifier = Modifier
 ) {
     val question = numbered.question
 
@@ -89,9 +90,9 @@ fun QuestionCard(
             Row(verticalAlignment = Alignment.Top) {
                 Icon(
                     Icons.Default.DragIndicator,
-                    contentDescription = null,
+                    contentDescription = "Drag to reorder",
                     tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.padding(top = 4.dp, end = 4.dp)
+                    modifier = dragHandleModifier.padding(top = 4.dp, end = 4.dp)
                 )
                 Text(
                     "${numbered.displayNumber}.",
