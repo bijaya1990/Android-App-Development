@@ -74,6 +74,7 @@ fun PreviewScreen(
     val pageBitmaps by viewModel.pageBitmaps.collectAsState()
     val isRendering by viewModel.isRendering.collectAsState()
     val issues by viewModel.validationIssues.collectAsState()
+    val paperContent by viewModel.content.collectAsState()
     val context = LocalContext.current
     val density = LocalDensity.current
 
@@ -129,10 +130,14 @@ fun PreviewScreen(
                     onClick = {
                         withExportedFile { file ->
                             val printManager = context.getSystemService(android.content.Context.PRINT_SERVICE) as PrintManager
+                            val isCompact = paperContent?.paper?.compactTwoColumnPrint == true
+                            val attributes = PrintAttributes.Builder().apply {
+                                if (isCompact) setDuplexMode(PrintAttributes.DUPLEX_MODE_LONG_EDGE)
+                            }.build()
                             printManager.print(
                                 file.nameWithoutExtension,
                                 PdfPrintAdapter(file, file.nameWithoutExtension),
-                                PrintAttributes.Builder().build()
+                                attributes
                             )
                         }
                     },

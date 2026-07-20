@@ -15,7 +15,7 @@ import com.questionpapermaker.app.data.database.entity.SectionEntity
 
 @Database(
     entities = [PaperEntity::class, SectionEntity::class, QuestionEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

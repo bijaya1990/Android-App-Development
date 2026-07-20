@@ -53,6 +53,8 @@ data class PaperEntity(
     val signatureLabel: String? = null,
     val watermarkText: String? = null,
     val continuousNumbering: Boolean = true,
+    /** Compact print: two flowing columns per page instead of one, for worksheets/notes. */
+    val compactTwoColumnPrint: Boolean = false,
 
     // Bookkeeping
     val createdAt: Long = System.currentTimeMillis(),

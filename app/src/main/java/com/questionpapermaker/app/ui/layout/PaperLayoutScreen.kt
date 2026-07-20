@@ -208,6 +208,11 @@ fun PaperLayoutScreen(
                         checked = current.continuousNumbering,
                         onCheckedChange = { v -> viewModel.update { it.copy(continuousNumbering = v) } }
                     )
+                    ToggleRow(
+                        label = "Compact Two-Column Print",
+                        checked = current.compactTwoColumnPrint,
+                        onCheckedChange = { v -> viewModel.update { it.copy(compactTwoColumnPrint = v) } }
+                    )
                     if (current.showSignatureArea) {
                         OutlinedTextField(
                             value = current.signatureLabel.orEmpty(),
