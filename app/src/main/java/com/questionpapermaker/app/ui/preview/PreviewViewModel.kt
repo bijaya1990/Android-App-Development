@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.questionpapermaker.app.data.model.PaperWithContent
 import com.questionpapermaker.app.data.repository.PaperRepository
+import com.questionpapermaker.app.docx.DocxExporter
 import com.questionpapermaker.app.engine.ValidationEngine
 import com.questionpapermaker.app.engine.ValidationIssue
 import com.questionpapermaker.app.pdf.PdfExporter
@@ -35,6 +36,7 @@ class PreviewViewModel(
     private val paperId: String,
     private val repository: PaperRepository,
     private val pdfExporter: PdfExporter,
+    private val docxExporter: DocxExporter,
     private val appContext: Context
 ) : ViewModel() {
 
@@ -83,6 +85,18 @@ class PreviewViewModel(
                     lastExportedPdfUri = outFile.toURI().toString()
                 )
             )
+            onReady(outFile)
+        }
+    }
+
+    /** Exports the paper as a real, editable Word (.docx) document into permanent app storage. */
+    fun exportDocx(onReady: (File) -> Unit) {
+        val current = content.value ?: return
+        viewModelScope.launch {
+            val exportsDir = File(appContext.filesDir, "exports").apply { mkdirs() }
+            val safeName = current.paper.displayTitle.replace(Regex("[^A-Za-z0-9 _-]"), "").ifBlank { "Question Paper" }
+            val outFile = File(exportsDir, "$safeName.docx")
+            docxExporter.export(current, outFile)
             onReady(outFile)
         }
     }

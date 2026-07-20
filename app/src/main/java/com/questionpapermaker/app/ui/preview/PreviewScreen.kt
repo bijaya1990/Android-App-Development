@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Print
@@ -159,6 +160,26 @@ fun PreviewScreen(
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                     }
                                     context.startActivity(Intent.createChooser(intent, "Share Question Paper"))
+                                }
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Export Word (.docx)") },
+                            leadingIcon = { Icon(Icons.Default.Description, contentDescription = null) },
+                            onClick = {
+                                moreMenuExpanded = false
+                                if (hasBlockingErrors) {
+                                    showBlockingIssuesDialog = true
+                                } else {
+                                    viewModel.exportDocx { file ->
+                                        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                                        val intent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            putExtra(Intent.EXTRA_STREAM, uri)
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
+                                        context.startActivity(Intent.createChooser(intent, "Share Question Paper (Word)"))
+                                    }
                                 }
                             }
                         )

@@ -1,6 +1,8 @@
 package com.questionpapermaker.app.ui.smartpaste
 
+import android.content.Context
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -44,22 +50,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.questionpapermaker.app.docx.DocxTextExtractor
 import com.questionpapermaker.app.engine.ParsedQuestion
 import com.questionpapermaker.app.engine.ParsedSection
+import com.questionpapermaker.app.pdf.PdfTextExtractor
 import com.questionpapermaker.app.ui.common.Chip
 import com.questionpapermaker.app.ui.common.FormCard
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 @Composable
 fun SmartPasteScreen(
     viewModel: SmartPasteViewModel,
+    pdfTextExtractor: PdfTextExtractor,
     onBack: () -> Unit,
     onImported: () -> Unit
 ) {
     val step by viewModel.step.collectAsState()
     when (step) {
-        SmartPasteStep.INPUT -> SmartPasteInputStep(viewModel = viewModel, onBack = onBack)
+        SmartPasteStep.INPUT -> SmartPasteInputStep(viewModel = viewModel, pdfTextExtractor = pdfTextExtractor, onBack = onBack)
         SmartPasteStep.PREVIEW -> ImportPreviewStep(
             viewModel = viewModel,
             onBack = viewModel::backToInput,
@@ -68,20 +80,78 @@ fun SmartPasteScreen(
     }
 }
 
+private enum class ImportFileKind { TXT, DOCX, PDF }
+
+private fun detectFileKind(context: Context, uri: Uri): ImportFileKind {
+    val mime = context.contentResolver.getType(uri)
+    when (mime) {
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> return ImportFileKind.DOCX
+        "application/pdf" -> return ImportFileKind.PDF
+        "text/plain" -> return ImportFileKind.TXT
+    }
+    val name = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
+        ?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (index >= 0) cursor.getString(index) else null
+            } else {
+                null
+            }
+        }
+        .orEmpty()
+        .lowercase()
+    return when {
+        name.endsWith(".docx") -> ImportFileKind.DOCX
+        name.endsWith(".pdf") -> ImportFileKind.PDF
+        else -> ImportFileKind.TXT
+    }
+}
+
+private fun extractTextFromUri(context: Context, uri: Uri, pdfTextExtractor: PdfTextExtractor): String {
+    val kind = detectFileKind(context, uri)
+    return context.contentResolver.openInputStream(uri)?.use { stream ->
+        when (kind) {
+            ImportFileKind.DOCX -> DocxTextExtractor.extractText(stream)
+            ImportFileKind.PDF -> pdfTextExtractor.extractText(stream)
+            ImportFileKind.TXT -> BufferedReader(InputStreamReader(stream, Charsets.UTF_8)).readText()
+        }
+    }.orEmpty()
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SmartPasteInputStep(viewModel: SmartPasteViewModel, onBack: () -> Unit) {
+private fun SmartPasteInputStep(
+    viewModel: SmartPasteViewModel,
+    pdfTextExtractor: PdfTextExtractor,
+    onBack: () -> Unit
+) {
     val rawText by viewModel.rawText.collectAsState()
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+    val coroutineScope = rememberCoroutineScope()
+    var isImportingFile by remember { mutableStateOf(false) }
+    var importError by remember { mutableStateOf<String?>(null) }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
+        contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         if (uri == null) return@rememberLauncherForActivityResult
-        context.contentResolver.openInputStream(uri)?.use { stream ->
-            val text = BufferedReader(InputStreamReader(stream, Charsets.UTF_8)).readText()
-            viewModel.onTextChange(text)
+        isImportingFile = true
+        importError = null
+        coroutineScope.launch {
+            val text = withContext(Dispatchers.IO) {
+                runCatching { extractTextFromUri(context, uri, pdfTextExtractor) }
+            }
+            isImportingFile = false
+            text.onSuccess { extracted ->
+                if (extracted.isBlank()) {
+                    importError = "No readable text was found in that file."
+                } else {
+                    viewModel.onTextChange(extracted)
+                }
+            }.onFailure {
+                importError = "Couldn't read that file. Try a .txt, .docx or .pdf file."
+            }
         }
     }
 
@@ -129,14 +199,41 @@ private fun SmartPasteInputStep(viewModel: SmartPasteViewModel, onBack: () -> Un
                     Text("  Paste Clipboard")
                 }
                 OutlinedButton(
-                    onClick = { filePickerLauncher.launch("text/plain") },
+                    onClick = {
+                        filePickerLauncher.launch(
+                            arrayOf(
+                                "text/plain",
+                                "application/pdf",
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            )
+                        )
+                    },
+                    enabled = !isImportingFile,
                     modifier = Modifier.weight(1f),
                     shape = MaterialTheme.shapes.small
                 ) {
-                    Icon(Icons.Default.UploadFile, contentDescription = null, modifier = Modifier.height(18.dp))
-                    Text("  Import .txt")
+                    if (isImportingFile) {
+                        CircularProgressIndicator(modifier = Modifier.height(18.dp), strokeWidth = 2.dp)
+                    } else {
+                        Icon(Icons.Default.UploadFile, contentDescription = null, modifier = Modifier.height(18.dp))
+                        Text("  Import File")
+                    }
                 }
             }
+            if (importError != null) {
+                Text(
+                    importError.orEmpty(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+            }
+            Text(
+                "Supports .txt, .docx and .pdf files.",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 6.dp)
+            )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = rawText,

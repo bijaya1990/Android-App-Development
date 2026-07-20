@@ -70,7 +70,9 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
 
         composable(Destination.Templates.route) {
             val viewModel: TemplatePickerViewModel = viewModel(
-                factory = GenericViewModelFactory { TemplatePickerViewModel(container.paperRepository) }
+                factory = GenericViewModelFactory {
+                    TemplatePickerViewModel(container.paperRepository, container.templateFavoritesRepository)
+                }
             )
             TemplatePickerScreen(
                 viewModel = viewModel,
@@ -132,6 +134,7 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
             )
             SmartPasteScreen(
                 viewModel = viewModel,
+                pdfTextExtractor = container.pdfTextExtractor,
                 onBack = { navController.popBackStack() },
                 onImported = { navController.popBackStack() }
             )
@@ -141,7 +144,13 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
             val paperId = backStackEntry.arguments?.getString(Destination.ARG_PAPER_ID) ?: return@composable
             val viewModel: PreviewViewModel = viewModel(
                 factory = GenericViewModelFactory {
-                    PreviewViewModel(paperId, container.paperRepository, container.pdfExporter, container.appContext)
+                    PreviewViewModel(
+                        paperId,
+                        container.paperRepository,
+                        container.pdfExporter,
+                        container.docxExporter,
+                        container.appContext
+                    )
                 }
             )
             PreviewScreen(
