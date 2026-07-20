@@ -6,8 +6,12 @@ import com.questionpapermaker.app.data.database.entity.QuestionEntity
 import com.questionpapermaker.app.data.database.entity.SectionEntity
 import com.questionpapermaker.app.data.model.NumberingStyle
 import com.questionpapermaker.app.data.model.PaperWithContent
+import com.questionpapermaker.app.data.model.QuestionOption
 import com.questionpapermaker.app.data.model.SectionWithQuestions
+import com.questionpapermaker.app.data.model.SubQuestion
 import com.questionpapermaker.app.data.model.TeacherDefaults
+import com.questionpapermaker.app.data.model.template.PaperTemplate
+import com.questionpapermaker.app.engine.SmartPasteResult
 import com.questionpapermaker.app.util.IdGenerator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -55,6 +59,45 @@ class PaperRepository(
             updatedAt = now
         )
         paperDao.upsert(paper)
+        return paper
+    }
+
+    /** Creates a new draft paper pre-configured from a [PaperTemplate]: layout, header/footer and section skeleton. */
+    suspend fun createPaperFromTemplate(template: PaperTemplate): PaperEntity {
+        val defaults: TeacherDefaults = defaultsRepository.getDefaults()
+        val now = System.currentTimeMillis()
+        val paper = PaperEntity(
+            id = IdGenerator.newId(),
+            institutionName = defaults.institutionName,
+            institutionLogoUri = defaults.institutionLogoUri,
+            department = defaults.department,
+            programme = defaults.programme,
+            examType = template.examType,
+            generalInstructions = template.generalInstructions,
+            headerStyle = template.headerStyle,
+            footerStyle = template.footerStyle,
+            showSignatureArea = template.showSignatureArea,
+            signatureLabel = defaults.signatureLabel,
+            createdAt = now,
+            updatedAt = now
+        )
+        paperDao.upsert(paper)
+
+        val sections = template.sections.mapIndexed { index, blueprint ->
+            SectionEntity(
+                id = IdGenerator.newId(),
+                paperId = paper.id,
+                orderIndex = index,
+                title = blueprint.title,
+                instruction = blueprint.instruction,
+                numberingStyle = blueprint.numberingStyle,
+                subNumberingStyle = blueprint.subNumberingStyle,
+                defaultQuestionType = blueprint.defaultQuestionType,
+                defaultMarksPerQuestion = blueprint.defaultMarksPerQuestion
+            )
+        }
+        if (sections.isNotEmpty()) sectionDao.upsertAll(sections)
+
         return paper
     }
 
@@ -203,6 +246,53 @@ class PaperRepository(
         }
         questionDao.upsertAll(reordered)
         touchPaper(paperId)
+    }
+
+    // ---------- Smart Paste import ----------
+
+    /**
+     * Appends the sections/questions confirmed in the Import Preview screen to the end of an
+     * existing paper. Never touches or removes anything already in the paper -- a Smart Paste
+     * import is purely additive.
+     */
+    suspend fun importSmartPasteResult(paperId: String, result: SmartPasteResult): List<SectionEntity> {
+        var nextOrderIndex = sectionDao.getSections(paperId).size
+        val newSections = mutableListOf<SectionEntity>()
+        val newQuestions = mutableListOf<QuestionEntity>()
+
+        result.sections.forEach { parsedSection ->
+            val section = SectionEntity(
+                id = IdGenerator.newId(),
+                paperId = paperId,
+                orderIndex = nextOrderIndex++,
+                title = parsedSection.title.ifBlank { "Imported Section" },
+                instruction = parsedSection.instruction
+            )
+            newSections += section
+
+            parsedSection.questions.forEachIndexed { questionIndex, parsedQuestion ->
+                newQuestions += QuestionEntity(
+                    id = IdGenerator.newId(),
+                    sectionId = section.id,
+                    orderIndex = questionIndex,
+                    questionType = parsedQuestion.questionType,
+                    text = parsedQuestion.text,
+                    marks = parsedQuestion.marks ?: 0.0,
+                    options = parsedQuestion.options.map { QuestionOption(id = IdGenerator.newId(), text = it.text) },
+                    subQuestions = parsedQuestion.subQuestions.map {
+                        SubQuestion(id = IdGenerator.newId(), text = it.text, marks = it.marks)
+                    },
+                    hasInternalChoice = parsedQuestion.hasInternalChoice,
+                    alternativeText = parsedQuestion.alternativeText,
+                    alternativeMarks = parsedQuestion.alternativeMarks
+                )
+            }
+        }
+
+        if (newSections.isNotEmpty()) sectionDao.upsertAll(newSections)
+        if (newQuestions.isNotEmpty()) questionDao.upsertAll(newQuestions)
+        touchPaper(paperId)
+        return newSections
     }
 
     private suspend fun renumberSection(sectionId: String) {

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Visibility
@@ -68,7 +69,8 @@ private sealed interface SectionRow {
 fun SectionBuilderScreen(
     viewModel: SectionBuilderViewModel,
     onBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onSmartPaste: () -> Unit
 ) {
     val numberedSections by viewModel.numberedSections.collectAsState()
     val issues by viewModel.validationIssues.collectAsState()
@@ -101,6 +103,9 @@ fun SectionBuilderScreen(
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Back") }
                 },
                 actions = {
+                    IconButton(onClick = onSmartPaste) {
+                        Icon(Icons.Default.ContentPaste, contentDescription = "Smart Paste")
+                    }
                     OutlinedButton(onClick = onNext, modifier = Modifier.padding(end = 8.dp), shape = MaterialTheme.shapes.large) {
                         Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.height(18.dp))
                         Text("  Live Preview")

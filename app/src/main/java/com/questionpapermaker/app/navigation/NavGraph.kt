@@ -23,7 +23,11 @@ import com.questionpapermaker.app.ui.sections.SectionBuilderViewModel
 import com.questionpapermaker.app.ui.settings.LegalDocumentScreen
 import com.questionpapermaker.app.ui.settings.LegalDocumentType
 import com.questionpapermaker.app.ui.settings.SettingsScreen
+import com.questionpapermaker.app.ui.smartpaste.SmartPasteScreen
+import com.questionpapermaker.app.ui.smartpaste.SmartPasteViewModel
 import com.questionpapermaker.app.ui.splash.SplashScreen
+import com.questionpapermaker.app.ui.templates.TemplatePickerScreen
+import com.questionpapermaker.app.ui.templates.TemplatePickerViewModel
 import com.questionpapermaker.app.util.GenericViewModelFactory
 
 private val paperIdArgument: List<NamedNavArgument> = listOf(
@@ -59,7 +63,23 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
                 onOpenPaper = { id -> navController.navigate(Destination.SectionBuilder.createRoute(id)) },
                 onOpenDetails = { id -> navController.navigate(Destination.PaperDetails.createRoute(id)) },
                 onOpenPreview = { id -> navController.navigate(Destination.Preview.createRoute(id)) },
-                onOpenSettings = { navController.navigate(Destination.Settings.route) }
+                onOpenSettings = { navController.navigate(Destination.Settings.route) },
+                onOpenTemplates = { navController.navigate(Destination.Templates.route) }
+            )
+        }
+
+        composable(Destination.Templates.route) {
+            val viewModel: TemplatePickerViewModel = viewModel(
+                factory = GenericViewModelFactory { TemplatePickerViewModel(container.paperRepository) }
+            )
+            TemplatePickerScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onTemplateReady = { id ->
+                    navController.navigate(Destination.PaperDetails.createRoute(id)) {
+                        popUpTo(Destination.Templates.route) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -100,7 +120,20 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
             SectionBuilderScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
-                onNext = { navController.navigate(Destination.Preview.createRoute(paperId)) }
+                onNext = { navController.navigate(Destination.Preview.createRoute(paperId)) },
+                onSmartPaste = { navController.navigate(Destination.SmartPaste.createRoute(paperId)) }
+            )
+        }
+
+        composable(Destination.SmartPaste.route, arguments = paperIdArgument) { backStackEntry ->
+            val paperId = backStackEntry.arguments?.getString(Destination.ARG_PAPER_ID) ?: return@composable
+            val viewModel: SmartPasteViewModel = viewModel(
+                factory = GenericViewModelFactory { SmartPasteViewModel(paperId, container.paperRepository) }
+            )
+            SmartPasteScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onImported = { navController.popBackStack() }
             )
         }
 

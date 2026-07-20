@@ -18,6 +18,12 @@ sealed class Destination(val route: String) {
         fun createRoute(paperId: String) = "section_builder/$paperId"
     }
 
+    data object SmartPaste : Destination("smart_paste/{paperId}") {
+        fun createRoute(paperId: String) = "smart_paste/$paperId"
+    }
+
+    data object Templates : Destination("templates")
+
     data object Preview : Destination("preview/{paperId}") {
         fun createRoute(paperId: String) = "preview/$paperId"
     }

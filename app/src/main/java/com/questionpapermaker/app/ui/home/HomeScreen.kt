@@ -79,7 +79,8 @@ fun HomeScreen(
     onOpenPaper: (String) -> Unit,
     onOpenDetails: (String) -> Unit,
     onOpenPreview: (String) -> Unit,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    onOpenTemplates: () -> Unit
 ) {
     val papers by viewModel.papers.collectAsState()
     val query by viewModel.query.collectAsState()
@@ -116,8 +117,8 @@ fun HomeScreen(
                     label = { Text("Home") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 1,
-                    onClick = { showComingSoon("Templates") },
+                    selected = false,
+                    onClick = onOpenTemplates,
                     icon = { Icon(Icons.Default.Dashboard, contentDescription = null) },
                     label = { Text("Templates") }
                 )
@@ -168,9 +169,9 @@ fun HomeScreen(
                     UtilityCard(
                         icon = Icons.Default.Dashboard,
                         title = "Templates",
-                        subtitle = "Coming soon",
+                        subtitle = "15 ready-made layouts",
                         modifier = Modifier.weight(1f),
-                        onClick = { showComingSoon("Templates") }
+                        onClick = onOpenTemplates
                     )
                     UtilityCard(
                         icon = Icons.Default.Storage,
