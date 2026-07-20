@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -55,14 +56,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.questionpapermaker.app.ads.InterstitialAdManager
 import com.questionpapermaker.app.engine.ValidationSeverity
 import com.questionpapermaker.app.pdf.PdfPrintAdapter
+import com.questionpapermaker.app.util.findActivity
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviewScreen(
     viewModel: PreviewViewModel,
+    interstitialAdManager: InterstitialAdManager,
     onBack: () -> Unit,
     onExported: () -> Unit
 ) {
@@ -100,11 +104,20 @@ fun PreviewScreen(
         },
         bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Button(
-                    onClick = { withExportedFile { onExported() } },
+                    onClick = {
+                        val activity = context.findActivity()
+                        if (activity != null) {
+                            interstitialAdManager.showThenRun(activity) {
+                                withExportedFile { onExported() }
+                            }
+                        } else {
+                            withExportedFile { onExported() }
+                        }
+                    },
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier.weight(1f)
                 ) {

@@ -2,10 +2,9 @@ package com.questionpapermaker.app.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.questionpapermaker.app.data.database.entity.PaperEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -34,7 +33,9 @@ interface PaperDao {
     )
     fun searchPapers(query: String): Flow<List<PaperEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // @Upsert compiles to a real SQL UPDATE for existing rows (not delete-then-insert), so it
+    // never trips the sections/questions ON DELETE CASCADE the way OnConflictStrategy.REPLACE did.
+    @Upsert
     suspend fun upsert(paper: PaperEntity)
 
     @Update

@@ -20,11 +20,18 @@ import com.questionpapermaker.app.ui.preview.PreviewScreen
 import com.questionpapermaker.app.ui.preview.PreviewViewModel
 import com.questionpapermaker.app.ui.sections.SectionBuilderScreen
 import com.questionpapermaker.app.ui.sections.SectionBuilderViewModel
+import com.questionpapermaker.app.ui.settings.LegalDocumentScreen
+import com.questionpapermaker.app.ui.settings.LegalDocumentType
+import com.questionpapermaker.app.ui.settings.SettingsScreen
 import com.questionpapermaker.app.ui.splash.SplashScreen
 import com.questionpapermaker.app.util.GenericViewModelFactory
 
 private val paperIdArgument: List<NamedNavArgument> = listOf(
     navArgument(Destination.ARG_PAPER_ID) { type = NavType.StringType }
+)
+
+private val docTypeArgument: List<NamedNavArgument> = listOf(
+    navArgument(Destination.ARG_DOC_TYPE) { type = NavType.StringType }
 )
 
 @Composable
@@ -51,7 +58,8 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
                 onCreatePaper = { id -> navController.navigate(Destination.PaperDetails.createRoute(id)) },
                 onOpenPaper = { id -> navController.navigate(Destination.SectionBuilder.createRoute(id)) },
                 onOpenDetails = { id -> navController.navigate(Destination.PaperDetails.createRoute(id)) },
-                onOpenPreview = { id -> navController.navigate(Destination.Preview.createRoute(id)) }
+                onOpenPreview = { id -> navController.navigate(Destination.Preview.createRoute(id)) },
+                onOpenSettings = { navController.navigate(Destination.Settings.route) }
             )
         }
 
@@ -105,6 +113,7 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
             )
             PreviewScreen(
                 viewModel = viewModel,
+                interstitialAdManager = container.interstitialAdManager,
                 onBack = { navController.popBackStack() },
                 onExported = {
                     navController.navigate(Destination.ExportSuccess.createRoute(paperId))
@@ -122,6 +131,23 @@ fun QuestionPaperMakerNavHost(container: AppContainer) {
                 onBackToHome = {
                     navController.popBackStack(Destination.Home.route, inclusive = false)
                 }
+            )
+        }
+
+        composable(Destination.Settings.route) {
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onOpenLegalDocument = { docType ->
+                    navController.navigate(Destination.LegalDocument.createRoute(docType.routeValue))
+                }
+            )
+        }
+
+        composable(Destination.LegalDocument.route, arguments = docTypeArgument) { backStackEntry ->
+            val docType = LegalDocumentType.fromRouteValue(backStackEntry.arguments?.getString(Destination.ARG_DOC_TYPE))
+            LegalDocumentScreen(
+                docType = docType,
+                onBack = { navController.popBackStack() }
             )
         }
     }

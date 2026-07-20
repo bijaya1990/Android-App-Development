@@ -1,6 +1,7 @@
 package com.questionpapermaker.app.data
 
 import android.content.Context
+import com.questionpapermaker.app.ads.InterstitialAdManager
 import com.questionpapermaker.app.data.database.AppDatabase
 import com.questionpapermaker.app.data.repository.DefaultsRepository
 import com.questionpapermaker.app.data.repository.PaperRepository
@@ -17,4 +18,5 @@ class AppContainer(context: Context) {
     val defaultsRepository: DefaultsRepository by lazy { DefaultsRepository(appContext) }
     val paperRepository: PaperRepository by lazy { PaperRepository(database, defaultsRepository) }
     val pdfExporter: PdfExporter by lazy { PdfExporter(appContext) }
+    val interstitialAdManager: InterstitialAdManager by lazy { InterstitialAdManager(appContext) }
 }

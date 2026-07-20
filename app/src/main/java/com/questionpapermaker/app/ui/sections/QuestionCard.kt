@@ -1,6 +1,7 @@
 package com.questionpapermaker.app.ui.sections
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -315,30 +317,59 @@ private fun OptionsEditor(options: List<QuestionOption>, onChange: (List<Questio
     }
 }
 
+private const val QUICK_ADD_SUB_QUESTION_COUNT = 5
+
 @Composable
 private fun SubQuestionsEditor(subQuestions: List<SubQuestion>, onChange: (List<SubQuestion>) -> Unit) {
     Column(modifier = Modifier.padding(top = 8.dp)) {
         Text("Sub-questions", style = MaterialTheme.typography.labelLarge)
         subQuestions.forEachIndexed { index, sub ->
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(6.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "${'a' + index}",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
                 OutlinedTextField(
                     value = sub.text,
                     onValueChange = { text ->
                         onChange(subQuestions.toMutableList().also { it[index] = sub.copy(text = text) })
                     },
+                    placeholder = { Text("Part ${'a' + index}") },
                     singleLine = true,
                     shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.weight(1f),
-                    label = { Text("(${('a' + index)})") }
+                    modifier = Modifier.weight(1f).padding(start = 8.dp)
                 )
                 IconButton(onClick = { onChange(subQuestions.toMutableList().also { it.removeAt(index) }) }) {
                     Icon(Icons.Default.Close, contentDescription = "Remove sub-question")
                 }
             }
         }
-        TextButton(onClick = { onChange(subQuestions + SubQuestion(id = IdGenerator.newId())) }) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Text(" Add Sub-question")
+        Row(modifier = Modifier.padding(top = 4.dp)) {
+            TextButton(onClick = { onChange(subQuestions + SubQuestion(id = IdGenerator.newId())) }) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Text(" Add Part")
+            }
+            if (subQuestions.isEmpty()) {
+                TextButton(
+                    onClick = {
+                        onChange(subQuestions + List(QUICK_ADD_SUB_QUESTION_COUNT) { SubQuestion(id = IdGenerator.newId()) })
+                    }
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null)
+                    Text(" Add a–e at once")
+                }
+            }
         }
     }
 }

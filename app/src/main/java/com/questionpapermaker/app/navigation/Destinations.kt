@@ -26,7 +26,14 @@ sealed class Destination(val route: String) {
         fun createRoute(paperId: String) = "export_success/$paperId"
     }
 
+    data object Settings : Destination("settings")
+
+    data object LegalDocument : Destination("legal/{docType}") {
+        fun createRoute(docType: String) = "legal/$docType"
+    }
+
     companion object {
         const val ARG_PAPER_ID = "paperId"
+        const val ARG_DOC_TYPE = "docType"
     }
 }

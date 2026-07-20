@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">Question Paper Maker</string>
     <string name="app_slogan">Create Professional Exam Papers in Minutes</string>
+
+    <!-- TODO(ads): Google's public test App ID. Swap for your real AdMob App ID before release. -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
 </resources>

@@ -2,10 +2,9 @@ package com.questionpapermaker.app.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.questionpapermaker.app.data.database.entity.QuestionEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -34,10 +33,10 @@ interface QuestionDao {
     @Query("SELECT * FROM questions WHERE id = :questionId")
     suspend fun getQuestion(questionId: String): QuestionEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsert(question: QuestionEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertAll(questions: List<QuestionEntity>)
 
     @Update

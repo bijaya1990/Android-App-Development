@@ -62,6 +62,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.questionpapermaker.app.ads.BannerAdView
 import com.questionpapermaker.app.data.database.entity.PaperEntity
 import com.questionpapermaker.app.ui.common.AppLogoMark
 import com.questionpapermaker.app.ui.common.Chip
@@ -77,7 +78,8 @@ fun HomeScreen(
     onCreatePaper: (String) -> Unit,
     onOpenPaper: (String) -> Unit,
     onOpenDetails: (String) -> Unit,
-    onOpenPreview: (String) -> Unit
+    onOpenPreview: (String) -> Unit,
+    onOpenSettings: () -> Unit
 ) {
     val papers by viewModel.papers.collectAsState()
     val query by viewModel.query.collectAsState()
@@ -126,8 +128,8 @@ fun HomeScreen(
                     label = { Text("Bank") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 3,
-                    onClick = { showComingSoon("Settings") },
+                    selected = false,
+                    onClick = onOpenSettings,
                     icon = { Icon(Icons.Default.Settings, contentDescription = null) },
                     label = { Text("Settings") }
                 )
@@ -178,6 +180,10 @@ fun HomeScreen(
                         onClick = { showComingSoon("Question Bank") }
                     )
                 }
+            }
+
+            item {
+                BannerAdView(modifier = Modifier.fillMaxWidth())
             }
 
             item {
