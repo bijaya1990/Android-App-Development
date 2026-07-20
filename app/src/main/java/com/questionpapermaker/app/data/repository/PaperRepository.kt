@@ -204,6 +204,27 @@ class PaperRepository(
         touchPaper(paperId)
     }
 
+    /** Deep-copies a section (with all its questions) and inserts the copy right after the original. */
+    suspend fun duplicateSection(section: SectionEntity): SectionEntity {
+        val siblings = sectionDao.getSections(section.paperId)
+        val originalIndex = siblings.indexOfFirst { it.id == section.id }
+        val insertIndex = if (originalIndex == -1) siblings.size else originalIndex + 1
+
+        val newSectionId = IdGenerator.newId()
+        val copy = section.copy(id = newSectionId, orderIndex = insertIndex)
+        val shifted = siblings
+            .filter { it.id != section.id && it.orderIndex >= insertIndex }
+            .map { it.copy(orderIndex = it.orderIndex + 1) }
+        sectionDao.upsertAll(shifted + copy)
+
+        val originalQuestions = questionDao.observeQuestions(section.id).first()
+        val newQuestions = originalQuestions.map { it.copy(id = IdGenerator.newId(), sectionId = newSectionId) }
+        if (newQuestions.isNotEmpty()) questionDao.upsertAll(newQuestions)
+
+        touchPaper(section.paperId)
+        return copy
+    }
+
     // ---------- Questions ----------
 
     suspend fun addQuestion(section: SectionEntity): QuestionEntity {

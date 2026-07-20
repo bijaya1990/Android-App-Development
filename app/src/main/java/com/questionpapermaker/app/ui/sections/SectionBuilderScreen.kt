@@ -24,9 +24,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Card
@@ -91,13 +94,16 @@ fun SectionBuilderScreen(
     var draggingSectionId by remember { mutableStateOf<String?>(null) }
     var dragOverrideOrder by remember { mutableStateOf<List<String>?>(null) }
 
-    val rows = remember(numberedSections, draggingSectionId, dragOverrideOrder) {
+    var searchActive by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    val trimmedQuery = searchQuery.trim()
+
+    val rows = remember(numberedSections, draggingSectionId, dragOverrideOrder, trimmedQuery) {
         buildList {
             numberedSections.forEachIndexed { sectionIndex, ns ->
                 val breakdown = MarksEngine.formatBreakdown(
                     SectionWithQuestions(ns.section, ns.questions.map { it.question })
                 )
-                add(SectionRow.Header(ns.section, breakdown, sectionIndex > 0, sectionIndex < numberedSections.size - 1))
 
                 val overrideOrder = dragOverrideOrder
                 val orderedQuestions = if (ns.section.id == draggingSectionId && overrideOrder != null) {
@@ -106,10 +112,20 @@ fun SectionBuilderScreen(
                 } else {
                     ns.questions
                 }
-                orderedQuestions.forEachIndexed { qIndex, nq ->
-                    add(SectionRow.QuestionItem(nq, qIndex > 0, qIndex < orderedQuestions.size - 1))
+                val visibleQuestions = if (trimmedQuery.isEmpty()) {
+                    orderedQuestions
+                } else {
+                    orderedQuestions.filter { it.question.text.contains(trimmedQuery, ignoreCase = true) }
                 }
-                add(SectionRow.AddQuestionButton(ns.section))
+                if (trimmedQuery.isNotEmpty() && visibleQuestions.isEmpty()) return@forEachIndexed
+
+                add(SectionRow.Header(ns.section, breakdown, sectionIndex > 0, sectionIndex < numberedSections.size - 1))
+                visibleQuestions.forEachIndexed { qIndex, nq ->
+                    add(SectionRow.QuestionItem(nq, qIndex > 0, qIndex < visibleQuestions.size - 1))
+                }
+                if (trimmedQuery.isEmpty()) {
+                    add(SectionRow.AddQuestionButton(ns.section))
+                }
             }
         }
     }
@@ -161,17 +177,42 @@ fun SectionBuilderScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Question Editor") },
+                title = {
+                    if (searchActive) {
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text("Search questions in this paper...") },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        Text("Question Editor")
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Back") }
                 },
                 actions = {
-                    IconButton(onClick = onSmartPaste) {
-                        Icon(Icons.Default.ContentPaste, contentDescription = "Smart Paste")
-                    }
-                    OutlinedButton(onClick = onNext, modifier = Modifier.padding(end = 8.dp), shape = MaterialTheme.shapes.large) {
-                        Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.height(18.dp))
-                        Text("  Live Preview")
+                    if (searchActive) {
+                        IconButton(onClick = { searchActive = false; searchQuery = "" }) {
+                            Icon(Icons.Default.Close, contentDescription = "Close search")
+                        }
+                    } else {
+                        IconButton(onClick = { searchActive = true }) {
+                            Icon(Icons.Default.Search, contentDescription = "Search questions")
+                        }
+                        IconButton(onClick = onSmartPaste) {
+                            Icon(Icons.Default.ContentPaste, contentDescription = "Smart Paste")
+                        }
+                        OutlinedButton(onClick = onNext, modifier = Modifier.padding(end = 8.dp), shape = MaterialTheme.shapes.large) {
+                            Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.height(18.dp))
+                            Text("  Live Preview")
+                        }
                     }
                 }
             )
@@ -243,6 +284,7 @@ fun SectionBuilderScreen(
                                 canMoveDown = row.canMoveDown,
                                 onUpdate = viewModel::updateSection,
                                 onDelete = { viewModel.deleteSection(row.section) },
+                                onDuplicate = { viewModel.duplicateSection(row.section) },
                                 onMoveUp = { viewModel.moveSection(row.section, -1) },
                                 onMoveDown = { viewModel.moveSection(row.section, 1) }
                             )
@@ -261,7 +303,9 @@ fun SectionBuilderScreen(
                                 onDuplicate = { viewModel.duplicateQuestion(row.numbered.question) },
                                 onMoveUp = { viewModel.moveQuestion(row.numbered.question, -1) },
                                 onMoveDown = { viewModel.moveQuestion(row.numbered.question, 1) },
-                                dragHandleModifier = Modifier.pointerInput(row.numbered.question.id) {
+                                dragHandleModifier = if (trimmedQuery.isNotEmpty()) {
+                                    Modifier
+                                } else Modifier.pointerInput(row.numbered.question.id) {
                                     detectDragGesturesAfterLongPress(
                                         onDragStart = { dragDropState.onDragStart(currentIndex) },
                                         onDrag = { change, dragAmount ->
@@ -291,6 +335,16 @@ fun SectionBuilderScreen(
                                 }
                             }
                         }
+                    }
+                }
+                if (trimmedQuery.isNotEmpty() && rows.none { it is SectionRow.QuestionItem }) {
+                    item {
+                        Text(
+                            "No questions match \"$trimmedQuery\".",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)
+                        )
                     }
                 }
                 item {
@@ -333,6 +387,7 @@ private fun SectionHeaderCard(
     canMoveDown: Boolean,
     onUpdate: (SectionEntity) -> Unit,
     onDelete: () -> Unit,
+    onDuplicate: () -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit
 ) {
@@ -362,6 +417,9 @@ private fun SectionHeaderCard(
                 }
                 IconButton(onClick = onMoveDown, enabled = canMoveDown) {
                     Icon(Icons.Default.ArrowDownward, contentDescription = "Move section down")
+                }
+                IconButton(onClick = onDuplicate) {
+                    Icon(Icons.Default.ContentCopy, contentDescription = "Duplicate section")
                 }
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete section", tint = MaterialTheme.colorScheme.error)

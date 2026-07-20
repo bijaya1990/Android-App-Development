@@ -44,6 +44,10 @@ class SectionBuilderViewModel(
         viewModelScope.launch { repository.deleteSection(section) }
     }
 
+    fun duplicateSection(section: SectionEntity) {
+        viewModelScope.launch { repository.duplicateSection(section) }
+    }
+
     fun moveSection(section: SectionEntity, delta: Int) {
         val sections = content.value?.sections?.map { it.section } ?: return
         val index = sections.indexOfFirst { it.id == section.id }
