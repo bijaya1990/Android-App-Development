@@ -12,6 +12,15 @@ final class ArticleRepository
         return get_db()->query('SELECT id, name FROM blocks ORDER BY id')->fetchAll();
     }
 
+    public static function blockById(int $id): ?array
+    {
+        $stmt = get_db()->prepare('SELECT id, name FROM blocks WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $id]);
+        $block = $stmt->fetch();
+
+        return $block ?: null;
+    }
+
     public static function create(int $writerId, string $title, int $blockId, string $content): int
     {
         $stmt = get_db()->prepare(
@@ -164,5 +173,70 @@ final class ArticleRepository
         $stmt->execute(['id' => $id]);
 
         return $paths;
+    }
+
+    // ------------------------------------------------------------------
+    // Public REST API reads. These NEVER return anything but 'published'
+    // articles — draft/pending_review/returned must never leak here.
+    // ------------------------------------------------------------------
+
+    /**
+     * @return array{items: array, total: int}
+     */
+    public static function publishedPaginated(?int $blockId, ?bool $breakingOnly, int $page, int $perPage): array
+    {
+        $where = ["a.status = 'published'"];
+        $params = [];
+
+        if ($blockId !== null) {
+            $where[] = 'a.block_id = :block_id';
+            $params['block_id'] = $blockId;
+        }
+        if ($breakingOnly === true) {
+            $where[] = 'a.breaking_news = 1';
+        }
+
+        $whereSql = implode(' AND ', $where);
+
+        $countStmt = get_db()->prepare("SELECT COUNT(*) FROM articles a WHERE {$whereSql}");
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        $offset = ($page - 1) * $perPage;
+        $stmt = get_db()->prepare(
+            "SELECT a.id, a.title, a.content, a.block_id, b.name AS block_name, a.breaking_news,
+                    a.published_at, u.full_name AS author
+             FROM articles a
+             JOIN blocks b ON b.id = a.block_id
+             JOIN users u ON u.id = a.writer_id
+             WHERE {$whereSql}
+             ORDER BY a.published_at DESC
+             LIMIT :limit OFFSET :offset"
+        );
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        }
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return ['items' => $stmt->fetchAll(), 'total' => $total];
+    }
+
+    public static function publishedFind(int $id): ?array
+    {
+        $stmt = get_db()->prepare(
+            "SELECT a.id, a.title, a.content, a.block_id, b.name AS block_name, a.breaking_news,
+                    a.published_at, u.full_name AS author
+             FROM articles a
+             JOIN blocks b ON b.id = a.block_id
+             JOIN users u ON u.id = a.writer_id
+             WHERE a.id = :id AND a.status = 'published'
+             LIMIT 1"
+        );
+        $stmt->execute(['id' => $id]);
+        $article = $stmt->fetch();
+
+        return $article ?: null;
     }
 }
