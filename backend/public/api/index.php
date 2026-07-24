@@ -5,10 +5,10 @@
  * ArticleRepository::publishedPaginated() / publishedFind()).
  *
  * Routes:
- *   GET /api/v1/news                       list published news (?block_id=, ?breaking=1, ?page=, ?per_page=)
+ *   GET /api/v1/news                       list published news (?block_id= or ?block=<name>, ?breaking=1, ?page=, ?per_page=)
  *   GET /api/v1/news/{id}                  single published article
  *   GET /api/v1/blocks                     the 12 Bargarh blocks
- *   GET /api/v1/blocks/{id}/news           published news for one block
+ *   GET /api/v1/blocks/{idOrName}/news     published news for one block — one button per block, filtered by that block's id or exact name
  *   GET /api/v1/districts                  V1 supports Bargarh only
  *   GET /api/v1/districts/bargarh/news     alias of /api/v1/news (explicit district scope)
  */
@@ -39,6 +39,26 @@ function paginationParams(): array
     return [$page, $perPage];
 }
 
+/** Accepts either a numeric block id or an exact (case-insensitive) block name — e.g. what a block button's label already is. */
+function resolveBlockToken(string $token): ?array
+{
+    return ctype_digit($token) ? ArticleRepository::blockById((int) $token) : ArticleRepository::blockByName($token);
+}
+
+/** Reads the block filter from the query string, accepting ?block_id= or ?block=<name>. */
+function blockIdFromQuery(): ?int
+{
+    if (isset($_GET['block_id'])) {
+        return (int) $_GET['block_id'];
+    }
+    if (isset($_GET['block']) && $_GET['block'] !== '') {
+        $block = ArticleRepository::blockByName((string) $_GET['block']);
+        return $block ? (int) $block['id'] : -1; // -1 matches nothing, so an unknown block name returns an empty list rather than all news
+    }
+
+    return null;
+}
+
 function respondNewsList(?int $blockId, ?bool $breakingOnly): never
 {
     [$page, $perPage] = paginationParams();
@@ -60,9 +80,8 @@ $resource = $segments[1] ?? null;
 switch ($resource) {
     case 'news':
         if (count($segments) === 2) {
-            $blockId = isset($_GET['block_id']) ? (int) $_GET['block_id'] : null;
             $breaking = isset($_GET['breaking']) ? $_GET['breaking'] === '1' : null;
-            respondNewsList($blockId, $breaking);
+            respondNewsList(blockIdFromQuery(), $breaking);
         }
 
         if (count($segments) === 3 && ctype_digit($segments[2])) {
@@ -81,12 +100,12 @@ switch ($resource) {
             JsonResponse::send(['data' => ArticleRepository::blocks()]);
         }
 
-        if (count($segments) === 4 && ctype_digit($segments[2]) && $segments[3] === 'news') {
-            $block = ArticleRepository::blockById((int) $segments[2]);
+        if (count($segments) === 4 && $segments[3] === 'news') {
+            $block = resolveBlockToken($segments[2]);
             if (!$block) {
                 JsonResponse::error('Block not found.', 404);
             }
-            respondNewsList((int) $segments[2], null);
+            respondNewsList((int) $block['id'], null);
         }
 
         JsonResponse::error('Not found.', 404);
@@ -97,9 +116,8 @@ switch ($resource) {
         }
 
         if (count($segments) === 4 && $segments[2] === 'bargarh' && $segments[3] === 'news') {
-            $blockId = isset($_GET['block_id']) ? (int) $_GET['block_id'] : null;
             $breaking = isset($_GET['breaking']) ? $_GET['breaking'] === '1' : null;
-            respondNewsList($blockId, $breaking);
+            respondNewsList(blockIdFromQuery(), $breaking);
         }
 
         JsonResponse::error('Not found.', 404);

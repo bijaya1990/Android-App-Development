@@ -11,12 +11,27 @@ Base URL: `https://<your-domain>/api`
 
 | Method | Path                                  | Description                                  |
 |--------|---------------------------------------|-----------------------------------------------|
-| GET    | `/v1/news`                            | All published news. `?block_id=`, `?breaking=1`, `?page=`, `?per_page=` (max 50) |
+| GET    | `/v1/news`                            | All published news. `?block_id=` or `?block=<name>`, `?breaking=1`, `?page=`, `?per_page=` (max 50) |
 | GET    | `/v1/news/{id}`                       | A single published article                    |
 | GET    | `/v1/blocks`                          | The 12 Bargarh blocks                          |
-| GET    | `/v1/blocks/{id}/news`                | Published news for one block                   |
+| GET    | `/v1/blocks/{idOrName}/news`          | Published news for one block — pass the block's id, or its exact name (case-insensitive, same string as its button label) |
 | GET    | `/v1/districts`                       | V1 scope: Bargarh only, with its blocks         |
 | GET    | `/v1/districts/bargarh/news`          | Same as `/v1/news` — explicit district scope    |
+
+### Block buttons -> filtered news
+
+Each of the 12 block buttons the app shows (Bargarh, Attabira, Bhatli, Sohela,
+Ambabhona, Bheden, Barpali, Bijepur, Gaisilet, Padampur, Paikmal, Jharbandh)
+maps directly to one of these, no extra lookup needed:
+
+```
+GET /v1/blocks/Attabira/news
+GET /v1/blocks/Sohela/news?page=2
+```
+
+An unrecognized block name returns `{"error": "Block not found.", ...}` with
+a 404, so a typo in a button label fails loudly instead of silently
+returning all-district news.
 
 ## Article JSON shape
 

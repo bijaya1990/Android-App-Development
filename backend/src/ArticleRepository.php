@@ -21,6 +21,16 @@ final class ArticleRepository
         return $block ?: null;
     }
 
+    /** Case-insensitive exact match, so the app can filter by the block button's label directly. */
+    public static function blockByName(string $name): ?array
+    {
+        $stmt = get_db()->prepare('SELECT id, name FROM blocks WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+        $stmt->execute(['name' => $name]);
+        $block = $stmt->fetch();
+
+        return $block ?: null;
+    }
+
     public static function create(int $writerId, string $title, int $blockId, string $content): int
     {
         $stmt = get_db()->prepare(
