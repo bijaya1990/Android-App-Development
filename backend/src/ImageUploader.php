@@ -38,7 +38,7 @@ final class ImageUploader
             return ['path' => null, 'error' => 'Only JPEG, PNG, or WebP images are allowed.'];
         }
 
-        $dir = ARTICLE_UPLOAD_DIR . '/' . $articleId;
+        $dir = article_upload_dir() . '/' . $articleId;
         if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
             return ['path' => null, 'error' => 'Could not create upload directory.'];
         }

@@ -14,8 +14,20 @@ const ROLE_CONTENT_WRITER = 'content_writer';
 const ARTICLE_MIN_IMAGES = 2;
 const ARTICLE_MAX_IMAGES = 4;
 const ARTICLE_MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB per image
-const ARTICLE_UPLOAD_DIR = __DIR__ . '/../public/uploads/articles';
 const ARTICLE_UPLOAD_URL_PREFIX = '/uploads/articles';
+
+/**
+ * Resolves to wherever the web server is actually serving requests
+ * from, rather than assuming the on-disk folder is named "public" —
+ * that assumption breaks on shared hosting where the document root's
+ * contents get uploaded straight into public_html under a different
+ * folder name.
+ */
+function article_upload_dir(): string
+{
+    $root = $_SERVER['DOCUMENT_ROOT'] ?? (__DIR__ . '/../public');
+    return rtrim($root, '/') . '/uploads/articles';
+}
 
 spl_autoload_register(function (string $class): void {
     $file = __DIR__ . '/../src/' . str_replace('\\', '/', $class) . '.php';
