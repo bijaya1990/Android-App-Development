@@ -37,3 +37,17 @@ function require_csrf(): void
         exit('Invalid or expired form submission. Please go back and try again.');
     }
 }
+
+/** One-time flash message, e.g. for showing a generated password exactly once after a redirect. */
+function flash_set(string $key, mixed $value): void
+{
+    $_SESSION['flash'][$key] = $value;
+}
+
+function flash_take(string $key): mixed
+{
+    $value = $_SESSION['flash'][$key] ?? null;
+    unset($_SESSION['flash'][$key]);
+
+    return $value;
+}

@@ -109,4 +109,60 @@ final class ArticleRepository
         $stmt = get_db()->prepare('DELETE FROM article_images WHERE id = :id AND article_id = :article_id');
         $stmt->execute(['id' => $imageId, 'article_id' => $articleId]);
     }
+
+    /** All articles in a given status, across every writer — for the Super Admin dashboard. */
+    public static function listAllByStatus(string $status): array
+    {
+        $stmt = get_db()->prepare(
+            'SELECT a.id, a.title, a.block_id, a.status, a.breaking_news, a.updated_at, u.full_name AS writer_name
+             FROM articles a
+             JOIN users u ON u.id = a.writer_id
+             WHERE a.status = :status
+             ORDER BY a.updated_at DESC'
+        );
+        $stmt->execute(['status' => $status]);
+
+        return $stmt->fetchAll();
+    }
+
+    public static function setBreakingNews(int $id, bool $breaking): void
+    {
+        $stmt = get_db()->prepare('UPDATE articles SET breaking_news = :breaking WHERE id = :id');
+        $stmt->execute(['breaking' => $breaking ? 1 : 0, 'id' => $id]);
+    }
+
+    public static function saveDraft(int $id): void
+    {
+        $stmt = get_db()->prepare("UPDATE articles SET status = 'draft', return_reason = NULL WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+    }
+
+    public static function publish(int $id, int $reviewerId): void
+    {
+        $stmt = get_db()->prepare(
+            "UPDATE articles SET status = 'published', published_at = NOW(), reviewed_by = :reviewer, return_reason = NULL
+             WHERE id = :id"
+        );
+        $stmt->execute(['reviewer' => $reviewerId, 'id' => $id]);
+    }
+
+    public static function returnToWriter(int $id, int $reviewerId, string $reason): void
+    {
+        $stmt = get_db()->prepare(
+            "UPDATE articles SET status = 'returned', reviewed_by = :reviewer, return_reason = :reason
+             WHERE id = :id"
+        );
+        $stmt->execute(['reviewer' => $reviewerId, 'reason' => $reason, 'id' => $id]);
+    }
+
+    /** Deletes the article row (article_images cascade via FK) and returns the image paths for on-disk cleanup. */
+    public static function delete(int $id): array
+    {
+        $paths = array_column(self::imagesFor($id), 'file_path');
+
+        $stmt = get_db()->prepare('DELETE FROM articles WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+
+        return $paths;
+    }
 }
