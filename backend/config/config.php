@@ -11,6 +11,12 @@ require_once __DIR__ . '/database.php';
 const ROLE_SUPER_ADMIN   = 'super_admin';
 const ROLE_CONTENT_WRITER = 'content_writer';
 
+const ARTICLE_MIN_IMAGES = 2;
+const ARTICLE_MAX_IMAGES = 4;
+const ARTICLE_MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB per image
+const ARTICLE_UPLOAD_DIR = __DIR__ . '/../public/uploads/articles';
+const ARTICLE_UPLOAD_URL_PREFIX = '/uploads/articles';
+
 spl_autoload_register(function (string $class): void {
     $file = __DIR__ . '/../src/' . str_replace('\\', '/', $class) . '.php';
     if (is_file($file)) {

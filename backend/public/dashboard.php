@@ -4,8 +4,12 @@ require_once __DIR__ . '/../config/config.php';
 
 Auth::requireLogin();
 
-// Placeholder only — Phase 3 replaces this with the Content Writer
-// dashboard and Phase 4 with the Super Admin dashboard.
+if (Auth::role() === ROLE_CONTENT_WRITER) {
+    header('Location: /writer/dashboard.php');
+    exit;
+}
+
+// Placeholder only — Phase 4 replaces this with the Super Admin dashboard.
 ?>
 <!DOCTYPE html>
 <html lang="en">
