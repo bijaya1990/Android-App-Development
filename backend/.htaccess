@@ -1,0 +1,10 @@
+# Only public/ should ever be served. If MilesWeb's document root is
+# pointed at backend/ instead of backend/public/, this blocks direct
+# access to config, source code, and the database folder.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
