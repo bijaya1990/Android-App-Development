@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EMI Calculator</string>
+
+    <!-- Home -->
+    <string name="home_title">EMI Calculator</string>
+    <string name="home_subtitle">Smart planning for every loan</string>
+    <string name="card_car_title">Car Loan EMI</string>
+    <string name="card_car_desc">Plan your dream car purchase</string>
+    <string name="card_home_title">Home Loan EMI</string>
+    <string name="card_home_desc">Calculate your home loan EMI</string>
+    <string name="card_personal_title">Personal Loan EMI</string>
+    <string name="card_personal_desc">Quick and easy loan planning</string>
+    <string name="card_bike_title">Bike Loan EMI</string>
+    <string name="card_bike_desc">Estimate your two-wheeler EMI</string>
+    <string name="action_settings">Settings</string>
+    <string name="content_desc_loan_icon">Loan type icon</string>
+
+    <!-- Calculator -->
+    <string name="label_total_price">Total %1$s Price</string>
+    <string name="label_down_payment">Down Payment</string>
+    <string name="label_loan_amount">Loan Amount</string>
+    <string name="label_interest_rate">Interest Rate (% p.a.)</string>
+    <string name="label_tenure_years">Tenure (Years)</string>
+    <string name="label_tenure_months">Tenure (Months)</string>
+    <string name="hint_amount">₹ 0</string>
+    <string name="hint_rate">0.0</string>
+    <string name="btn_calculate">Calculate EMI</string>
+    <string name="btn_reset">Reset</string>
+    <string name="error_required">This field is required</string>
+    <string name="error_invalid_number">Enter a valid number</string>
+    <string name="error_negative">Value cannot be negative</string>
+    <string name="error_down_payment_exceeds">Down payment cannot exceed total price</string>
+    <string name="error_loan_amount_zero">Loan amount must be greater than zero</string>
+    <string name="error_tenure_zero">Enter a valid loan tenure</string>
+    <string name="error_rate_zero">Enter a valid interest rate</string>
+    <string name="calculator_title_format">%1$s Calculator</string>
+
+    <!-- Result -->
+    <string name="tab_summary">Summary</string>
+    <string name="tab_chart">Chart</string>
+    <string name="tab_schedule">Schedule</string>
+    <string name="result_monthly_emi">Monthly EMI</string>
+    <string name="result_principal">Principal Amount</string>
+    <string name="result_interest">Total Interest</string>
+    <string name="result_total_payment">Total Payment</string>
+    <string name="action_share">Share</string>
+    <string name="action_pdf">Export PDF</string>
+    <string name="action_print">Print</string>
+    <string name="action_copy">Copy Results</string>
+    <string name="schedule_header_month">Month</string>
+    <string name="schedule_header_emi">EMI</string>
+    <string name="schedule_header_principal">Principal</string>
+    <string name="schedule_header_interest">Interest</string>
+    <string name="schedule_header_balance">Balance</string>
+    <string name="chart_principal_label">Principal</string>
+    <string name="chart_interest_label">Interest</string>
+    <string name="pdf_generating">Generating PDF…</string>
+    <string name="pdf_error">Failed to generate PDF</string>
+    <string name="copied_to_clipboard">Results copied to clipboard</string>
+    <string name="share_chooser_title">Share EMI details</string>
+    <string name="pdf_chooser_title">Share PDF report</string>
+    <string name="no_pdf_app_found">No app found to handle this action</string>
+    <string name="result_title">EMI Result</string>
+    <string name="loan_breakup">Loan Breakup</string>
+    <string name="amortization_schedule">Amortization Schedule</string>
+
+    <!-- Share text template -->
+    <string name="share_text_template">"%1\$s EMI Summary\n\nLoan Amount: %2\$s\nInterest Rate: %3\$s%% p.a.\nTenure: %4\$s\n\nMonthly EMI: %5\$s\nTotal Interest: %6\$s\nTotal Payment: %7\$s\n\nCalculated using EMI Calculator app."</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_dark_mode_desc">Follow system, light or dark theme</string>
+    <string name="settings_general">General</string>
+    <string name="settings_rate_app">Rate App</string>
+    <string name="settings_rate_app_desc">Enjoying the app? Leave us a rating</string>
+    <string name="settings_share_app">Share App</string>
+    <string name="settings_share_app_desc">Tell your friends about us</string>
+    <string name="settings_about">About</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_terms">Terms of Use</string>
+    <string name="settings_contact">Contact Us</string>
+    <string name="settings_version">App Version</string>
+    <string name="settings_open_source">Open Source Libraries</string>
+    <string name="share_app_text">Check out EMI Calculator — a simple, offline, and beautiful app to calculate Car, Home, Personal and Bike loan EMIs.</string>
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="choose_theme">Choose theme</string>
+
+    <!-- Contact -->
+    <string name="contact_title">Contact Us</string>
+    <string name="contact_body">If you have any questions, suggestions, feedback, feature requests, or business enquiries regarding this application, please feel free to contact us.</string>
+    <string name="contact_email">info@naukripatra.in</string>
+    <string name="contact_footer">We aim to respond as soon as possible.\n\nThank you for using our application.</string>
+    <string name="action_send_email">Send Email</string>
+
+    <!-- Open source -->
+    <string name="open_source_title">Open Source Libraries</string>
+    <string name="lib_material">AndroidX Material Components — Apache License 2.0</string>
+    <string name="lib_mpandroidchart">MPAndroidChart — Apache License 2.0</string>
+    <string name="lib_androidx">AndroidX Libraries — Apache License 2.0</string>
+
+    <!-- Misc -->
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="terms_of_use_title">Terms of Use</string>
+    <string name="back">Back</string>
+</resources>

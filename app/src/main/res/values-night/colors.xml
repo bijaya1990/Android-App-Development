@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="md_primary">#BBC3FF</color>
+    <color name="md_on_primary">#0A1A9E</color>
+    <color name="md_primary_container">#2739B8</color>
+    <color name="md_on_primary_container">#DEE1FF</color>
+
+    <color name="md_secondary">#84D6BE</color>
+    <color name="md_on_secondary">#00382C</color>
+    <color name="md_secondary_container">#005141</color>
+    <color name="md_on_secondary_container">#AEF2DE</color>
+
+    <color name="md_tertiary">#FFB877</color>
+    <color name="md_on_tertiary">#5C2900</color>
+    <color name="md_tertiary_container">#823D00</color>
+    <color name="md_on_tertiary_container">#FFDCC1</color>
+
+    <color name="md_error">#FFB4AB</color>
+    <color name="md_on_error">#690005</color>
+    <color name="md_error_container">#93000A</color>
+    <color name="md_on_error_container">#FFDAD6</color>
+
+    <color name="md_background">#131318</color>
+    <color name="md_on_background">#E4E1E9</color>
+    <color name="md_surface">#131318</color>
+    <color name="md_on_surface">#E4E1E9</color>
+    <color name="md_surface_variant">#45464F</color>
+    <color name="md_on_surface_variant">#C6C5D0</color>
+    <color name="md_outline">#90909A</color>
+    <color name="md_outline_variant">#45464F</color>
+    <color name="md_surface_container">#201F26</color>
+    <color name="md_surface_container_high">#2B2A31</color>
+    <color name="md_surface_container_low">#1C1B21</color>
+
+    <color name="accent_car">#BBC3FF</color>
+    <color name="accent_home">#84D6BE</color>
+    <color name="accent_personal">#FFB877</color>
+    <color name="accent_bike">#D8B8FF</color>
+
+    <color name="chart_principal">#BBC3FF</color>
+    <color name="chart_interest">#FFB877</color>
+</resources>
