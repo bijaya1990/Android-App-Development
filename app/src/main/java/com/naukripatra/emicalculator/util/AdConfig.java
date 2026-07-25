@@ -1,13 +1,8 @@
 package com.naukripatra.emicalculator.util;
 
-import android.app.Activity;
-import android.util.DisplayMetrics;
-
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.naukripatra.emicalculator.BuildConfig;
-import com.naukripatra.emicalculator.R;
 
 /**
  * AdMob identifiers for this app. The Application ID itself lives in AndroidManifest.xml
@@ -18,6 +13,11 @@ import com.naukripatra.emicalculator.R;
  * freshly created ad unit routinely serves zero fill for real IDs until Google finishes
  * reviewing it — switching to the test IDs while developing is the standard way to confirm
  * the integration itself works instead of chasing a fill-rate problem.
+ *
+ * The banner's ad unit ID and size are both declared declaratively in layout_ad_banner.xml
+ * (app:adUnitId / app:adSize) rather than set programmatically — AdMob's AdView only allows
+ * each to be set once, ever, and setting them in Java after XML inflation proved unreliable
+ * to sequence correctly, so this sticks to Google's simplest documented pattern.
  */
 public final class AdConfig {
 
@@ -31,25 +31,8 @@ public final class AdConfig {
         return BuildConfig.DEBUG ? TEST_INTERSTITIAL_AD_UNIT_ID : REAL_INTERSTITIAL_AD_UNIT_ID;
     }
 
-    /**
-     * Loads the shared banner ad unit into a {@code layout_ad_banner.xml} AdView. Both the ad
-     * unit ID and the ad size are set here in Java — not via XML attributes — and in this exact
-     * order, since AdMob's AdView allows each to be set only once, ever, and requires both to be
-     * set before {@code loadAd()} is called. The ad unit ID resolves from
-     * {@code R.string.admob_banner_ad_unit_id}, which the debug build type overrides with
-     * Google's test banner ID — see {@code src/debug/res/values/strings.xml}.
-     */
-    public static void loadBanner(Activity activity, AdView adView) {
-        adView.setAdUnitId(activity.getString(R.string.admob_banner_ad_unit_id));
-        adView.setAdSize(adaptiveBannerSize(activity));
+    /** Triggers the load for the banner AdView declared in {@code layout_ad_banner.xml}. */
+    public static void loadBanner(AdView adView) {
         adView.loadAd(new AdRequest.Builder().build());
-    }
-
-    private static AdSize adaptiveBannerSize(Activity activity) {
-        DisplayMetrics outMetrics = activity.getResources().getDisplayMetrics();
-        float density = outMetrics.density;
-        int adWidthPixels = outMetrics.widthPixels;
-        int adWidthDp = (int) (adWidthPixels / density);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, adWidthDp);
     }
 }
