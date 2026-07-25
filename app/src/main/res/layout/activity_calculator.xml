@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/ic_back"
-        app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
-        tools:title="Car Loan Calculator" />
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_sm">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:padding="9dp"
+            android:src="@drawable/ic_back"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.EmiCalculator.TitleLg"
+            android:textColor="?attr/colorOnSurface"
+            tools:text="Car Loan" />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/spacing_xl">
 
@@ -27,12 +49,58 @@
             android:orientation="vertical"
             android:padding="@dimen/spacing_md">
 
+            <FrameLayout
+                android:id="@+id/heroBanner"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/bg_hero_car">
+
+                <ImageView
+                    android:id="@+id/heroWatermark"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="end|top"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="-8dp"
+                    android:alpha="0.16"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_car"
+                    app:tint="#FFFFFF" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_lg">
+
+                    <TextView
+                        android:id="@+id/heroTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.EmiCalculator.HeadlineLgMobile"
+                        android:textColor="#FFFFFF"
+                        tools:text="Drive Your Dream" />
+
+                    <TextView
+                        android:id="@+id/heroSubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textAppearance="@style/TextAppearance.EmiCalculator.BodyLg"
+                        android:textColor="#E6FFFFFF"
+                        tools:text="Precision calculation for your automotive future." />
+                </LinearLayout>
+            </FrameLayout>
+
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.EmiCalculator.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="?attr/colorSurfaceContainer"
-                app:strokeWidth="0dp">
+                android:layout_marginTop="@dimen/spacing_lg"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
+                app:strokeColor="?attr/colorOutlineVariant"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -44,13 +112,13 @@
                         style="@style/Widget.EmiCalculator.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/label_total_price"
-                        app:startIconDrawable="@drawable/ic_calculate">
+                        android:hint="@string/label_total_price">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/inputTotalPrice"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/hint_amount"
                             android:inputType="numberDecimal"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -61,13 +129,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_md"
-                        android:hint="@string/label_down_payment"
-                        app:startIconDrawable="@drawable/ic_calculate">
+                        android:hint="@string/label_down_payment">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/inputDownPayment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/hint_amount"
                             android:inputType="numberDecimal"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -79,14 +147,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_md"
                         android:hint="@string/label_loan_amount"
-                        app:startIconDrawable="@drawable/ic_calculate">
+                        app:endIconDrawable="@drawable/ic_edit"
+                        app:endIconMode="custom"
+                        app:endIconTintMode="src_in">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/inputLoanAmount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/hint_amount"
                             android:inputType="numberDecimal"
-                            android:maxLines="1" />
+                            android:maxLines="1"
+                            android:textStyle="bold" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -95,12 +167,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_md"
-                        android:hint="@string/label_interest_rate">
+                        android:hint="@string/label_interest_rate"
+                        app:suffixText="%">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/inputInterestRate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/hint_rate"
                             android:inputType="numberDecimal"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -108,77 +182,209 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_md"
+                        android:layout_marginTop="@dimen/spacing_lg"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/inputTenureYearsLayout"
-                            style="@style/Widget.EmiCalculator.TextInputLayout"
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/label_loan_tenure"
+                            android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_track"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:id="@+id/btnYears"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_pill_selected"
+                                android:backgroundTint="?attr/colorPrimary"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:paddingHorizontal="16dp"
+                                android:paddingVertical="6dp"
+                                android:text="@string/btn_years"
+                                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
+                                android:textColor="?attr/colorOnPrimary" />
+
+                            <TextView
+                                android:id="@+id/btnMonths"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:paddingHorizontal="16dp"
+                                android:paddingVertical="6dp"
+                                android:text="@string/btn_months"
+                                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/inputTenureLayout"
+                        style="@style/Widget.EmiCalculator.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        app:suffixText="@string/tenure_unit_years">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputTenure"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="0"
+                            android:inputType="number"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_lg"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnReset"
+                            style="@style/Widget.EmiCalculator.Button.Outlined"
+                            android:layout_width="wrap_content"
+                            android:layout_height="56dp"
                             android:layout_marginEnd="@dimen/spacing_sm"
-                            android:layout_weight="1"
-                            android:hint="@string/label_tenure_years">
+                            android:text="@string/btn_reset" />
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/inputTenureYears"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="number"
-                                android:maxLines="1" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/inputTenureMonthsLayout"
-                            style="@style/Widget.EmiCalculator.TextInputLayout"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCalculate"
+                            style="@style/Widget.EmiCalculator.Button"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:layout_height="56dp"
                             android:layout_weight="1"
-                            android:hint="@string/label_tenure_months">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/inputTenureMonths"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="number"
-                                android:maxLines="1" />
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:text="@string/btn_calculate"
+                            app:icon="@drawable/ic_calculate"
+                            app:iconGravity="textStart" />
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.EmiCalculator.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_lg"
-                android:orientation="horizontal">
+                app:cardBackgroundColor="?attr/colorSecondaryContainer"
+                app:strokeWidth="0dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnReset"
-                    style="@style/Widget.EmiCalculator.Button.Outlined"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/spacing_sm"
-                    android:layout_weight="1"
-                    android:text="@string/btn_reset"
-                    app:icon="@drawable/ic_reset"
-                    app:iconGravity="textStart" />
+                    android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCalculate"
-                    style="@style/Widget.EmiCalculator.Button"
-                    android:layout_width="0dp"
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_icon_badge"
+                            android:backgroundTint="?attr/colorSecondary" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_lightbulb"
+                            app:tint="?attr/colorOnSecondary" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/tip_down_payment_title"
+                            android:textAppearance="@style/TextAppearance.EmiCalculator.TitleLg"
+                            android:textColor="?attr/colorOnSecondaryContainer" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/tip_down_payment_desc"
+                            android:textAppearance="@style/TextAppearance.EmiCalculator.BodyMd"
+                            android:textColor="?attr/colorOnSecondaryContainer" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.EmiCalculator.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardBackgroundColor="?attr/colorTertiaryContainer"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_sm"
-                    android:layout_weight="1"
-                    android:text="@string/btn_calculate"
-                    app:icon="@drawable/ic_calculate"
-                    app:iconGravity="textStart" />
-            </LinearLayout>
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_trending_up"
+                            app:tint="?attr/colorOnTertiaryContainer" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:text="@string/tip_credit_title"
+                            android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
+                            android:textColor="?attr/colorOnTertiaryContainer" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="@string/tip_credit_desc"
+                        android:textAppearance="@style/TextAppearance.EmiCalculator.BodyMd"
+                        android:textColor="?attr/colorOnTertiaryContainer" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <include
+        android:id="@+id/adBannerContainer"
+        layout="@layout/layout_ad_banner" />
+
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/layout_bottom_nav" />
+
+</LinearLayout>

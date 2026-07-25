@@ -1,46 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/ic_back"
-        app:title="@string/settings_title"
-        app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_md">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_title"
+            android:textAppearance="@style/TextAppearance.EmiCalculator.HeadlineLgMobile"
+            android:textColor="?attr/colorPrimary" />
+
+        <FrameLayout
+            android:id="@+id/btnAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_circle_badge"
+                android:backgroundTint="?attr/colorPrimary" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/content_desc_avatar"
+                android:src="@drawable/ic_person"
+                app:tint="?attr/colorOnPrimary" />
+        </FrameLayout>
+
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/spacing_xl">
+        android:paddingBottom="@dimen/spacing_lg">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
 
             <TextView
-                style="@style/TextAppearance.Material3.LabelLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
-                android:layout_marginTop="@dimen/spacing_md"
                 android:layout_marginBottom="@dimen/spacing_xs"
+                android:letterSpacing="0.06"
                 android:text="@string/settings_appearance"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
                 android:textColor="?attr/colorPrimary" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.EmiCalculator.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
-                app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
 
@@ -50,21 +81,21 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                style="@style/TextAppearance.Material3.LabelLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
                 android:layout_marginTop="@dimen/spacing_lg"
                 android:layout_marginBottom="@dimen/spacing_xs"
+                android:letterSpacing="0.06"
                 android:text="@string/settings_general"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
                 android:textColor="?attr/colorPrimary" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.EmiCalculator.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
-                app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
 
@@ -84,21 +115,45 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                style="@style/TextAppearance.Material3.LabelLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
                 android:layout_marginTop="@dimen/spacing_lg"
                 android:layout_marginBottom="@dimen/spacing_xs"
-                android:text="@string/settings_about"
+                android:letterSpacing="0.06"
+                android:text="@string/settings_support"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
                 android:textColor="?attr/colorPrimary" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.EmiCalculator.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
-                app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:contentPadding="0dp"
+                app:strokeWidth="0dp">
+
+                <include
+                    android:id="@+id/rowContactUs"
+                    layout="@layout/item_settings_row" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:layout_marginBottom="@dimen/spacing_xs"
+                android:letterSpacing="0.06"
+                android:text="@string/settings_legal"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
+                android:textColor="?attr/colorPrimary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.EmiCalculator.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
 
@@ -114,17 +169,39 @@
                     <include
                         android:id="@+id/rowTermsOfUse"
                         layout="@layout/item_settings_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:layout_marginBottom="@dimen/spacing_xs"
+                android:letterSpacing="0.06"
+                android:text="@string/settings_info"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.EmiCalculator.LabelLg"
+                android:textColor="?attr/colorPrimary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.EmiCalculator.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:contentPadding="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <include
-                        android:id="@+id/rowContactUs"
+                        android:id="@+id/rowAppVersion"
                         layout="@layout/item_settings_row" />
 
                     <include
                         android:id="@+id/rowOpenSource"
-                        layout="@layout/item_settings_row" />
-
-                    <include
-                        android:id="@+id/rowAppVersion"
                         layout="@layout/item_settings_row" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -132,4 +209,12 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <include
+        android:id="@+id/adBannerContainer"
+        layout="@layout/layout_ad_banner" />
+
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/layout_bottom_nav" />
+
+</LinearLayout>

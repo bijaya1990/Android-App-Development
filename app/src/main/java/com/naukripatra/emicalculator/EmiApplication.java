@@ -2,6 +2,7 @@ package com.naukripatra.emicalculator;
 
 import android.app.Application;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.color.DynamicColors;
 import com.naukripatra.emicalculator.util.PreferenceManager;
 
@@ -12,5 +13,6 @@ public class EmiApplication extends Application {
         super.onCreate();
         DynamicColors.applyToActivitiesIfAvailable(this);
         PreferenceManager.applyTheme(new PreferenceManager(this).getThemeMode());
+        MobileAds.initialize(this, initializationStatus -> { });
     }
 }

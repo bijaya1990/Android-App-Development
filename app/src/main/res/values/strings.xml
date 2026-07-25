@@ -2,29 +2,53 @@
 <resources>
     <string name="app_name">EMI Calculator</string>
 
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
     <!-- Home -->
-    <string name="home_title">EMI Calculator</string>
-    <string name="home_subtitle">Smart planning for every loan</string>
+    <string name="home_title">EMI Expert</string>
+    <string name="home_greeting_morning">Good morning, Plan your loan</string>
+    <string name="home_greeting_afternoon">Good afternoon, Plan your loan</string>
+    <string name="home_greeting_evening">Good evening, Plan your loan</string>
+    <string name="home_subtitle">Calculate your potential monthly payments with precision. Clear, private, and always on your device.</string>
     <string name="card_car_title">Car Loan EMI</string>
-    <string name="card_car_desc">Plan your dream car purchase</string>
+    <string name="card_car_desc">Finance your dream drive with competitive rates.</string>
     <string name="card_home_title">Home Loan EMI</string>
-    <string name="card_home_desc">Calculate your home loan EMI</string>
+    <string name="card_home_desc">Step into your future home with structured planning.</string>
     <string name="card_personal_title">Personal Loan EMI</string>
-    <string name="card_personal_desc">Quick and easy loan planning</string>
+    <string name="card_personal_desc">Tailored financial flexibility for your personal needs.</string>
     <string name="card_bike_title">Bike Loan EMI</string>
-    <string name="card_bike_desc">Estimate your two-wheeler EMI</string>
+    <string name="card_bike_desc">Swift financing for two-wheeled adventures.</string>
     <string name="action_settings">Settings</string>
     <string name="content_desc_loan_icon">Loan type icon</string>
+    <string name="content_desc_avatar">Account</string>
+    <string name="trust_card_title">100% Offline &amp; Private</string>
+    <string name="trust_card_desc">Every calculation runs on your device. Nothing you enter is ever uploaded or shared.</string>
+
+    <!-- Calculator hero copy, per loan type -->
+    <string name="hero_car_title">Drive Your Dream</string>
+    <string name="hero_car_subtitle">Precision calculation for your automotive future.</string>
+    <string name="hero_home_title">Step Into Your Future</string>
+    <string name="hero_home_subtitle">Structured planning for your home loan journey.</string>
+    <string name="hero_personal_title">Flexible Finance</string>
+    <string name="hero_personal_subtitle">Tailored funding for your personal needs.</string>
+    <string name="hero_bike_title">Ride Without Limits</string>
+    <string name="hero_bike_subtitle">Swift financing for your next two-wheeler.</string>
 
     <!-- Calculator -->
     <string name="label_total_price">Total %1$s Price</string>
     <string name="label_down_payment">Down Payment</string>
-    <string name="label_loan_amount">Loan Amount</string>
-    <string name="label_interest_rate">Interest Rate (% p.a.)</string>
-    <string name="label_tenure_years">Tenure (Years)</string>
-    <string name="label_tenure_months">Tenure (Months)</string>
-    <string name="hint_amount">₹ 0</string>
-    <string name="hint_rate">0.0</string>
+    <string name="label_loan_amount">Loan Amount (Auto-Calculated)</string>
+    <string name="label_interest_rate">Interest Rate % (Annual)</string>
+    <string name="label_loan_tenure">Loan Tenure</string>
+    <string name="btn_years">Years</string>
+    <string name="btn_months">Months</string>
+    <string name="tenure_unit_years">yrs</string>
+    <string name="tenure_unit_months">mos</string>
+    <string name="hint_amount">0.00</string>
+    <string name="hint_rate">e.g. 7.5</string>
     <string name="btn_calculate">Calculate EMI</string>
     <string name="btn_reset">Reset</string>
     <string name="error_required">This field is required</string>
@@ -34,36 +58,51 @@
     <string name="error_loan_amount_zero">Loan amount must be greater than zero</string>
     <string name="error_tenure_zero">Enter a valid loan tenure</string>
     <string name="error_rate_zero">Enter a valid interest rate</string>
-    <string name="calculator_title_format">%1$s Calculator</string>
+    <string name="tip_down_payment_title">Higher Down Payment?</string>
+    <string name="tip_down_payment_desc">Paying 20% upfront significantly reduces your monthly burden and total interest paid over time.</string>
+    <string name="tip_credit_title">Credit Impact</string>
+    <string name="tip_credit_desc">Rates shown are estimates. Check with your lender for offers based on your actual credit profile.</string>
 
     <!-- Result -->
-    <string name="tab_summary">Summary</string>
-    <string name="tab_chart">Chart</string>
-    <string name="tab_schedule">Schedule</string>
+    <string name="result_title">Calculation Result</string>
     <string name="result_monthly_emi">Monthly EMI</string>
+    <string name="result_next_due">Next due: %1$s</string>
     <string name="result_principal">Principal Amount</string>
-    <string name="result_interest">Total Interest</string>
+    <string name="result_interest">Interest Payable</string>
     <string name="result_total_payment">Total Payment</string>
+    <string name="btn_view_schedule">View EMI Schedule</string>
+    <string name="btn_generate_pdf">Generate PDF</string>
+    <string name="repayment_split_title">Repayment Split</string>
+    <string name="repayment_split_principal_pct">%1$d%%</string>
+    <string name="expert_insights_title">Expert Insights</string>
+    <string name="expert_insights_body">With an interest rate of %1$s%% p.a., your total payout is %2$s× your loan amount — %3$s of every rupee you repay goes toward interest.</string>
     <string name="action_share">Share</string>
     <string name="action_pdf">Export PDF</string>
     <string name="action_print">Print</string>
     <string name="action_copy">Copy Results</string>
-    <string name="schedule_header_month">Month</string>
-    <string name="schedule_header_emi">EMI</string>
-    <string name="schedule_header_principal">Principal</string>
-    <string name="schedule_header_interest">Interest</string>
-    <string name="schedule_header_balance">Balance</string>
-    <string name="chart_principal_label">Principal</string>
-    <string name="chart_interest_label">Interest</string>
+    <string name="action_more">More options</string>
+    <string name="chart_principal_label">Principal Amount</string>
+    <string name="chart_interest_label">Total Interest</string>
     <string name="pdf_generating">Generating PDF…</string>
     <string name="pdf_error">Failed to generate PDF</string>
     <string name="copied_to_clipboard">Results copied to clipboard</string>
     <string name="share_chooser_title">Share EMI details</string>
     <string name="pdf_chooser_title">Share PDF report</string>
     <string name="no_pdf_app_found">No app found to handle this action</string>
-    <string name="result_title">EMI Result</string>
-    <string name="loan_breakup">Loan Breakup</string>
-    <string name="amortization_schedule">Amortization Schedule</string>
+
+    <!-- Schedule / History -->
+    <string name="schedule_title">EMI Schedule</string>
+    <string name="active_loan_recap">Active Loan Recap</string>
+    <string name="schedule_recap_meta">%1$s • %2$s • %3$s%% APR</string>
+    <string name="schedule_header_month">Month</string>
+    <string name="schedule_header_emi">EMI</string>
+    <string name="schedule_header_principal">Principal</string>
+    <string name="schedule_header_interest">Interest</string>
+    <string name="schedule_header_balance">Balance</string>
+    <string name="btn_save_pdf">Save as PDF</string>
+    <string name="history_empty_title">No calculations yet</string>
+    <string name="history_empty_desc">Calculate an EMI from the Home tab to see your loan recap and full schedule here.</string>
+    <string name="history_empty_cta">Go to Home</string>
 
     <!-- Share text template -->
     <string name="share_text_template">"%1\$s EMI Summary\n\nLoan Amount: %2\$s\nInterest Rate: %3\$s%% p.a.\nTenure: %4\$s\n\nMonthly EMI: %5\$s\nTotal Interest: %6\$s\nTotal Payment: %7\$s\n\nCalculated using EMI Calculator app."</string>
@@ -72,16 +111,15 @@
     <string name="settings_title">Settings</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_dark_mode">Dark Mode</string>
-    <string name="settings_dark_mode_desc">Follow system, light or dark theme</string>
-    <string name="settings_general">General</string>
+    <string name="settings_general">App Actions</string>
     <string name="settings_rate_app">Rate App</string>
-    <string name="settings_rate_app_desc">Enjoying the app? Leave us a rating</string>
     <string name="settings_share_app">Share App</string>
-    <string name="settings_share_app_desc">Tell your friends about us</string>
-    <string name="settings_about">About</string>
+    <string name="settings_support">Support</string>
+    <string name="settings_legal">Legal</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_terms">Terms of Use</string>
     <string name="settings_contact">Contact Us</string>
+    <string name="settings_info">Info</string>
     <string name="settings_version">App Version</string>
     <string name="settings_open_source">Open Source Libraries</string>
     <string name="share_app_text">Check out EMI Calculator — a simple, offline, and beautiful app to calculate Car, Home, Personal and Bike loan EMIs.</string>
@@ -102,6 +140,7 @@
     <string name="lib_material">AndroidX Material Components — Apache License 2.0</string>
     <string name="lib_mpandroidchart">MPAndroidChart — Apache License 2.0</string>
     <string name="lib_androidx">AndroidX Libraries — Apache License 2.0</string>
+    <string name="lib_play_services_ads">Google Mobile Ads SDK — Google Play Services</string>
 
     <!-- Misc -->
     <string name="privacy_policy_title">Privacy Policy</string>

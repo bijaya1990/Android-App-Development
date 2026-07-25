@@ -34,7 +34,9 @@
         <item name="colorOutlineVariant">@color/md_outline_variant</item>
         <item name="colorSurfaceContainer">@color/md_surface_container</item>
         <item name="colorSurfaceContainerHigh">@color/md_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/md_surface_container_highest</item>
         <item name="colorSurfaceContainerLow">@color/md_surface_container_low</item>
+        <item name="colorSurfaceContainerLowest">@color/md_surface_container_lowest</item>
 
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -48,30 +50,31 @@
         <item name="textInputStyle">@style/Widget.EmiCalculator.TextInputLayout</item>
     </style>
 
-    <style name="Theme.EmiCalculator.Splash" parent="Base.Theme.EmiCalculator" />
-
     <!-- Widget styles -->
     <style name="Widget.EmiCalculator.Button" parent="Widget.Material3.Button">
-        <item name="cornerRadius">16dp</item>
+        <item name="cornerRadius">28dp</item>
         <item name="android:paddingTop">14dp</item>
         <item name="android:paddingBottom">14dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
+        <item name="fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="Widget.EmiCalculator.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="cornerRadius">16dp</item>
+        <item name="cornerRadius">28dp</item>
         <item name="android:paddingTop">14dp</item>
         <item name="android:paddingBottom">14dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
+        <item name="fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="Widget.EmiCalculator.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxCornerRadiusTopStart">16dp</item>
-        <item name="boxCornerRadiusTopEnd">16dp</item>
-        <item name="boxCornerRadiusBottomStart">16dp</item>
-        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
+        <item name="boxStrokeWidth">2dp</item>
         <item name="hintTextColor">?attr/colorPrimary</item>
     </style>
 
@@ -81,11 +84,40 @@
         <item name="contentPadding">20dp</item>
     </style>
 
-    <style name="TextAppearance.EmiCalculator.HeroNumber" parent="TextAppearance.Material3.DisplaySmall">
+    <!-- Stitch type scale -->
+    <style name="TextAppearance.EmiCalculator.DisplayLg" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">44sp</item>
     </style>
 
-    <style name="ShapeAppearance.EmiCalculator.LargeCard" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerSize">24dp</item>
+    <style name="TextAppearance.EmiCalculator.HeadlineLg" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <style name="TextAppearance.EmiCalculator.HeadlineLgMobile" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextAppearance.EmiCalculator.TitleLg" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextAppearance.EmiCalculator.BodyLg" parent="TextAppearance.Material3.BodyLarge" />
+
+    <style name="TextAppearance.EmiCalculator.BodyMd" parent="TextAppearance.Material3.BodyMedium" />
+
+    <style name="TextAppearance.EmiCalculator.LabelLg" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.EmiCalculator.LabelMono" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">monospace</item>
+        <item name="android:letterSpacing">0.04</item>
     </style>
 </resources>

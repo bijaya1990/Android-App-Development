@@ -9,10 +9,14 @@ import com.naukripatra.emicalculator.R;
  * on the home screen.
  */
 public enum LoanType {
-    CAR(R.string.card_car_title, R.string.card_car_desc, "Car", R.drawable.ic_car, R.color.accent_car, true),
-    HOME(R.string.card_home_title, R.string.card_home_desc, "Home", R.drawable.ic_home, R.color.accent_home, true),
-    PERSONAL(R.string.card_personal_title, R.string.card_personal_desc, "Personal", R.drawable.ic_person, R.color.accent_personal, false),
-    BIKE(R.string.card_bike_title, R.string.card_bike_desc, "Bike", R.drawable.ic_bike, R.color.accent_bike, true);
+    CAR(R.string.card_car_title, R.string.card_car_desc, "Car", R.drawable.ic_car, R.color.accent_car, true,
+            R.drawable.bg_hero_car, R.string.hero_car_title, R.string.hero_car_subtitle),
+    HOME(R.string.card_home_title, R.string.card_home_desc, "Home", R.drawable.ic_home, R.color.accent_home, true,
+            R.drawable.bg_hero_home, R.string.hero_home_title, R.string.hero_home_subtitle),
+    PERSONAL(R.string.card_personal_title, R.string.card_personal_desc, "Personal", R.drawable.ic_person, R.color.accent_personal, false,
+            R.drawable.bg_hero_personal, R.string.hero_personal_title, R.string.hero_personal_subtitle),
+    BIKE(R.string.card_bike_title, R.string.card_bike_desc, "Bike", R.drawable.ic_bike, R.color.accent_bike, true,
+            R.drawable.bg_hero_bike, R.string.hero_bike_title, R.string.hero_bike_subtitle);
 
     private final int titleRes;
     private final int descRes;
@@ -20,14 +24,21 @@ public enum LoanType {
     private final int iconRes;
     private final int accentColorRes;
     private final boolean showsPriceAndDownPayment;
+    private final int heroBackgroundRes;
+    private final int heroTitleRes;
+    private final int heroSubtitleRes;
 
-    LoanType(int titleRes, int descRes, String noun, int iconRes, int accentColorRes, boolean showsPriceAndDownPayment) {
+    LoanType(int titleRes, int descRes, String noun, int iconRes, int accentColorRes, boolean showsPriceAndDownPayment,
+             int heroBackgroundRes, int heroTitleRes, int heroSubtitleRes) {
         this.titleRes = titleRes;
         this.descRes = descRes;
         this.noun = noun;
         this.iconRes = iconRes;
         this.accentColorRes = accentColorRes;
         this.showsPriceAndDownPayment = showsPriceAndDownPayment;
+        this.heroBackgroundRes = heroBackgroundRes;
+        this.heroTitleRes = heroTitleRes;
+        this.heroSubtitleRes = heroSubtitleRes;
     }
 
     public int getTitleRes() {
@@ -54,5 +65,17 @@ public enum LoanType {
     /** Personal loans skip Total Price / Down Payment and expose Loan Amount directly. */
     public boolean showsPriceAndDownPayment() {
         return showsPriceAndDownPayment;
+    }
+
+    public int getHeroBackgroundRes() {
+        return heroBackgroundRes;
+    }
+
+    public int getHeroTitleRes() {
+        return heroTitleRes;
+    }
+
+    public int getHeroSubtitleRes() {
+        return heroSubtitleRes;
     }
 }

@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- No internet permission required: app is fully offline-first.
-         READ/WRITE external storage is not requested; PDFs are written
-         to the app-specific cache directory and shared via FileProvider. -->
+    <!-- Calculations themselves are fully offline; INTERNET/ACCESS_NETWORK_STATE are
+         required only to serve AdMob ads (banner + interstitial). PDFs are written to
+         the app-specific cache directory and shared via FileProvider. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".EmiApplication"
@@ -17,6 +19,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EmiCalculator"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5327551236542725~7420100649" />
 
         <activity
             android:name=".ui.home.HomeActivity"
@@ -38,6 +44,16 @@
             android:name=".ui.result.ResultActivity"
             android:exported="false"
             android:parentActivityName=".ui.calculator.CalculatorActivity" />
+
+        <activity
+            android:name=".ui.schedule.ScheduleActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.result.ResultActivity" />
+
+        <activity
+            android:name=".ui.history.HistoryActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
             android:name=".ui.settings.SettingsActivity"

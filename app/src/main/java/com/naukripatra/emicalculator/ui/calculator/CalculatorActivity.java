@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -17,7 +18,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.naukripatra.emicalculator.R;
 import com.naukripatra.emicalculator.databinding.ActivityCalculatorBinding;
 import com.naukripatra.emicalculator.model.LoanType;
+import com.naukripatra.emicalculator.ui.nav.BottomNavHelper;
 import com.naukripatra.emicalculator.ui.result.ResultActivity;
+import com.naukripatra.emicalculator.util.AdConfig;
+import com.naukripatra.emicalculator.util.InterstitialAdManager;
 
 public class CalculatorActivity extends AppCompatActivity {
 
@@ -27,6 +31,7 @@ public class CalculatorActivity extends AppCompatActivity {
     private CalculatorViewModel viewModel;
     private LoanType loanType;
     private boolean autoFillingLoanAmount = false;
+    private boolean tenureInYears = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +44,19 @@ public class CalculatorActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(CalculatorViewModel.class);
 
         applyEdgeToEdgeInsets();
-        setupToolbar();
+        setupHeader();
+        setupHero();
         applyLoanTypeVisibility();
+        setupTenureToggle();
         setupAutoLoanAmountCalculation();
         setupErrorClearing();
 
         binding.btnCalculate.setOnClickListener(v -> onCalculateClicked());
         binding.btnReset.setOnClickListener(v -> resetForm());
+
+        BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HOME);
+        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        InterstitialAdManager.preload(this);
     }
 
     private LoanType resolveLoanType() {
@@ -60,16 +71,23 @@ public class CalculatorActivity extends AppCompatActivity {
         }
     }
 
-    private void setupToolbar() {
-        binding.toolbar.setTitle(loanType.getTitleRes());
-        binding.toolbar.setNavigationOnClickListener(v -> {
+    private void setupHeader() {
+        binding.txtTitle.setText(loanType.getTitleRes());
+        binding.btnBack.setOnClickListener(v -> {
             getOnBackPressedDispatcher().onBackPressed();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         });
     }
 
+    private void setupHero() {
+        binding.heroBanner.setBackgroundResource(loanType.getHeroBackgroundRes());
+        binding.heroWatermark.setImageResource(loanType.getIconRes());
+        binding.heroTitle.setText(loanType.getHeroTitleRes());
+        binding.heroSubtitle.setText(loanType.getHeroSubtitleRes());
+    }
+
     private void applyEdgeToEdgeInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar, (view, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.header, (view, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             view.setPadding(view.getPaddingLeft(), bars.top, view.getPaddingRight(), view.getPaddingBottom());
             return insets;
@@ -77,11 +95,36 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     private void applyLoanTypeVisibility() {
-        int visibility = loanType.showsPriceAndDownPayment() ? android.view.View.VISIBLE : android.view.View.GONE;
+        int visibility = loanType.showsPriceAndDownPayment() ? View.VISIBLE : View.GONE;
         binding.inputTotalPriceLayout.setVisibility(visibility);
         binding.inputDownPaymentLayout.setVisibility(visibility);
         if (loanType.showsPriceAndDownPayment()) {
             binding.inputTotalPriceLayout.setHint(getString(R.string.label_total_price, loanType.getNoun()));
+        }
+    }
+
+    private void setupTenureToggle() {
+        binding.btnYears.setOnClickListener(v -> setTenureMode(true));
+        binding.btnMonths.setOnClickListener(v -> setTenureMode(false));
+        setTenureMode(true);
+    }
+
+    private void setTenureMode(boolean years) {
+        tenureInYears = years;
+        if (years) {
+            binding.btnYears.setBackgroundResource(R.drawable.bg_pill_selected);
+            binding.btnYears.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.md_primary)));
+            binding.btnYears.setTextColor(getColor(R.color.md_on_primary));
+            binding.btnMonths.setBackground(null);
+            binding.btnMonths.setTextColor(getColor(R.color.md_on_surface_variant));
+            binding.inputTenureLayout.setSuffixText(getString(R.string.tenure_unit_years));
+        } else {
+            binding.btnMonths.setBackgroundResource(R.drawable.bg_pill_selected);
+            binding.btnMonths.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.md_primary)));
+            binding.btnMonths.setTextColor(getColor(R.color.md_on_primary));
+            binding.btnYears.setBackground(null);
+            binding.btnYears.setTextColor(getColor(R.color.md_on_surface_variant));
+            binding.inputTenureLayout.setSuffixText(getString(R.string.tenure_unit_months));
         }
     }
 
@@ -108,8 +151,7 @@ public class CalculatorActivity extends AppCompatActivity {
         clearErrorOnEdit(binding.inputDownPayment, binding.inputDownPaymentLayout);
         clearErrorOnEdit(binding.inputLoanAmount, binding.inputLoanAmountLayout);
         clearErrorOnEdit(binding.inputInterestRate, binding.inputInterestRateLayout);
-        clearErrorOnEdit(binding.inputTenureYears, binding.inputTenureYearsLayout);
-        clearErrorOnEdit(binding.inputTenureMonths, binding.inputTenureMonthsLayout);
+        clearErrorOnEdit(binding.inputTenure, binding.inputTenureLayout);
     }
 
     private void clearErrorOnEdit(TextInputEditText editText, TextInputLayout layout) {
@@ -128,20 +170,23 @@ public class CalculatorActivity extends AppCompatActivity {
                 textOf(binding.inputDownPayment),
                 textOf(binding.inputLoanAmount),
                 textOf(binding.inputInterestRate),
-                textOf(binding.inputTenureYears),
-                textOf(binding.inputTenureMonths));
+                textOf(binding.inputTenure),
+                tenureInYears);
 
         binding.inputTotalPriceLayout.setError(errorText(result.totalPriceError));
         binding.inputDownPaymentLayout.setError(errorText(result.downPaymentError));
         binding.inputLoanAmountLayout.setError(errorText(result.loanAmountError));
         binding.inputInterestRateLayout.setError(errorText(result.rateError));
-        binding.inputTenureYearsLayout.setError(errorText(result.tenureError));
-        binding.inputTenureMonthsLayout.setError(errorText(result.tenureError));
+        binding.inputTenureLayout.setError(errorText(result.tenureError));
 
         if (!result.isValid()) {
             return;
         }
 
+        InterstitialAdManager.showIfEligible(this, () -> navigateToResult(result));
+    }
+
+    private void navigateToResult(FormValidationResult result) {
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra(ResultActivity.EXTRA_LOAN_TYPE, loanType.name());
         intent.putExtra(ResultActivity.EXTRA_LOAN_AMOUNT, result.loanAmount);
@@ -156,15 +201,13 @@ public class CalculatorActivity extends AppCompatActivity {
         binding.inputDownPayment.setText("");
         binding.inputLoanAmount.setText("");
         binding.inputInterestRate.setText("");
-        binding.inputTenureYears.setText("");
-        binding.inputTenureMonths.setText("");
+        binding.inputTenure.setText("");
 
         binding.inputTotalPriceLayout.setError(null);
         binding.inputDownPaymentLayout.setError(null);
         binding.inputLoanAmountLayout.setError(null);
         binding.inputInterestRateLayout.setError(null);
-        binding.inputTenureYearsLayout.setError(null);
-        binding.inputTenureMonthsLayout.setError(null);
+        binding.inputTenureLayout.setError(null);
     }
 
     private String errorText(Integer resId) {
@@ -173,6 +216,24 @@ public class CalculatorActivity extends AppCompatActivity {
 
     private String textOf(TextInputEditText editText) {
         return editText.getText() == null ? "" : editText.getText().toString();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.adBannerContainer.adBanner.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        binding.adBannerContainer.adBanner.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        binding.adBannerContainer.adBanner.destroy();
+        super.onDestroy();
     }
 
     /** Collapses the four-argument TextWatcher interface into a single "something changed" callback. */

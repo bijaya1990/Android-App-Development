@@ -45,7 +45,7 @@ public class CalculatorViewModel extends ViewModel {
     }
 
     public FormValidationResult validate(LoanType loanType, String totalPriceText, String downPaymentText,
-                                          String loanAmountText, String rateText, String yearsText, String monthsText) {
+                                          String loanAmountText, String rateText, String tenureText, boolean tenureInYears) {
         FormValidationResult result = new FormValidationResult();
 
         double totalPrice = Double.NaN;
@@ -95,17 +95,16 @@ public class CalculatorViewModel extends ViewModel {
             result.rateError = R.string.error_rate_zero;
         }
 
-        double years = ValidationUtils.isBlank(yearsText) ? 0 : ValidationUtils.parseOrNaN(yearsText);
-        double months = ValidationUtils.isBlank(monthsText) ? 0 : ValidationUtils.parseOrNaN(monthsText);
-        boolean tenureInvalidNumber = (!ValidationUtils.isBlank(yearsText) && Double.isNaN(years))
-                || (!ValidationUtils.isBlank(monthsText) && Double.isNaN(months));
+        double tenureValue = ValidationUtils.parseOrNaN(tenureText);
         int tenureMonths = 0;
-        if (tenureInvalidNumber) {
+        if (ValidationUtils.isBlank(tenureText)) {
+            result.tenureError = R.string.error_required;
+        } else if (Double.isNaN(tenureValue)) {
             result.tenureError = R.string.error_invalid_number;
-        } else if (ValidationUtils.isNegative(years) || ValidationUtils.isNegative(months)) {
+        } else if (ValidationUtils.isNegative(tenureValue)) {
             result.tenureError = R.string.error_negative;
         } else {
-            tenureMonths = (int) Math.round(years) * 12 + (int) Math.round(months);
+            tenureMonths = (int) Math.round(tenureValue) * (tenureInYears ? 12 : 1);
             if (tenureMonths <= 0) {
                 result.tenureError = R.string.error_tenure_zero;
             }

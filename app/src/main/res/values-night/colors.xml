@@ -1,42 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="md_primary">#BBC3FF</color>
-    <color name="md_on_primary">#0A1A9E</color>
-    <color name="md_primary_container">#2739B8</color>
-    <color name="md_on_primary_container">#DEE1FF</color>
+    <!-- Stitch "Premium Finance System" palette — dark (deep navy-charcoal, not pure black) -->
+    <color name="md_primary">#B9C3FF</color>
+    <color name="md_on_primary">#001256</color>
+    <color name="md_primary_container">#0B3FD8</color>
+    <color name="md_on_primary_container">#DDE1FF</color>
 
-    <color name="md_secondary">#84D6BE</color>
-    <color name="md_on_secondary">#00382C</color>
-    <color name="md_secondary_container">#005141</color>
-    <color name="md_on_secondary_container">#AEF2DE</color>
+    <color name="md_secondary">#95CCFF</color>
+    <color name="md_on_secondary">#001D32</color>
+    <color name="md_secondary_container">#04A8FF</color>
+    <color name="md_on_secondary_container">#CDE5FF</color>
 
-    <color name="md_tertiary">#FFB877</color>
-    <color name="md_on_tertiary">#5C2900</color>
-    <color name="md_tertiary_container">#823D00</color>
-    <color name="md_on_tertiary_container">#FFDCC1</color>
+    <color name="md_tertiary">#FFB86F</color>
+    <color name="md_on_tertiary">#2C1600</color>
+    <color name="md_tertiary_container">#7A4700</color>
+    <color name="md_on_tertiary_container">#FFDCBD</color>
 
     <color name="md_error">#FFB4AB</color>
     <color name="md_on_error">#690005</color>
     <color name="md_error_container">#93000A</color>
     <color name="md_on_error_container">#FFDAD6</color>
 
-    <color name="md_background">#131318</color>
-    <color name="md_on_background">#E4E1E9</color>
-    <color name="md_surface">#131318</color>
-    <color name="md_on_surface">#E4E1E9</color>
-    <color name="md_surface_variant">#45464F</color>
-    <color name="md_on_surface_variant">#C6C5D0</color>
-    <color name="md_outline">#90909A</color>
-    <color name="md_outline_variant">#45464F</color>
-    <color name="md_surface_container">#201F26</color>
-    <color name="md_surface_container_high">#2B2A31</color>
-    <color name="md_surface_container_low">#1C1B21</color>
+    <color name="md_background">#1A1C1E</color>
+    <color name="md_on_background">#E3E2E6</color>
+    <color name="md_surface">#1A1C1E</color>
+    <color name="md_on_surface">#E3E2E6</color>
+    <color name="md_surface_variant">#44474E</color>
+    <color name="md_on_surface_variant">#C4C6D0</color>
+    <color name="md_outline">#8E9099</color>
+    <color name="md_outline_variant">#44474E</color>
+    <color name="md_surface_container">#232528</color>
+    <color name="md_surface_container_high">#2B2D30</color>
+    <color name="md_surface_container_highest">#333539</color>
+    <color name="md_surface_container_low">#202225</color>
+    <color name="md_surface_container_lowest">#141516</color>
 
-    <color name="accent_car">#BBC3FF</color>
-    <color name="accent_home">#84D6BE</color>
-    <color name="accent_personal">#FFB877</color>
-    <color name="accent_bike">#D8B8FF</color>
+    <color name="md_primary_fixed">#DDE1FF</color>
+    <color name="md_on_primary_fixed">#001256</color>
+    <color name="md_secondary_fixed">#CDE5FF</color>
+    <color name="md_on_secondary_fixed">#001D32</color>
+    <color name="md_tertiary_fixed">#FFDCBD</color>
+    <color name="md_on_tertiary_fixed">#2C1600</color>
 
-    <color name="chart_principal">#BBC3FF</color>
-    <color name="chart_interest">#FFB877</color>
+    <color name="deep_indigo">#0B3FD8</color>
+    <color name="vibrant_teal">#00A8FF</color>
+
+    <color name="accent_car">#B9C3FF</color>
+    <color name="accent_home">#95CCFF</color>
+    <color name="accent_personal">#FFB86F</color>
+    <color name="accent_bike">#00A8FF</color>
+
+    <color name="chart_principal">#B9C3FF</color>
+    <color name="chart_interest">#333539</color>
 </resources>
