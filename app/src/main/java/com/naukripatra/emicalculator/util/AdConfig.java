@@ -7,6 +7,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.naukripatra.emicalculator.BuildConfig;
+import com.naukripatra.emicalculator.R;
 
 /**
  * AdMob identifiers for this app. The Application ID itself lives in AndroidManifest.xml
@@ -31,13 +32,15 @@ public final class AdConfig {
     }
 
     /**
-     * Loads the shared banner ad unit into a {@code layout_ad_banner.xml} AdView, sized to a
-     * full-width adaptive banner (taller and higher-eCPM than the fixed 320x50 banner, and
-     * properly proportioned regardless of device width). The ad unit ID itself is resolved from
+     * Loads the shared banner ad unit into a {@code layout_ad_banner.xml} AdView. Both the ad
+     * unit ID and the ad size are set here in Java — not via XML attributes — and in this exact
+     * order, since AdMob's AdView allows each to be set only once, ever, and requires both to be
+     * set before {@code loadAd()} is called. The ad unit ID resolves from
      * {@code R.string.admob_banner_ad_unit_id}, which the debug build type overrides with
      * Google's test banner ID — see {@code src/debug/res/values/strings.xml}.
      */
     public static void loadBanner(Activity activity, AdView adView) {
+        adView.setAdUnitId(activity.getString(R.string.admob_banner_ad_unit_id));
         adView.setAdSize(adaptiveBannerSize(activity));
         adView.loadAd(new AdRequest.Builder().build());
     }
