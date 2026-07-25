@@ -14,15 +14,16 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 /**
- * Shows a full-screen interstitial the 1st time the user taps Calculate, then again every
- * 3rd time after (taps 1, 3, 6, 9, ...). The ad is preloaded ahead of time so most taps don't
- * wait on a network call, and {@code onComplete} always fires — whether or not an ad was shown —
- * so callers can safely navigate on afterward without ever blocking the user.
+ * Shows a full-screen interstitial every 3rd time the user taps Calculate (taps 3, 6, 9, ...).
+ * The ad is preloaded ahead of time so most taps don't wait on a network call, and
+ * {@code onComplete} always fires — whether or not an ad was shown — so callers can safely
+ * navigate onward without ever blocking the user.
  */
 public final class InterstitialAdManager {
 
     private static final String PREFS_NAME = "ad_prefs";
     private static final String KEY_CLICK_COUNT = "calculate_click_count";
+    private static final int SHOW_EVERY_N_CLICKS = 3;
 
     private static InterstitialAd interstitialAd;
     private static boolean loading;
@@ -39,7 +40,7 @@ public final class InterstitialAdManager {
             return;
         }
         loading = true;
-        InterstitialAd.load(context.getApplicationContext(), AdConfig.INTERSTITIAL_AD_UNIT_ID,
+        InterstitialAd.load(context.getApplicationContext(), AdConfig.interstitialAdUnitId(),
                 new AdRequest.Builder().build(), new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd ad) {
@@ -60,7 +61,7 @@ public final class InterstitialAdManager {
         int count = prefs.getInt(KEY_CLICK_COUNT, 0) + 1;
         prefs.edit().putInt(KEY_CLICK_COUNT, count).apply();
 
-        boolean eligible = count == 1 || count % 3 == 0;
+        boolean eligible = count % SHOW_EVERY_N_CLICKS == 0;
 
         if (!eligible || interstitialAd == null) {
             listener.onComplete();

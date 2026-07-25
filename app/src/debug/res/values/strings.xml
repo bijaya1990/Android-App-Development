@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google's official test banner ad unit ID — always serves a guaranteed test ad,
+         regardless of AdMob account/ad-unit review status. Overrides the real ad unit
+         ID declared in src/main only for debug builds. See util/AdConfig.java. -->
+    <string name="admob_banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
+</resources>

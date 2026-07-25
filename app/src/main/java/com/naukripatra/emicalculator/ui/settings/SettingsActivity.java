@@ -50,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
         setupSupportAndLegalSection();
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.SETTINGS);
-        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        AdConfig.loadBanner(this, binding.adBannerContainer.adBanner);
     }
 
     private void applyEdgeToEdgeInsets() {

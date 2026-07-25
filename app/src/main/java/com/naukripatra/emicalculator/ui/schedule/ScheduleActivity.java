@@ -65,7 +65,7 @@ public class ScheduleActivity extends AppCompatActivity {
         binding.btnSavePdf.setOnClickListener(v -> generateAndSharePdf());
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HISTORY);
-        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        AdConfig.loadBanner(this, binding.adBannerContainer.adBanner);
     }
 
     private boolean loadFromIntent() {

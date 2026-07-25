@@ -55,7 +55,7 @@ public class CalculatorActivity extends AppCompatActivity {
         binding.btnReset.setOnClickListener(v -> resetForm());
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HOME);
-        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        AdConfig.loadBanner(this, binding.adBannerContainer.adBanner);
         InterstitialAdManager.preload(this);
     }
 

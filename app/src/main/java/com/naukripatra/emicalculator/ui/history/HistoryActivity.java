@@ -64,7 +64,7 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HISTORY);
-        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        AdConfig.loadBanner(this, binding.adBannerContainer.adBanner);
     }
 
     @Override

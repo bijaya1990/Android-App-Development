@@ -83,7 +83,7 @@ public class ResultActivity extends AppCompatActivity {
         setupActions();
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HOME);
-        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        AdConfig.loadBanner(this, binding.adBannerContainer.adBanner);
     }
 
     private void initViewModelFromIntent() {

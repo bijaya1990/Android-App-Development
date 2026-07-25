@@ -41,7 +41,7 @@ public class HomeActivity extends AppCompatActivity {
         binding.recyclerLoanTypes.setAdapter(new LoanCardAdapter(this::openCalculator));
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HOME);
-        AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+        AdConfig.loadBanner(this, binding.adBannerContainer.adBanner);
     }
 
     private String currentGreeting() {
