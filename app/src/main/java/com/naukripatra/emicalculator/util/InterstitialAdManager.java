@@ -14,10 +14,10 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 /**
- * Shows a full-screen interstitial every 3rd time the user taps Calculate (taps 3, 6, 9, ...).
- * The ad is preloaded ahead of time so most taps don't wait on a network call, and
- * {@code onComplete} always fires — whether or not an ad was shown — so callers can safely
- * navigate onward without ever blocking the user.
+ * Shows a full-screen interstitial on the 1st time the user taps Calculate, then again every
+ * 3rd tap after that (taps 1, 3, 6, 9, ...). The ad is preloaded ahead of time so most taps
+ * don't wait on a network call, and {@code onComplete} always fires — whether or not an ad was
+ * shown — so callers can safely navigate onward without ever blocking the user.
  */
 public final class InterstitialAdManager {
 
@@ -61,7 +61,7 @@ public final class InterstitialAdManager {
         int count = prefs.getInt(KEY_CLICK_COUNT, 0) + 1;
         prefs.edit().putInt(KEY_CLICK_COUNT, count).apply();
 
-        boolean eligible = count % SHOW_EVERY_N_CLICKS == 0;
+        boolean eligible = count == 1 || count % SHOW_EVERY_N_CLICKS == 0;
 
         if (!eligible || interstitialAd == null) {
             listener.onComplete();
