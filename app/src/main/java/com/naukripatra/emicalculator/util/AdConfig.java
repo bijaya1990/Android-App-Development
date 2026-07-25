@@ -1,7 +1,6 @@
 package com.naukripatra.emicalculator.util;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 /**
@@ -16,10 +15,12 @@ public final class AdConfig {
     private AdConfig() {
     }
 
-    /** Loads the shared banner ad unit into a {@code layout_ad_banner.xml} AdView. */
+    /**
+     * Loads the shared banner ad unit into a {@code layout_ad_banner.xml} AdView. The ad size
+     * and ad unit ID are already declared in that layout's XML (required so the SDK knows the
+     * banner's size before its first layout pass), so this only needs to trigger the load.
+     */
     public static void loadBanner(AdView adView) {
-        adView.setAdUnitId(BANNER_AD_UNIT_ID);
-        adView.setAdSize(AdSize.BANNER);
         adView.loadAd(new AdRequest.Builder().build());
     }
 }

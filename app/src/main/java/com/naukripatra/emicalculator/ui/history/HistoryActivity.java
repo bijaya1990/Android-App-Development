@@ -51,6 +51,11 @@ public class HistoryActivity extends AppCompatActivity {
             view.setPadding(view.getPaddingLeft(), bars.top, view.getPaddingRight(), view.getPaddingBottom());
             return insets;
         });
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav.getRoot(), (view, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), bars.bottom);
+            return insets;
+        });
 
         binding.btnGoHome.setOnClickListener(v -> {
             Intent intent = new Intent(this, HomeActivity.class);

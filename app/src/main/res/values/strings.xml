@@ -142,6 +142,9 @@
     <string name="lib_androidx">AndroidX Libraries — Apache License 2.0</string>
     <string name="lib_play_services_ads">Google Mobile Ads SDK — Google Play Services</string>
 
+    <!-- AdMob -->
+    <string name="admob_banner_ad_unit_id" translatable="false">ca-app-pub-5327551236542725/8738151826</string>
+
     <!-- Misc -->
     <string name="privacy_policy_title">Privacy Policy</string>
     <string name="terms_of_use_title">Terms of Use</string>
