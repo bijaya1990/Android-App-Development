@@ -24,6 +24,10 @@
     <string name="action_settings">Settings</string>
     <string name="content_desc_loan_icon">Loan type icon</string>
     <string name="content_desc_avatar">Account</string>
+    <string name="exit_app_title">Exit EMI Calculator?</string>
+    <string name="exit_app_message">Are you sure you want to close the app?</string>
+    <string name="exit_app_confirm">Exit</string>
+    <string name="exit_app_cancel">Cancel</string>
     <string name="trust_card_title">100% Offline &amp; Private</string>
     <string name="trust_card_desc">Every calculation runs on your device. Nothing you enter is ever uploaded or shared.</string>
 

@@ -3,6 +3,7 @@ package com.naukripatra.emicalculator.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -13,6 +14,7 @@ import com.naukripatra.emicalculator.R;
 import com.naukripatra.emicalculator.databinding.ActivityHomeBinding;
 import com.naukripatra.emicalculator.model.LoanType;
 import com.naukripatra.emicalculator.ui.calculator.CalculatorActivity;
+import com.naukripatra.emicalculator.ui.common.ExitAppDialog;
 import com.naukripatra.emicalculator.ui.nav.BottomNavHelper;
 import com.naukripatra.emicalculator.ui.settings.SettingsActivity;
 import com.naukripatra.emicalculator.util.AdConfig;
@@ -42,6 +44,13 @@ public class HomeActivity extends AppCompatActivity {
 
         BottomNavHelper.setup(this, binding.bottomNav, BottomNavHelper.Destination.HOME);
         AdConfig.loadBanner(binding.adBannerContainer.adBanner);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                ExitAppDialog.show(HomeActivity.this);
+            }
+        });
     }
 
     private String currentGreeting() {
