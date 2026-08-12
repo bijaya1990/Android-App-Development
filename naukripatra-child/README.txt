@@ -433,3 +433,64 @@ wahan koi conflict nahi hai kyunki shortcode call hi nahi hota.
 
 Verify kiya gaya (standalone test): dono states me "LIVE RESULTS"
 text ab exactly EK baar hi print hota hai.
+
+-----------------------------------------------------
+ VERSION 3.2 — LIVE RESULTS TICKER: OVERLAP/GARBLED-LAYOUT FIX
+-----------------------------------------------------
+PROBLEM (screenshot se confirm): Live Results ticker ka content
+overlap/garbled/repeating tiny boxes jaisa dikh raha tha, text ek
+doosre ke upar chal raha tha. Upar wala News ticker bilkul theek
+kaam kar raha tha.
+
+WAJAH: `.np-results-ticker-live` wrapper me sirf `overflow-x:auto`
+tha aur koi height boundary nahi thi. `overflow-x:auto` sirf ek
+scrollbar deta hai — content ko clip/contain NAHI karta. Isliye
+plugin ke shortcode ka internal markup/animation jo bhi tha, wo
+apni asli height/width le kar page ke normal flow me overlap/garbled
+dikh raha tha.
+
+FIX (sirf CSS, sirf is ek selector aur uske andar ke elements par):
+  - `.np-results-ticker-live` ko ab position:relative + isolation:
+    isolate diya gaya — yeh ek naya stacking context banata hai
+    taaki plugin ka koi bhi internal position/z-index/animation is
+    box ke bahar kabhi na nikal sake (News ticker ya baaki homepage
+    se 100% isolated).
+  - `overflow-x:auto` ko `overflow:hidden` se replace kiya — ab
+    content hamesha box ke andar hi clip hota hai (chahe plugin
+    andar se kitna bhi wide/tall markup print kare).
+  - `min-height:44px` aur `max-height:60px` add kiya (mobile par
+    40px/52px) — News ticker jaisi hi fixed pill-height, na box
+    collapse hoga na content ke wajah se infinite badhega.
+  - `display:flex;align-items:center` — content vertically center
+    rahe, chahe plugin single-line ya multi-line output de.
+  - `.np-results-ticker-live *{box-sizing:border-box;max-width:100%}`
+    — plugin ke andar koi bhi child element galti se container se
+    zyada wide na ban paaye (defensive reset, kyunki plugin ka
+    internal CSS humare paas available nahi hai — is theme se hum
+    sirf integration wrapper control kar sakte hain).
+
+ISOLATION SE News ticker (`.np-ticker*`) bilkul untouched hai — koi
+shared class/selector nahi, alag CSS block, alag markup. Result
+Management PHP system aur result database ko bhi bilkul touch nahi
+kiya gaya — sirf yeh theme-side CSS wrapper hai.
+
+DUPLICATE-RENDER SAFETY: `np_render_results_ticker()` (inc/features.php)
+me ek `static $done` guard bhi add kiya gaya hai, taaki agar kabhi
+yeh function ek hi page-load me galti se do baar call ho jaaye, to
+bhi ticker sirf EK baar hi render ho — page/theme me shortcode call
+sirf ek jagah (front-page.php) hai, koi doosra ticker CSS/JS file
+theme me load nahi hoti.
+
+VERIFY: standalone browser test (Playwright) — asli theme CSS ke
+saath ek "worst-case" wide/multi-row simulated plugin output diya
+gaya, aur confirm hua ki container hamesha bounded height (44-60px)
+par rehta hai aur scroll-width se bada content clip ho jaata hai —
+koi overlap/garbled boxes nahi dikhte, na desktop na mobile width par.
+
+CHANGED FILES (is fix ke liye):
+  - style.css → `.np-results-ticker-live` rule + naya mobile
+    breakpoint block (overflow/height/isolation fix)
+  - inc/features.php → `np_render_results_ticker()` me duplicate-
+    render safety guard (`static $done`) + explain comment
+  (front-page.php, News ticker, Result PHP system/database — kuch
+  bhi is fix me nahi chheda gaya)

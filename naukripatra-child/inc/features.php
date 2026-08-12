@@ -54,37 +54,47 @@ function np_render_ticker() {
 
 /**
  * LIVE RESULTS TICKER — homepage ka naya section (additive, existing
- * kuch bhi nahi chheda gaya).
+ * kuch bhi nahi chheda gaya, News ticker se 100% isolated — alag
+ * class names, alag markup, koi shared selector nahi).
  *
- * [naukripatra_results_ticker] shortcode kisi plugin se aata hai, is
- * theme me register nahi hota — isliye shortcode_exists() se check
- * karke hi call kiya jaata hai (agar plugin kabhi inactive ho jaaye,
- * to yahan silently kuch nahi todega).
+ * [naukripatra_results_ticker] shortcode kisi plugin se aata hai
+ * (Result Management system), is theme me register nahi hota — na
+ * hi is theme se us system/database ko kabhi touch kiya jaata hai.
+ * shortcode_exists() se check karke hi call kiya jaata hai (agar
+ * plugin kabhi inactive ho jaaye, to yahan silently kuch nahi todega).
  *
- * FIX: Shortcode ka apna khud ka "🔴 LIVE RESULTS" label already
- * built-in hai (plugin ke andar) — pehle iske UPAR se bhi ek "🔴 LIVE
- * RESULTS" label wrap kiya jaata tha, jisse label DO BAAR dikhta tha
- * (ek box ke andar text repeat). Ab jab asli shortcode render hota
- * hai, humara apna label print NAHI hota — sirf shortcode ka khud ka
- * output dikhta hai. Humara label sirf "Coming Soon" placeholder ke
- * saath dikhta hai (jahan koi plugin output hi nahi hai, label ki
- * zaroorat hai).
+ * FIX 1 (double label — pehle fix ho chuka): Shortcode ka apna khud
+ * ka "🔴 LIVE RESULTS" label already built-in hai — humara wrapper
+ * apna alag label nahi jodta jab asli shortcode render hota hai.
  *
- * "Result" category me post count check karke decide karta hai ki
- * asli shortcode dikhana hai ya "Coming Soon" — shortcode ke apne
- * empty-state par depend nahi karta.
+ * FIX 2 (overlapping/broken layout — YEH FIX): Shortcode ka internal
+ * ticker/marquee kisi bhi standard marquee ki tarah apne CONTAINER
+ * se overflow:hidden + ek defined height expect karta hai (taaki
+ * scrolling content clip ho, na ki neeche/upar overflow karke ek
+ * dusre par overlap kare). Humara wrapper pehle overflow-x:auto
+ * (sirf scrollbar) de raha tha, koi height nahi — isse plugin ka
+ * scrolling content clip nahi ho pa raha tha, text upar-upar
+ * overlap/repeat ho raha tha. Ab poori tarah clip + bounded height
+ * + apna stacking context (isolation:isolate) diya gaya hai.
+ *
+ * FIX 3 (duplicate render safety): static flag guarantee karta hai
+ * ki yeh function (aur andar ka do_shortcode) ek page-load me kabhi
+ * ek se zyada baar execute na ho.
  */
 function np_render_results_ticker() {
+	static $done = false;
+	if ( $done ) return;
+	$done = true;
+
 	$term        = get_term_by( 'slug', 'result', 'category' );
 	$has_results = $term && ! is_wp_error( $term ) && (int) $term->count > 0;
 
 	if ( $has_results && shortcode_exists( 'naukripatra_results_ticker' ) ) {
 		// Shortcode khud self-contained hai (apna label + apna box styling
-		// already deta hai) — isliye sirf spacing wrapper, koi extra box/
-		// label nahi (warna do box ya do label ek saath dikhte).
-		echo '<div class="np-results-ticker-live">';
-		echo do_shortcode( '[naukripatra_results_ticker]' );
-		echo '</div>';
+		// already deta hai) — isliye sirf isolation/containment wrapper,
+		// koi extra box/label nahi (warna do box ya do label ek saath
+		// dikhte — jo pehle fix ho chuka).
+		echo '<div class="np-results-ticker-live">' . do_shortcode( '[naukripatra_results_ticker]' ) . '</div>';
 	} else {
 		echo '<div class="np-results-ticker">';
 		echo '<span class="np-results-label">🔴 LIVE RESULTS</span>';
