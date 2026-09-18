@@ -1,0 +1,105 @@
+/*
+Theme Name:   Naukripatra Child
+Theme URI:    https://naukripatra.in/
+Description:  Child theme for GeneratePress powering the Naukripatra premium redesign. All custom CSS, PHP and JS for naukripatra.in lives here — the GeneratePress parent theme is never edited.
+Author:       Naukripatra
+Author URI:   https://naukripatra.in/
+Template:     generatepress
+Version:      1.0.0
+Requires PHP: 7.4
+Text Domain:  naukripatra
+*/
+
+/* ==========================================================================
+   PHASE 1 — DESIGN TOKENS ONLY (no visual changes yet)
+   --------------------------------------------------------------------------
+   These are CSS custom properties. Nothing below applies a colour to an
+   existing element, so activating this child theme does NOT change how the
+   live site looks. Phase 2+ styling will consume these variables.
+
+   WHERE AN ADMIN CHANGES THINGS:
+   - Logo / site title / header layout : Appearance > Customize > Site Identity + Layout
+   - Global colours (GeneratePress)    : Appearance > Customize > Colors
+   - Typography                        : Appearance > Customize > Typography
+   - Menus (incl. future mega menu)    : Appearance > Menus
+   - Widgets / sidebar / ad slots      : Appearance > Widgets
+   Only the brand token values below are code-level; everything an editor
+   touches day to day is a wp-admin screen.
+   ========================================================================== */
+
+:root {
+	/* Brand */
+	--np-primary:        #0b3fd8;
+	--np-primary-dark:   #082ea0;
+	--np-primary-light:  #e8eeff;
+	--np-accent:         #ff7a00;   /* CTA orange */
+	--np-accent-dark:    #e06a00;
+
+	/* Status badges (Phase 3 job table) */
+	--np-status-open:    #12904a;
+	--np-status-soon:    #c98100;
+	--np-status-closed:  #c0392b;
+
+	/* Neutrals */
+	--np-text:           #17203a;
+	--np-text-muted:     #5c6780;
+	--np-border:         #e2e6ef;
+	--np-surface:        #ffffff;
+	--np-surface-alt:    #f6f8fc;
+
+	/* Reusable card component (Phase 7 consistency rule) */
+	--np-radius:         12px;
+	--np-radius-sm:      8px;
+	--np-shadow:         0 1px 2px rgba(23, 32, 58, .06), 0 4px 16px rgba(23, 32, 58, .06);
+	--np-shadow-hover:   0 6px 24px rgba(23, 32, 58, .12);
+	--np-transition:     180ms cubic-bezier(.4, 0, .2, 1);
+
+	/* Spacing scale — vertical rhythm between sections */
+	--np-space-1: 4px;
+	--np-space-2: 8px;
+	--np-space-3: 16px;
+	--np-space-4: 24px;
+	--np-space-5: 32px;
+	--np-space-6: 48px;
+	--np-space-7: 64px;
+
+	/* Fonts — Phase 7 will enqueue these; falls back to GeneratePress fonts now */
+	--np-font-heading: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+	--np-font-body:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Reserved ad containers. Used from Phase 2 onward so AdSense units never
+   cause layout shift (CLS). The height is reserved before the ad loads. */
+.np-ad {
+	display: block;
+	margin: var(--np-space-4) auto;
+	text-align: center;
+	overflow: hidden;
+}
+.np-ad__label {
+	display: block;
+	font-size: 11px;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--np-text-muted);
+	margin-bottom: var(--np-space-1);
+}
+.np-ad--leaderboard { width: 728px; height: 90px; max-width: 100%; }
+.np-ad--rect        { width: 300px; height: 250px; max-width: 100%; }
+.np-ad--halfpage    { width: 300px; height: 600px; max-width: 100%; }
+.np-ad--native      { width: 336px; height: 280px; max-width: 100%; }
+
+@media (max-width: 767px) {
+	.np-ad--leaderboard { width: 320px; height: 50px; }
+	.np-ad--halfpage    { display: none; } /* desktop-only slot */
+}
+
+/* Empty-state block used by every dynamic list/table (zero-data safety). */
+.np-empty {
+	border: 1px dashed var(--np-border);
+	border-radius: var(--np-radius);
+	padding: var(--np-space-6) var(--np-space-4);
+	text-align: center;
+	color: var(--np-text-muted);
+	background: var(--np-surface-alt);
+}
