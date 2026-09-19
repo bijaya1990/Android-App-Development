@@ -150,3 +150,88 @@ function np_skin_parent_notice() {
 	);
 }
 add_action( 'admin_notices', 'np_skin_parent_notice' );
+
+/**
+ * SETTINGS SAFETY NET — the one real risk of activating any new theme.
+ *
+ * WordPress stores Customizer settings PER THEME, in the option
+ * `theme_mods_<theme-folder>`. So the moment you activate a different theme,
+ * these look "gone" even though nothing was deleted:
+ *   - site logo,
+ *   - menu locations (which menu shows in the header / slide-out),
+ *   - Appearance > Customize > Additional CSS,
+ *   - GeneratePress Customizer layout choices.
+ *
+ * They are all still sitting safely under the OLD theme's option, and come
+ * back the instant you switch back. But to avoid even that momentary scare,
+ * this copies the previous theme's settings across on first activation.
+ *
+ * It only COPIES. The old theme's settings are never modified or removed, so
+ * switching back to GeneratePress still restores the exact current site.
+ * It also runs only once — if this theme already has settings, it does nothing.
+ *
+ * @param string   $old_name  Name of the previously active theme.
+ * @param WP_Theme $old_theme The previously active theme object.
+ */
+function np_skin_inherit_settings( $old_name = '', $old_theme = null ) {
+	$current = get_stylesheet();
+
+	// Already configured? Leave it alone.
+	$existing = get_option( 'theme_mods_' . $current );
+	if ( ! empty( $existing ) && is_array( $existing ) ) {
+		return;
+	}
+
+	$previous = ( $old_theme instanceof WP_Theme ) ? $old_theme->get_stylesheet() : '';
+	$mods     = $previous ? get_option( 'theme_mods_' . $previous ) : array();
+
+	// Fall back to the parent theme's settings.
+	if ( empty( $mods ) || ! is_array( $mods ) ) {
+		$mods     = get_option( 'theme_mods_generatepress' );
+		$previous = 'generatepress';
+	}
+
+	if ( empty( $mods ) || ! is_array( $mods ) ) {
+		return;
+	}
+
+	$mods['np_skin_inherited_from'] = $previous;
+	update_option( 'theme_mods_' . $current, $mods );
+	update_option( 'np_skin_inherited', $previous );
+}
+add_action( 'after_switch_theme', 'np_skin_inherit_settings', 10, 2 );
+
+/**
+ * Tell the admin what was inherited, once.
+ */
+function np_skin_inherited_notice() {
+	$from = get_option( 'np_skin_inherited' );
+	if ( ! $from || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( get_user_meta( get_current_user_id(), 'np_skin_notice_seen', true ) ) {
+		return;
+	}
+
+	printf(
+		'<div class="notice notice-success"><p><strong>%s</strong> %s <code>%s</code>. <a href="%s">%s</a></p></div>',
+		esc_html__( 'Naukripatra Skin active.', 'naukripatra-skin' ),
+		esc_html__( 'Your logo, menu locations and Additional CSS were copied over from', 'naukripatra-skin' ),
+		esc_html( $from ),
+		esc_url( wp_nonce_url( add_query_arg( 'np_skin_seen', 1 ), 'np_skin_seen' ) ),
+		esc_html__( 'Got it', 'naukripatra-skin' )
+	);
+}
+add_action( 'admin_notices', 'np_skin_inherited_notice' );
+
+/**
+ * Dismiss the notice above.
+ */
+function np_skin_dismiss_notice() {
+	if ( ! isset( $_GET['np_skin_seen'] ) || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	check_admin_referer( 'np_skin_seen' );
+	update_user_meta( get_current_user_id(), 'np_skin_notice_seen', 1 );
+}
+add_action( 'admin_init', 'np_skin_dismiss_notice' );
