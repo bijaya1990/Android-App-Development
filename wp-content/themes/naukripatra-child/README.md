@@ -1,73 +1,116 @@
-# Naukripatra Child Theme (GeneratePress)
+# Naukripatra Skin — GeneratePress child theme
 
-All custom code for the naukripatra.in redesign. The GeneratePress parent theme
-is **never** edited — updating GeneratePress will never overwrite anything here.
+naukripatra.in ka **look-only** child theme. HTML, URL, REST API, SEO — kuch nahi
+badalta. Sirf CSS (aur single post par ek chhota JS jo sirf class add karta hai).
 
-## Install
+---
 
-1. Zip the `naukripatra-child` folder.
-2. **Appearance → Themes → Add New → Upload Theme** → upload → **Activate**.
-   (GeneratePress must stay installed — it is the parent.)
-3. Visit **Settings → Permalinks** once and click *Save* (rebuilds the URL cache).
+## Install (5 minute)
 
-Nothing about the site's appearance changes after activation. Phase 1 is
-foundation only.
+1. **Backup lein** — UpdraftPlus → *Backup Now* (database + files). `docs/BACKUP-AND-STAGING.md` dekhiye.
+2. **Appearance → Themes → Add New → Upload Theme** → `naukripatra-child.zip` → **Install** → **Activate**.
+   (GeneratePress installed rehna chahiye — yeh uska child hai.)
+3. Homepage aur ek job post kholkar dekh lein.
+4. Pasand na aaye? **Appearance → Themes → GeneratePress → Activate.** Purana look turant wapas.
+
+> Zaroori: activate karne ke baad apni purani CSS **mat hataiye**.
+> Skin uske upar apne aap lag jati hai (`body.np-skin` scoping ki wajah se).
+> Baad me chahein to purani np- CSS hata sakte hain — tab skin aur saaf dikhegi.
+
+---
+
+## Kya-kya style hota hai
+
+**Homepage** — bilkul wahi sections, wahi order, sirf naya look:
+
+| Aapka block | Naya look |
+|---|---|
+| `.np-hero` | Navy → blue gradient, gold glow, badi search bar |
+| `.np-ticker` (🔴 LIVE) | Red label + white card, hover par ruk jata hai |
+| `.npr-ticker` (LIVE RESULTS) | Green label, "CHECK RESULT" chip |
+| `.np-trend-zone` | Trending Jobs + Quick Menu — do saaf cards |
+| `.np-quick-btn` | Icon tiles, hover par lift + shadow |
+| `.np-appbar` | Gradient band, Play/WhatsApp/Telegram buttons |
+| `.np-states` | 36 state buttons, gold dot, hover highlight |
+| `.np-sections` (`np-card-1…6`) | 6 colour-coded card panels, NEW badge, "View All" footer |
+| `.np-float`, `.np-top`, `.np-sticky-menu` | Restyled, jagah wahi |
+
+**Single job post — Naukri.com jaisa:**
+
+- `⚡ Quick Details` box → gold-accent highlights strip
+- Content ek white card me, h2 par gold accent bar
+- Tables saaf (navy header, alternate rows, mobile par apna scroll — page side me nahi hilta)
+- **Important Links** list → button grid (sirf class add hoti hai)
+- **FAQ** ke `Q1.` heading + answer → accordion (text DOM me hi rehta hai)
+- Mobile par neeche **sticky Apply bar**, page ke apne links se banti hai
+
+---
+
+## Colour badalna (ek jagah)
+
+`style.css` ke top par `:root` block hai:
+
+```css
+--np-navy:#12307f;   /* main brand colour  */
+--np-gold:#c08a12;   /* accent / CTA       */
+--np-red:#c62828;    /* LIVE, NEW, last date */
+--np-green:#0f7a4d;  /* results, Apply Now */
+```
+
+Inhe badaliye — poori site follow karegi. Editing: **Appearance → Theme File Editor → style.css**,
+ya behtar: **Appearance → Customize → Additional CSS** me sirf yeh likh dijiye:
+
+```css
+:root{ --np-navy:#0b3fd8; --np-gold:#ff7a00; }
+```
+
+---
+
+## Kaunsi screen se kya control hota hai
+
+| Kya badalna hai | Kahan jaiye |
+|---|---|
+| Naya job post | **Posts → Add New** (bilkul jaise abhi karte hain) |
+| Logo / site title | Appearance → Customize → Site Identity |
+| Menu | Appearance → Menus |
+| Widgets / ad slots | Appearance → Widgets |
+| Homepage sections | Wahi page/blocks jo abhi edit karte hain |
+| Push notification | OneSignal menu (untouched) |
+| AdSense | Site Kit menu (untouched) |
+
+---
+
+## Switch off karne ke tarike (rollback)
+
+`wp-config.php` me `/* That's all, stop editing! */` se upar:
+
+```php
+define( 'NP_SKIN', false );           // poori skin band
+define( 'NP_SKIN_FONTS', false );     // Google Fonts band, baaki chalu
+define( 'NP_SKIN_POST_JS', false );   // FAQ accordion + apply bar band
+define( 'NP_SKIN_FAQ', false );       // sirf FAQ accordion band
+define( 'NP_SKIN_APPLY_BAR', false ); // sirf mobile apply bar band
+```
+
+Ya theme hi switch kar dijiye — **Appearance → Themes → GeneratePress**.
+
+---
+
+## Guarantee (kya nahi chhua gaya)
+
+- ❌ Koi URL, slug, permalink, redirect — nahi
+- ❌ Koi custom post type, custom field, taxonomy, DB table — nahi
+- ❌ `/wp-json` REST API — waisa ka waisa
+- ❌ Sitemap, canonical, schema, SEO plugin output — waisa ka waisa
+- ❌ Post ka content edit/delete — nahi (JS sirf class add karta hai)
+- ❌ GeneratePress parent theme ya koi plugin file — nahi
+- ✅ Deactivate = purana look, zero data loss
 
 ## Files
 
-| File | What it does |
+| File | Kaam |
 |---|---|
-| `style.css` | Theme header + design tokens (`:root` CSS variables): colours, radius, shadow, spacing scale, fonts. Change brand colours here in one place. |
-| `functions.php` | Loads everything, enqueues styles, one-time rewrite flush. |
-| `inc/flags.php` | Feature flags — the rollback switch for every phase. |
-| `inc/helpers.php` | Field reading, date parsing, **automatic status calculation**. |
-| `inc/cpt-jobs.php` | Jobs post type, State + Job Category taxonomies, state/region list. |
-| `inc/fields-jobs.php` | ACF field group (with a metabox fallback so data survives without ACF) + Jobs admin columns. |
-| `inc/admin-notices.php` | Health checks: missing parent theme, missing ACF, URL collisions. |
-
-## Which admin screen controls which element
-
-| You want to change… | Go to |
-|---|---|
-| Add / edit a job posting | **Jobs → Add New** (fill the *Job Details* form — no code) |
-| The state list | **Jobs → States** |
-| Latest Job / Admit Card / Result / … list | **Jobs → Job Categories** |
-| Logo, site title, favicon | **Appearance → Customize → Site Identity** |
-| Global colours | **Appearance → Customize → Colors** (brand tokens: `style.css` `:root`) |
-| Fonts | **Appearance → Customize → Typography** |
-| Header / footer / sidebar layout | **Appearance → Customize → Layout** |
-| Menus (incl. the future States mega menu) | **Appearance → Menus** |
-| Sidebar & footer widgets, ad slots | **Appearance → Widgets** |
-| Push notifications | **OneSignal** menu (unchanged) |
-| AdSense | **Site Kit** menu (unchanged) |
-
-## Status badges are automatic
-
-Never tag a job as open/closed by hand. The badge comes from **Last Date to
-Apply**:
-
-* more than 7 days left → 🟢 Apply Now
-* 7 days or fewer → 🟡 Closing Soon
-* past the last date → 🔴 Closed
-* no last date entered → treated as Apply Now
-
-## Turning things off (rollback)
-
-Add to `wp-config.php`, above `/* That's all, stop editing! */`:
-
-```php
-define( 'NP_ENABLE_JOBS_CPT', false );
-```
-
-The Jobs menu disappears; **no job posts and no field data are deleted** — they
-stay in the database and reappear when the flag is removed. Switching back to
-plain GeneratePress (Appearance → Themes) restores the previous site exactly.
-
-## Free-tier notes
-
-* **ACF free** covers every field above. An FAQ *repeater* (Phase 4) and
-  flexible content need **ACF Pro** — the free fallback will be a structured
-  textarea (`Question | Answer` per line). Works, just less pretty to edit.
-* **GenerateBlocks free** is enough for Phases 2–3 layouts. GenerateBlocks Pro
-  would add loop/query blocks and global styles, saving some custom PHP.
-* No Elementor Pro needed anywhere in this plan.
+| `style.css` | Poori skin (252 rules) + brand colour variables |
+| `functions.php` | Parent + child CSS load, `np-skin` body class, switches |
+| `assets/js/skin.js` | Sirf single post par: class add, table scroll wrap, FAQ accordion, apply bar |
+| `screenshot.png` | Themes screen ka thumbnail |
