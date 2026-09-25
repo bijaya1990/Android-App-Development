@@ -187,7 +187,6 @@
                         style="@style/Text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/select_state"
                         android:fontFamily="@font/jakarta_700"
                         android:hint="@string/select_state"
                         android:inputType="none"
@@ -199,7 +198,7 @@
         </ScrollView>
     </ViewFlipper>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/next"
         style="@style/Button.Primary"
         android:layout_width="match_parent"

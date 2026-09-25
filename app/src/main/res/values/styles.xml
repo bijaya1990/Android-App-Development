@@ -191,8 +191,10 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_glass</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:paddingHorizontal">10dp</item>
-        <item name="android:paddingVertical">9dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">9dp</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
@@ -252,4 +254,5 @@
         <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginBottom">8dp</item>
     </style>
+
 </resources>

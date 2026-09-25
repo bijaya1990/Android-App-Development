@@ -3,6 +3,8 @@ package in.naukripatra.app;
 import android.app.Application;
 import android.content.Intent;
 
+import androidx.core.app.TaskStackBuilder;
+
 import com.onesignal.OneSignal;
 import com.onesignal.debug.LogLevel;
 
@@ -29,16 +31,12 @@ public class NaukriPatraApp extends Application {
         // Launch URLs are opened inside the app (see manifest: suppressLaunchURLs),
         // so a tapped job notification lands on that job's detail page.
         OneSignal.getNotifications().addClickListener(event -> {
-            String url = event.getNotification().getLaunchURL();
-            Intent intent;
-            String slug = slugFrom(url);
-            if (slug.isEmpty()) {
-                intent = new Intent(this, MainActivity.class);
-            } else {
-                intent = JobDetailActivity.forSlug(this, slug);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            String slug = slugFrom(event.getNotification().getLaunchURL());
+            // Home sits under the job, so Back from the job returns to the app.
+            TaskStackBuilder stack = TaskStackBuilder.create(this)
+                    .addNextIntent(new Intent(this, MainActivity.class));
+            if (!slug.isEmpty()) stack.addNextIntent(JobDetailActivity.forSlug(this, slug));
+            stack.startActivities();
         });
     }
 

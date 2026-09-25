@@ -37,7 +37,7 @@ class RelatedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Job job = jobs.get(position);
         View v = holder.itemView;
-        Ui.bindLogo(v.findViewById(R.id.logo), job.initials(), job.title);
+        Ui.bindThumb(v.findViewById(R.id.thumb), v.findViewById(R.id.logo), job.image, job.initials(), job.title);
         ((TextView) v.findViewById(R.id.title)).setText(job.title);
         ((TextView) v.findViewById(R.id.date)).setText(v.getContext().getString(R.string.posted_on, job.date));
         v.setOnClickListener(x -> click.onJobClick(job));

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Logo on a white rounded tile, centred inside the 288dp splash icon canvas. -->
+<!-- Logo on a white circle, centred inside the 288dp splash icon canvas.
+     The square logo is sized so its corners stay inside the circle. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:width="288dp" android:height="288dp">
         <shape android:shape="rectangle"><solid android:color="@android:color/transparent" /></shape>
     </item>
-    <item android:width="150dp" android:height="150dp" android:gravity="center">
+    <item android:width="156dp" android:height="156dp" android:gravity="center">
         <shape android:shape="oval"><solid android:color="#FFFFFF" /></shape>
     </item>
-    <item android:width="118dp" android:height="118dp" android:gravity="center" android:drawable="@drawable/app_logo" />
+    <item android:width="104dp" android:height="104dp" android:gravity="center" android:drawable="@drawable/app_logo" />
 </layer-list>

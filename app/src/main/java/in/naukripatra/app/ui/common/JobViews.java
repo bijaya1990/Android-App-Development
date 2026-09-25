@@ -35,7 +35,8 @@ public final class JobViews {
         TextView newTag = card.findViewById(R.id.newTag);
         View metaRow = card.findViewById(R.id.metaRow);
 
-        Ui.bindLogo(logo, job.initials(), job.organization.isEmpty() ? job.title : job.organization);
+        Ui.bindThumb(card.findViewById(R.id.thumb), logo, job.image, job.initials(),
+                job.organization.isEmpty() ? job.title : job.organization);
         title.setText(job.title);
         Ui.textOrGone(org, !job.organization.isEmpty() ? job.organization : job.date);
 
@@ -47,7 +48,7 @@ public final class JobViews {
                 && qualification.getVisibility() == View.GONE ? View.GONE : View.VISIBLE);
 
         if (!job.lastDate.isEmpty()) {
-            lastDate.setText(c.getString(R.string.last_date_prefix) + Deadline.pretty(job.lastDate));
+            lastDate.setText(c.getString(R.string.last_date_value, Deadline.pretty(job.lastDate)));
         } else {
             lastDate.setText(c.getString(R.string.posted_on, job.date));
         }

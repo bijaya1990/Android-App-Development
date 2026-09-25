@@ -38,6 +38,13 @@ public final class Ui {
         view.setCompoundDrawablesRelative(d, null, null, null);
     }
 
+    /** Same as {@link #startIcon} but after the text. */
+    public static void endIcon(TextView view, @DrawableRes int icon, int sizeDp, @ColorInt int color) {
+        startIcon(view, icon, sizeDp, color);
+        Drawable d = view.getCompoundDrawablesRelative()[0];
+        view.setCompoundDrawablesRelative(null, null, d, null);
+    }
+
     public static void startIcon(TextView view, @DrawableRes int icon, int sizeDp) {
         startIcon(view, icon, sizeDp, view.getCurrentTextColor());
     }
@@ -74,6 +81,51 @@ public final class Ui {
         logo.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(c, pair[0])));
         logo.setTextColor(ContextCompat.getColor(c, pair[1]));
         logo.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, initials.length() > 3 ? 10.5f : 13f);
+    }
+
+    /**
+     * Shows the API thumbnail with rounded corners. The initials box underneath stays
+     * as the placeholder and remains visible if there is no image or it fails to load.
+     */
+    public static void bindThumb(android.widget.ImageView thumb, TextView fallback, String url,
+                                 String initials, String key) {
+        bindThumb(thumb, fallback, url, initials, key, 10);
+    }
+
+    public static void bindThumb(android.widget.ImageView thumb, TextView fallback, String url,
+                                 String initials, String key, int radiusDp) {
+        bindLogo(fallback, initials, key);
+        com.bumptech.glide.Glide.with(thumb).clear(thumb);
+        if (Text.isEmpty(url)) {
+            thumb.setVisibility(View.GONE);
+            return;
+        }
+        thumb.setVisibility(View.VISIBLE);
+        com.bumptech.glide.Glide.with(thumb)
+                .load(url)
+                .transform(new com.bumptech.glide.load.resource.bitmap.CenterCrop(),
+                        new com.bumptech.glide.load.resource.bitmap.RoundedCorners(dp(thumb.getContext(), radiusDp)))
+                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(150))
+                .listener(new com.bumptech.glide.request.RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e,
+                                                Object model,
+                                                @androidx.annotation.NonNull com.bumptech.glide.request.target.Target<Drawable> target,
+                                                boolean isFirstResource) {
+                        thumb.setVisibility(View.GONE);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(@androidx.annotation.NonNull Drawable resource,
+                                                   @androidx.annotation.NonNull Object model,
+                                                   com.bumptech.glide.request.target.Target<Drawable> target,
+                                                   @androidx.annotation.NonNull com.bumptech.glide.load.DataSource dataSource,
+                                                   boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                .into(thumb);
     }
 
     // ============ Edge-to-edge insets ============

@@ -47,6 +47,5 @@
     <color name="disclaimer_line">#FDE3A7</color>
     <color name="disclaimer_text">#6B5320</color>
     <color name="skeleton">#E6ECF3</color>
-    <color name="scrim">#66000000</color>
     <color name="splash_bg">#0C2D6B</color>
 </resources>

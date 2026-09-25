@@ -204,8 +204,7 @@ public class JobDetailFragment extends Fragment {
         View v = root;
 
         ((TextView) v.findViewById(R.id.title)).setText(d.title);
-        TextView orgLogo = v.findViewById(R.id.orgLogo);
-        orgLogo.setText(Text.initials(d.organization.isEmpty() ? d.title : d.organization));
+        bindHero();
         StringBuilder orgLine = new StringBuilder();
         if (!d.organization.isEmpty()) orgLine.append(d.organization).append(" · ");
         orgLine.append(getString(R.string.posted_on, d.date));
@@ -224,7 +223,7 @@ public class JobDetailFragment extends Fragment {
         TextView source = v.findViewById(R.id.source);
         String host = d.sourceHost();
         if (!host.isEmpty()) {
-            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(getString(R.string.source_label));
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(getString(R.string.source_label)).append(' ');
             int start = sb.length();
             sb.append(host);
             sb.setSpan(new android.text.style.ForegroundColorSpan(ContextCompat.getColor(c, R.color.link)), start, sb.length(), 0);
@@ -262,6 +261,39 @@ public class JobDetailFragment extends Fragment {
         bindActionBar();
     }
 
+    private void bindHero() {
+        View box = root.findViewById(R.id.heroBox);
+        ImageView hero = root.findViewById(R.id.hero);
+        if (detail.image.isEmpty()) {
+            box.setVisibility(View.GONE);
+            return;
+        }
+        box.setVisibility(View.VISIBLE);
+        com.bumptech.glide.Glide.with(this)
+                .load(detail.image)
+                .transform(new com.bumptech.glide.load.resource.bitmap.CenterCrop(),
+                        new com.bumptech.glide.load.resource.bitmap.RoundedCorners(Ui.dp(requireContext(), 16)))
+                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(200))
+                .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable com.bumptech.glide.load.engine.GlideException e, Object model,
+                                                @NonNull com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target,
+                                                boolean isFirstResource) {
+                        box.setVisibility(View.GONE);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(@NonNull android.graphics.drawable.Drawable resource, @NonNull Object model,
+                                                   com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target,
+                                                   @NonNull com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                        hero.setBackground(null);
+                        return false;
+                    }
+                })
+                .into(hero);
+    }
+
     private void bindSave(ImageButton save) {
         boolean saved = SavedJobs.isSaved(requireContext(), detail.id);
         save.setImageResource(saved ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_border);
@@ -277,13 +309,13 @@ public class JobDetailFragment extends Fragment {
         if (!detail.jobType.isEmpty() && detail.jobType.length() <= 28) values.add(detail.jobType);
         if (!detail.applicationMode.isEmpty() && detail.applicationMode.length() <= 22) values.add(detail.applicationMode);
         int days = Deadline.daysLeft(detail.lastDate);
-        for (String value : values) tags.addView(tag(value, false));
-        if (days != Deadline.UNKNOWN && days >= 0) tags.addView(tag("● Apply Open", true));
+        for (String value : values) tags.addView(tag(tags, value, false));
+        if (days != Deadline.UNKNOWN && days >= 0) tags.addView(tag(tags, "● Apply Open", true));
         tags.setVisibility(tags.getChildCount() == 0 ? View.GONE : View.VISIBLE);
     }
 
-    private TextView tag(String text, boolean open) {
-        TextView t = (TextView) getLayoutInflater().inflate(R.layout.item_tag, null, false);
+    private TextView tag(ViewGroup parent, String text, boolean open) {
+        TextView t = (TextView) getLayoutInflater().inflate(R.layout.item_tag, parent, false);
         t.setText(text);
         if (open) t.setBackgroundTintList(ColorStateList.valueOf(0xFF059669));
         return t;
@@ -447,25 +479,24 @@ public class JobDetailFragment extends Fragment {
         pdf.setVisibility(d.notificationLink.isEmpty() ? View.GONE : View.VISIBLE);
         pdf.setOnClickListener(x -> Links.open(requireContext(), d.notificationLink));
 
-        TextView apply = root.findViewById(R.id.btnApply);
-        String target;
-        int label;
-        if (!d.applyLink.isEmpty()) {
-            target = d.applyLink;
-            label = R.string.apply_now;
-        } else if (!d.officialWebsite.isEmpty()) {
-            target = d.officialWebsite;
-            label = R.string.visit_website;
-        } else {
-            target = null;
-            label = R.string.read_details;
-        }
-        apply.setText(label);
-        Ui.startIcon(apply, target == null ? R.drawable.ic_article : R.drawable.ic_open_in_new, 18,
-                ContextCompat.getColor(requireContext(), R.color.on_brand));
-        apply.setOnClickListener(x -> {
-            if (target != null) Links.open(requireContext(), target);
-            else openArticle();
+        View applyButton = root.findViewById(R.id.btnApply);
+        TextView apply = root.findViewById(R.id.btnApplyText);
+        // Always "Apply Now": opens the apply link from the API directly, or tells
+        // the user there is no link yet - never a different page in its place.
+        boolean hasLink = !d.applyLink.isEmpty();
+        apply.setText(R.string.apply_now);
+        Ui.endIcon(apply, R.drawable.ic_open_in_new, 18, ContextCompat.getColor(requireContext(), R.color.on_brand));
+        applyButton.setAlpha(hasLink ? 1f : 0.7f);
+        applyButton.setContentDescription(getString(R.string.apply_now));
+        applyButton.setOnClickListener(x -> {
+            if (hasLink) {
+                Links.open(requireContext(), d.applyLink);
+            } else {
+                com.google.android.material.snackbar.Snackbar
+                        .make(root, R.string.apply_link_unavailable, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                        .setAnchorView(bar)
+                        .show();
+            }
         });
     }
 
@@ -504,8 +535,19 @@ public class JobDetailFragment extends Fragment {
 
     private void loadAd() {
         FrameLayout container = root.findViewById(R.id.adContainer);
+        View caption = root.findViewById(R.id.adCaption);
+        // Reserve the ad space while it loads so the page does not jump.
+        container.setVisibility(View.VISIBLE);
+        caption.setVisibility(View.VISIBLE);
+        in.naukripatra.app.ui.common.Skeleton.pulse(root.findViewById(R.id.adSkeleton));
         Ads.loadNative(requireContext(), ad -> {
-            if (ad == null) return;
+            if (ad == null) {
+                if (getView() != null) {
+                    container.setVisibility(View.GONE);
+                    caption.setVisibility(View.GONE);
+                }
+                return;
+            }
             if (!isAdded() || getView() == null) {
                 ad.destroy();
                 return;

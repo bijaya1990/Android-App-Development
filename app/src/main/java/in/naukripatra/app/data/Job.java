@@ -25,9 +25,17 @@ public final class Job {
     public final String date;
     public final String excerpt;
     public final String link;
+    /** Thumbnail from the API (1200x630 banner); may be empty. */
+    public final String image;
 
     public Job(int id, String title, String organization, String vacancy, String qualification,
                String salary, String lastDate, String location, String date, String excerpt, String link) {
+        this(id, title, organization, vacancy, qualification, salary, lastDate, location, date, excerpt, link, "");
+    }
+
+    public Job(int id, String title, String organization, String vacancy, String qualification,
+               String salary, String lastDate, String location, String date, String excerpt, String link,
+               String image) {
         this.id = id;
         this.title = title;
         this.organization = organization;
@@ -39,6 +47,7 @@ public final class Job {
         this.date = date;
         this.excerpt = excerpt;
         this.link = link;
+        this.image = image == null ? "" : image;
     }
 
     public static Job fromJson(JSONObject o) {
@@ -53,7 +62,8 @@ public final class Job {
                 Text.clean(o.optString("job_location")),
                 Text.clean(o.optString("date")),
                 Text.html(o.optString("excerpt")),
-                o.optString("link"));
+                o.optString("link"),
+                Text.url(o.optString("image", o.optString("featured_image"))));
     }
 
     public static List<Job> listFrom(JSONArray array) {
@@ -73,7 +83,7 @@ public final class Job {
                     .put("vacancy", vacancy).put("qualification", qualification)
                     .put("salary", salary).put("last_date", lastDate)
                     .put("job_location", location).put("date", date)
-                    .put("excerpt", excerpt).put("link", link);
+                    .put("excerpt", excerpt).put("link", link).put("image", image);
         } catch (JSONException ignored) {
         }
         return o;

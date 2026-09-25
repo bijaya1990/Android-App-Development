@@ -18,6 +18,7 @@ public final class JobDetail {
     public String excerpt = "";
     public String permalink = "";
     public String readingTime = "";
+    public String image = "";
 
     public String organization = "";
     public String postName = "";
@@ -51,6 +52,7 @@ public final class JobDetail {
             d.excerpt = Text.html(post.optString("excerpt"));
             d.permalink = post.optString("permalink");
             d.readingTime = Text.clean(post.optString("reading_time"));
+            d.image = Text.url(post.optString("featured_image"));
         }
         JSONObject s = json.optJSONObject("summary");
         if (s != null) {
@@ -92,7 +94,7 @@ public final class JobDetail {
     /** Snapshot used for bookmarks, so a saved job shows the same card as in lists. */
     public Job toJob() {
         return new Job(id, title, organization, vacancy, qualification, salary, lastDate,
-                location, date, excerpt, permalink);
+                location, date, excerpt, permalink, image);
     }
 
     /** Host of the official site, shown as the source of this post. */

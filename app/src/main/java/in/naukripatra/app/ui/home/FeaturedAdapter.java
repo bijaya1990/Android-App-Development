@@ -65,7 +65,10 @@ class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.Holder> {
         bg.setCornerRadius(Ui.dp(h.itemView.getContext(), 18));
         h.itemView.setBackground(bg);
 
-        h.logo.setText(job.initials());
+        Ui.bindThumb(h.thumb, h.logo, job.image, job.initials(), job.title);
+        // Keep the initials white on the gradient card.
+        h.logo.setTextColor(0xFFFFFFFF);
+        h.logo.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0x38FFFFFF));
         h.title.setText(job.title);
 
         StringBuilder meta = new StringBuilder();
@@ -108,6 +111,7 @@ class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.Holder> {
     static class Holder extends RecyclerView.ViewHolder {
         final TextView logo, title, meta, deadline;
         final ImageButton bookmark;
+        final android.widget.ImageView thumb;
 
         Holder(View v) {
             super(v);
@@ -116,6 +120,7 @@ class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.Holder> {
             meta = v.findViewById(R.id.meta);
             deadline = v.findViewById(R.id.deadline);
             bookmark = v.findViewById(R.id.bookmark);
+            thumb = v.findViewById(R.id.thumb);
         }
     }
 }

@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">NaukriPatra</string>
     <string name="tagline">Find Your Dream Job</string>
-    <string name="tagline_hi">अपनी सपनों की नौकरी पाएं</string>
     <string name="namaste">Namaste 👋</string>
 
     <string name="nav_home">Home</string>
@@ -11,7 +10,6 @@
     <string name="nav_more">More</string>
 
     <string name="search_hint">Search post, department, exam…</string>
-    <string name="state_label">State</string>
     <string name="all_states">All States</string>
     <string name="select_state">Select your state</string>
 
@@ -45,7 +43,7 @@
     <string name="advertisement">ADVERTISEMENT</string>
     <string name="ad">Ad</string>
     <string name="new_tag">NEW</string>
-    <string name="last_date_prefix">Last date: </string>
+    <string name="last_date_value">Last date: %1$s</string>
 
     <string name="saved_title">Saved Jobs</string>
     <string name="saved_subtitle">Jobs you bookmark are kept on this phone</string>
@@ -99,6 +97,7 @@
     <string name="back">Back</string>
 
     <string name="job_details">Job Details</string>
+    <string name="job_image">Job banner</string>
     <string name="last_date_to_apply">LAST DATE TO APPLY</string>
     <string name="total_posts">Total Posts</string>
     <string name="salary">Salary</string>
@@ -123,10 +122,9 @@
     <string name="read_full">Read complete details</string>
     <string name="similar_jobs">Similar Jobs</string>
     <string name="apply_now">Apply Now</string>
-    <string name="visit_website">Visit Website</string>
-    <string name="read_details">Read Details</string>
+    <string name="apply_link_unavailable">Apply link is not available for this job yet. Please check the official notification.</string>
     <string name="posted_on">Posted %1$s</string>
-    <string name="source_label">Source: </string>
+    <string name="source_label">Source:</string>
     <string name="source_official">(official website)</string>
     <string name="disclaimer_short">NaukriPatra is an independent job information app and is not affiliated with any government body. Please verify all details on the official website before applying.</string>
     <string name="disclaimer_title">Disclaimer:</string>
@@ -134,7 +132,6 @@
     <string name="saved">Saved</string>
     <string name="share">Share</string>
     <string name="share_job">Share job</string>
-    <string name="notification">Notification</string>
     <string name="complete_details">Complete Details</string>
     <string name="job_not_found">This job is no longer available.</string>
 

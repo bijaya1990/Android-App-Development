@@ -101,6 +101,7 @@ public class OnboardingActivity extends AppCompatActivity {
             GridLayout.LayoutParams lp = new GridLayout.LayoutParams(
                     GridLayout.spec(GridLayout.UNDEFINED), GridLayout.spec(GridLayout.UNDEFINED, 1f));
             lp.width = 0;
+            lp.height = Ui.dp(this, 58);
             int gap = Ui.dp(this, 5);
             lp.setMargins(gap, gap, gap, gap);
             option.setLayoutParams(lp);

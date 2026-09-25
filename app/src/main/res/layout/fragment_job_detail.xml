@@ -94,24 +94,12 @@
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical">
 
-                        <TextView
-                            android:id="@+id/orgLogo"
-                            style="@style/Text"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:background="@drawable/bg_round8"
-                            android:fontFamily="@font/jakarta_800"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:textColor="@color/brand_700"
-                            android:textSize="9sp" />
 
                         <TextView
                             android:id="@+id/orgLine"
                             style="@style/Text.OnBrand"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
                             android:layout_weight="1"
                             android:alpha="0.92"
                             android:textSize="13sp"
@@ -202,7 +190,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
                                     app:indicatorColor="@color/accent"
+                                    app:indicatorTrackGapSize="0dp"
                                     app:trackColor="@color/line"
+                                    app:trackStopIndicatorSize="0dp"
                                     app:trackCornerRadius="4dp"
                                     app:trackThickness="6dp" />
                             </LinearLayout>
@@ -215,6 +205,27 @@
                                 tools:text="5 days left" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/heroBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/hero"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="@drawable/bg_round16"
+                            android:backgroundTint="@color/skeleton"
+                            android:contentDescription="@string/job_image"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintDimensionRatio="1200:630"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <GridLayout
                         android:id="@+id/facts"
@@ -283,7 +294,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:visibility="gone" />
+                        android:visibility="gone">
+
+                        <!-- Placeholder while the native ad loads; replaced by the ad. -->
+                        <View
+                            android:id="@+id/adSkeleton"
+                            android:layout_width="match_parent"
+                            android:layout_height="240dp"
+                            android:background="@drawable/bg_round16"
+                            android:backgroundTint="@color/skeleton" />
+                    </FrameLayout>
 
                     <!-- Overview -->
                     <com.google.android.material.card.MaterialCardView
@@ -507,23 +527,29 @@
             app:icon="@drawable/ic_share"
             app:iconTint="@color/green_text" />
 
-        <TextView
+        <FrameLayout
             android:id="@+id/btnApply"
-            style="@style/Text"
             android:layout_width="0dp"
             android:layout_height="52dp"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:background="@drawable/bg_button_gradient"
             android:clickable="true"
-            android:drawablePadding="8dp"
             android:elevation="4dp"
-            android:focusable="true"
-            android:fontFamily="@font/jakarta_700"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:text="@string/apply_now"
-            android:textColor="@color/on_brand"
-            android:textSize="15.5sp" />
+            android:focusable="true">
+
+            <TextView
+                android:id="@+id/btnApplyText"
+                style="@style/Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="8dp"
+                android:duplicateParentState="true"
+                android:fontFamily="@font/jakarta_700"
+                android:text="@string/apply_now"
+                android:textColor="@color/on_brand"
+                android:textSize="15.5sp" />
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>
