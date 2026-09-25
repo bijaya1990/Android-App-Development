@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.NaukriPatra" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_700</item>
+        <item name="colorOnPrimary">@color/on_brand</item>
+        <item name="colorPrimaryContainer">@color/brand_100</item>
+        <item name="colorOnPrimaryContainer">@color/brand_700</item>
+        <item name="colorSecondary">@color/cyan</item>
+        <item name="colorSecondaryContainer">@color/brand_100</item>
+        <item name="colorOnSecondaryContainer">@color/brand_700</item>
+        <item name="colorTertiary">@color/accent</item>
+        <item name="colorError">@color/red</item>
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceContainer">@color/surface</item>
+        <item name="colorSurfaceContainerLow">@color/surface</item>
+        <item name="colorSurfaceContainerHigh">@color/surface</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_alt</item>
+        <item name="colorOnSurface">@color/text</item>
+        <item name="colorOnSurfaceVariant">@color/text_2</item>
+        <item name="colorOutline">@color/line</item>
+        <item name="colorOutlineVariant">@color/line</item>
+        <item name="colorControlNormal">@color/text_2</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.NaukriPatra.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.NaukriPatra.BottomSheet</item>
+    </style>
+
+    <style name="ThemeOverlay.NaukriPatra.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="colorPrimary">@color/brand_700</item>
+    </style>
+
+    <style name="ThemeOverlay.NaukriPatra.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+    </style>
+
+    <!-- Android 12+ system splash. The launcher icon is shown on the brand colour,
+         then the app goes straight to the first screen - no extra fake delay. -->
+    <style name="Theme.NaukriPatra.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.NaukriPatra</item>
+    </style>
+</resources>

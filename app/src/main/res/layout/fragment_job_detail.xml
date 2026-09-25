@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- ===== Header ===== -->
+                <LinearLayout
+                    android:id="@+id/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_header"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/gutter"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="64dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageButton
+                            android:id="@+id/btnBack"
+                            style="@style/GlassIcon"
+                            android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/back"
+                            android:src="@drawable/ic_arrow_back" />
+
+                        <TextView
+                            style="@style/Text.OnBrand"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/jakarta_700"
+                            android:text="@string/job_details"
+                            android:textSize="16sp" />
+
+                        <ImageButton
+                            android:id="@+id/btnShareTop"
+                            style="@style/GlassIcon"
+                            android:layout_marginEnd="8dp"
+                            android:contentDescription="@string/share"
+                            android:src="@drawable/ic_share" />
+
+                        <ImageButton
+                            android:id="@+id/btnSave"
+                            style="@style/GlassIcon"
+                            android:contentDescription="@string/save"
+                            android:src="@drawable/ic_bookmark_border" />
+                    </LinearLayout>
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/tags"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:chipSpacingHorizontal="6dp"
+                        app:chipSpacingVertical="6dp" />
+
+                    <TextView
+                        android:id="@+id/title"
+                        style="@style/Text.Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textColor="@color/on_brand"
+                        android:textIsSelectable="true"
+                        tools:text="SSC CGL 2026 – Combined Graduate Level Examination" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/orgLogo"
+                            style="@style/Text"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_round8"
+                            android:fontFamily="@font/jakarta_800"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:textColor="@color/brand_700"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            android:id="@+id/orgLine"
+                            style="@style/Text.OnBrand"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:alpha="0.92"
+                            android:textSize="13sp"
+                            tools:text="Staff Selection Commission · Posted 25 Sep 2026" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ===== Body (overlaps the header) ===== -->
+                <LinearLayout
+                    android:id="@+id/body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-48dp"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/gutter">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/deadlineCard"
+                        style="@style/Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="6dp"
+                        app:strokeWidth="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:padding="14dp">
+
+                            <LinearLayout
+                                android:id="@+id/dateBox"
+                                android:layout_width="54dp"
+                                android:layout_height="58dp"
+                                android:background="@drawable/bg_round12"
+                                android:backgroundTint="@color/red_100"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/dateDay"
+                                    style="@style/Text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/jakarta_800"
+                                    android:textColor="@color/red"
+                                    android:textSize="20sp"
+                                    tools:text="30" />
+
+                                <TextView
+                                    android:id="@+id/dateMonth"
+                                    style="@style/Text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/jakarta_700"
+                                    android:textColor="@color/red"
+                                    android:textSize="10.5sp"
+                                    tools:text="OCT" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Text.Overline"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/last_date_to_apply"
+                                    android:textColor="@color/text_2"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dateFull"
+                                    style="@style/Text.CardTitle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    tools:text="Thursday, 30 Oct 2026" />
+
+                                <com.google.android.material.progressindicator.LinearProgressIndicator
+                                    android:id="@+id/dateProgress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    app:indicatorColor="@color/accent"
+                                    app:trackColor="@color/line"
+                                    app:trackCornerRadius="4dp"
+                                    app:trackThickness="6dp" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/badge"
+                                style="@style/DeadlineBadge"
+                                android:layout_gravity="top"
+                                android:layout_marginStart="8dp"
+                                tools:text="5 days left" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <GridLayout
+                        android:id="@+id/facts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:columnCount="@integer/fact_columns"
+                        android:useDefaultMargins="false" />
+
+                    <LinearLayout
+                        android:id="@+id/matchBanner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_match"
+                        android:gravity="center_vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_verified"
+                            app:tint="@color/green" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/jakarta_700"
+                                android:text="@string/matches_you"
+                                android:textColor="@color/green_text"
+                                android:textSize="13.5sp" />
+
+                            <TextView
+                                android:id="@+id/matchSub"
+                                style="@style/Text.Secondary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/adCaption"
+                        style="@style/Text.Overline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/advertisement"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:id="@+id/adContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:visibility="gone" />
+
+                    <!-- Overview -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/overviewCard"
+                        style="@style/Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp">
+
+                        <LinearLayout style="@style/CardBody">
+
+                            <TextView
+                                style="@style/CardHeading"
+                                android:text="@string/overview"
+                                app:drawableStartCompat="@drawable/ic_info"
+                                app:drawableTint="@color/brand_700" />
+
+                            <TextView
+                                android:id="@+id/overview"
+                                style="@style/Text.Body"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:textColor="@color/text"
+                                android:textIsSelectable="true" />
+
+                            <TextView
+                                android:id="@+id/source"
+                                style="@style/Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:background="?attr/selectableItemBackground"
+                                android:drawablePadding="6dp"
+                                android:fontFamily="@font/jakarta_500"
+                                android:gravity="center_vertical"
+                                android:minHeight="32dp"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Job information -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/infoCard"
+                        style="@style/Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+
+                        <LinearLayout style="@style/CardBody">
+
+                            <TextView
+                                style="@style/CardHeading"
+                                android:text="@string/job_information"
+                                app:drawableStartCompat="@drawable/ic_fact_check"
+                                app:drawableTint="@color/purple" />
+
+                            <LinearLayout
+                                android:id="@+id/infoRows"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:orientation="vertical" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Important links -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/linksCard"
+                        style="@style/Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+
+                        <LinearLayout style="@style/CardBody">
+
+                            <TextView
+                                style="@style/CardHeading"
+                                android:text="@string/important_links"
+                                app:drawableStartCompat="@drawable/ic_language"
+                                app:drawableTint="@color/brand_700" />
+
+                            <LinearLayout
+                                android:id="@+id/linkRows"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:orientation="vertical" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <Button
+                        android:id="@+id/btnReadFull"
+                        style="@style/Button.Tonal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/read_full"
+                        app:icon="@drawable/ic_article"
+                        app:iconGravity="textStart" />
+
+                    <!-- Disclaimer -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_disclaimer"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_info"
+                            app:tint="@color/amber" />
+
+                        <TextView
+                            android:id="@+id/disclaimer"
+                            style="@style/Text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:lineSpacingMultiplier="1.35"
+                            android:textColor="@color/disclaimer_text"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Similar jobs -->
+                    <TextView
+                        android:id="@+id/similarTitle"
+                        style="@style/Text.Section"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="22dp"
+                        android:text="@string/similar_jobs"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/similar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/gutter"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Loading / error cover -->
+        <FrameLayout
+            android:id="@+id/cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <View
+                android:id="@+id/coverHeader"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:background="@drawable/bg_header" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
+
+            <include
+                android:id="@+id/state"
+                layout="@layout/view_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <ImageButton
+                android:id="@+id/coverBack"
+                style="@style/GlassIcon"
+                android:layout_marginStart="@dimen/gutter"
+                android:layout_marginTop="6dp"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_arrow_back" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- ===== Sticky action bar (no ads here) ===== -->
+    <LinearLayout
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/gutter"
+        android:paddingTop="10dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnPdf"
+            style="@style/Button.Square"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:contentDescription="@string/notification_pdf"
+            app:icon="@drawable/ic_picture_as_pdf" />
+
+        <Button
+            android:id="@+id/btnShare"
+            style="@style/Button.Square"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/share"
+            app:backgroundTint="@color/green_100"
+            app:icon="@drawable/ic_share"
+            app:iconTint="@color/green_text" />
+
+        <TextView
+            android:id="@+id/btnApply"
+            style="@style/Text"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_gradient"
+            android:clickable="true"
+            android:drawablePadding="8dp"
+            android:elevation="4dp"
+            android:focusable="true"
+            android:fontFamily="@font/jakarta_700"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:text="@string/apply_now"
+            android:textColor="@color/on_brand"
+            android:textSize="15.5sp" />
+    </LinearLayout>
+</LinearLayout>

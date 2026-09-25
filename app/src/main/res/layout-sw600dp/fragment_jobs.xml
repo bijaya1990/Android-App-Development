@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tablet: job list on the left, the selected job's details on the right. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.42"
+        android:maxWidth="460dp">
+
+        <include layout="@layout/view_jobs_list" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/line" />
+
+    <FrameLayout
+        android:id="@+id/detailPane"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.58">
+
+        <LinearLayout
+            android:id="@+id/detailPlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <ImageView
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:background="@drawable/bg_round18"
+                android:backgroundTint="@color/brand_100"
+                android:importantForAccessibility="no"
+                android:padding="20dp"
+                android:src="@drawable/ic_work"
+                app:tint="@color/brand_700" />
+
+            <TextView
+                style="@style/Text.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/tagline" />
+
+            <TextView
+                style="@style/Text.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/select_job_hint" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_round16"
+    android:minHeight="104dp"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_round8"
+        android:importantForAccessibility="no"
+        android:padding="7dp"
+        app:tint="@color/on_brand" />
+
+    <TextView
+        android:id="@+id/label"
+        style="@style/Text.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="11.5sp"
+        tools:text="Total Posts" />
+
+    <TextView
+        android:id="@+id/value"
+        style="@style/Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/jakarta_800"
+        android:lineSpacingMultiplier="1.15"
+        android:maxLines="3"
+        android:textSize="14.5sp"
+        tools:text="14,582" />
+</LinearLayout>

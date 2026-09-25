@@ -1,0 +1,24 @@
+*.iml
+.gradle
+/local.properties
+local.properties
+/.idea
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+.kotlin
+
+# Signing - never commit the upload key or its passwords.
+naukripatra_keystore
+*.jks
+*.keystore
+keystore.properties
+
+# Build outputs
+/app/release
+/app/debug
+*.apk
+*.aab

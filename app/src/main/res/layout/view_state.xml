@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Empty / error message with an optional retry button. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stateView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="32dp"
+    android:paddingVertical="48dp"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/stateIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/bg_round18"
+        android:backgroundTint="@color/brand_100"
+        android:importantForAccessibility="no"
+        android:padding="18dp"
+        android:src="@drawable/ic_search_off"
+        app:tint="@color/brand_700" />
+
+    <TextView
+        android:id="@+id/stateTitle"
+        style="@style/Text.Section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/no_jobs_title" />
+
+    <TextView
+        android:id="@+id/stateBody"
+        style="@style/Text.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.3"
+        android:text="@string/no_jobs_body" />
+
+    <Button
+        android:id="@+id/stateRetry"
+        style="@style/Button.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/retry"
+        android:visibility="gone"
+        app:icon="@drawable/ic_refresh" />
+</LinearLayout>

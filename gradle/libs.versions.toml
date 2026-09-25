@@ -1,0 +1,38 @@
+[versions]
+agp = "8.13.0"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.9.3"
+fragment = "1.8.5"
+core = "1.13.1"
+constraintlayout = "2.2.1"
+recyclerview = "1.4.0"
+swiperefreshlayout = "1.1.0"
+splashscreen = "1.0.1"
+browser = "1.8.0"
+okhttp = "4.12.0"
+glide = "4.16.0"
+playServicesAds = "24.3.0"
+ump = "3.1.0"
+junit = "4.13.2"
+
+[libraries]
+androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+ump = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "ump" }
+onesignal = { group = "com.onesignal", name = "OneSignal", version = "[5.0.0, 5.99.99]" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }

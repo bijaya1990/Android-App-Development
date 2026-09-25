@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Search, state dropdown, filter chips and the job list. Used alone on phones
+     and as the left pane on tablets. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="1dp"
+        android:orientation="vertical"
+        android:paddingTop="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="@dimen/gutter"
+            android:background="@drawable/bg_round12"
+            android:backgroundTint="@color/surface_alt"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_search"
+                app:tint="@color/brand_700" />
+
+            <EditText
+                android:id="@+id/search"
+                style="@style/Text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/search_hint"
+                android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColorHint="@color/text_3"
+                android:textSize="14.5sp" />
+
+            <ImageButton
+                android:id="@+id/clearSearch"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@android:string/cancel"
+                android:src="@drawable/ic_close"
+                android:visibility="gone"
+                app:tint="@color/text_3" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stateField"
+            style="@style/DropdownField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/gutter"
+            android:layout_marginTop="10dp"
+            app:startIconDrawable="@drawable/ic_location_on">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/stateDropdown"
+                style="@style/Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/select_state"
+                android:fontFamily="@font/jakarta_700"
+                android:inputType="none"
+                android:minHeight="48dp"
+                android:paddingVertical="10dp"
+                android:text="@string/all_states"
+                android:textColor="@color/brand_700"
+                android:textSize="14.5sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/gutter"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="8dp"
+                app:chipSpacingHorizontal="8dp"
+                app:selectionRequired="false"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLatest"
+                    style="@style/FilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/cat_latest"
+                    app:chipIcon="@drawable/ic_local_fire_department" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAllIndia"
+                    style="@style/FilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cat_all_india"
+                    app:chipIcon="@drawable/ic_public" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipUsa"
+                    style="@style/FilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cat_usa"
+                    app:chipIcon="@drawable/ic_flight_takeoff" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipForMe"
+                    style="@style/FilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cat_for_me"
+                    app:chipIcon="@drawable/ic_school" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/gutter"
+                android:paddingTop="40dp"
+                android:paddingBottom="8dp"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical" />
+
+            <TextView
+                android:id="@+id/count"
+                style="@style/Text.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/bg"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/gutter"
+                android:textSize="12.5sp" />
+
+            <include
+                android:id="@+id/state"
+                layout="@layout/view_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp" />
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

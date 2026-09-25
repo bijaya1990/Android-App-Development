@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp">
+
+    <LinearLayout style="@style/CardBody">
+
+        <TextView
+            android:id="@+id/heading"
+            style="@style/Text.Section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15.5sp" />
+
+        <TextView
+            android:id="@+id/body"
+            style="@style/Text.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/text_2"
+            android:textColorLink="@color/link"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

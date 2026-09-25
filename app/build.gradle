@@ -1,0 +1,82 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+// Release signing is read from keystore.properties (kept out of git), so the
+// same upload key used for the live Play listing signs every update.
+def keystorePropsFile = rootProject.file("keystore.properties")
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+
+android {
+    namespace 'in.naukripatra.app'
+    compileSdk 36
+
+    defaultConfig {
+        // Play Store identity of the published app - must never change.
+        applicationId "in.naukripatra.in"
+        minSdk 24
+        targetSdk 36
+        versionCode 10
+        versionName "2.0"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropsFile.exists()) {
+                storeFile rootProject.file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+}
+
+dependencies {
+    implementation libs.androidx.core
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.activity
+    implementation libs.androidx.fragment
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.swiperefreshlayout
+    implementation libs.androidx.splashscreen
+    implementation libs.androidx.browser
+    implementation libs.material
+    implementation libs.okhttp
+    implementation libs.glide
+    implementation libs.play.services.ads
+    implementation libs.ump
+    implementation libs.onesignal
+
+    testImplementation libs.junit
+}

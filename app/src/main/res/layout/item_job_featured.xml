@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Colourful "For You" card on Home. Background gradient is set in code. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/rec_card_width"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="12dp"
+    android:background="@drawable/bg_round18"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/logo"
+            style="@style/Text.OnBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_round8"
+            android:backgroundTint="#38FFFFFF"
+            android:fontFamily="@font/jakarta_800"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textSize="11sp"
+            tools:text="OSSC" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/bookmark"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="-6dp"
+            android:layout_marginEnd="-8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/save"
+            android:src="@drawable/ic_bookmark_border"
+            app:tint="@color/on_brand" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/Text.CardTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textColor="@color/on_brand"
+        tools:text="OSSC CGL 2026 – Group B &amp; C Posts" />
+
+    <TextView
+        android:id="@+id/meta"
+        style="@style/Text.OnBrand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:alpha="0.95"
+        android:ellipsize="end"
+        android:fontFamily="@font/jakarta_600"
+        android:maxLines="1"
+        android:textSize="12sp"
+        tools:text="1,120 Posts · Odisha" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/deadline"
+        style="@style/Text.OnBrand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_round12"
+        android:backgroundTint="#2EFFFFFF"
+        android:ellipsize="end"
+        android:fontFamily="@font/jakarta_600"
+        android:maxLines="1"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="7dp"
+        android:textSize="12sp"
+        tools:text="Apply by 12 Oct · 17 days left" />
+</LinearLayout>

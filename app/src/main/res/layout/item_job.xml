@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/logo"
+                style="@style/Text"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_round12"
+                android:fontFamily="@font/jakarta_800"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="13sp"
+                tools:text="SSC" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/Text.CardTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    tools:text="SSC CGL 2026 – Combined Graduate Level Examination" />
+
+                <TextView
+                    android:id="@+id/org"
+                    style="@style/Text.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:text="Staff Selection Commission" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/bookmark"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="-6dp"
+                android:layout_marginEnd="-8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/save"
+                android:src="@drawable/ic_bookmark_border"
+                app:tint="@color/text_3" />
+        </LinearLayout>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/metaRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:chipSpacingHorizontal="6dp"
+            app:chipSpacingVertical="6dp">
+
+            <TextView
+                android:id="@+id/location"
+                style="@style/MetaChip"
+                android:maxWidth="170dp"
+                tools:text="All India" />
+
+            <TextView
+                android:id="@+id/vacancy"
+                style="@style/MetaChip"
+                tools:text="14,582 Posts" />
+
+            <TextView
+                android:id="@+id/qualification"
+                style="@style/MetaChip"
+                android:maxWidth="200dp"
+                tools:text="Graduate" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_divider_dashed"
+            android:layerType="software" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/lastDate"
+                style="@style/Text.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/jakarta_500"
+                android:maxLines="1"
+                tools:text="Last date: 30 Oct 2026" />
+
+            <TextView
+                android:id="@+id/newTag"
+                style="@style/Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_round8"
+                android:backgroundTint="@color/brand_700"
+                android:fontFamily="@font/jakarta_800"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="3dp"
+                android:text="@string/new_tag"
+                android:textColor="@color/on_brand"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/badge"
+                style="@style/DeadlineBadge"
+                android:layout_marginStart="6dp"
+                tools:text="5 days left" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

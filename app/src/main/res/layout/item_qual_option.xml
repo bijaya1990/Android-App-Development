@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Text"
+    android:layout_width="0dp"
+    android:layout_height="58dp"
+    android:background="@drawable/bg_select_card"
+    android:checkMark="@drawable/check_selector"
+    android:drawablePadding="10dp"
+    android:ellipsize="end"
+    android:fontFamily="@font/jakarta_700"
+    android:gravity="center_vertical"
+    android:maxLines="1"
+    android:paddingStart="14dp"
+    android:paddingEnd="10dp"
+    android:textColor="@color/qual_text"
+    android:textSize="14sp" />

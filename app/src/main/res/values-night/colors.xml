@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_900">#0A1A3F</color>
+    <color name="brand_700">#3B82F6</color>
+    <color name="brand">#60A5FA</color>
+    <color name="cyan">#22D3EE</color>
+    <color name="brand_100">#1B2B4F</color>
+    <color name="brand_50">#152238</color>
+    <color name="link">#7DB3FF</color>
+
+    <color name="header_start">#0A1A3F</color>
+    <color name="header_mid">#1E3A8A</color>
+    <color name="header_end">#0E7490</color>
+
+    <color name="accent">#FF9A4D</color>
+    <color name="accent_100">#3D2512</color>
+    <color name="accent_text">#FFB27A</color>
+    <color name="green">#34D399</color>
+    <color name="green_100">#0F3B2E</color>
+    <color name="green_text">#6EE7B7</color>
+    <color name="red">#F87171</color>
+    <color name="red_100">#40191B</color>
+    <color name="purple">#A78BFA</color>
+    <color name="purple_100">#2A1F4A</color>
+    <color name="teal">#22D3EE</color>
+    <color name="teal_100">#0E3440</color>
+    <color name="pink">#F472B6</color>
+    <color name="pink_100">#3F1A2A</color>
+    <color name="amber">#FBBF24</color>
+    <color name="amber_100">#3A2D0E</color>
+    <color name="grey_100">#1E2A40</color>
+
+    <color name="bg">#0B1220</color>
+    <color name="surface">#131C2E</color>
+    <color name="surface_alt">#18233A</color>
+    <color name="line">#22304A</color>
+    <color name="text">#E8EEF8</color>
+    <color name="text_2">#A9B4C8</color>
+    <color name="text_3">#6E7A90</color>
+    <color name="disclaimer_bg">#2E2610</color>
+    <color name="disclaimer_line">#4A3D17</color>
+    <color name="disclaimer_text">#F2DDA4</color>
+    <color name="skeleton">#1E2A40</color>
+</resources>

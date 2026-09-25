@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NaukriPatra</string>
+    <string name="tagline">Find Your Dream Job</string>
+    <string name="tagline_hi">अपनी सपनों की नौकरी पाएं</string>
+    <string name="namaste">Namaste 👋</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_jobs">Jobs</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_more">More</string>
+
+    <string name="search_hint">Search post, department, exam…</string>
+    <string name="state_label">State</string>
+    <string name="all_states">All States</string>
+    <string name="select_state">Select your state</string>
+
+    <string name="cat_latest">Latest</string>
+    <string name="cat_all_india">All India</string>
+    <string name="cat_usa">USA Jobs</string>
+    <string name="cat_my_state">My State</string>
+    <string name="cat_for_me">For Me</string>
+
+    <string name="stat_active">Active jobs</string>
+    <string name="stat_usa">USA jobs</string>
+    <string name="stat_in_state">In %1$s</string>
+    <string name="stat_all_india">All India</string>
+
+    <string name="for_you">For You</string>
+    <string name="closing_soon">Closing Soon</string>
+    <string name="latest_jobs">Latest Jobs</string>
+    <string name="see_all">See all</string>
+    <string name="set_qualification_title">Get jobs that match you</string>
+    <string name="set_qualification_body">Tell us your qualification and state to see jobs made for you.</string>
+    <string name="set_now">Set now</string>
+
+    <string name="jobs_found">%1$s jobs found</string>
+    <string name="jobs_found_in">%1$s jobs found in %2$s</string>
+    <string name="jobs_found_for">%1$s jobs found for “%2$s”</string>
+    <string name="no_jobs_title">No jobs found</string>
+    <string name="no_jobs_body">Try another keyword, state or category.</string>
+    <string name="error_title">Couldn’t load jobs</string>
+    <string name="retry">Try again</string>
+    <string name="sponsored">SPONSORED</string>
+    <string name="advertisement">ADVERTISEMENT</string>
+    <string name="ad">Ad</string>
+    <string name="new_tag">NEW</string>
+    <string name="last_date_prefix">Last date: </string>
+
+    <string name="saved_title">Saved Jobs</string>
+    <string name="saved_subtitle">Jobs you bookmark are kept on this phone</string>
+    <string name="saved_empty_title">No saved jobs yet</string>
+    <string name="saved_empty_body">Tap the bookmark on any job to keep it here.</string>
+    <string name="saved_closing">%1$d saved jobs close this week</string>
+    <string name="saved_closing_one">1 saved job closes this week</string>
+    <string name="saved_closing_body">Apply before you miss them</string>
+    <string name="saved_toast">Saved</string>
+    <string name="removed_toast">Removed from saved</string>
+
+    <string name="more_title">More</string>
+    <string name="more_subtitle">Your preferences · No login needed</string>
+    <string name="prefs_not_set">Set your qualification &amp; state</string>
+    <string name="prefs_hint">Jobs are personalised for you</string>
+    <string name="edit">Edit</string>
+    <string name="browse_jobs">Browse jobs</string>
+    <string name="settings">Settings</string>
+    <string name="app_section">App</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="notifications">Job alerts</string>
+    <string name="notifications_on">On</string>
+    <string name="notifications_off">Off</string>
+    <string name="ad_privacy">Ad privacy choices</string>
+    <string name="share_app">Share App</string>
+    <string name="rate_app">Rate us on Play Store</string>
+    <string name="about_us">About Us</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="disclaimer">Disclaimer</string>
+    <string name="version">Version %1$s</string>
+    <string name="state_wise">State Wise</string>
+    <string name="qualification_wise">Qualification Wise</string>
+    <string name="all_india_jobs">All India Jobs</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="choose_qualification">Choose qualification</string>
+
+    <string name="step_1">STEP 1 OF 2</string>
+    <string name="step_2">STEP 2 OF 2</string>
+    <string name="q_title">What is your highest qualification?</string>
+    <string name="q_title_hi">आपकी सबसे ऊँची पढ़ाई क्या है?</string>
+    <string name="q_body">We’ll show jobs that match you. No login needed.</string>
+    <string name="s_title">Which state are you from?</string>
+    <string name="s_title_hi">आप किस राज्य से हैं?</string>
+    <string name="skip">Skip</string>
+    <string name="continue_btn">Continue</string>
+    <string name="show_my_jobs">Show My Jobs</string>
+    <string name="back">Back</string>
+
+    <string name="job_details">Job Details</string>
+    <string name="last_date_to_apply">LAST DATE TO APPLY</string>
+    <string name="total_posts">Total Posts</string>
+    <string name="salary">Salary</string>
+    <string name="age_limit">Age Limit</string>
+    <string name="qualification">Qualification</string>
+    <string name="matches_you">Matches your qualification</string>
+    <string name="based_on">Based on your qualification: %1$s</string>
+    <string name="overview">Overview</string>
+    <string name="job_information">Job Information</string>
+    <string name="organization">Organization</string>
+    <string name="post_name">Post Name</string>
+    <string name="department">Department</string>
+    <string name="job_type">Job Type</string>
+    <string name="job_location">Job Location</string>
+    <string name="application_mode">Application Mode</string>
+    <string name="application_fee">Application Fee</string>
+    <string name="selection_process">Selection Process</string>
+    <string name="important_links">Important Links</string>
+    <string name="apply_online">Apply Online</string>
+    <string name="notification_pdf">Download Notification PDF</string>
+    <string name="official_website">Official Website</string>
+    <string name="read_full">Read complete details</string>
+    <string name="similar_jobs">Similar Jobs</string>
+    <string name="apply_now">Apply Now</string>
+    <string name="visit_website">Visit Website</string>
+    <string name="read_details">Read Details</string>
+    <string name="posted_on">Posted %1$s</string>
+    <string name="source_label">Source: </string>
+    <string name="source_official">(official website)</string>
+    <string name="disclaimer_short">NaukriPatra is an independent job information app and is not affiliated with any government body. Please verify all details on the official website before applying.</string>
+    <string name="disclaimer_title">Disclaimer:</string>
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
+    <string name="share">Share</string>
+    <string name="share_job">Share job</string>
+    <string name="notification">Notification</string>
+    <string name="complete_details">Complete Details</string>
+    <string name="job_not_found">This job is no longer available.</string>
+
+    <string name="link_unavailable">Link not available for this job</string>
+    <string name="no_browser">No browser found to open this link</string>
+    <string name="select_job_hint">Select a job from the list to see its full details here.</string>
+</resources>
