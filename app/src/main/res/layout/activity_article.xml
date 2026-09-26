@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface"
+    android:background="@color/bg"
     android:orientation="vertical">
 
     <LinearLayout
@@ -31,9 +31,15 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:fontFamily="@font/jakarta_700"
-            android:maxLines="2"
+            android:maxLines="1"
             android:text="@string/complete_details"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/btnShare"
+            style="@style/GlassIcon"
+            android:contentDescription="@string/share"
+            android:src="@drawable/ic_share" />
     </LinearLayout>
 
     <FrameLayout

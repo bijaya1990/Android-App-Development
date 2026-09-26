@@ -47,5 +47,8 @@
     <color name="disclaimer_line">#FDE3A7</color>
     <color name="disclaimer_text">#6B5320</color>
     <color name="skeleton">#E6ECF3</color>
+    <!-- Attention buttons on Job Details (same in light and dark). -->
+    <color name="pdf_orange">#F97316</color>
+    <color name="read_red">#E11D48</color>
     <color name="splash_bg">#0C2D6B</color>
 </resources>

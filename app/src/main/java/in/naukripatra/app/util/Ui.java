@@ -128,6 +128,40 @@ public final class Ui {
                 .into(thumb);
     }
 
+    /**
+     * Gentle attention pulse (fade + slight grow) that repeats while the view is on
+     * screen. Follows the system "remove animations" setting automatically.
+     */
+    public static void blink(View view) {
+        android.animation.PropertyValuesHolder alpha =
+                android.animation.PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.72f);
+        android.animation.PropertyValuesHolder sx =
+                android.animation.PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.025f);
+        android.animation.PropertyValuesHolder sy =
+                android.animation.PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.025f);
+        android.animation.ObjectAnimator a =
+                android.animation.ObjectAnimator.ofPropertyValuesHolder(view, alpha, sx, sy);
+        a.setDuration(650);
+        a.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        a.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        a.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                a.start();
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                a.cancel();
+                v.setAlpha(1f);
+                v.setScaleX(1f);
+                v.setScaleY(1f);
+            }
+        });
+        if (view.isAttachedToWindow()) a.start();
+    }
+
     // ============ Edge-to-edge insets ============
 
     public static final int TOP = 1;

@@ -243,6 +243,7 @@ public class JobDetailFragment extends Fragment {
         View readFull = v.findViewById(R.id.btnReadFull);
         readFull.setVisibility(d.html.trim().isEmpty() ? View.GONE : View.VISIBLE);
         readFull.setOnClickListener(x -> openArticle());
+        if (readFull.getVisibility() == View.VISIBLE) Ui.blink(readFull);
 
         // Bookmark
         ImageButton save = v.findViewById(R.id.btnSave);
@@ -431,16 +432,17 @@ public class JobDetailFragment extends Fragment {
     private void bindLinks(LinearLayout rows) {
         rows.removeAllViews();
         JobDetail d = detail;
-        addLink(rows, R.string.apply_online, d.applyLink, R.drawable.ic_open_in_new, true);
-        addLink(rows, R.string.notification_pdf, d.notificationLink, R.drawable.ic_picture_as_pdf, false);
-        if (!d.officialWebsite.equals(d.applyLink)) {
-            addLink(rows, R.string.official_website, d.officialWebsite, R.drawable.ic_language, false);
-        }
+        // Apply Online points at the official website (falls back to the API apply link).
+        addLink(rows, R.string.apply_online, !d.officialWebsite.isEmpty() ? d.officialWebsite : d.applyLink,
+                R.drawable.ic_open_in_new, true);
+        View pdf = addLink(rows, R.string.notification_pdf, d.notificationLink, R.drawable.ic_picture_as_pdf, false);
+        if (pdf != null) Ui.blink(pdf);
         root.findViewById(R.id.linksCard).setVisibility(rows.getChildCount() == 0 ? View.GONE : View.VISIBLE);
     }
 
-    private void addLink(LinearLayout rows, int label, String url, int icon, boolean primary) {
-        if (Text.isEmpty(url)) return;
+    @Nullable
+    private View addLink(LinearLayout rows, int label, String url, int icon, boolean primary) {
+        if (Text.isEmpty(url)) return null;
         Context c = requireContext();
         View row = getLayoutInflater().inflate(R.layout.item_link, rows, false);
         int bg;
@@ -449,8 +451,8 @@ public class JobDetailFragment extends Fragment {
             bg = R.color.brand_700;
             fg = R.color.on_brand;
         } else if (icon == R.drawable.ic_picture_as_pdf) {
-            bg = R.color.red_100;
-            fg = R.color.red;
+            bg = R.color.pdf_orange;
+            fg = R.color.on_brand;
         } else {
             bg = R.color.surface_alt;
             fg = R.color.text;
@@ -468,6 +470,7 @@ public class JobDetailFragment extends Fragment {
         tv.setTextColor(color);
         row.setOnClickListener(x -> Links.open(c, url));
         rows.addView(row);
+        return row;
     }
 
     private void bindActionBar() {
@@ -481,16 +484,17 @@ public class JobDetailFragment extends Fragment {
 
         View applyButton = root.findViewById(R.id.btnApply);
         TextView apply = root.findViewById(R.id.btnApplyText);
-        // Always "Apply Now": opens the apply link from the API directly, or tells
-        // the user there is no link yet - never a different page in its place.
-        boolean hasLink = !d.applyLink.isEmpty();
+        // "Apply Now" opens the official website; if there is none, the official
+        // notification PDF; otherwise it tells the user there is no link yet.
+        final String applyTarget = !d.officialWebsite.isEmpty() ? d.officialWebsite : d.notificationLink;
+        boolean hasLink = !applyTarget.isEmpty();
         apply.setText(R.string.apply_now);
         Ui.endIcon(apply, R.drawable.ic_open_in_new, 18, ContextCompat.getColor(requireContext(), R.color.on_brand));
         applyButton.setAlpha(hasLink ? 1f : 0.7f);
         applyButton.setContentDescription(getString(R.string.apply_now));
         applyButton.setOnClickListener(x -> {
             if (hasLink) {
-                Links.open(requireContext(), d.applyLink);
+                Links.open(requireContext(), applyTarget);
             } else {
                 com.google.android.material.snackbar.Snackbar
                         .make(root, R.string.apply_link_unavailable, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)

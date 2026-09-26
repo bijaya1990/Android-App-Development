@@ -119,7 +119,8 @@
     <string name="apply_online">Apply Online</string>
     <string name="notification_pdf">Download Notification PDF</string>
     <string name="official_website">Official Website</string>
-    <string name="read_full">Read complete details</string>
+    <string name="read_full">Read Complete Details</string>
+    <string name="read_full_sub">Eligibility, dates, fees &amp; how to apply</string>
     <string name="similar_jobs">Similar Jobs</string>
     <string name="apply_now">Apply Now</string>
     <string name="apply_link_unavailable">Apply link is not available for this job yet. Please check the official notification.</string>
