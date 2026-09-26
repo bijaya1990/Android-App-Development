@@ -1,0 +1,67 @@
+===== APP NAME (max 30) =====
+NaukriPatra: Latest Job Update
+
+===== SHORT DESCRIPTION (max 80) =====
+Latest job openings across India & USA, by your state and qualification.
+
+===== FULL DESCRIPTION (max 4000) =====
+NaukriPatra helps you find your dream job. Browse the latest job openings from across India and the USA in a simple, easy-to-read format – number of posts, qualification, age limit, salary, fees, last date and official links, all in one place.
+
+IMPORTANT DISCLAIMER
+NaukriPatra is an independent, privately owned job information app. It is NOT a government app and does NOT represent any government entity. NaukriPatra is not affiliated with, authorised by or endorsed by any government department, ministry, commission, recruitment board, university or public institution.
+
+Job information in the app is collected from publicly available official notifications and official websites, for general information only. Every job page shows its official source. Please verify all details – eligibility, dates, fees and how to apply – on the official website or notification before you apply.
+
+SOURCES OF INFORMATION
+Job details are taken from official notifications and websites such as:
+
+India
+• https://www.india.gov.in
+• https://www.upsc.gov.in
+• https://ssc.gov.in
+• https://employmentnews.gov.in
+• https://www.ncs.gov.in
+
+Odisha
+• https://www.opsc.gov.in
+• https://www.ossc.gov.in
+• https://osssc.gov.in
+• https://ssbodisha.ac.in
+• https://ojee.nic.in
+
+Other recruiting institutions
+• https://www.aiimsexams.ac.in
+• https://www.drdo.gov.in/drdo/
+• https://www.suniv.ac.in
+• https://ravenshawuniversity.ac.in
+• https://rdwu.ac.in
+• https://www.vssut.ac.in
+• https://www.vimsar.ac.in
+• https://mscbu.ac.in
+
+United States
+• https://www.usajobs.gov
+
+KEY FEATURES
+• Latest jobs updated every day
+• Jobs for your state – choose your state from a dropdown on every job list
+• Jobs for your qualification – 8th, 10th, 12th, ITI, Diploma, Graduate, Post Graduate, B.Tech
+• All India jobs and USA jobs
+• Search by post, department or exam name
+• Clear job details: posts, salary, age limit, qualification and last date
+• "Days left" countdown so you never miss a last date
+• Official website and notification PDF links on every job
+• Save jobs and see which ones close this week
+• Job alert notifications (can be turned off anytime)
+• Dark mode, and works on phones and tablets
+• No login or sign-up needed
+
+WHAT NAUKRIPATRA DOES NOT DO
+NaukriPatra does not conduct exams, accept applications, collect any fee, or hire on behalf of any organisation. To apply for a job you always go to the organisation's own official website. NaukriPatra never asks for money to get you a job.
+
+All organisation names, logos and trademarks belong to their respective owners.
+
+CONTACT
+Email: info@naukripatra.in
+Website: https://naukripatra.in
+Privacy Policy: https://naukripatra.in/privacy-policy/
