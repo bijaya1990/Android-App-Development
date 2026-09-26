@@ -93,7 +93,12 @@ public class ArticleActivity extends AppCompatActivity {
     private void load() {
         findViewById(R.id.progress).setVisibility(View.VISIBLE);
         stateView.hide();
-        call = Api.get(Api.post(postId), JobDetail::fromJson, new Api.Result<JobDetail>() {
+        // Parsing and table conversion run on the network thread, off the UI thread.
+        call = Api.get(Api.post(postId), json -> {
+            JobDetail d = JobDetail.fromJson(json);
+            d.html = TableCards.apply(d.html);
+            return d;
+        }, new Api.Result<JobDetail>() {
             @Override
             public void onSuccess(JobDetail d) {
                 if (isFinishing()) return;
@@ -211,6 +216,25 @@ public class ArticleActivity extends AppCompatActivity {
                 .append(";background:").append(hex(R.color.purple_100)).append(";border-radius:14px}")
                 .append("pre,code{white-space:pre-wrap;word-break:break-word}")
                 .append("svg{flex:none}")
+                // Wide tables become one card per row: column name + value on each line.
+                .append(".stack{margin:12px 0 18px}")
+                .append(".srow{background:").append(surface).append(";border:1px solid ").append(line)
+                .append(";border-left:5px solid var(--c);border-radius:14px;margin-bottom:10px;overflow:hidden;")
+                .append("box-shadow:0 2px 8px rgba(16,30,80,.06)}")
+                .append(".srow.c0{--c:").append(sections[0][1]).append(";--t:").append(sections[0][0]).append("}")
+                .append(".srow.c1{--c:").append(sections[2][1]).append(";--t:").append(sections[2][0]).append("}")
+                .append(".srow.c2{--c:").append(sections[5][1]).append(";--t:").append(sections[5][0]).append("}")
+                .append(".srow.c3{--c:").append(sections[3][1]).append(";--t:").append(sections[3][0]).append("}")
+                .append(".srow.total{--c:").append(sections[1][1]).append(";--t:").append(sections[1][0]).append("}")
+                .append(".shead{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--t)}")
+                .append(".sbadge{flex:none;min-width:28px;height:28px;padding:0 7px;border-radius:9px;background:var(--c);")
+                .append("color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}")
+                .append(".stext{display:flex;flex-direction:column;min-width:0}")
+                .append(".scol{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;opacity:.75;color:var(--c)}")
+                .append(".stitle{font-size:15.5px;font-weight:800;line-height:1.35;color:").append(text).append("}")
+                .append(".sline{display:flex;gap:12px;padding:9px 12px;border-top:1px dashed ").append(line).append(";font-size:14.5px;line-height:1.45}")
+                .append(".slabel{flex:0 0 42%;font-size:13px;font-weight:700;color:").append(text2).append("}")
+                .append(".sval{flex:1;font-weight:700;color:").append(text).append(";min-width:0}")
                 .append("iframe,script,style,form{display:none!important}")
                 // Official links + disclaimer
                 .append(".btns{display:flex;flex-direction:column;gap:10px;margin:16px 0}")

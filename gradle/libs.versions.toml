@@ -12,6 +12,7 @@ splashscreen = "1.0.1"
 browser = "1.8.0"
 okhttp = "4.12.0"
 glide = "4.16.0"
+jsoup = "1.18.3"
 playServicesAds = "24.3.0"
 ump = "3.2.0"
 junit = "4.13.2"
@@ -29,6 +30,7 @@ androidx-browser = { group = "androidx.browser", name = "browser", version.ref =
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 ump = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "ump" }
 onesignal = { group = "com.onesignal", name = "OneSignal", version = "5.10.2" }

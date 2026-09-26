@@ -74,6 +74,7 @@ dependencies {
     implementation libs.material
     implementation libs.okhttp
     implementation libs.glide
+    implementation libs.jsoup
     implementation libs.play.services.ads
     implementation libs.ump
     implementation libs.onesignal
