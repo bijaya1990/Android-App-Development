@@ -41,7 +41,7 @@ function dm_ajax_check_slug() {
 		array(
 			'slug'      => $slug,
 			'available' => dm_slug_available( $slug, get_current_user_id() ),
-			'url'       => dm_pretty_permalinks() ? home_url( '/store/' . $slug . '/' ) : add_query_arg( 'dm_store', $slug, home_url( '/' ) ),
+			'url'       => dm_pretty_permalinks() ? dm_pretty_url( 'store/' . $slug . '/' ) : add_query_arg( 'dm_store', $slug, home_url( '/' ) ),
 		)
 	);
 }

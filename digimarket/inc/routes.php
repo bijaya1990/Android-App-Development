@@ -12,19 +12,77 @@ function dm_routes() {
 }
 
 add_action( 'init', 'dm_add_rewrites', 20 );
+
+/**
+ * Regex prefix for our rules. With "/index.php/..." (PATHINFO) permalinks WordPress
+ * matches requests as "index.php/cart", so rules must carry the same prefix.
+ */
+function dm_rule_prefix() {
+	global $wp_rewrite;
+	return ( $wp_rewrite instanceof WP_Rewrite && $wp_rewrite->using_index_permalinks() ) ? $wp_rewrite->index . '/' : '^';
+}
+
 function dm_add_rewrites() {
-	add_rewrite_rule( '^store/([^/]+)/?$', 'index.php?dm_store=$matches[1]', 'top' );
-	add_rewrite_rule( '^store/([^/]+)/page/([0-9]+)/?$', 'index.php?dm_store=$matches[1]&paged=$matches[2]', 'top' );
-	add_rewrite_rule( '^admin/login/?$', 'index.php?dm_route=adminlogin', 'top' );
+	$p = dm_rule_prefix();
+	add_rewrite_rule( $p . 'store/([^/]+)/?$', 'index.php?dm_store=$matches[1]', 'top' );
+	add_rewrite_rule( $p . 'store/([^/]+)/page/([0-9]+)/?$', 'index.php?dm_store=$matches[1]&paged=$matches[2]', 'top' );
+	add_rewrite_rule( $p . 'admin/login/?$', 'index.php?dm_route=adminlogin', 'top' );
 	foreach ( dm_routes() as $r ) {
-		add_rewrite_rule( '^' . $r . '/?$', 'index.php?dm_route=' . $r, 'top' );
-		add_rewrite_rule( '^' . $r . '/([^/]+)/?$', 'index.php?dm_route=' . $r . '&dm_tab=$matches[1]', 'top' );
-		add_rewrite_rule( '^' . $r . '/([^/]+)/([^/]+)/?$', 'index.php?dm_route=' . $r . '&dm_tab=$matches[1]&dm_id=$matches[2]', 'top' );
+		add_rewrite_rule( $p . $r . '/?$', 'index.php?dm_route=' . $r, 'top' );
+		add_rewrite_rule( $p . $r . '/([^/]+)/?$', 'index.php?dm_route=' . $r . '&dm_tab=$matches[1]', 'top' );
+		add_rewrite_rule( $p . $r . '/([^/]+)/([^/]+)/?$', 'index.php?dm_route=' . $r . '&dm_tab=$matches[1]&dm_id=$matches[2]', 'top' );
 	}
-	if ( get_option( 'dm_flush_rewrite' ) ) {
-		flush_rewrite_rules( false );
+	// Self-heal: flush when asked to, or when our rules are missing from the stored rules.
+	$rules = get_option( 'rewrite_rules' );
+	if ( get_option( 'dm_flush_rewrite' ) || ( dm_pretty_permalinks() && ( ! is_array( $rules ) || ! isset( $rules[ $p . 'cart/?$' ] ) ) ) ) {
+		dm_hard_flush_rewrites();
 		delete_option( 'dm_flush_rewrite' );
 	}
+}
+
+/**
+ * Flush rewrite rules AND write the .htaccess / web.config file.
+ * A soft flush only updates the database; on Apache/LiteSpeed pretty URLs
+ * then 404 because the server never forwards them to WordPress.
+ */
+function dm_hard_flush_rewrites() {
+	if ( ! function_exists( 'save_mod_rewrite_rules' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/misc.php';
+	}
+	flush_rewrite_rules( true );
+}
+
+/**
+ * Warn the admin when pretty permalinks are on but .htaccess has no WordPress rules.
+ */
+add_action( 'admin_notices', 'dm_htaccess_notice' );
+function dm_htaccess_notice() {
+	if ( ! current_user_can( 'manage_options' ) || ! dm_pretty_permalinks() ) {
+		return;
+	}
+	global $is_apache;
+	if ( ! $is_apache ) {
+		return;
+	}
+	if ( ! function_exists( 'get_home_path' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+	$file = get_home_path() . '.htaccess';
+	$ok   = file_exists( $file ) && false !== strpos( (string) file_get_contents( $file ), 'RewriteRule . /' ); // phpcs:ignore
+	if ( ! $ok ) {
+		$ok = file_exists( $file ) && false !== strpos( (string) file_get_contents( $file ), 'index.php [L]' ); // phpcs:ignore
+	}
+	if ( $ok ) {
+		return;
+	}
+	echo '<div class="notice notice-error"><p><strong>DigiMarket:</strong> ' . wp_kses_post(
+		sprintf(
+			/* translators: %s: permalinks settings URL */
+			__( 'Your .htaccess file is missing the WordPress rewrite rules, so pages like /cart/ and /sell/ will show 404. Open <a href="%s">Settings → Permalinks</a> and click “Save Changes”. If the file is not writable, copy the rules shown there into the .htaccess file in your site root (cPanel → File Manager).', 'digimarket' ),
+			esc_url( admin_url( 'options-permalink.php' ) )
+		)
+	) . '</p></div>';
 }
 
 add_filter( 'query_vars', 'dm_query_vars' );

@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /shops, /store/{shop}, /cart, /checkout, /account, /dashboard, /sell, /login, /register, /forgot, /admin/login (→ wp-login with 2FA)
 
 == Changelog ==
+
+= 1.0.1 =
+* Fix: pages like /cart/ and /sell/ returning 404 on Apache/LiteSpeed hosts (.htaccess is now written on activation, with self-repair and an admin warning).
 
 = 1.0.0 =
 * Initial release.

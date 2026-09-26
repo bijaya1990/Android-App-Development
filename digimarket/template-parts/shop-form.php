@@ -8,7 +8,7 @@
 $dm_uid  = get_current_user_id();
 $dm_new  = ! empty( $args['new'] );
 $dm_slug = (string) get_user_meta( $dm_uid, 'dm_shop_slug', true );
-$dm_base = dm_pretty_permalinks() ? home_url( '/store/' ) : add_query_arg( 'dm_store', '', home_url( '/' ) );
+$dm_base = dm_pretty_permalinks() ? dm_pretty_url( 'store/' ) : add_query_arg( 'dm_store', '', home_url( '/' ) );
 $dm_created = (int) get_user_meta( $dm_uid, 'dm_shop_created', true );
 ?>
 <form method="post" enctype="multipart/form-data" class="dm-form">

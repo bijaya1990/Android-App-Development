@@ -277,7 +277,12 @@ function dm_install() {
 	dm_create_legal_pages();
 
 	if ( ! get_option( 'permalink_structure' ) ) {
-		update_option( 'permalink_structure', '/%postname%/' );
+		// Marketplace URLs (/cart/, /store/{shop}/) need pretty permalinks.
+		require_once ABSPATH . 'wp-admin/includes/misc.php';
+		update_option( 'permalink_structure', got_url_rewrite() ? '/%postname%/' : '/index.php/%postname%/' );
+		if ( isset( $GLOBALS['wp_rewrite'] ) ) {
+			$GLOBALS['wp_rewrite']->init();
+		}
 	}
 	update_option( 'dm_flush_rewrite', 1 );
 	update_option( 'dm_db_version', DM_DB_VERSION );

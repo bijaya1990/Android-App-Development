@@ -80,6 +80,16 @@ function dm_pretty_permalinks() {
 }
 
 /**
+ * Absolute URL for a pretty path, honouring "/index.php/..." style permalinks
+ * used on servers without mod_rewrite.
+ */
+function dm_pretty_url( $path ) {
+	global $wp_rewrite;
+	$root = ( $wp_rewrite instanceof WP_Rewrite ) ? $wp_rewrite->root : '';
+	return home_url( '/' . $root . ltrim( $path, '/' ) );
+}
+
+/**
  * Build a URL for one of the theme's virtual routes.
  *
  * @param string $route  cart|checkout|account|dashboard|login|register|sell|...
@@ -96,7 +106,7 @@ function dm_url( $route, $tab = '', $id = '', $args = array() ) {
 		if ( '' !== (string) $id ) {
 			$path .= rawurlencode( $id ) . '/';
 		}
-		$url = home_url( '/' . $path );
+		$url = dm_pretty_url( $path );
 	} else {
 		$q = array( 'dm_route' => $route );
 		if ( '' !== (string) $tab ) {
@@ -115,7 +125,7 @@ function dm_store_url( $seller_id ) {
 	if ( ! $slug ) {
 		return home_url( '/' );
 	}
-	return dm_pretty_permalinks() ? home_url( '/store/' . $slug . '/' ) : add_query_arg( 'dm_store', $slug, home_url( '/' ) );
+	return dm_pretty_permalinks() ? dm_pretty_url( 'store/' . $slug . '/' ) : add_query_arg( 'dm_store', $slug, home_url( '/' ) );
 }
 
 function dm_products_url( $args = array() ) {
