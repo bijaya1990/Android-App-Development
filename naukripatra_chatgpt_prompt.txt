@@ -1,88 +1,191 @@
 ===========================================================
  NAUKRIPATRA.IN - PROMPT FOR WRITING A POST WITH CHATGPT
+ (Full details + human tone + simple Indian English)
 ===========================================================
 
 How to use:
 1. Open ChatGPT.
-2. Attach the notification PDF/image.
+2. Attach the notification PDF/image (all pages).
 3. Attach naukripatra_article_template.html (or paste its code).
 4. Copy the whole prompt below and paste it.
+5. Put the notice's link in place of [PASTE THE NOTIFICATION PDF LINK HERE].
 
 -----------------------------------------------------------
 PROMPT (copy everything from here)
 -----------------------------------------------------------
 
 You are writing a job post for my government job website NaukriPatra.in.
-I have attached the official notification and my HTML template.
+My readers are students and job seekers from small towns and villages across India.
+Many of them read English as a second language. The post must be complete, correct
+and easy to understand.
 
-Your task: fill in the attached HTML template using the details from the notification
-and give me a complete SEO-friendly job article.
+I have attached the official notification (PDF/image) and my HTML template.
+Fill in the template using the notification and give me the complete article.
 
-STRICT RULES:
+===================================================
+PART A - DATA RULES (MOST IMPORTANT)
+===================================================
 
-1. Use ONLY the information written in the notification. Do not guess or invent anything.
-   If something (salary, age limit, fee, number of posts, selection process) is not in the notice,
-   write clearly: "The notice does not mention ...". A student's career depends on this.
+A1. READ EVERY PAGE of the notification, including annexures, tables, footnotes,
+    notes marked with *, corrigendum lines and the last page. Nothing from the
+    advertisement should be left out.
 
-2. Keep the template's design, structure, headings, table style and inline CSS exactly the same.
-   Only replace the [ ] placeholders.
-   - Every table must stay inside <div class="np-table-wrap" style="margin-bottom:1.2em;">.
-   - Keep the table attributes the same: border="1" cellpadding="8" cellspacing="0"
-     style="border-collapse:collapse; width:100%; min-width:500px;"
+A2. COPY THE DATA EXACTLY as written in the notice. Do not round off, shorten or change:
+    - Numbers of posts (post-wise AND category-wise: UR/OBC/SC/ST/EWS/PwBD/ESM/Women)
+    - Salary / pay level / pay scale / stipend / honorarium (exact figures)
+    - Age limit, the date on which age is counted, and every relaxation
+    - Fee for every category, payment mode, exemptions
+    - Every date and time (start date, last date, hard copy date, exam, interview,
+      reporting time, document verification)
+    - Qualification and experience for EVERY post, word for word in meaning,
+      including "essential" and "desirable" separately
+    - Advertisement number, reference number, date of notice
+    - Addresses, email IDs, phone numbers, venue, website/apply links
+    - Selection process with marks/weightage, if given
+    - Special conditions (domicile, language, bond, probation, contract period,
+      NOC, posting place, "no TA/DA", etc.)
 
-3. Section order must stay the same:
-   Intro -> (Red Box if needed) -> Highlights -> Post-wise Vacancy Details -> Who Can Apply ->
-   Educational Qualification -> Age Limit -> Application Fee -> Salary -> Selection Process ->
-   Documents Required -> Important Dates -> How to Apply -> Why You Should Apply ->
-   Preparation Tips -> Important Links -> FAQs
+A3. NEVER GUESS. If something is not in the notice, write it plainly, for example:
+    "The notice does not mention the salary." / "No application fee is mentioned."
+    Do not add information from your own knowledge or from other websites.
 
-4. RED BOX: keep it only if eligibility is restricted, for example:
-   retired only, women only, ex-servicemen only, deputation (serving govt employees only),
-   domicile/local residents only, or honorary/volunteer posts.
-   Otherwise delete the red box completely.
+A4. Never invent a website or apply link. Keep the "Official Website" / "Apply Online"
+    rows only if that exact link is written in the notice. Otherwise delete those rows.
 
-5. Tables:
-   - Add or remove rows in the vacancy table as needed; show the category-wise split (UR/OBC/SC/ST/EWS)
-     if it is in the notice. Add up the totals correctly.
-   - Use a table for Age Limit, Fee and Salary when they differ by post or category.
+A5. If two parts of the notice give different figures (for example, 1 post in one table
+    and 2 posts in another), show both and write: "Please check the official notice."
 
-6. Important Links:
-   - Notification PDF link: [PASTE THE NOTIFICATION PDF LINK HERE]
-   - Keep the Official Website / Apply Online rows ONLY if the link is written in the notice.
-     Never guess a website URL. If there is none, delete those rows.
-   - Do NOT change the NaukriPatra App, WhatsApp Channel and Telegram Channel rows.
+A6. Before giving the output, check yourself:
+    - Do the post-wise totals add up to the total posts?
+    - Is every post from the notice in the vacancy table?
+    - Is every date from the notice in the Important Dates table?
+    - Is every category's fee and age relaxation included?
+    If anything is missing, add it.
 
-7. FAQs: write 6-8 FAQs in this exact format:
-   <h3>Q1. Question?</h3>
-   <p>Answer.</p>
+===================================================
+PART B - DESIGN RULES
+===================================================
 
-8. Article length: at least 1800 characters. Simple, clear English.
-   Write dates as "15 October 2026".
+B1. Keep the template's design, headings, table style and inline CSS exactly the same.
+    Only replace the [ ] placeholders.
+    - Every table must stay inside <div class="np-table-wrap" style="margin-bottom:1.2em;">
+    - Keep the table attributes: border="1" cellpadding="8" cellspacing="0"
+      style="border-collapse:collapse; width:100%; min-width:500px;"
 
-9. Walk-in: if it is a walk-in interview, show the interview date, time, reporting time
-   and venue clearly in the Highlights and Important Dates.
+B2. Section order stays the same:
+    Intro -> (Red Box if needed) -> Highlights -> Post-wise Vacancy Details ->
+    Who Can Apply -> Educational Qualification -> Age Limit -> Application Fee ->
+    Salary -> Selection Process -> Documents Required -> Important Dates ->
+    How to Apply -> Why You Should Apply -> Preparation Tips -> Important Links -> FAQs
+    If the notice has extra important information (job description, terms and conditions,
+    bond, training, posting, exam pattern, syllabus), add a new <h2> section for it.
+    Put it before "Selection Process". Do not drop it.
 
-10. Output: first give ONLY the HTML code in one code block. Then, separately, give me:
-    - Post Title (SEO friendly, e.g. "XYZ Recruitment 2026: 25 ABC Posts, Apply by 15 October")
+B3. RED BOX: keep it only if eligibility is restricted, for example: retired only,
+    women only, ex-servicemen only, deputation (serving govt employees only),
+    domicile/local residents only, honorary/volunteer posts, a specific caste category only.
+    Otherwise delete the red box completely.
+
+B4. Add or remove table rows as needed. Use tables for vacancy, age, fee, salary and dates.
+    If there are many posts, make one row per post. Do not merge posts.
+
+B5. Important Links: do NOT change the NaukriPatra App, WhatsApp Channel and Telegram rows.
+    Notification PDF link: [PASTE THE NOTIFICATION PDF LINK HERE]
+
+B6. FAQs: 6-8 questions in this exact format:
+    <h3>Q1. Question?</h3>
+    <p>Answer.</p>
+    Answers must use the exact data from the notice.
+
+===================================================
+PART C - WRITING STYLE (HUMAN TONE, SIMPLE INDIAN ENGLISH)
+===================================================
+
+C1. Write like a helpful senior explaining the job to a younger student,
+    not like a machine or a press release.
+
+C2. Use short, simple sentences (mostly under 20 words). One idea per sentence.
+    Use common words that a Class 10-12 pass student in India understands.
+
+C3. Use normal Indian English words and terms that job seekers know:
+    "last date", "apply online", "form", "vacancy", "posts", "pay scale",
+    "walk-in interview", "document verification", "hard copy", "self-attested copy",
+    "10th pass", "12th pass", "graduation", "category-wise", "fee", "admit card".
+
+C4. DO NOT USE these robotic AI words and phrases. Replace them with the simple words:
+    - "delve into" / "dive into"            -> "look at"
+    - "embark on a journey"                 -> "start"
+    - "in today's competitive landscape"    -> remove it
+    - "a golden opportunity" / "a remarkable opportunity" -> "a good chance"
+    - "aspiring candidates" / "aspirants"   -> "candidates" / "students"
+    - "leverage" / "utilize"                -> "use"
+    - "facilitate"                          -> "help"
+    - "commence"                            -> "start"
+    - "endeavour"                           -> "try"
+    - "pivotal" / "crucial" / "paramount"   -> "important"
+    - "seamless" / "streamlined"            -> "easy" / "simple"
+    - "comprehensive"                       -> "full" / "complete"
+    - "meticulously" / "diligently"         -> "carefully"
+    - "in order to"                         -> "to"
+    - "prior to"                            -> "before"
+    - "subsequently"                        -> "after that"
+    - "furthermore" / "moreover" / "additionally" -> "also"
+    - "it is worth noting that" / "it is important to note that" -> remove it, just say the fact
+    - "unlock your potential" / "elevate your career" / "take the first step" -> remove it
+    - "don't miss out" / "hurry up" / "grab this chance" -> "apply before the last date"
+    - "robust", "holistic", "dynamic", "vibrant", "realm", "tapestry",
+      "navigate", "bolster", "foster", "showcase" -> do not use
+    - "Look no further", "In conclusion", "In summary", "Rest assured" -> do not use
+
+C5. No exaggeration or false promises. Do not write "guaranteed job", "best job ever",
+    "dream job", etc. Just state the facts and benefits in a normal way.
+
+C6. Use the active voice: "Candidates must send the form by 10 October"
+    (not "The form is required to be sent by candidates...").
+
+C7. Write numbers and dates clearly: "Rs 35,000 per month", "15 October 2026",
+    "18 to 35 years".
+
+C8. No emojis. No bold words in the middle of sentences, except in tables and the red box.
+
+C9. Article length: at least 1800 characters. Longer is fine if the notice has more details.
+    Never cut data to make it shorter.
+
+===================================================
+PART D - OUTPUT FORMAT
+===================================================
+
+D1. First, give ONLY the complete HTML code in one code block.
+
+D2. After that, separately give me:
+    - Post Title (e.g. "XYZ Recruitment 2026: 25 ABC Posts, Apply by 15 October")
     - Slug (e.g. xyz-abc-recruitment-2026)
     - Focus Keyword (e.g. XYZ Recruitment 2026)
     - Meta Description (under 160 characters)
-    - Excerpt (1-2 lines)
+    - Excerpt (1-2 simple lines)
     - Tags (4-5, comma separated)
     - Category (Latest Jobs + State name)
-    - Thumbnail text: Organization name / Post name / Total posts / Last date
+    - Thumbnail text: Organization / Post name / Total posts / Last date
+
+D3. At the end, give a short "Data Check" list:
+    - Total posts: __ (matches notice: Yes/No)
+    - Last date: __
+    - Anything not given in the notice: __
+    - Any confusing or conflicting point in the notice: __
 
 -----------------------------------------------------------
 PROMPT END
 -----------------------------------------------------------
 
-CHECKLIST BEFORE PUBLISHING (do it yourself):
-[ ] Last date matches the notice
-[ ] Vacancy total matches the notice
-[ ] Salary / fee / age match the notice
-[ ] Official website / apply link is actually in the notice
+CHECKLIST BEFORE PUBLISHING (do it yourself, with the notice open):
+[ ] Last date and time match the notice
+[ ] Post-wise and category-wise vacancy match the notice, total is correct
+[ ] Salary / fee / age limit / relaxation match the notice
+[ ] Qualification for every post is included
+[ ] Official website / apply link is actually written in the notice
 [ ] App, WhatsApp, Telegram links are correct
 [ ] Red box used only where it is needed
+[ ] Read the article once - it should sound like a person wrote it, not a robot
 
 WORDPRESS STEPS:
 1. Posts -> Add New
