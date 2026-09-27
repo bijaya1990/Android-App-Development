@@ -31,7 +31,7 @@ $dm_term = dm_lp_theme_term();
 ?>
 <div class="dm-lp dm-lp-thm">
 	<header class="dm-lp-hero">
-		<?php echo dm_lp_fade( $dm_hero, 'full', dm_store_opt( 'lp_thm_h1' ), true, false ); // phpcs:ignore ?>
+		<?php echo $dm_hero ? dm_lp_fade( $dm_hero, 'full', dm_store_opt( 'lp_thm_h1' ), true, false ) : dm_lp_wallpaper( 'wordpress' ); // phpcs:ignore ?>
 		<div class="dm-container dm-lp-hero-in">
 			<?php dm_render_breadcrumbs(); ?>
 			<span class="dm-kicker"><?php esc_html_e( 'WordPress themes', 'digimarket' ); ?></span>

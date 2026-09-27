@@ -12,8 +12,8 @@ $dm_count = dm_cart_count();
 $dm_links = array();
 $dm_lp    = array_filter(
 	array(
-		'website-services' => dm_lp_service_ids( 1 ) ? __( 'Website Services', 'digimarket' ) : '',
-		'wordpress-themes' => dm_lp_theme_ids( 1 ) ? __( 'WordPress Themes', 'digimarket' ) : '',
+		'website-services' => __( 'Website Services', 'digimarket' ),
+		'wordpress-themes' => __( 'WordPress Themes', 'digimarket' ),
 	)
 );
 foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {

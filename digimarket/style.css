@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.1.0
+Version: 2.1.1
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -1343,3 +1343,10 @@ main:has(> .dm-lp > .dm-lp-band:last-child) + .dm-ft { margin-top: 0; }
 .dm-demo-btn { margin-top: 10px; }
 .dm-hd-nav a.is-lp { font-weight: 700; color: var(--dm-primary); }
 .dm-hd-textlink[aria-current] { color: var(--dm-primary); }
+/* Designed wallpaper when no listing images exist yet */
+.dm-wall { background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, .22), transparent 40%), linear-gradient(135deg, #3F2BE0, #5B4BFF 50%, #8B5CF6); }
+.dm-wall.is-wordpress { background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, .2), transparent 40%), linear-gradient(135deg, #7C2D12, #C2410C 50%, #F59E0B); }
+.dm-wall-grid { position: absolute; top: 12%; right: 6%; display: grid; grid-template-columns: repeat(2, 64px); gap: 12px; transform: rotate(-8deg); }
+.dm-wall-grid i { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .28); color: #fff; }
+.dm-lp-hero .dm-wall-grid { top: 18%; right: 8%; opacity: .6; }
+@media (max-width: 719px) { .dm-show-card .dm-wall-grid { grid-template-columns: repeat(4, 48px); top: 16px; right: 16px; transform: none; } .dm-show-card .dm-wall-grid i { width: 48px; height: 48px; border-radius: 14px; } }

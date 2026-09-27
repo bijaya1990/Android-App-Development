@@ -25,7 +25,7 @@ $dm_email = dm_store_opt( 'business_email' ) ? dm_store_opt( 'business_email' ) 
 ?>
 <div class="dm-lp dm-lp-svc">
 	<header class="dm-lp-hero">
-		<?php echo dm_lp_fade( $dm_hero, 'full', dm_store_opt( 'lp_svc_h1' ), true, false ); // phpcs:ignore ?>
+		<?php echo $dm_hero ? dm_lp_fade( $dm_hero, 'full', dm_store_opt( 'lp_svc_h1' ), true, false ) : dm_lp_wallpaper( 'globe' ); // phpcs:ignore ?>
 		<div class="dm-container dm-lp-hero-in">
 			<?php dm_render_breadcrumbs(); ?>
 			<span class="dm-kicker"><?php esc_html_e( 'Website services', 'digimarket' ); ?></span>

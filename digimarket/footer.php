@@ -50,8 +50,8 @@ $dm_route  = dm_route();
 						<li><a href="<?php echo esc_url( get_term_link( $dm_cat ) ); ?>"><?php echo esc_html( $dm_cat->name ); ?></a></li>
 					<?php endforeach; ?>
 					<li><a href="<?php echo esc_url( dm_products_url() ); ?>"><?php esc_html_e( 'All products', 'digimarket' ); ?></a></li>
-						<?php if ( dm_lp_service_ids( 1 ) ) : ?><li><a href="<?php echo esc_url( dm_url( 'website-services' ) ); ?>"><?php esc_html_e( 'Website Services', 'digimarket' ); ?></a></li><?php endif; ?>
-						<?php if ( dm_lp_theme_ids( 1 ) ) : ?><li><a href="<?php echo esc_url( dm_url( 'wordpress-themes' ) ); ?>"><?php esc_html_e( 'WordPress Themes', 'digimarket' ); ?></a></li><?php endif; ?>
+						<li><a href="<?php echo esc_url( dm_url( 'website-services' ) ); ?>"><?php esc_html_e( 'Website Services', 'digimarket' ); ?></a></li>
+						<li><a href="<?php echo esc_url( dm_url( 'wordpress-themes' ) ); ?>"><?php esc_html_e( 'WordPress Themes', 'digimarket' ); ?></a></li>
 					<?php if ( ! dm_single_seller_mode() ) : ?>
 						<li><a href="<?php echo esc_url( dm_url( 'shops' ) ); ?>"><?php esc_html_e( 'All shops', 'digimarket' ); ?></a></li>
 						<li><a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a></li>

@@ -215,6 +215,18 @@ function dm_lp_fade( $att_ids, $size, $alt, $eager = false, $dots = true ) {
 	return $out . '</div>';
 }
 
+/**
+ * Designed fallback wallpaper (no image needed) for cards and heroes.
+ */
+function dm_lp_wallpaper( $kind ) {
+	$icons = 'wordpress' === $kind ? array( 'layout', 'image', 'palette', 'code' ) : array( 'globe', 'layout', 'phone', 'chat' );
+	$out   = '<div class="dm-fade dm-wall is-' . esc_attr( $kind ) . '" aria-hidden="true"><span class="dm-wall-grid">';
+	foreach ( $icons as $i ) {
+		$out .= '<i>' . dm_icon( $i, 34 ) . '</i>';
+	}
+	return $out . '</span></div>';
+}
+
 function dm_lp_coupon_strip( $code, $text ) {
 	if ( ! $code ) {
 		return;
@@ -261,11 +273,9 @@ function dm_lp_reviews_block( $ids, $title, $empty ) {
 function dm_home_block_landing() {
 	$svc = dm_lp_service_ids( 12 );
 	$thm = dm_lp_theme_ids( 12 );
-	if ( ! $svc && ! $thm ) {
-		return false;
-	}
-	echo '<section class="dm-block dm-show"><div class="dm-container"><div class="dm-show-grid' . ( $svc && $thm ? '' : ' is-one' ) . '">';
-	if ( $svc ) {
+	// Both cards always show; without listings yet they use a designed wallpaper.
+	echo '<section class="dm-block dm-show"><div class="dm-container"><div class="dm-show-grid">';
+	{
 		$wall = (int) dm_store_opt( 'lp_svc_wall' );
 		$imgs = $wall ? array( $wall ) : array();
 		if ( ! $imgs ) {
@@ -275,19 +285,21 @@ function dm_home_block_landing() {
 		}
 		$min = dm_lp_min_price( $svc );
 		echo '<a class="dm-show-card is-svc" href="' . esc_url( dm_url( 'website-services' ) ) . '" data-track="landing-services">';
-		echo dm_lp_fade( array_slice( array_filter( $imgs ), 0, 5 ), 'dm-wide', dm_store_opt( 'lp_svc_card_title' ), true, false ); // phpcs:ignore
+		$imgs = array_slice( array_filter( $imgs ), 0, 5 );
+		echo $imgs ? dm_lp_fade( $imgs, 'dm-wide', dm_store_opt( 'lp_svc_card_title' ), true, false ) : dm_lp_wallpaper( 'globe' ); // phpcs:ignore
 		echo '<span class="dm-show-body"><span class="dm-kicker">' . esc_html__( 'Website services', 'digimarket' ) . '</span><strong class="dm-show-title">' . esc_html( dm_store_opt( 'lp_svc_card_title' ) ) . '</strong>';
 		echo '<span class="dm-show-meta">' . ( $min ? esc_html( sprintf( /* translators: %s price */ __( 'Starting %s', 'digimarket' ), dm_money_short( $min ) ) ) . ' · ' : '' ) . esc_html__( 'Order on WhatsApp', 'digimarket' ) . '</span>';
 		echo '<span class="dm-btn dm-btn-light">' . esc_html( dm_store_opt( 'lp_svc_card_btn' ) ) . ' ' . dm_icon( 'arrow', 18 ) . '</span></span></a>'; // phpcs:ignore
 	}
-	if ( $thm ) {
+	{
 		$imgs = array();
 		foreach ( $thm as $id ) {
 			$imgs[] = (int) get_post_thumbnail_id( $id );
 		}
 		$min = dm_lp_min_price( $thm );
 		echo '<a class="dm-show-card is-thm" href="' . esc_url( dm_url( 'wordpress-themes' ) ) . '" data-track="landing-themes">';
-		echo dm_lp_fade( array_slice( array_filter( $imgs ), 0, 6 ), 'dm-wide', dm_store_opt( 'lp_thm_card_title' ), true, false ); // phpcs:ignore
+		$imgs = array_slice( array_filter( $imgs ), 0, 6 );
+		echo $imgs ? dm_lp_fade( $imgs, 'dm-wide', dm_store_opt( 'lp_thm_card_title' ), true, false ) : dm_lp_wallpaper( 'wordpress' ); // phpcs:ignore
 		echo '<span class="dm-show-body"><span class="dm-kicker">' . esc_html__( 'WordPress themes', 'digimarket' ) . '</span><strong class="dm-show-title">' . esc_html( dm_store_opt( 'lp_thm_card_title' ) ) . '</strong>';
 		echo '<span class="dm-show-meta">' . ( $min ? esc_html( sprintf( /* translators: %s price */ __( 'From %s', 'digimarket' ), dm_money_short( $min ) ) ) . ' · ' : '' ) . esc_html__( 'Instant download', 'digimarket' ) . '</span>';
 		echo '<span class="dm-btn dm-btn-buy">' . esc_html( dm_store_opt( 'lp_thm_card_btn' ) ) . ' ' . dm_icon( 'arrow', 18 ) . '</span></span></a>'; // phpcs:ignore
