@@ -1,0 +1,95 @@
+===========================================================
+ NAUKRIPATRA.IN - PROMPT FOR WRITING A POST WITH CHATGPT
+===========================================================
+
+How to use:
+1. Open ChatGPT.
+2. Attach the notification PDF/image.
+3. Attach naukripatra_article_template.html (or paste its code).
+4. Copy the whole prompt below and paste it.
+
+-----------------------------------------------------------
+PROMPT (copy everything from here)
+-----------------------------------------------------------
+
+You are writing a job post for my government job website NaukriPatra.in.
+I have attached the official notification and my HTML template.
+
+Your task: fill in the attached HTML template using the details from the notification
+and give me a complete SEO-friendly job article.
+
+STRICT RULES:
+
+1. Use ONLY the information written in the notification. Do not guess or invent anything.
+   If something (salary, age limit, fee, number of posts, selection process) is not in the notice,
+   write clearly: "The notice does not mention ...". A student's career depends on this.
+
+2. Keep the template's design, structure, headings, table style and inline CSS exactly the same.
+   Only replace the [ ] placeholders.
+   - Every table must stay inside <div class="np-table-wrap" style="margin-bottom:1.2em;">.
+   - Keep the table attributes the same: border="1" cellpadding="8" cellspacing="0"
+     style="border-collapse:collapse; width:100%; min-width:500px;"
+
+3. Section order must stay the same:
+   Intro -> (Red Box if needed) -> Highlights -> Post-wise Vacancy Details -> Who Can Apply ->
+   Educational Qualification -> Age Limit -> Application Fee -> Salary -> Selection Process ->
+   Documents Required -> Important Dates -> How to Apply -> Why You Should Apply ->
+   Preparation Tips -> Important Links -> FAQs
+
+4. RED BOX: keep it only if eligibility is restricted, for example:
+   retired only, women only, ex-servicemen only, deputation (serving govt employees only),
+   domicile/local residents only, or honorary/volunteer posts.
+   Otherwise delete the red box completely.
+
+5. Tables:
+   - Add or remove rows in the vacancy table as needed; show the category-wise split (UR/OBC/SC/ST/EWS)
+     if it is in the notice. Add up the totals correctly.
+   - Use a table for Age Limit, Fee and Salary when they differ by post or category.
+
+6. Important Links:
+   - Notification PDF link: [PASTE THE NOTIFICATION PDF LINK HERE]
+   - Keep the Official Website / Apply Online rows ONLY if the link is written in the notice.
+     Never guess a website URL. If there is none, delete those rows.
+   - Do NOT change the NaukriPatra App, WhatsApp Channel and Telegram Channel rows.
+
+7. FAQs: write 6-8 FAQs in this exact format:
+   <h3>Q1. Question?</h3>
+   <p>Answer.</p>
+
+8. Article length: at least 1800 characters. Simple, clear English.
+   Write dates as "15 October 2026".
+
+9. Walk-in: if it is a walk-in interview, show the interview date, time, reporting time
+   and venue clearly in the Highlights and Important Dates.
+
+10. Output: first give ONLY the HTML code in one code block. Then, separately, give me:
+    - Post Title (SEO friendly, e.g. "XYZ Recruitment 2026: 25 ABC Posts, Apply by 15 October")
+    - Slug (e.g. xyz-abc-recruitment-2026)
+    - Focus Keyword (e.g. XYZ Recruitment 2026)
+    - Meta Description (under 160 characters)
+    - Excerpt (1-2 lines)
+    - Tags (4-5, comma separated)
+    - Category (Latest Jobs + State name)
+    - Thumbnail text: Organization name / Post name / Total posts / Last date
+
+-----------------------------------------------------------
+PROMPT END
+-----------------------------------------------------------
+
+CHECKLIST BEFORE PUBLISHING (do it yourself):
+[ ] Last date matches the notice
+[ ] Vacancy total matches the notice
+[ ] Salary / fee / age match the notice
+[ ] Official website / apply link is actually in the notice
+[ ] App, WhatsApp, Telegram links are correct
+[ ] Red box used only where it is needed
+
+WORDPRESS STEPS:
+1. Posts -> Add New
+2. Top-right three dots (⋮) -> Code editor (or add a Custom HTML block)
+3. Paste the HTML
+4. Fill in Title, Slug, Category, Tags, Excerpt
+5. Yoast SEO: Focus keyword, SEO title, Meta description
+6. Featured Image: upload the thumbnail made in Canva, add alt text
+7. Publish
+8. Google Search Console -> URL Inspection -> paste the post URL -> Request Indexing
