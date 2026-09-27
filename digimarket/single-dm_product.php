@@ -18,6 +18,7 @@ while ( have_posts() ) :
 	$dm_owned    = dm_user_purchase( $dm_uid, $dm_pid );
 	$dm_own      = $dm_uid && $dm_uid === $dm_seller;
 	$dm_delivery = get_post_meta( $dm_pid, '_dm_delivery', true );
+	$dm_service  = dm_is_service( $dm_pid );
 	$dm_cats     = get_the_terms( $dm_pid, 'dm_category' );
 	$dm_tags     = get_the_terms( $dm_pid, 'dm_tag' );
 	$dm_rating   = (float) get_post_meta( $dm_pid, '_dm_rating_avg', true );
@@ -66,36 +67,50 @@ while ( have_posts() ) :
 				<?php if ( has_excerpt() ) : ?><p class="dm-lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
 
 				<div class="dm-buy-box">
-					<div class="dm-buy-price"><?php echo wp_kses_post( dm_price_html( $dm_pid ) ); ?></div>
-					<ul class="dm-buy-facts">
-						<li>⚡ <?php echo esc_html( dm_delivery_label( $dm_delivery ) ); ?></li>
-						<?php if ( 'file' === $dm_delivery && get_post_meta( $dm_pid, '_dm_file_size', true ) ) : ?>
-							<li>📦 <?php echo esc_html( strtoupper( pathinfo( (string) get_post_meta( $dm_pid, '_dm_file_name', true ), PATHINFO_EXTENSION ) ) . ' · ' . size_format( (int) get_post_meta( $dm_pid, '_dm_file_size', true ) ) ); ?></li>
+					<?php if ( $dm_service ) : ?>
+						<div class="dm-buy-price"><span class="dm-price"><span class="dm-price-now"><?php esc_html_e( 'Starting from', 'digimarket' ); ?> <?php echo esc_html( dm_money( dm_product_price( $dm_pid ) ) ); ?></span></span></div>
+						<p class="dm-muted dm-small"><?php esc_html_e( 'Final price depends on your requirements — let’s discuss on WhatsApp.', 'digimarket' ); ?></p>
+						<?php $dm_wa = dm_service_whatsapp_url( $dm_pid ); ?>
+						<?php if ( $dm_own ) : ?>
+							<a class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" href="<?php echo esc_url( dm_url( 'dashboard', 'edit', $dm_pid ) ); ?>"><?php esc_html_e( 'Edit this service', 'digimarket' ); ?></a>
+						<?php elseif ( $dm_wa ) : ?>
+							<a class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" href="<?php echo esc_url( $dm_wa ); ?>" target="_blank" rel="noopener">💬 <?php esc_html_e( 'Enquire on WhatsApp', 'digimarket' ); ?></a>
+						<?php else : ?>
+							<div class="dm-notice dm-notice-info"><?php esc_html_e( 'Contact us for pricing and details.', 'digimarket' ); ?></div>
 						<?php endif; ?>
-						<?php $dm_days = (int) get_post_meta( $dm_pid, '_dm_access_days', true ); ?>
-						<li>♾️ <?php echo $dm_days ? esc_html( sprintf( /* translators: %d */ _n( '%d day access', '%d days access', $dm_days, 'digimarket' ), $dm_days ) ) : esc_html__( 'Lifetime access', 'digimarket' ); ?></li>
-						<?php $dm_lim = (int) get_post_meta( $dm_pid, '_dm_download_limit', true ); ?>
-						<?php if ( $dm_lim ) : ?><li>⬇️ <?php echo esc_html( sprintf( /* translators: %d */ _n( '%d download', '%d downloads', $dm_lim, 'digimarket' ), $dm_lim ) ); ?></li><?php endif; ?>
-					</ul>
-					<?php if ( $dm_owned ) : ?>
-						<div class="dm-owned">✓ <?php esc_html_e( 'You own this product', 'digimarket' ); ?></div>
-						<a class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" href="<?php echo esc_url( dm_url( 'account', 'purchases' ) ); ?>"><?php esc_html_e( 'Go to My Purchases', 'digimarket' ); ?></a>
-					<?php elseif ( $dm_own ) : ?>
-						<a class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" href="<?php echo esc_url( dm_url( 'dashboard', 'edit', $dm_pid ) ); ?>"><?php esc_html_e( 'Edit this product', 'digimarket' ); ?></a>
-					<?php elseif ( $dm_can ) : ?>
-						<form method="post" class="dm-buy-form">
-							<?php dm_nonce_field( 'cart_add' ); ?>
-							<input type="hidden" name="product_id" value="<?php echo (int) $dm_pid; ?>">
-							<button class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" name="buy_now" value="1" type="submit"><?php esc_html_e( 'Buy now', 'digimarket' ); ?></button>
-							<button class="dm-btn dm-btn-outline dm-btn-lg dm-btn-block" type="submit" data-add-to-cart="<?php echo (int) $dm_pid; ?>"><?php esc_html_e( 'Add to cart', 'digimarket' ); ?></button>
-						</form>
+						<p class="dm-secure">💬 <?php esc_html_e( 'No payment now — we’ll agree on price and details first.', 'digimarket' ); ?></p>
 					<?php else : ?>
-						<div class="dm-notice dm-notice-info"><?php echo esc_html( $dm_reason ); ?></div>
+						<div class="dm-buy-price"><?php echo wp_kses_post( dm_price_html( $dm_pid ) ); ?></div>
+						<ul class="dm-buy-facts">
+							<li>⚡ <?php echo esc_html( dm_delivery_label( $dm_delivery ) ); ?></li>
+							<?php if ( 'file' === $dm_delivery && get_post_meta( $dm_pid, '_dm_file_size', true ) ) : ?>
+								<li>📦 <?php echo esc_html( strtoupper( pathinfo( (string) get_post_meta( $dm_pid, '_dm_file_name', true ), PATHINFO_EXTENSION ) ) . ' · ' . size_format( (int) get_post_meta( $dm_pid, '_dm_file_size', true ) ) ); ?></li>
+							<?php endif; ?>
+							<?php $dm_days = (int) get_post_meta( $dm_pid, '_dm_access_days', true ); ?>
+							<li>♾️ <?php echo $dm_days ? esc_html( sprintf( /* translators: %d */ _n( '%d day access', '%d days access', $dm_days, 'digimarket' ), $dm_days ) ) : esc_html__( 'Lifetime access', 'digimarket' ); ?></li>
+							<?php $dm_lim = (int) get_post_meta( $dm_pid, '_dm_download_limit', true ); ?>
+							<?php if ( $dm_lim ) : ?><li>⬇️ <?php echo esc_html( sprintf( /* translators: %d */ _n( '%d download', '%d downloads', $dm_lim, 'digimarket' ), $dm_lim ) ); ?></li><?php endif; ?>
+						</ul>
+						<?php if ( $dm_owned ) : ?>
+							<div class="dm-owned">✓ <?php esc_html_e( 'You own this product', 'digimarket' ); ?></div>
+							<a class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" href="<?php echo esc_url( dm_url( 'account', 'purchases' ) ); ?>"><?php esc_html_e( 'Go to My Purchases', 'digimarket' ); ?></a>
+						<?php elseif ( $dm_own ) : ?>
+							<a class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" href="<?php echo esc_url( dm_url( 'dashboard', 'edit', $dm_pid ) ); ?>"><?php esc_html_e( 'Edit this product', 'digimarket' ); ?></a>
+						<?php elseif ( $dm_can ) : ?>
+							<form method="post" class="dm-buy-form">
+								<?php dm_nonce_field( 'cart_add' ); ?>
+								<input type="hidden" name="product_id" value="<?php echo (int) $dm_pid; ?>">
+								<button class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" name="buy_now" value="1" type="submit"><?php esc_html_e( 'Buy now', 'digimarket' ); ?></button>
+								<button class="dm-btn dm-btn-outline dm-btn-lg dm-btn-block" type="submit" data-add-to-cart="<?php echo (int) $dm_pid; ?>"><?php esc_html_e( 'Add to cart', 'digimarket' ); ?></button>
+							</form>
+						<?php else : ?>
+							<div class="dm-notice dm-notice-info"><?php echo esc_html( $dm_reason ); ?></div>
+						<?php endif; ?>
+						<p class="dm-secure">🔒 <?php esc_html_e( 'Secure checkout · UPI, cards, netbanking, wallets', 'digimarket' ); ?></p>
 					<?php endif; ?>
 					<?php if ( $dm_uid && ! $dm_own ) : ?>
 						<button class="dm-btn dm-btn-ghost dm-btn-block dm-wish-inline<?php echo dm_in_wishlist( $dm_pid ) ? ' is-on' : ''; ?>" data-product="<?php echo (int) $dm_pid; ?>" aria-pressed="<?php echo dm_in_wishlist( $dm_pid ) ? 'true' : 'false'; ?>">♥ <span><?php echo dm_in_wishlist( $dm_pid ) ? esc_html__( 'Saved', 'digimarket' ) : esc_html__( 'Save to wishlist', 'digimarket' ); ?></span></button>
 					<?php endif; ?>
-					<p class="dm-secure">🔒 <?php esc_html_e( 'Secure checkout · UPI, cards, netbanking, wallets', 'digimarket' ); ?></p>
 				</div>
 
 				<div class="dm-seller-card">

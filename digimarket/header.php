@@ -75,7 +75,7 @@ $dm_count = dm_cart_count();
 						<?php endif; ?>
 						<?php if ( dm_is_seller() ) : ?>
 							<a role="menuitem" href="<?php echo esc_url( dm_url( 'dashboard' ) ); ?>"><?php esc_html_e( 'Seller dashboard', 'digimarket' ); ?></a>
-						<?php else : ?>
+						<?php elseif ( ! dm_single_seller_mode() ) : ?>
 							<a role="menuitem" href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php esc_html_e( 'Start selling', 'digimarket' ); ?></a>
 						<?php endif; ?>
 						<a role="menuitem" href="<?php echo esc_url( dm_url( 'account', 'purchases' ) ); ?>"><?php esc_html_e( 'My purchases', 'digimarket' ); ?></a>
@@ -102,7 +102,7 @@ $dm_count = dm_cart_count();
 			<input type="search" name="s" placeholder="<?php esc_attr_e( 'Search…', 'digimarket' ); ?>" aria-label="<?php esc_attr_e( 'Search products', 'digimarket' ); ?>">
 		</form>
 		<a href="<?php echo esc_url( dm_products_url() ); ?>"><?php esc_html_e( 'All products', 'digimarket' ); ?></a>
-		<a href="<?php echo esc_url( dm_url( 'shops' ) ); ?>"><?php esc_html_e( 'All shops', 'digimarket' ); ?></a>
+		<?php if ( ! dm_single_seller_mode() ) : ?><a href="<?php echo esc_url( dm_url( 'shops' ) ); ?>"><?php esc_html_e( 'All shops', 'digimarket' ); ?></a><?php endif; ?>
 		<?php foreach ( $dm_cats as $dm_cat ) : ?>
 			<a href="<?php echo esc_url( get_term_link( $dm_cat ) ); ?>"><?php echo esc_html( $dm_cat->name ); ?></a>
 		<?php endforeach; ?>
@@ -113,7 +113,7 @@ $dm_count = dm_cart_count();
 			<a href="<?php echo esc_url( dm_url( 'login' ) ); ?>"><?php esc_html_e( 'Log in', 'digimarket' ); ?></a>
 			<a href="<?php echo esc_url( dm_url( 'register' ) ); ?>"><?php esc_html_e( 'Sign up', 'digimarket' ); ?></a>
 		<?php endif; ?>
-		<a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>" class="dm-btn dm-btn-primary"><?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a>
+		<?php if ( ! dm_single_seller_mode() ) : ?><a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>" class="dm-btn dm-btn-primary"><?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a><?php endif; ?>
 	</div>
 </header>
 <main id="dm-main" class="dm-main">

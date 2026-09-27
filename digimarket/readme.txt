@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,10 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /shops, /store/{shop}, /cart, /checkout, /account, /dashboard, /sell, /login, /register, /forgot, /admin/login (→ wp-login with 2FA)
 
 == Changelog ==
+
+= 1.1.0 =
+* New: Single Seller Mode setting (Marketplace → Settings) for running as your own solo shop — hides seller signup, shop directory and per-seller Razorpay linked accounts; your own sales settle without needing Route.
+* New: "Service" product type — a WhatsApp-enquiry button instead of Buy Now/cart, for custom work (website builds, etc.) priced after discussion. Set a default WhatsApp number in Settings, or per product.
 
 = 1.0.1 =
 * Fix: pages like /cart/ and /sell/ returning 404 on Apache/LiteSpeed hosts (.htaccess is now written on activation, with self-repair and an admin warning).

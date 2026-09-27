@@ -41,7 +41,28 @@ function dm_default_settings() {
 		'invoice_gstin'          => '',
 		'support_email'          => get_option( 'admin_email' ),
 		'order_prefix'           => 'DM-',
+		'single_seller_mode'     => 0,
+		'whatsapp_number'        => '',
 	);
+}
+
+/**
+ * True when the site runs as a solo shop (no seller signup, no marketplace UI).
+ */
+function dm_single_seller_mode() {
+	return (bool) dm_opt( 'single_seller_mode' );
+}
+
+/**
+ * A wa.me deep link that opens WhatsApp with a pre-filled message.
+ */
+function dm_whatsapp_url( $message, $number = '' ) {
+	$number = $number ? $number : dm_opt( 'whatsapp_number' );
+	$number = preg_replace( '/\D/', '', (string) $number );
+	if ( ! $number ) {
+		return '';
+	}
+	return 'https://wa.me/' . $number . '?text=' . rawurlencode( $message );
 }
 
 function dm_settings() {
@@ -211,6 +232,23 @@ function dm_product_thumb( $pid, $size = 'dm-card' ) {
 		return get_the_post_thumbnail( $pid, $size, array( 'loading' => 'lazy', 'class' => 'dm-thumb-img' ) );
 	}
 	return '<div class="dm-thumb-placeholder" aria-hidden="true"><span>' . esc_html( mb_substr( get_the_title( $pid ), 0, 1 ) ) . '</span></div>';
+}
+
+function dm_is_service( $pid ) {
+	return (bool) get_post_meta( $pid, '_dm_service_mode', true );
+}
+
+/**
+ * WhatsApp enquiry link for a service product, with the product name pre-filled.
+ */
+function dm_service_whatsapp_url( $pid ) {
+	$number  = get_post_meta( $pid, '_dm_service_whatsapp', true );
+	$message = get_post_meta( $pid, '_dm_service_message', true );
+	if ( ! $message ) {
+		/* translators: %s product title */
+		$message = sprintf( __( 'Hi, I\'m interested in "%s". Order #%s.', 'digimarket' ), get_the_title( $pid ), $pid );
+	}
+	return dm_whatsapp_url( $message, $number );
 }
 
 function dm_delivery_label( $type ) {

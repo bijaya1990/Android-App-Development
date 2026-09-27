@@ -151,7 +151,13 @@ function dm_route_guard() {
 				dm_redirect( dm_url( 'login', '', '', array( 'redirect_to' => rawurlencode( dm_current_url() ) ) ) );
 			}
 			if ( ! dm_is_seller() ) {
-				dm_redirect( dm_url( 'sell' ) );
+				dm_redirect( dm_single_seller_mode() ? home_url( '/' ) : dm_url( 'sell' ) );
+			}
+			break;
+		case 'sell':
+		case 'shops':
+			if ( dm_single_seller_mode() ) {
+				dm_redirect( home_url( '/' ) );
 			}
 			break;
 		case 'login':
@@ -183,6 +189,9 @@ function dm_route_guard() {
 add_filter( 'template_include', 'dm_template_include', 99 );
 function dm_template_include( $template ) {
 	if ( get_query_var( 'dm_store' ) ) {
+		if ( dm_single_seller_mode() ) {
+			dm_redirect( home_url( '/' ) );
+		}
 		return DM_DIR . '/templates/store.php';
 	}
 	$route = dm_route();

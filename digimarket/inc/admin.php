@@ -639,6 +639,11 @@ function dm_admin_settings() {
 		}
 		echo '</td></tr>';
 	};
+	echo '<h2>' . esc_html__( 'Store mode', 'digimarket' ) . '</h2><table class="form-table">';
+	$field( 'single_seller_mode', __( 'Single seller mode', 'digimarket' ), 'checkbox', __( 'Run this as your own solo shop — hides seller signup, shop directory and commission split. Only the site admin can list products.', 'digimarket' ) );
+	$field( 'whatsapp_number', __( 'Default WhatsApp number', 'digimarket' ), 'text', __( 'Used for “Service” products (and the footer chat button) that don’t set their own number. Include country code, digits only, e.g. 919776144085.', 'digimarket' ) );
+	echo '</table>';
+
 	echo '<h2>' . esc_html__( 'Commission engine', 'digimarket' ) . '</h2><table class="form-table">';
 	$field( 'commission_global', __( 'Global commission (%)', 'digimarket' ), 'number', __( 'Applied to every sale unless a seller or category override exists.', 'digimarket' ), 'step="0.01" min="0" max="100"' );
 	$field( 'commission_start_date', __( 'Commission starts on', 'digimarket' ), 'date', __( 'Launch promo: before this date commission is 0% for everyone. It switches to the normal rate automatically. Leave blank to charge commission now.', 'digimarket' ) );
@@ -903,7 +908,7 @@ function dm_admin_handle() {
 			$old      = dm_settings();
 			$defaults = dm_default_settings();
 			$new      = $old;
-			$checks   = array( 'auto_approve_sellers', 'require_email_verify', 'allow_sales_without_kyc', 'admin_2fa', 'sellers_can_refund' );
+			$checks   = array( 'auto_approve_sellers', 'require_email_verify', 'allow_sales_without_kyc', 'admin_2fa', 'sellers_can_refund', 'single_seller_mode' );
 			foreach ( $defaults as $k => $def ) {
 				if ( in_array( $k, $checks, true ) ) {
 					$new[ $k ] = empty( $in[ $k ] ) ? 0 : 1;

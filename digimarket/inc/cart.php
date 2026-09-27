@@ -67,6 +67,9 @@ function dm_cart_merge_on_login( $login, $user ) {
  * Add to cart with validation. Returns true or WP_Error.
  */
 function dm_cart_add( $pid ) {
+	if ( dm_is_service( $pid ) ) {
+		return new WP_Error( 'service', __( 'This is a service — please enquire on WhatsApp instead of adding it to the cart.', 'digimarket' ) );
+	}
 	list( $ok, $reason ) = dm_can_purchase( $pid );
 	if ( ! $ok ) {
 		return new WP_Error( 'unavailable', $reason );

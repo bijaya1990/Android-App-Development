@@ -126,7 +126,7 @@ if ( ! $dm_shop_ids ) {
 	$dm_shop_ids = get_users( array( 'meta_key' => 'dm_seller_status', 'meta_value' => 'active', 'number' => 8, 'fields' => 'ID' ) );
 }
 $dm_shop_ids = array_filter( $dm_shop_ids, 'dm_is_active_seller' );
-if ( $dm_shop_ids && get_theme_mod( 'dm_show_shops', 1 ) ) :
+if ( ! dm_single_seller_mode() && $dm_shop_ids && get_theme_mod( 'dm_show_shops', 1 ) ) :
 	?>
 <section class="dm-section dm-section-alt">
 	<div class="dm-container">

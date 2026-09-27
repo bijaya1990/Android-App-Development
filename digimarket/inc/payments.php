@@ -460,6 +460,22 @@ function dm_process_transfers( $order_id ) {
 		$by_seller[ $it->seller_id ][] = $it;
 	}
 
+	// The site owner selling their own products: the money already sits in the
+	// platform's own Razorpay account, so no Route transfer is needed at all.
+	foreach ( $by_seller as $seller_id => $rows ) {
+		if ( user_can( $seller_id, 'manage_options' ) ) {
+			foreach ( $rows as $it ) {
+				$wpdb->update( dm_table( 'order_items' ), array( 'transfer_status' => 'not_required', 'transfer_note' => '' ), array( 'id' => $it->id ) );
+				$wpdb->update( dm_table( 'payouts' ), array( 'status' => 'settled', 'note' => 'Site owner — no transfer needed', 'settled_at' => dm_now() ), array( 'order_item_id' => $it->id ) );
+			}
+			unset( $by_seller[ $seller_id ] );
+		}
+	}
+	if ( ! $by_seller ) {
+		return;
+	}
+	$items = array_merge( ...array_values( $by_seller ) );
+
 	// Demo / non-Razorpay: simulate an instant transfer so dashboards reflect the split.
 	if ( ! in_array( $order->gateway, array( 'razorpay' ), true ) ) {
 		foreach ( $items as $it ) {

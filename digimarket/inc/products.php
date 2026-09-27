@@ -211,7 +211,11 @@ function dm_save_product( $pid, $owner, $data ) {
 	if ( 'external_link' === $delivery && $external && ! wp_http_validate_url( $external ) ) {
 		$errors->add( 'url', __( 'The access link must be a valid URL.', 'digimarket' ) );
 	}
-	$status = in_array( $data['status'] ?? 'draft', array( 'draft', 'publish', 'dm_unpublished' ), true ) ? $data['status'] : 'draft';
+	$status  = in_array( $data['status'] ?? 'draft', array( 'draft', 'publish', 'dm_unpublished' ), true ) ? $data['status'] : 'draft';
+	$service = ! empty( $data['service_mode'] );
+	if ( $service && empty( trim( (string) ( $data['service_whatsapp'] ?? '' ) ) ) && ! dm_opt( 'whatsapp_number' ) ) {
+		$errors->add( 'whatsapp', __( 'Add a WhatsApp number for this service (or set a default one in Marketplace → Settings).', 'digimarket' ) );
+	}
 
 	if ( $errors->has_errors() ) {
 		return $errors;
@@ -253,6 +257,9 @@ function dm_save_product( $pid, $owner, $data ) {
 	update_post_meta( $pid, '_dm_effective_price', '' !== $sale ? $sale : $price );
 	update_post_meta( $pid, '_dm_delivery', $delivery );
 	update_post_meta( $pid, '_dm_external_url', $external );
+	update_post_meta( $pid, '_dm_service_mode', $service ? 1 : 0 );
+	update_post_meta( $pid, '_dm_service_whatsapp', preg_replace( '/\D/', '', (string) ( $data['service_whatsapp'] ?? '' ) ) );
+	update_post_meta( $pid, '_dm_service_message', sanitize_text_field( $data['service_message'] ?? '' ) );
 	update_post_meta( $pid, '_dm_download_limit', max( 0, absint( $data['download_limit'] ?? 0 ) ) );
 	update_post_meta( $pid, '_dm_access_days', max( 0, absint( $data['access_days'] ?? 0 ) ) );
 	update_post_meta( $pid, '_dm_meta_title', sanitize_text_field( $data['meta_title'] ?? '' ) );
@@ -346,14 +353,16 @@ function dm_save_product( $pid, $owner, $data ) {
 		if ( ! has_post_thumbnail( $pid ) ) {
 			$missing[] = __( 'a thumbnail image', 'digimarket' );
 		}
-		if ( 'file' === $delivery && ! get_post_meta( $pid, '_dm_file', true ) ) {
-			$missing[] = __( 'the digital file', 'digimarket' );
-		}
-		if ( 'external_link' === $delivery && ! $external ) {
-			$missing[] = __( 'the access link', 'digimarket' );
-		}
-		if ( 'license_key' === $delivery && dm_license_keys_available( $pid ) < 1 ) {
-			$missing[] = __( 'at least one license key', 'digimarket' );
+		if ( ! $service ) {
+			if ( 'file' === $delivery && ! get_post_meta( $pid, '_dm_file', true ) ) {
+				$missing[] = __( 'the digital file', 'digimarket' );
+			}
+			if ( 'external_link' === $delivery && ! $external ) {
+				$missing[] = __( 'the access link', 'digimarket' );
+			}
+			if ( 'license_key' === $delivery && dm_license_keys_available( $pid ) < 1 ) {
+				$missing[] = __( 'at least one license key', 'digimarket' );
+			}
 		}
 		if ( $missing ) {
 			/* translators: %s list */
@@ -610,6 +619,10 @@ function dm_product_metabox( $post ) {
 	echo '<tr><th>' . esc_html__( 'Add license keys (one per line)', 'digimarket' ) . '</th><td><textarea name="dm[license_keys]" rows="4" class="large-text"></textarea><p class="description">' . esc_html( sprintf( /* translators: %d */ __( '%d unused keys available.', 'digimarket' ), dm_license_keys_available( $post->ID ) ) ) . '</p></td></tr>';
 	echo '<tr><th>' . esc_html__( 'Featured on homepage', 'digimarket' ) . '</th><td><label><input type="checkbox" name="dm[featured]" value="1"' . checked( get_post_meta( $post->ID, '_dm_featured', true ), 1, false ) . '> ' . esc_html__( 'Show in the homepage hero rotator', 'digimarket' ) . '</label></td></tr>';
 	echo '<tr><th>' . esc_html__( 'Moderation lock', 'digimarket' ) . '</th><td><label><input type="checkbox" name="dm[forced]" value="1"' . checked( get_post_meta( $post->ID, '_dm_forced', true ), 1, false ) . '> ' . esc_html__( 'Force-unpublished (seller cannot republish)', 'digimarket' ) . '</label></td></tr>';
+	echo '<tr><th colspan="2"><hr></th></tr>';
+	echo '<tr><th>' . esc_html__( 'Service (no online payment)', 'digimarket' ) . '</th><td><label><input type="checkbox" name="dm[service_mode]" value="1" id="dm_service_mode"' . checked( get_post_meta( $post->ID, '_dm_service_mode', true ), 1, false ) . '> ' . esc_html__( 'This is a service — show a WhatsApp enquiry button instead of Buy Now, and no cart/payment.', 'digimarket' ) . '</label></td></tr>';
+	echo '<tr><th><label for="dm_service_whatsapp">' . esc_html__( 'Service WhatsApp number', 'digimarket' ) . '</label></th><td><input class="regular-text" type="text" id="dm_service_whatsapp" name="dm[service_whatsapp]" value="' . esc_attr( get_post_meta( $post->ID, '_dm_service_whatsapp', true ) ) . '" placeholder="' . esc_attr( dm_opt( 'whatsapp_number', '91XXXXXXXXXX' ) ) . '"><p class="description">' . esc_html__( 'Leave blank to use the default WhatsApp number set in Marketplace → Settings.', 'digimarket' ) . '</p></td></tr>';
+	echo '<tr><th><label for="dm_service_message">' . esc_html__( 'WhatsApp pre-filled message', 'digimarket' ) . '</label></th><td><input class="regular-text" type="text" id="dm_service_message" name="dm[service_message]" value="' . esc_attr( get_post_meta( $post->ID, '_dm_service_message', true ) ) . '" placeholder="' . esc_attr__( 'Hi, I\'m interested in this website package…', 'digimarket' ) . '"></td></tr>';
 	echo '</tbody></table>';
 }
 
@@ -639,6 +652,9 @@ function dm_admin_save_product( $pid, $post ) {
 	update_post_meta( $pid, '_dm_access_days', absint( $d['access_days'] ?? 0 ) );
 	update_post_meta( $pid, '_dm_meta_title', sanitize_text_field( $d['meta_title'] ?? '' ) );
 	update_post_meta( $pid, '_dm_meta_desc', sanitize_text_field( $d['meta_desc'] ?? '' ) );
+	update_post_meta( $pid, '_dm_service_mode', empty( $d['service_mode'] ) ? 0 : 1 );
+	update_post_meta( $pid, '_dm_service_whatsapp', preg_replace( '/\D/', '', (string) ( $d['service_whatsapp'] ?? '' ) ) );
+	update_post_meta( $pid, '_dm_service_message', sanitize_text_field( $d['service_message'] ?? '' ) );
 	foreach ( array( '_dm_sales', '_dm_views', '_dm_rating_avg', '_dm_rating_count' ) as $counter ) {
 		if ( '' === get_post_meta( $pid, $counter, true ) ) {
 			update_post_meta( $pid, $counter, 0 );

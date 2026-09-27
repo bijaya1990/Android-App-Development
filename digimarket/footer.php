@@ -9,6 +9,7 @@
 </main>
 <footer class="dm-footer">
 	<div class="dm-container">
+		<?php if ( ! dm_single_seller_mode() ) : ?>
 		<div class="dm-footer-cta">
 			<div>
 				<h2><?php esc_html_e( 'Sell your digital products here', 'digimarket' ); ?></h2>
@@ -16,6 +17,15 @@
 			</div>
 			<a class="dm-btn dm-btn-light dm-btn-lg" href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a>
 		</div>
+		<?php elseif ( dm_opt( 'whatsapp_number' ) ) : ?>
+		<div class="dm-footer-cta">
+			<div>
+				<h2><?php esc_html_e( 'Need a website built?', 'digimarket' ); ?></h2>
+				<p><?php esc_html_e( 'Chat with us on WhatsApp to discuss your requirements.', 'digimarket' ); ?></p>
+			</div>
+			<a class="dm-btn dm-btn-light dm-btn-lg" href="<?php echo esc_url( dm_whatsapp_url( __( 'Hi, I have a question about a website/service.', 'digimarket' ) ) ); ?>" target="_blank" rel="noopener">💬 <?php esc_html_e( 'Chat on WhatsApp', 'digimarket' ); ?></a>
+		</div>
+		<?php endif; ?>
 		<div class="dm-footer-grid">
 			<div>
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="dm-logo-text"><span class="dm-logo-mark" aria-hidden="true">◆</span><?php bloginfo( 'name' ); ?></a>
@@ -37,8 +47,10 @@
 				<h4><?php esc_html_e( 'Marketplace', 'digimarket' ); ?></h4>
 				<ul>
 					<li><a href="<?php echo esc_url( dm_products_url() ); ?>"><?php esc_html_e( 'All products', 'digimarket' ); ?></a></li>
-					<li><a href="<?php echo esc_url( dm_url( 'shops' ) ); ?>"><?php esc_html_e( 'All shops', 'digimarket' ); ?></a></li>
-					<li><a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a></li>
+					<?php if ( ! dm_single_seller_mode() ) : ?>
+						<li><a href="<?php echo esc_url( dm_url( 'shops' ) ); ?>"><?php esc_html_e( 'All shops', 'digimarket' ); ?></a></li>
+						<li><a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a></li>
+					<?php endif; ?>
 					<li><a href="<?php echo esc_url( dm_url( 'account' ) ); ?>"><?php esc_html_e( 'My account', 'digimarket' ); ?></a></li>
 				</ul>
 			</div>
