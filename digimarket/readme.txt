@@ -1,13 +1,13 @@
-=== DigiMarket ===
+=== PikaCart (DigiMarket) ===
 Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A complete multi-vendor digital products marketplace theme with automatic Razorpay Route commission splits. No plugins required.
+A Flipkart-style storefront for digital products, WhatsApp-quoted website services and hosting partner offers — with built-in SEO, banners, coupons and articles. Also runs as a full multi-vendor marketplace with Razorpay Route splits. No plugins required.
 
 == Description ==
 
@@ -20,6 +20,23 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 * Payments: Razorpay Orders + Checkout, signature verification, automatic Route transfers (one per seller per order), idempotent processing, webhooks (payment.captured, payment.failed, transfer.processed, transfer.failed, refund.processed, disputes) with signature verification and de-duplication. Refunds reverse the seller transfer and refund the buyer (both legs of the split) and revoke access.
 * Security: server-side role checks on every action, nonces everywhere, login rate limiting / lockout, optional admin email OTP (2FA), admin idle auto-logout, encrypted PAN and bank account at rest, private file storage with HMAC-signed expiring links, download logging, audit log.
 * Design: clean SaaS look, mobile-first, dark mode (auto / manual), skeleton-free fast server rendering, accessible markup, customizer options (brand colour, hero text & image, section toggles).
+
+== PikaCart storefront (2.0) — quick start ==
+
+1. Marketplace → Settings: turn on Single seller mode, set your default WhatsApp number (with country code, e.g. 919XXXXXXXXX).
+2. Marketplace → Banners → "Import demo banners" (optional) to fill the homepage instantly. Replace them with your own later. Sizes: hero card 1000×500, offer tile 600×600, campaign 1460×325 (+1080×540 mobile), cart strip 1200×150. Use Start/End times to schedule festival banners.
+3. Marketplace → Categories: give each category an icon (emoji or image), colour, intro text, FAQ and SEO title/description.
+4. Marketplace → All products → Add product: choose Digital product / Service / Partner offer.
+   * Digital: price, optional discount + sale start/end, file, "What you get" list, age band (Kids).
+   * Service: starting price, turnaround, "What's included", up to 3 packages, FAQ, WhatsApp message.
+   * Partner offer: affiliate link (kept private), short link /go/your-slug/, pros/cons.
+   * Fill the SEO box (focus keyword, title 50–60 chars, description 120–160). Left blank, it is generated automatically.
+5. Marketplace → Portfolio and Testimonials: add real projects and client quotes (shown on service pages and the homepage).
+6. Marketplace → Storefront & SEO: homepage block order, announcement bar with countdown, trust numbers, process steps, default FAQ, owner name/photo/bio (author box), homepage SEO title/description, Google Search Console code, social profiles.
+7. Posts → Add New writes an Article. Articles live at /articles/ (menu only — never on the homepage).
+8. After delivering a website: Marketplace → Request review creates a one-time link the client uses to leave a "Verified client" review.
+9. Marketplace → Coupons: category/product scope, first order only, per-customer limit, max discount, "show as best offer". Share links look like /?coupon=CODE.
+10. Reports: Leads (enquiry form), Clicks report (WhatsApp + partner clicks), SEO health (listing checks, redirects, 404 log).
 
 == Installation ==
 
@@ -39,9 +56,22 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 
 == Pages / URLs ==
 
-/products, /shops, /store/{shop}, /cart, /checkout, /account, /dashboard, /sell, /login, /register, /forgot, /admin/login (→ wp-login with 2FA)
+/products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.0.0 =
+* New storefront design: Poppins typography, Flipkart-style header with live search suggestions, category icon row, card-style hero banner carousel, offer tiles, gradient category boxes, deals row with countdowns, services band, portfolio, testimonials, trust strip, dark footer, floating WhatsApp button, mobile bottom navigation and drawer menu, sticky mobile buy bar.
+* New product/service/partner pages: gallery with zoom, % off and "You save", best-coupon offer box, "What you get" / "What's included" checklists, service packages (Basic/Standard/Premium) with per-package WhatsApp buttons, "How it works" steps, FAQ accordion, enquiry form, trust bar, rating breakdown with verified buyer/client badges.
+* Banner manager: placements (hero, tile, campaign, category, articles, cart), mobile image, link, alt text, start/end scheduling, countdown, audience, views/clicks/CTR, one-click demo import.
+* Listing types: Digital product, Service (WhatsApp) and Partner offer (affiliate) with private links, /go/ short links, click tracking, rel="sponsored", disclosure and "Recommended hosting" on services.
+* Services toolkit: Portfolio and Testimonials, enquiry form → Leads (status, notes, CSV export, email alert, WhatsApp continue), one-time "Request review" links for verified client reviews.
+* Built-in SEO: auto titles/descriptions, canonical tags, noindex for private/filtered pages, Open Graph (WhatsApp previews), JSON-LD (Organization, WebSite, Product, Service, FAQPage, BreadcrumbList, CollectionPage, BlogPosting), robots.txt rules, cleaner sitemaps, SEO panel with Google preview, keyword checks and duplicate detection, SEO health report, 301 redirects manager, 404 log, deleted products redirect to their category, IndexNow pings, WebP image sizes, deferred JS, self-hosted fonts, split/minified CSS.
+* Articles under /articles/ (menu only): list view with thumbnails + View button, table of contents, reading time, author box, share buttons, related articles, "Products mentioned", [pikacart_product] and [pikacart_cta] shortcodes.
+* Coupons: category/product scope, first order only, per-customer limit, max discount cap, shareable ?coupon= links, "best offer" hint, per-coupon report.
+* Scheduled sale prices (start/end) and a /sale/ page; announcement bar with countdown; homepage block ordering.
+* New pages created on update: About Us, Contact Us, Delivery & Service Policy, Affiliate Disclosure.
+* Fixes: default categories are no longer re-created after you delete them; URL checks no longer need DNS (works on hosts with DNS timeouts); single-seller owners can use the front-end product editor.
 
 = 1.1.0 =
 * New: Single Seller Mode setting (Marketplace → Settings) for running as your own solo shop — hides seller signup, shop directory and per-seller Razorpay linked accounts; your own sales settle without needing Route.

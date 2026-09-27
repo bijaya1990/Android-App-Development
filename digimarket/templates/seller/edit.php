@@ -51,6 +51,46 @@ $dm_status   = $dm_p ? $dm_p->post_status : 'draft';
 				?>
 			</div>
 
+			<?php $dm_type = $dm_pid ? dm_listing_type( $dm_pid ) : 'digital'; ?>
+			<div class="dm-card dm-pad" data-listing-editor>
+				<h2 class="dm-h3"><?php esc_html_e( 'Listing type', 'digimarket' ); ?></h2>
+				<div class="dm-segmented" role="radiogroup">
+					<?php foreach ( array( 'digital' => __( 'Digital product', 'digimarket' ), 'service' => __( 'Service (WhatsApp)', 'digimarket' ), 'affiliate' => __( 'Partner offer', 'digimarket' ) ) as $dm_k => $dm_l ) : ?>
+						<label><input type="radio" name="listing_type" value="<?php echo esc_attr( $dm_k ); ?>" <?php checked( $dm_type, $dm_k ); ?>><span><?php echo esc_html( $dm_l ); ?></span></label>
+					<?php endforeach; ?>
+				</div>
+				<div class="dm-f-digital">
+					<?php dm_render_listing_field( 'what_you_get', $dm_pid, '', true ); ?>
+					<div class="dm-form-grid">
+						<?php dm_render_listing_field( 'age_band', $dm_pid, '', true ); ?>
+						<?php dm_render_listing_field( 'badge', $dm_pid, '', true ); ?>
+						<?php dm_render_listing_field( 'sale_from', $dm_pid, '', true ); ?>
+						<?php dm_render_listing_field( 'sale_to', $dm_pid, '', true ); ?>
+					</div>
+				</div>
+				<div class="dm-f-service">
+					<div class="dm-form-grid">
+						<label><?php esc_html_e( 'WhatsApp number', 'digimarket' ); ?><input type="text" name="service_whatsapp" value="<?php echo esc_attr( $dm_get( '_dm_service_whatsapp' ) ); ?>" placeholder="<?php echo esc_attr( dm_opt( 'whatsapp_number', '91XXXXXXXXXX' ) ); ?>"><small class="dm-muted"><?php esc_html_e( 'Blank = default number', 'digimarket' ); ?></small></label>
+						<label><?php esc_html_e( 'WhatsApp opening message', 'digimarket' ); ?><input type="text" name="service_message" value="<?php echo esc_attr( $dm_get( '_dm_service_message' ) ); ?>"></label>
+						<?php dm_render_listing_field( 'turnaround', $dm_pid, '', true ); ?>
+						<?php dm_render_listing_field( 'area_served', $dm_pid, '', true ); ?>
+					</div>
+					<?php dm_render_listing_field( 'included', $dm_pid, '', true ); ?>
+					<div class="dm-label"><?php esc_html_e( 'Packages', 'digimarket' ); ?></div>
+					<?php echo dm_packages_editor( $dm_pid, '' ); // phpcs:ignore ?>
+					<?php dm_render_listing_field( 'faq', $dm_pid, '', true ); ?>
+					<?php dm_render_listing_field( 'show_partners', $dm_pid, '', true ); ?>
+				</div>
+				<div class="dm-f-affiliate">
+					<?php dm_render_listing_field( 'aff_url', $dm_pid, '', true ); ?>
+					<div class="dm-form-grid">
+						<?php foreach ( array( 'aff_slug', 'aff_button', 'aff_suffix', 'aff_coupon', 'aff_best_for' ) as $dm_k ) { dm_render_listing_field( $dm_k, $dm_pid, '', true ); } ?>
+						<?php dm_render_listing_field( 'aff_pros', $dm_pid, '', true ); ?>
+						<?php dm_render_listing_field( 'aff_cons', $dm_pid, '', true ); ?>
+					</div>
+				</div>
+			</div>
+
 			<div class="dm-card dm-pad">
 				<h2 class="dm-h3"><?php esc_html_e( 'Images', 'digimarket' ); ?></h2>
 				<div class="dm-form-grid">
@@ -72,7 +112,7 @@ $dm_status   = $dm_p ? $dm_p->post_status : 'draft';
 				</div>
 			</div>
 
-			<div class="dm-card dm-pad">
+			<div class="dm-card dm-pad dm-f-digital">
 				<h2 class="dm-h3"><?php esc_html_e( 'Delivery', 'digimarket' ); ?></h2>
 				<div class="dm-segmented" role="radiogroup">
 					<?php foreach ( array( 'file' => __( 'File download', 'digimarket' ), 'license_key' => __( 'License keys', 'digimarket' ), 'external_link' => __( 'External link', 'digimarket' ) ) as $dm_k => $dm_l ) : ?>
@@ -101,9 +141,10 @@ $dm_status   = $dm_p ? $dm_p->post_status : 'draft';
 			</div>
 
 			<details class="dm-card dm-pad">
-				<summary class="dm-h3"><?php esc_html_e( 'SEO (optional)', 'digimarket' ); ?></summary>
-				<label><?php esc_html_e( 'Meta title', 'digimarket' ); ?><input type="text" name="meta_title" maxlength="70" value="<?php echo esc_attr( $dm_get( '_dm_meta_title' ) ); ?>"></label>
-				<label><?php esc_html_e( 'Meta description', 'digimarket' ); ?><textarea name="meta_desc" rows="2" maxlength="160"><?php echo esc_textarea( $dm_get( '_dm_meta_desc' ) ); ?></textarea></label>
+				<summary class="dm-h3"><?php esc_html_e( 'SEO — how this looks on Google', 'digimarket' ); ?></summary>
+				<?php dm_render_listing_field( 'focus_kw', $dm_pid, '', true ); ?>
+				<label><?php esc_html_e( 'SEO title', 'digimarket' ); ?><input type="text" name="meta_title" maxlength="70" value="<?php echo esc_attr( $dm_get( '_dm_meta_title' ) ); ?>" data-count="60"><small class="dm-muted dm-counter"></small><small class="dm-muted"><?php esc_html_e( '50–60 characters. Left blank, it is generated from the title and category.', 'digimarket' ); ?></small></label>
+				<label><?php esc_html_e( 'Meta description', 'digimarket' ); ?><textarea name="meta_desc" rows="2" maxlength="200" data-count="160"><?php echo esc_textarea( $dm_get( '_dm_meta_desc' ) ); ?></textarea><small class="dm-muted dm-counter"></small><small class="dm-muted"><?php esc_html_e( '120–160 characters. Left blank, the short description is used.', 'digimarket' ); ?></small></label>
 			</details>
 		</div>
 

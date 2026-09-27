@@ -11,13 +11,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DM_VERSION', '1.1.0' );
-define( 'DM_DB_VERSION', '1.1.0' );
+define( 'DM_VERSION', '2.0.0' );
+define( 'DM_DB_VERSION', '2.0.0' );
 define( 'DM_DIR', get_template_directory() );
 define( 'DM_URI', get_template_directory_uri() );
 
 $dm_includes = array(
 	'helpers',
+	'icons',
 	'install',
 	'setup',
 	'routes',
@@ -31,6 +32,12 @@ $dm_includes = array(
 	'buyer',
 	'emails',
 	'admin',
+	'storefront',
+	'listing',
+	'services',
+	'seo',
+	'articles',
+	'template-tags',
 );
 
 foreach ( $dm_includes as $dm_file ) {

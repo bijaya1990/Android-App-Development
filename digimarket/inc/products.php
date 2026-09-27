@@ -190,7 +190,11 @@ function dm_upload_image( $field, $owner, $index = null, $parent = 0 ) {
  * @return int|WP_Error
  */
 function dm_save_product( $pid, $owner, $data ) {
+	$data   = dm_normalise_listing_type( $data );
 	$errors = new WP_Error();
+	foreach ( dm_validate_listing_fields( $data ) as $msg ) {
+		$errors->add( 'listing', $msg );
+	}
 	$title  = sanitize_text_field( $data['title'] ?? '' );
 	if ( '' === $title ) {
 		$errors->add( 'title', __( 'Title is required.', 'digimarket' ) );
@@ -206,13 +210,15 @@ function dm_save_product( $pid, $owner, $data ) {
 	if ( '' !== $sale && ( $sale < 0 || $sale >= $price ) ) {
 		$errors->add( 'sale', __( 'Discount price must be lower than the regular price.', 'digimarket' ) );
 	}
-	$delivery = in_array( $data['delivery'] ?? 'file', array( 'file', 'license_key', 'external_link' ), true ) ? $data['delivery'] : 'file';
+	$delivery = $data['delivery'] ?? 'file';
+	$delivery = in_array( $delivery, array( 'file', 'license_key', 'external_link' ), true ) ? $delivery : 'file';
 	$external = esc_url_raw( trim( (string) ( $data['external_url'] ?? '' ) ) );
-	if ( 'external_link' === $delivery && $external && ! wp_http_validate_url( $external ) ) {
+	if ( 'external_link' === $delivery && $external && ! dm_valid_url( $external ) ) {
 		$errors->add( 'url', __( 'The access link must be a valid URL.', 'digimarket' ) );
 	}
 	$status  = in_array( $data['status'] ?? 'draft', array( 'draft', 'publish', 'dm_unpublished' ), true ) ? $data['status'] : 'draft';
-	$service = ! empty( $data['service_mode'] );
+	$service   = ! empty( $data['service_mode'] );
+	$affiliate = ! empty( $data['affiliate'] );
 	if ( $service && empty( trim( (string) ( $data['service_whatsapp'] ?? '' ) ) ) && ! dm_opt( 'whatsapp_number' ) ) {
 		$errors->add( 'whatsapp', __( 'Add a WhatsApp number for this service (or set a default one in Marketplace → Settings).', 'digimarket' ) );
 	}
@@ -269,6 +275,7 @@ function dm_save_product( $pid, $owner, $data ) {
 			update_post_meta( $pid, $counter, 0 );
 		}
 	}
+	dm_save_listing_fields( $pid, $data );
 
 	// Category & tags.
 	$cat = absint( $data['category'] ?? 0 );
@@ -353,7 +360,7 @@ function dm_save_product( $pid, $owner, $data ) {
 		if ( ! has_post_thumbnail( $pid ) ) {
 			$missing[] = __( 'a thumbnail image', 'digimarket' );
 		}
-		if ( ! $service ) {
+		if ( ! $service && ! $affiliate ) {
 			if ( 'file' === $delivery && ! get_post_meta( $pid, '_dm_file', true ) ) {
 				$missing[] = __( 'the digital file', 'digimarket' );
 			}
@@ -368,6 +375,7 @@ function dm_save_product( $pid, $owner, $data ) {
 			/* translators: %s list */
 			dm_flash( 'warning', sprintf( __( 'Saved as draft. To publish, add %s.', 'digimarket' ), implode( ', ', $missing ) ) );
 		} else {
+			dm_seo_autofill( $pid );
 			$was_published = (bool) get_post_meta( $pid, '_dm_published_once', true );
 			wp_update_post( array( 'ID' => $pid, 'post_status' => 'publish' ) );
 			if ( ! $was_published ) {
@@ -473,6 +481,26 @@ function dm_apply_catalogue_args( $q ) {
 	if ( ! empty( $_GET['rating'] ) ) {
 		$meta[] = array( 'key' => '_dm_rating_avg', 'value' => (float) $_GET['rating'], 'compare' => '>=', 'type' => 'DECIMAL(3,1)' );
 	}
+	$type = isset( $_GET['type'] ) ? sanitize_key( $_GET['type'] ) : '';
+	if ( 'service' === $type ) {
+		$meta[] = array( 'key' => '_dm_service_mode', 'value' => '1' );
+	} elseif ( 'affiliate' === $type ) {
+		$meta[] = array( 'key' => '_dm_affiliate', 'value' => '1' );
+	} elseif ( 'digital' === $type ) {
+		$meta[] = array(
+			'relation' => 'OR',
+			array( 'key' => '_dm_service_mode', 'compare' => 'NOT EXISTS' ),
+			array( 'key' => '_dm_service_mode', 'value' => '1', 'compare' => '!=' ),
+		);
+		$meta[] = array(
+			'relation' => 'OR',
+			array( 'key' => '_dm_affiliate', 'compare' => 'NOT EXISTS' ),
+			array( 'key' => '_dm_affiliate', 'value' => '1', 'compare' => '!=' ),
+		);
+	}
+	if ( ! empty( $_GET['age'] ) && array_key_exists( (string) $_GET['age'], dm_age_bands() ) ) {
+		$meta[] = array( 'key' => '_dm_age_band', 'value' => sanitize_text_field( wp_unslash( $_GET['age'] ) ) );
+	}
 	if ( count( $meta ) > 1 ) {
 		$q->set( 'meta_query', $meta );
 	}
@@ -502,6 +530,10 @@ function dm_apply_catalogue_args( $q ) {
 			break;
 		case 'rating':
 			$q->set( 'meta_key', '_dm_rating_avg' );
+			$q->set( 'orderby', array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ) );
+			break;
+		case 'popular':
+			$q->set( 'meta_key', '_dm_views' );
 			$q->set( 'orderby', array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ) );
 			break;
 		default:
@@ -637,7 +669,7 @@ function dm_admin_save_product( $pid, $post ) {
 	if ( ! current_user_can( 'edit_post', $pid ) ) {
 		return;
 	}
-	$d     = isset( $_POST['dm'] ) ? wp_unslash( (array) $_POST['dm'] ) : array();
+	$d     = dm_normalise_listing_type( isset( $_POST['dm'] ) ? wp_unslash( (array) $_POST['dm'] ) : array() );
 	$price = round( (float) ( $d['price'] ?? 0 ), 2 );
 	$sale  = isset( $d['sale_price'] ) && '' !== $d['sale_price'] ? round( (float) $d['sale_price'], 2 ) : '';
 	if ( '' !== $sale && $sale >= $price ) {
@@ -651,7 +683,7 @@ function dm_admin_save_product( $pid, $post ) {
 	update_post_meta( $pid, '_dm_download_limit', absint( $d['download_limit'] ?? 0 ) );
 	update_post_meta( $pid, '_dm_access_days', absint( $d['access_days'] ?? 0 ) );
 	update_post_meta( $pid, '_dm_meta_title', sanitize_text_field( $d['meta_title'] ?? '' ) );
-	update_post_meta( $pid, '_dm_meta_desc', sanitize_text_field( $d['meta_desc'] ?? '' ) );
+	update_post_meta( $pid, '_dm_meta_desc', sanitize_textarea_field( $d['meta_desc'] ?? '' ) );
 	update_post_meta( $pid, '_dm_service_mode', empty( $d['service_mode'] ) ? 0 : 1 );
 	update_post_meta( $pid, '_dm_service_whatsapp', preg_replace( '/\D/', '', (string) ( $d['service_whatsapp'] ?? '' ) ) );
 	update_post_meta( $pid, '_dm_service_message', sanitize_text_field( $d['service_message'] ?? '' ) );
@@ -659,6 +691,13 @@ function dm_admin_save_product( $pid, $post ) {
 		if ( '' === get_post_meta( $pid, $counter, true ) ) {
 			update_post_meta( $pid, $counter, 0 );
 		}
+	}
+	dm_save_listing_fields( $pid, $d );
+	foreach ( dm_validate_listing_fields( $d ) as $msg ) {
+		set_transient( 'dm_admin_notice_' . get_current_user_id(), $msg, 60 );
+	}
+	if ( 'publish' === $post->post_status ) {
+		dm_seo_autofill( $pid );
 	}
 	if ( current_user_can( 'dm_manage_marketplace' ) ) {
 		$was_forced = (bool) get_post_meta( $pid, '_dm_forced', true );

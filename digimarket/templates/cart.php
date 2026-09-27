@@ -14,12 +14,13 @@ get_header();
 <div class="dm-container dm-page">
 	<ol class="dm-steps dm-steps-inline"><li class="is-active"><?php esc_html_e( 'Cart', 'digimarket' ); ?></li><li><?php esc_html_e( 'Payment', 'digimarket' ); ?></li><li><?php esc_html_e( 'Download', 'digimarket' ); ?></li></ol>
 	<h1><?php esc_html_e( 'Your cart', 'digimarket' ); ?></h1>
+	<?php if ( $dm_t['lines'] ) { echo '<div class="dm-cart-strip">'; dm_render_wide_banner( 'cart', 0, false ); echo '</div>'; } ?>
 	<?php foreach ( $dm_t['invalid'] as $dm_reason ) : ?>
 		<div class="dm-notice dm-notice-warning"><?php echo esc_html( sprintf( /* translators: %s reason */ __( 'An item was removed: %s', 'digimarket' ), $dm_reason ) ); ?></div>
 	<?php endforeach; ?>
 
 	<?php if ( ! $dm_t['lines'] ) : ?>
-		<?php dm_empty_state( __( 'Your cart is empty', 'digimarket' ), __( 'Discover ebooks, templates, courses and more from independent creators.', 'digimarket' ), dm_products_url(), __( 'Browse products', 'digimarket' ) ); ?>
+		<?php dm_empty_state( __( 'Your cart is empty', 'digimarket' ), __( 'Discover study notes, templates, kids worksheets and more.', 'digimarket' ), dm_products_url(), __( 'Browse products', 'digimarket' ) ); ?>
 	<?php else : ?>
 		<div class="dm-cart">
 			<div class="dm-cart-items">
@@ -31,7 +32,7 @@ get_header();
 				foreach ( $dm_by_seller as $dm_sid => $dm_lines ) :
 					?>
 					<div class="dm-card dm-cart-group">
-						<a class="dm-cart-seller" href="<?php echo esc_url( dm_store_url( $dm_sid ) ); ?>"><?php echo dm_shop_logo( $dm_sid, 'dm-avatar dm-avatar-xs' ); // phpcs:ignore ?> <?php echo esc_html( dm_shop_name( $dm_sid ) ); ?></a>
+						<?php if ( ! dm_single_seller_mode() ) : ?><a class="dm-cart-seller" href="<?php echo esc_url( dm_store_url( $dm_sid ) ); ?>"><?php echo dm_shop_logo( $dm_sid, 'dm-avatar dm-avatar-xs' ); // phpcs:ignore ?> <?php echo esc_html( dm_shop_name( $dm_sid ) ); ?></a><?php endif; ?>
 						<?php foreach ( $dm_lines as $dm_l ) : ?>
 							<div class="dm-cart-line">
 								<a class="dm-cart-thumb" href="<?php echo esc_url( get_permalink( $dm_l['pid'] ) ); ?>"><?php echo dm_product_thumb( $dm_l['pid'], 'thumbnail' ); // phpcs:ignore ?></a>
@@ -43,7 +44,7 @@ get_header();
 									<?php echo wp_kses_post( dm_price_html( $dm_l['pid'] ) ); ?>
 									<?php if ( $dm_l['discount'] > 0 ) : ?><small class="dm-success">−<?php echo esc_html( dm_money( $dm_l['discount'] ) ); ?></small><?php endif; ?>
 								</div>
-								<form method="post"><?php dm_nonce_field( 'cart_remove' ); ?><input type="hidden" name="product_id" value="<?php echo (int) $dm_l['pid']; ?>"><button class="dm-icon-btn" aria-label="<?php esc_attr_e( 'Remove', 'digimarket' ); ?>">✕</button></form>
+								<form method="post"><?php dm_nonce_field( 'cart_remove' ); ?><input type="hidden" name="product_id" value="<?php echo (int) $dm_l['pid']; ?>"><button class="dm-icon-btn" aria-label="<?php esc_attr_e( 'Remove', 'digimarket' ); ?>"><?php echo dm_icon( 'close', 18 ); // phpcs:ignore ?></button></form>
 							</div>
 						<?php endforeach; ?>
 					</div>

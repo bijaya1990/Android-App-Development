@@ -514,14 +514,15 @@ function dm_admin_reviews() {
 	echo '<ul class="subsubsub"><li><a class="' . ( $flagged ? '' : 'current' ) . '" href="' . esc_url( dm_admin_url( 'dm-reviews' ) ) . '">' . esc_html__( 'All', 'digimarket' ) . '</a> | </li><li><a class="' . ( $flagged ? 'current' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-reviews', array( 'flagged' => 1 ) ) ) . '">' . esc_html__( 'Flagged', 'digimarket' ) . '</a></li></ul>';
 	echo '<table class="widefat striped dm-table"><thead><tr><th>' . esc_html__( 'Product', 'digimarket' ) . '</th><th>' . esc_html__( 'Buyer', 'digimarket' ) . '</th><th>' . esc_html__( 'Rating', 'digimarket' ) . '</th><th>' . esc_html__( 'Comment', 'digimarket' ) . '</th><th>' . esc_html__( 'Status', 'digimarket' ) . '</th><th></th></tr></thead><tbody>';
 	foreach ( $rows as $r ) {
-		$u = get_userdata( $r->buyer_id );
-		echo '<tr><td>' . esc_html( get_the_title( $r->product_id ) ) . '</td><td>' . esc_html( $u ? $u->display_name : '—' ) . '</td><td>' . str_repeat( '★', (int) $r->rating ) . '</td><td>' . esc_html( $r->comment ) . ( $r->flagged ? '<br><span class="dm-badge dm-badge-warning">' . esc_html__( 'Flagged:', 'digimarket' ) . ' ' . esc_html( $r->flag_reason ) . '</span>' : '' ) . '</td><td>' . dm_status_badge( $r->status ) . '</td><td class="dm-actions">'; // phpcs:ignore
+		echo '<tr><td>' . esc_html( get_the_title( $r->product_id ) ) . '</td><td>' . esc_html( dm_review_author( $r ) ) . '<br><small>' . esc_html( dm_review_badge( $r ) ) . '</small></td><td>' . str_repeat( '★', (int) $r->rating ) . '</td><td>' . esc_html( $r->comment ) . ( $r->flagged ? '<br><span class="dm-badge dm-badge-warning">' . esc_html__( 'Flagged:', 'digimarket' ) . ' ' . esc_html( $r->flag_reason ) . '</span>' : '' ) . '</td><td>' . dm_status_badge( $r->status ) . '</td><td class="dm-actions">'; // phpcs:ignore
 		if ( current_user_can( 'dm_manage_marketplace' ) ) {
 			echo '<a class="button button-small" href="' . esc_url( dm_admin_action_url( 'review_status', array( 'id' => $r->id, 'to' => 'approved' === $r->status ? 'hidden' : 'approved' ) ) ) . '">' . ( 'approved' === $r->status ? esc_html__( 'Hide', 'digimarket' ) : esc_html__( 'Approve', 'digimarket' ) ) . '</a> ';
 			if ( $r->flagged ) {
 				echo '<a class="button button-small" href="' . esc_url( dm_admin_action_url( 'review_unflag', array( 'id' => $r->id ) ) ) . '">' . esc_html__( 'Keep & unflag', 'digimarket' ) . '</a> ';
 			}
 			echo '<a class="button button-small dm-danger" onclick="return confirm(\'' . esc_js( __( 'Delete review?', 'digimarket' ) ) . '\')" href="' . esc_url( dm_admin_action_url( 'review_delete', array( 'id' => $r->id ) ) ) . '">' . esc_html__( 'Delete', 'digimarket' ) . '</a>';
+			dm_admin_form_open( 'review_reply' );
+			echo '<input type="hidden" name="id" value="' . (int) $r->id . '"><textarea name="reply" rows="2" style="width:100%;margin-top:6px" placeholder="' . esc_attr__( 'Public reply…', 'digimarket' ) . '">' . esc_textarea( (string) $r->seller_reply ) . '</textarea><button class="button button-small">' . esc_html__( 'Save reply', 'digimarket' ) . '</button></form>';
 		}
 		echo '</td></tr>';
 	}
@@ -547,16 +548,26 @@ function dm_admin_coupons() {
 		echo '<label>' . esc_html__( 'Type', 'digimarket' ) . '<select name="discount_type"><option value="percent">%</option><option value="flat">' . esc_html( dm_opt( 'currency_symbol' ) ) . ' ' . esc_html__( 'flat', 'digimarket' ) . '</option></select></label>';
 		echo '<label>' . esc_html__( 'Value', 'digimarket' ) . '<input type="number" step="0.01" min="0" name="discount_value" required></label>';
 		echo '<label>' . esc_html__( 'Seller (optional)', 'digimarket' ) . '<select name="seller_id"><option value="0">' . esc_html__( 'Platform-wide', 'digimarket' ) . '</option>';
-		foreach ( $sellers as $s ) {
+		foreach ( dm_single_seller_mode() ? array() : $sellers as $s ) {
 			echo '<option value="' . (int) $s->ID . '">' . esc_html( dm_shop_name( $s->ID ) ) . '</option>';
 		}
 		echo '</select></label><label>' . esc_html__( 'Min order', 'digimarket' ) . '<input type="number" step="0.01" min="0" name="min_order" value="0"></label>';
 		echo '<label>' . esc_html__( 'Valid from', 'digimarket' ) . '<input type="date" name="valid_from"></label><label>' . esc_html__( 'Valid until', 'digimarket' ) . '<input type="date" name="valid_until"></label>';
-		echo '<label>' . esc_html__( 'Usage limit (0 = ∞)', 'digimarket' ) . '<input type="number" min="0" name="usage_limit" value="0"></label></div><p><button class="button button-primary">' . esc_html__( 'Create coupon', 'digimarket' ) . '</button></p></form></div>';
+		echo '<label>' . esc_html__( 'Usage limit (0 = ∞)', 'digimarket' ) . '<input type="number" min="0" name="usage_limit" value="0"></label>';
+		echo '<label>' . esc_html__( 'Per customer (0 = ∞)', 'digimarket' ) . '<input type="number" min="0" name="per_user_limit" value="0"></label>';
+		echo '<label>' . esc_html__( 'Max discount (₹, 0 = no cap)', 'digimarket' ) . '<input type="number" min="0" step="0.01" name="max_discount" value="0"></label></div>';
+		echo '<div class="dm-form-row"><label>' . esc_html__( 'Only these categories', 'digimarket' ) . '<select name="category_ids[]" multiple size="4">';
+		foreach ( dm_categories() as $t ) {
+			echo '<option value="' . (int) $t->term_id . '">' . esc_html( $t->name ) . '</option>';
+		}
+		echo '</select></label><label>' . esc_html__( 'Only these product IDs', 'digimarket' ) . '<input type="text" name="product_ids" placeholder="12, 34"></label>';
+		echo '<label class="dm-inline-check"><input type="checkbox" name="first_order" value="1"> ' . esc_html__( 'First order only', 'digimarket' ) . '</label>';
+		echo '<label class="dm-inline-check"><input type="checkbox" name="is_public" value="1" checked> ' . esc_html__( 'Show as “best offer” on product pages', 'digimarket' ) . '</label></div>';
+		echo '<p><button class="button button-primary">' . esc_html__( 'Create coupon', 'digimarket' ) . '</button></p></form></div>';
 	}
 	echo '<table class="widefat striped dm-table"><thead><tr><th>' . esc_html__( 'Code', 'digimarket' ) . '</th><th>' . esc_html__( 'Discount', 'digimarket' ) . '</th><th>' . esc_html__( 'Scope', 'digimarket' ) . '</th><th>' . esc_html__( 'Min order', 'digimarket' ) . '</th><th>' . esc_html__( 'Validity', 'digimarket' ) . '</th><th>' . esc_html__( 'Used', 'digimarket' ) . '</th><th>' . esc_html__( 'Status', 'digimarket' ) . '</th><th></th></tr></thead><tbody>';
 	foreach ( $rows as $c ) {
-		echo '<tr><td><code>' . esc_html( $c->code ) . '</code></td><td>' . esc_html( 'percent' === $c->discount_type ? (float) $c->discount_value . '%' : dm_money( $c->discount_value ) ) . '</td><td>' . esc_html( $c->seller_id ? dm_shop_name( $c->seller_id ) : __( 'Platform-wide', 'digimarket' ) ) . '</td><td>' . esc_html( dm_money( $c->min_order ) ) . '</td><td>' . esc_html( ( $c->valid_from ? $c->valid_from : '…' ) . ' → ' . ( $c->valid_until ? $c->valid_until : '…' ) ) . '</td><td>' . (int) $c->times_used . ' / ' . ( $c->usage_limit ? (int) $c->usage_limit : '∞' ) . '</td><td>' . dm_status_badge( $c->active ? 'active' : 'closed' ) . '</td><td>'; // phpcs:ignore
+		echo '<tr><td><code>' . esc_html( $c->code ) . '</code></td><td>' . esc_html( 'percent' === $c->discount_type ? (float) $c->discount_value . '%' : dm_money( $c->discount_value ) ) . '</td><td>' . esc_html( dm_coupon_scope_text( $c ) ) . '<br><small>' . wp_kses_post( dm_coupon_report_html( $c ) ) . '</small></td><td>' . esc_html( dm_money( $c->min_order ) ) . '</td><td>' . esc_html( ( $c->valid_from ? $c->valid_from : '…' ) . ' → ' . ( $c->valid_until ? $c->valid_until : '…' ) ) . '</td><td>' . (int) $c->times_used . ' / ' . ( $c->usage_limit ? (int) $c->usage_limit : '∞' ) . '</td><td>' . dm_status_badge( $c->active ? 'active' : 'closed' ) . '</td><td>'; // phpcs:ignore
 		if ( current_user_can( 'dm_manage_marketplace' ) ) {
 			echo '<a class="button button-small" href="' . esc_url( dm_admin_action_url( 'coupon_toggle', array( 'id' => $c->id ) ) ) . '">' . ( $c->active ? esc_html__( 'Disable', 'digimarket' ) : esc_html__( 'Enable', 'digimarket' ) ) . '</a> <a class="button button-small dm-danger" href="' . esc_url( dm_admin_action_url( 'coupon_delete', array( 'id' => $c->id ) ) ) . '">' . esc_html__( 'Delete', 'digimarket' ) . '</a>';
 		}
@@ -872,6 +883,12 @@ function dm_admin_handle() {
 					'valid_from'     => ! empty( $r['valid_from'] ) ? sanitize_text_field( $r['valid_from'] ) : null,
 					'valid_until'    => ! empty( $r['valid_until'] ) ? sanitize_text_field( $r['valid_until'] ) : null,
 					'usage_limit'    => absint( $r['usage_limit'] ?? 0 ),
+					'per_user_limit' => absint( $r['per_user_limit'] ?? 0 ),
+					'max_discount'   => max( 0, (float) ( $r['max_discount'] ?? 0 ) ),
+					'category_ids'   => implode( ',', array_filter( array_map( 'absint', (array) ( $r['category_ids'] ?? array() ) ) ) ),
+					'product_ids'    => implode( ',', array_filter( array_map( 'absint', explode( ',', (string) ( $r['product_ids'] ?? '' ) ) ) ) ),
+					'first_order'    => empty( $r['first_order'] ) ? 0 : 1,
+					'is_public'      => empty( $r['is_public'] ) ? 0 : 1,
 					'times_used'     => 0,
 					'active'         => 1,
 					'created_at'     => dm_now(),
@@ -942,6 +959,10 @@ function dm_admin_handle() {
 			}
 			dm_admin_back( __( 'Settings saved.', 'digimarket' ) );
 			break;
+		default:
+			if ( has_action( 'dm_admin_do_' . $do ) ) {
+				do_action( 'dm_admin_do_' . $do, $r );
+			}
 	}
 	dm_admin_back();
 }
@@ -1008,3 +1029,47 @@ add_filter( 'wp_dropdown_users_args', function ( $args, $r ) {
 	}
 	return $args;
 }, 10, 2 );
+
+function dm_coupon_scope_text( $c ) {
+	$bits = array();
+	if ( $c->seller_id ) {
+		$bits[] = dm_shop_name( $c->seller_id );
+	}
+	$cats = array_filter( array_map( 'absint', explode( ',', (string) ( $c->category_ids ?? '' ) ) ) );
+	foreach ( $cats as $t ) {
+		$term = get_term( $t, 'dm_category' );
+		if ( $term && ! is_wp_error( $term ) ) {
+			$bits[] = $term->name;
+		}
+	}
+	if ( ! empty( $c->product_ids ) ) {
+		/* translators: %s ids */
+		$bits[] = sprintf( __( 'Products %s', 'digimarket' ), $c->product_ids );
+	}
+	if ( ! empty( $c->first_order ) ) {
+		$bits[] = __( 'First order', 'digimarket' );
+	}
+	if ( ! empty( $c->per_user_limit ) ) {
+		/* translators: %d */
+		$bits[] = sprintf( __( '%d× per customer', 'digimarket' ), $c->per_user_limit );
+	}
+	if ( ! empty( $c->max_discount ) && (float) $c->max_discount > 0 ) {
+		/* translators: %s */
+		$bits[] = sprintf( __( 'max %s off', 'digimarket' ), dm_money( $c->max_discount ) );
+	}
+	return $bits ? implode( ' · ', $bits ) : __( 'Everything', 'digimarket' );
+}
+
+function dm_coupon_report_html( $c ) {
+	global $wpdb;
+	$r    = $wpdb->get_row( $wpdb->prepare( 'SELECT COUNT(*) n, COALESCE(SUM(order_total),0) rev, COALESCE(SUM(discount),0) disc FROM ' . dm_table( 'orders' ) . " WHERE UPPER(coupon_code) = %s AND payment_status IN ('paid','partially_refunded')", strtoupper( $c->code ) ) );
+	$link = add_query_arg( 'coupon', rawurlencode( $c->code ), home_url( '/' ) );
+	/* translators: 1 orders 2 revenue 3 discount */
+	return esc_html( sprintf( __( '%1$d orders · %2$s revenue · %3$s given', 'digimarket' ), (int) $r->n, dm_money( $r->rev ), dm_money( $r->disc ) ) ) . '<br>' . esc_html__( 'Share link:', 'digimarket' ) . ' <code>' . esc_html( $link ) . '</code>';
+}
+
+add_action( 'dm_admin_do_review_reply', function ( $r ) {
+	global $wpdb;
+	$wpdb->update( dm_table( 'reviews' ), array( 'seller_reply' => sanitize_textarea_field( $r['reply'] ?? '' ) ), array( 'id' => absint( $r['id'] ?? 0 ) ) );
+	dm_admin_back( __( 'Reply saved.', 'digimarket' ) );
+} );

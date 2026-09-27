@@ -240,7 +240,7 @@ function dm_seller_owns( $pid, $uid = 0 ) {
 
 function dm_seller_guard() {
 	dm_require_login();
-	if ( ! dm_is_seller() ) {
+	if ( ! dm_is_seller() && ! dm_is_store_owner() ) {
 		dm_redirect( dm_url( 'sell' ) );
 	}
 	if ( 'suspended' === dm_seller_status( get_current_user_id() ) ) {

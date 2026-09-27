@@ -23,7 +23,7 @@ if ( ! isset( $dm_nav[ $dm_active ] ) ) {
 	$dm_active = 'overview';
 	$dm_tab    = 'overview';
 }
-if ( dm_onboarding_step( $dm_uid ) < 4 ) {
+if ( dm_onboarding_step( $dm_uid ) < 4 && ! dm_is_store_owner( $dm_uid ) ) {
 	dm_redirect( dm_url( 'sell' ) );
 }
 get_header();

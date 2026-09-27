@@ -206,6 +206,9 @@ function dm_product_sale_price( $pid ) {
 		return null;
 	}
 	$sale = (float) $sale;
+	if ( function_exists( 'dm_sale_window_open' ) && ! dm_sale_window_open( $pid ) ) {
+		return null;
+	}
 	return ( $sale < dm_product_regular_price( $pid ) ) ? $sale : null;
 }
 
@@ -227,11 +230,56 @@ function dm_price_html( $pid ) {
 	return '<span class="dm-price"><span class="dm-price-now">' . esc_html( dm_money( $reg ) ) . '</span></span>';
 }
 
-function dm_product_thumb( $pid, $size = 'dm-card' ) {
+function dm_product_thumb( $pid, $size = 'dm-card', $attr = array() ) {
 	if ( has_post_thumbnail( $pid ) ) {
-		return get_the_post_thumbnail( $pid, $size, array( 'loading' => 'lazy', 'class' => 'dm-thumb-img' ) );
+		dm_ensure_image_size( get_post_thumbnail_id( $pid ), $size );
+		return get_the_post_thumbnail( $pid, $size, array_merge( array( 'loading' => 'lazy', 'decoding' => 'async', 'class' => 'dm-thumb-img' ), $attr ) );
 	}
 	return '<div class="dm-thumb-placeholder" aria-hidden="true"><span>' . esc_html( mb_substr( get_the_title( $pid ), 0, 1 ) ) . '</span></div>';
+}
+
+/**
+ * Create a registered image size on demand for images uploaded before the size existed.
+ */
+function dm_ensure_image_size( $att_id, $size ) {
+	static $made = 0;
+	if ( ! $att_id || $made >= 4 || ! is_string( $size ) || in_array( $size, array( 'full', 'thumbnail', 'medium', 'large' ), true ) ) {
+		return;
+	}
+	$meta = wp_get_attachment_metadata( $att_id );
+	if ( ! is_array( $meta ) || isset( $meta['sizes'][ $size ] ) ) {
+		return;
+	}
+	$sizes = wp_get_registered_image_subsizes();
+	$file  = get_attached_file( $att_id );
+	if ( ! isset( $sizes[ $size ] ) || ! $file || ! file_exists( $file ) || empty( $meta['width'] ) ) {
+		return;
+	}
+	if ( $meta['width'] < $sizes[ $size ]['width'] && $meta['height'] < $sizes[ $size ]['height'] ) {
+		return;
+	}
+	++$made;
+	$editor = wp_get_image_editor( $file );
+	if ( is_wp_error( $editor ) ) {
+		return;
+	}
+	$new = $editor->make_subsize( $sizes[ $size ] );
+	if ( ! is_wp_error( $new ) ) {
+		$meta['sizes'][ $size ] = $new;
+		wp_update_attachment_metadata( $att_id, $meta );
+	}
+}
+
+/**
+ * Syntax-only URL check (no DNS lookup — some hosts time out on DNS).
+ */
+function dm_valid_url( $url ) {
+	$url = trim( (string) $url );
+	if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+		return false;
+	}
+	$scheme = strtolower( (string) wp_parse_url( $url, PHP_URL_SCHEME ) );
+	return in_array( $scheme, array( 'http', 'https' ), true ) && (bool) wp_parse_url( $url, PHP_URL_HOST );
 }
 
 function dm_is_service( $pid ) {
@@ -269,6 +317,9 @@ function dm_can_purchase( $pid ) {
 	$post = get_post( $pid );
 	if ( ! $post || 'dm_product' !== $post->post_type || 'publish' !== $post->post_status ) {
 		return array( false, __( 'This product is not available.', 'digimarket' ) );
+	}
+	if ( dm_is_affiliate( $pid ) ) {
+		return array( false, __( 'This is a partner offer — use the deal button to buy it on the partner’s website.', 'digimarket' ) );
 	}
 	$seller = (int) $post->post_author;
 	if ( 'active' !== dm_seller_status( $seller ) && ! user_can( $seller, 'manage_options' ) ) {
@@ -319,6 +370,14 @@ function dm_seller_status( $uid ) {
 function dm_is_seller( $uid = 0 ) {
 	$uid = $uid ? $uid : get_current_user_id();
 	return $uid && in_array( dm_seller_status( $uid ), array( 'draft', 'pending', 'active', 'suspended', 'rejected' ), true );
+}
+
+/**
+ * Site owner in single-seller mode: may use the seller dashboard without onboarding.
+ */
+function dm_is_store_owner( $uid = 0 ) {
+	$uid = $uid ? $uid : get_current_user_id();
+	return $uid && dm_single_seller_mode() && user_can( $uid, 'manage_options' );
 }
 
 function dm_is_active_seller( $uid = 0 ) {
@@ -489,8 +548,13 @@ function dm_status_badge( $status ) {
  * Flash messages (cookie based so they survive redirects for guests too)
  * ---------------------------------------------------------------------- */
 
-function dm_flash( $type, $message ) {
-	$GLOBALS['dm_flash_queue'][] = array( 'type' => $type, 'msg' => $message );
+function dm_flash( $type, $message, $link = '', $link_label = '' ) {
+	$item = array( 'type' => $type, 'msg' => $message );
+	if ( $link ) {
+		$item['link']  = $link;
+		$item['label'] = $link_label;
+	}
+	$GLOBALS['dm_flash_queue'][] = $item;
 	if ( ! headers_sent() ) {
 		setcookie( 'dm_flash', wp_json_encode( $GLOBALS['dm_flash_queue'] ), time() + 120, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl(), true );
 	}
@@ -526,7 +590,7 @@ function dm_render_flash() {
 			continue;
 		}
 		$type = in_array( $item['type'] ?? '', array( 'success', 'error', 'info', 'warning' ), true ) ? $item['type'] : 'info';
-		echo '<div class="dm-notice dm-notice-' . esc_attr( $type ) . '" role="alert">' . esc_html( $item['msg'] ) . '<button type="button" class="dm-notice-close" aria-label="' . esc_attr__( 'Dismiss', 'digimarket' ) . '">&times;</button></div>';
+		echo '<div class="dm-notice dm-notice-' . esc_attr( $type ) . '" role="alert">' . esc_html( $item['msg'] ) . ( ! empty( $item['link'] ) ? ' <a href="' . esc_url( $item['link'] ) . '" target="_blank" rel="noopener">' . esc_html( $item['label'] ?? '' ) . '</a>' : '' ) . '<button type="button" class="dm-notice-close" aria-label="' . esc_attr__( 'Dismiss', 'digimarket' ) . '">&times;</button></div>';
 	}
 }
 

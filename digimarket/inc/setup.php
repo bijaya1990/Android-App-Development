@@ -22,6 +22,8 @@ function dm_theme_setup() {
 	add_theme_support( 'editor-styles' );
 
 	add_image_size( 'dm-card', 640, 480, true );
+	add_image_size( 'dm-square', 600, 600, true );
+	add_image_size( 'dm-wide', 800, 450, true );
 	add_image_size( 'dm-gallery', 1200, 900, false );
 
 	register_nav_menus(
@@ -62,12 +64,20 @@ function dm_widgets_init() {
 
 add_action( 'wp_enqueue_scripts', 'dm_enqueue_assets' );
 function dm_enqueue_assets() {
-	wp_enqueue_style( 'digimarket', get_stylesheet_uri(), array(), DM_VERSION );
+	if ( file_exists( DM_DIR . '/assets/css/app.min.css' ) ) {
+		wp_enqueue_style( 'digimarket', DM_URI . '/assets/css/app.min.css', array(), DM_VERSION );
+		$dm_app_routes = array( 'cart', 'checkout', 'order-received', 'account', 'dashboard', 'login', 'register', 'forgot', 'reset', 'verify', 'sell', 'invoice', 'review', 'shops' );
+		if ( in_array( dm_route(), $dm_app_routes, true ) || get_query_var( 'dm_store' ) ) {
+			wp_enqueue_style( 'digimarket-app', DM_URI . '/assets/css/dash.min.css', array( 'digimarket' ), DM_VERSION );
+		}
+	} else {
+		wp_enqueue_style( 'digimarket', get_stylesheet_uri(), array(), DM_VERSION );
+	}
 	$primary = sanitize_hex_color( get_theme_mod( 'dm_primary_color', '#5b4bff' ) );
 	if ( $primary ) {
 		wp_add_inline_style( 'digimarket', ':root{--dm-primary:' . $primary . ';}' );
 	}
-	wp_enqueue_script( 'digimarket', DM_URI . '/assets/js/main.js', array(), DM_VERSION, true );
+	wp_enqueue_script( 'digimarket', DM_URI . '/assets/js/main.js', array(), DM_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
 	wp_localize_script(
 		'digimarket',
 		'DM',
@@ -77,6 +87,8 @@ function dm_enqueue_assets() {
 			'loggedIn' => is_user_logged_in(),
 			'loginUrl' => dm_url( 'login' ),
 			'cartUrl'  => dm_url( 'cart' ),
+			'searchUrl' => home_url( '/' ),
+			'currency' => dm_opt( 'currency_symbol', '₹' ),
 			'i18n'     => array(
 				'available'   => __( 'Available', 'digimarket' ),
 				'taken'       => __( 'Not available', 'digimarket' ),
@@ -85,6 +97,10 @@ function dm_enqueue_assets() {
 				'confirm'     => __( 'Are you sure?', 'digimarket' ),
 				'error'       => __( 'Something went wrong. Please try again.', 'digimarket' ),
 				'paymentFail' => __( 'Payment was not completed. You can retry below.', 'digimarket' ),
+				'copied'      => __( 'Copied!', 'digimarket' ),
+				'noResults'   => __( 'No matches — press Enter to search everything', 'digimarket' ),
+				'ended'       => __( 'Ended', 'digimarket' ),
+				'viewAll'     => __( 'See all results', 'digimarket' ),
 			),
 		)
 	);
@@ -125,7 +141,7 @@ function dm_customize_register( $wp_customize ) {
 	$texts = array(
 		'dm_hero_title'    => array( __( 'Hero title', 'digimarket' ), __( 'Digital products from independent creators', 'digimarket' ) ),
 		'dm_hero_subtitle' => array( __( 'Hero subtitle', 'digimarket' ), __( 'Ebooks, courses, templates, software and more — delivered instantly, paid securely.', 'digimarket' ) ),
-		'dm_footer_text'   => array( __( 'Footer about text', 'digimarket' ), __( 'A marketplace where creators open their own shop and get paid automatically on every sale.', 'digimarket' ) ),
+		'dm_footer_text'   => array( __( 'Footer about text', 'digimarket' ), __( 'Study notes, resume templates, kids worksheets and professional websites for schools, committees and small businesses.', 'digimarket' ) ),
 	);
 	foreach ( $texts as $id => $t ) {
 		$wp_customize->add_setting( $id, array( 'default' => $t[1], 'sanitize_callback' => 'sanitize_text_field' ) );
@@ -168,95 +184,6 @@ function dm_block_wp_admin() {
 add_filter( 'show_admin_bar', 'dm_admin_bar' );
 function dm_admin_bar( $show ) {
 	return ( current_user_can( 'edit_posts' ) || current_user_can( 'dm_view_marketplace' ) ) ? $show : false;
-}
-
-/* -------------------------------------------------------------------------
- * SEO meta for products & shops.
- * ---------------------------------------------------------------------- */
-
-add_filter( 'pre_get_document_title', 'dm_document_title', 20 );
-function dm_document_title( $title ) {
-	if ( is_singular( 'dm_product' ) ) {
-		$mt = get_post_meta( get_queried_object_id(), '_dm_meta_title', true );
-		if ( $mt ) {
-			return $mt;
-		}
-	}
-	$route = get_query_var( 'dm_route' );
-	$store = get_query_var( 'dm_store' );
-	if ( $store ) {
-		$sid = dm_get_seller_by_slug( $store );
-		if ( $sid ) {
-			return dm_shop_name( $sid ) . ' – ' . get_bloginfo( 'name' );
-		}
-	}
-	if ( $route ) {
-		$names = array(
-			'cart'           => __( 'Cart', 'digimarket' ),
-			'checkout'       => __( 'Checkout', 'digimarket' ),
-			'order-received' => __( 'Order confirmed', 'digimarket' ),
-			'account'        => __( 'My Account', 'digimarket' ),
-			'dashboard'      => __( 'Seller Dashboard', 'digimarket' ),
-			'login'          => __( 'Log in', 'digimarket' ),
-			'register'       => __( 'Create account', 'digimarket' ),
-			'forgot'         => __( 'Forgot password', 'digimarket' ),
-			'reset'          => __( 'Reset password', 'digimarket' ),
-			'verify'         => __( 'Verify email', 'digimarket' ),
-			'sell'           => __( 'Start selling', 'digimarket' ),
-			'shops'          => __( 'All shops', 'digimarket' ),
-			'invoice'        => __( 'Invoice', 'digimarket' ),
-		);
-		if ( isset( $names[ $route ] ) ) {
-			return $names[ $route ] . ' – ' . get_bloginfo( 'name' );
-		}
-	}
-	return $title;
-}
-
-add_action( 'wp_head', 'dm_meta_tags', 5 );
-function dm_meta_tags() {
-	$desc  = '';
-	$image = '';
-	if ( is_singular( 'dm_product' ) ) {
-		$pid   = get_queried_object_id();
-		$desc  = get_post_meta( $pid, '_dm_meta_desc', true );
-		$desc  = $desc ? $desc : get_the_excerpt( $pid );
-		$image = get_the_post_thumbnail_url( $pid, 'dm-gallery' );
-		$price = dm_product_price( $pid );
-		$data  = array(
-			'@context'    => 'https://schema.org',
-			'@type'       => 'Product',
-			'name'        => get_the_title( $pid ),
-			'description' => wp_strip_all_tags( $desc ),
-			'image'       => $image ? $image : null,
-			'brand'       => array( '@type' => 'Brand', 'name' => dm_shop_name( get_post_field( 'post_author', $pid ) ) ),
-			'offers'      => array(
-				'@type'         => 'Offer',
-				'price'         => number_format( $price, 2, '.', '' ),
-				'priceCurrency' => dm_opt( 'currency_code', 'INR' ),
-				'availability'  => 'https://schema.org/InStock',
-				'url'           => get_permalink( $pid ),
-			),
-		);
-		$count = (int) get_post_meta( $pid, '_dm_rating_count', true );
-		if ( $count ) {
-			$data['aggregateRating'] = array( '@type' => 'AggregateRating', 'ratingValue' => (float) get_post_meta( $pid, '_dm_rating_avg', true ), 'reviewCount' => $count );
-		}
-		echo '<script type="application/ld+json">' . wp_json_encode( array_filter( $data ) ) . "</script>\n";
-	} elseif ( get_query_var( 'dm_store' ) ) {
-		$sid  = dm_get_seller_by_slug( get_query_var( 'dm_store' ) );
-		$desc = $sid ? get_user_meta( $sid, 'dm_shop_bio', true ) : '';
-		$image = $sid ? dm_shop_banner_url( $sid ) : '';
-	} elseif ( is_front_page() ) {
-		$desc = get_bloginfo( 'description' );
-	}
-	if ( $desc ) {
-		echo '<meta name="description" content="' . esc_attr( wp_trim_words( wp_strip_all_tags( $desc ), 30, '…' ) ) . '">' . "\n";
-		echo '<meta property="og:description" content="' . esc_attr( wp_trim_words( wp_strip_all_tags( $desc ), 30, '…' ) ) . '">' . "\n";
-	}
-	if ( $image ) {
-		echo '<meta property="og:image" content="' . esc_url( $image ) . '">' . "\n";
-	}
 }
 
 add_filter( 'body_class', 'dm_body_class' );

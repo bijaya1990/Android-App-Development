@@ -112,9 +112,18 @@ function dm_validate_coupon( $code, $lines ) {
 	if ( $c->usage_limit > 0 && $c->times_used >= $c->usage_limit ) {
 		return new WP_Error( 'used', __( 'This coupon has reached its usage limit.', 'digimarket' ) );
 	}
+	if ( is_user_logged_in() ) {
+		$uid = get_current_user_id();
+		if ( ! empty( $c->first_order ) && (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . dm_table( 'orders' ) . " WHERE buyer_id = %d AND payment_status IN ('paid','partially_refunded','refunded')", $uid ) ) > 0 ) {
+			return new WP_Error( 'first', __( 'This coupon is only for your first order.', 'digimarket' ) );
+		}
+		if ( ! empty( $c->per_user_limit ) && (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . dm_table( 'orders' ) . " WHERE buyer_id = %d AND UPPER(coupon_code) = %s AND payment_status IN ('paid','partially_refunded')", $uid, $code ) ) >= (int) $c->per_user_limit ) {
+			return new WP_Error( 'peruser', __( 'You have already used this coupon.', 'digimarket' ) );
+		}
+	}
 	$eligible = 0;
 	foreach ( $lines as $l ) {
-		if ( ! $c->seller_id || (int) $c->seller_id === (int) $l['seller'] ) {
+		if ( dm_coupon_applies_to( $c, $l ) ) {
 			$eligible += $l['price'];
 		}
 	}
@@ -164,12 +173,15 @@ function dm_cart_totals( $ids = null ) {
 			$coupon   = $c;
 			$eligible = array();
 			foreach ( $lines as $pid => $l ) {
-				if ( ! $c->seller_id || (int) $c->seller_id === $l['seller'] ) {
+				if ( dm_coupon_applies_to( $c, $l ) ) {
 					$eligible[ $pid ] = $l['price'];
 				}
 			}
 			$base     = array_sum( $eligible );
 			$discount = 'percent' === $c->discount_type ? $base * min( 100, (float) $c->discount_value ) / 100 : min( $base, (float) $c->discount_value );
+			if ( ! empty( $c->max_discount ) && (float) $c->max_discount > 0 ) {
+				$discount = min( $discount, (float) $c->max_discount );
+			}
 			$discount = dm_round( $discount );
 			$left     = $discount;
 			$keys     = array_keys( $eligible );
@@ -246,3 +258,79 @@ function dm_do_remove_coupon() {
 	dm_cart_set_coupon( '' );
 	dm_back( dm_url( 'cart' ) );
 }
+
+/**
+ * Whether a coupon covers a cart line (seller, category and product scope).
+ */
+function dm_coupon_applies_to( $c, $line ) {
+	if ( $c->seller_id && (int) $c->seller_id !== (int) $line['seller'] ) {
+		return false;
+	}
+	$pids = array_filter( array_map( 'absint', explode( ',', (string) ( $c->product_ids ?? '' ) ) ) );
+	$cats = array_filter( array_map( 'absint', explode( ',', (string) ( $c->category_ids ?? '' ) ) ) );
+	if ( ! $pids && ! $cats ) {
+		return true;
+	}
+	if ( $pids && in_array( (int) $line['pid'], $pids, true ) ) {
+		return true;
+	}
+	if ( $cats ) {
+		$terms = wp_get_object_terms( (int) $line['pid'], 'dm_category', array( 'fields' => 'ids' ) );
+		foreach ( (array) $terms as $t ) {
+			if ( in_array( (int) $t, $cats, true ) || array_intersect( $cats, get_ancestors( (int) $t, 'dm_category' ) ) ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Best public coupon for a single product: array( code, price_after, coupon ) or null.
+ */
+function dm_best_coupon_for( $pid ) {
+	global $wpdb;
+	static $coupons = null;
+	if ( null === $coupons ) {
+		$today   = current_time( 'Y-m-d' );
+		$coupons = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . dm_table( 'coupons' ) . ' WHERE active = 1 AND is_public = 1 AND (valid_from IS NULL OR valid_from <= %s) AND (valid_until IS NULL OR valid_until >= %s) AND (usage_limit = 0 OR times_used < usage_limit)', $today, $today ) ); // phpcs:ignore
+	}
+	$price = dm_product_price( $pid );
+	if ( $price <= 0 || ! $coupons ) {
+		return null;
+	}
+	$line = array( 'pid' => $pid, 'seller' => (int) get_post_field( 'post_author', $pid ), 'price' => $price );
+	$best = null;
+	foreach ( $coupons as $c ) {
+		if ( ! dm_coupon_applies_to( $c, $line ) || ( $c->min_order > 0 && $price < $c->min_order ) ) {
+			continue;
+		}
+		$off = 'percent' === $c->discount_type ? $price * min( 100, (float) $c->discount_value ) / 100 : min( $price, (float) $c->discount_value );
+		if ( (float) $c->max_discount > 0 ) {
+			$off = min( $off, (float) $c->max_discount );
+		}
+		$after = dm_round( $price - $off );
+		if ( null === $best || $after < $best[1] ) {
+			$best = array( $c->code, $after, $c );
+		}
+	}
+	return $best;
+}
+
+/* Shareable coupon links: /?coupon=DIWALI30 saves the code, then drops the parameter. */
+add_action( 'template_redirect', function () {
+	if ( empty( $_GET['coupon'] ) || is_admin() ) { // phpcs:ignore
+		return;
+	}
+	global $wpdb;
+	$code = strtoupper( sanitize_text_field( wp_unslash( $_GET['coupon'] ) ) ); // phpcs:ignore
+	$ok   = $code && $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . dm_table( 'coupons' ) . ' WHERE UPPER(code) = %s AND active = 1', $code ) );
+	if ( $ok ) {
+		dm_cart_set_coupon( $code );
+		/* translators: %s code */
+		dm_flash( 'success', sprintf( __( 'Coupon %s saved — it will apply automatically in your cart.', 'digimarket' ), $code ) );
+	} else {
+		dm_flash( 'warning', __( 'That coupon is not active right now.', 'digimarket' ) );
+	}
+	dm_redirect( remove_query_arg( 'coupon', dm_current_url() ) );
+}, 2 );

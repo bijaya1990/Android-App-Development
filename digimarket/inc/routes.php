@@ -8,7 +8,7 @@
 defined( 'ABSPATH' ) || exit;
 
 function dm_routes() {
-	return array( 'cart', 'checkout', 'order-received', 'account', 'dashboard', 'login', 'register', 'forgot', 'reset', 'verify', 'sell', 'shops', 'invoice', 'download' );
+	return array( 'cart', 'checkout', 'order-received', 'account', 'dashboard', 'login', 'register', 'forgot', 'reset', 'verify', 'sell', 'shops', 'invoice', 'download', 'sale', 'review' );
 }
 
 add_action( 'init', 'dm_add_rewrites', 20 );
@@ -150,7 +150,7 @@ function dm_route_guard() {
 			if ( ! is_user_logged_in() ) {
 				dm_redirect( dm_url( 'login', '', '', array( 'redirect_to' => rawurlencode( dm_current_url() ) ) ) );
 			}
-			if ( ! dm_is_seller() ) {
+			if ( ! dm_is_seller() && ! dm_is_store_owner() ) {
 				dm_redirect( dm_single_seller_mode() ? home_url( '/' ) : dm_url( 'sell' ) );
 			}
 			break;
