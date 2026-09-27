@@ -53,6 +53,7 @@ function dm_listing_fields() {
 		'what_you_get'  => array( __( '“What you get” checklist', 'digimarket' ), 'lines', 'digital', __( 'One item per line, e.g. “PDF, 42 pages”, “Editable Word file”, “Lifetime updates”. Shown next to the price.', 'digimarket' ) ),
 		'age_band'      => array( __( 'Age band (Kids)', 'digimarket' ), 'age', 'digital', __( 'Shown as a badge on Kids products.', 'digimarket' ) ),
 		'badge'         => array( __( 'Custom badge', 'digimarket' ), 'text', 'all', __( 'Optional short badge on the card, e.g. “Bestseller”, “New”, “Editor’s pick”.', 'digimarket' ) ),
+		'demo_url'      => array( __( 'Live demo URL', 'digimarket' ), 'url', 'digital', __( 'Optional. For themes/templates: a link to the live preview. Shows a “Live preview” button.', 'digimarket' ) ),
 		'sale_from'     => array( __( 'Sale starts', 'digimarket' ), 'datetime', 'price', __( 'Optional. The discount price applies only between these times.', 'digimarket' ) ),
 		'sale_to'       => array( __( 'Sale ends', 'digimarket' ), 'datetime', 'price', __( 'Optional. After this the regular price returns automatically, and the card shows a countdown.', 'digimarket' ) ),
 		// Services.
@@ -366,6 +367,7 @@ function dm_product_editor_box( $post ) {
 	echo '<tr><th><label for="dm_download_limit">' . esc_html__( 'Download limit', 'digimarket' ) . '</label></th><td><input type="number" min="0" id="dm_download_limit" name="dm[download_limit]" value="' . esc_attr( $val( 'download_limit' ) ) . '" class="small-text"> <span class="description">' . esc_html__( '0 = unlimited', 'digimarket' ) . '</span></td></tr>';
 	echo '<tr><th><label for="dm_access_days">' . esc_html__( 'Access days', 'digimarket' ) . '</label></th><td><input type="number" min="0" id="dm_access_days" name="dm[access_days]" value="' . esc_attr( $val( 'access_days' ) ) . '" class="small-text"> <span class="description">' . esc_html__( '0 = lifetime', 'digimarket' ) . '</span></td></tr>';
 	dm_render_listing_field( 'what_you_get', $pid );
+	dm_render_listing_field( 'demo_url', $pid );
 	dm_render_listing_field( 'age_band', $pid );
 	echo '</tbody></table></div>';
 

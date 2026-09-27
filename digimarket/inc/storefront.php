@@ -16,6 +16,7 @@ function dm_home_block_defs() {
 	return array(
 		'categories' => __( 'Category icon row', 'digimarket' ),
 		'hero'       => __( 'Hero banner carousel', 'digimarket' ),
+		'landing'    => __( 'Website services & WordPress themes cards', 'digimarket' ),
 		'tiles'      => __( 'Offer tiles', 'digimarket' ),
 		'deals'      => __( 'Deals row (products on sale)', 'digimarket' ),
 		'sections'   => __( 'Category section boxes', 'digimarket' ),
@@ -65,7 +66,7 @@ function dm_store_defaults() {
 		'owner_name'        => '',
 		'owner_bio'         => '',
 		'owner_photo'       => 0,
-	);
+	) + dm_landing_defaults();
 }
 
 function dm_store() {
@@ -73,7 +74,12 @@ function dm_store() {
 	if ( null === $cache || did_action( 'dm_store_saved' ) ) {
 		$saved = get_option( 'dm_store', array() );
 		$cache = wp_parse_args( is_array( $saved ) ? $saved : array(), dm_store_defaults() );
-		$cache['blocks'] = wp_parse_args( (array) $cache['blocks'], dm_store_defaults()['blocks'] );
+		$saved_blocks    = (array) $cache['blocks'];
+		$cache['blocks'] = wp_parse_args( $saved_blocks, dm_store_defaults()['blocks'] );
+		// Blocks added in an update slot in right after the hero on existing sites.
+		if ( $saved_blocks && ! isset( $saved_blocks['landing'] ) && isset( $saved_blocks['hero'] ) ) {
+			$cache['blocks']['landing']['order'] = (int) $saved_blocks['hero']['order'];
+		}
 	}
 	return $cache;
 }
@@ -188,6 +194,33 @@ function dm_admin_storefront() {
 	$f( 'owner_photo', __( 'Your photo', 'digimarket' ), 'media' );
 	echo '</table>';
 
+	echo '<h2 id="landing">' . esc_html__( 'Landing pages', 'digimarket' ) . '</h2><p class="description">' . wp_kses_post( sprintf( /* translators: 1 url 2 url */ __( 'Two homepage cards open <a href="%1$s" target="_blank">Website services</a> (every Service listing, ordered on WhatsApp) and <a href="%2$s" target="_blank">WordPress themes</a> (digital products in the themes category, paid via Razorpay). Rotating images come from each listing’s featured image + gallery.', 'digimarket' ), esc_url( dm_url( 'website-services' ) ), esc_url( dm_url( 'wordpress-themes' ) ) ) ) . '</p><table class="form-table">';
+	$f( 'lp_svc_card_title', __( 'Services card headline', 'digimarket' ) );
+	$f( 'lp_svc_card_btn', __( 'Services card button', 'digimarket' ) );
+	$f( 'lp_svc_wall', __( 'Services wallpaper', 'digimarket' ), 'media', __( 'Optional background for the services card and page top (1600×900). Leave empty to rotate your service images.', 'digimarket' ) );
+	$f( 'lp_svc_h1', __( 'Services page heading (H1)', 'digimarket' ) );
+	$f( 'lp_svc_sub', __( 'Services page subtitle', 'digimarket' ), 'textarea' );
+	$f( 'lp_svc_coupon', __( 'Services coupon code', 'digimarket' ), 'text', __( 'e.g. FIRSTSITE. Shown with a Copy button and added to every WhatsApp order message. Leave blank to hide.', 'digimarket' ) );
+	$f( 'lp_svc_coupon_txt', __( 'Services coupon text', 'digimarket' ), 'text', __( 'e.g. ₹500 off your first website with FIRSTSITE.', 'digimarket' ) );
+	$f( 'lp_hours', __( 'Working hours', 'digimarket' ) );
+	$f( 'lp_svc_seo_title', __( 'Services page SEO title', 'digimarket' ), 'text', __( 'Leave blank for the built-in keyword title.', 'digimarket' ), 'maxlength="70" data-counter="60"' );
+	$f( 'lp_svc_seo_desc', __( 'Services page meta description', 'digimarket' ), 'textarea' );
+	echo '<tr><th><label for="dms_lp_thm_cat">' . esc_html__( 'Themes category', 'digimarket' ) . '</label></th><td><select id="dms_lp_thm_cat" name="st[lp_thm_cat]"><option value="0">' . esc_html__( 'Auto (category named WordPress / Themes)', 'digimarket' ) . '</option>';
+	foreach ( dm_categories() as $c ) {
+		echo '<option value="' . (int) $c->term_id . '"' . selected( (int) $s['lp_thm_cat'], (int) $c->term_id, false ) . '>' . esc_html( $c->name ) . '</option>';
+	}
+	$auto = dm_lp_theme_term();
+	echo '</select><p class="description">' . esc_html( $auto ? sprintf( /* translators: %s */ __( 'Currently showing: %s. Add a “Live demo URL” on each theme for the Live preview button.', 'digimarket' ), $auto->name ) : __( 'No themes category found yet.', 'digimarket' ) ) . '</p></td></tr>';
+	$f( 'lp_thm_card_title', __( 'Themes card headline', 'digimarket' ) );
+	$f( 'lp_thm_card_btn', __( 'Themes card button', 'digimarket' ) );
+	$f( 'lp_thm_h1', __( 'Themes page heading (H1)', 'digimarket' ) );
+	$f( 'lp_thm_sub', __( 'Themes page subtitle', 'digimarket' ), 'textarea' );
+	$f( 'lp_thm_includes', __( '“What you get” list', 'digimarket' ), 'textarea', __( 'One item per line.', 'digimarket' ) );
+	$f( 'lp_thm_faq', __( 'Themes FAQ', 'digimarket' ), 'textarea', __( 'One per line: Question | Answer.', 'digimarket' ) );
+	$f( 'lp_thm_seo_title', __( 'Themes page SEO title', 'digimarket' ), 'text', __( 'Leave blank for the built-in keyword title.', 'digimarket' ), 'maxlength="70" data-counter="60"' );
+	$f( 'lp_thm_seo_desc', __( 'Themes page meta description', 'digimarket' ), 'textarea' );
+	echo '</table>';
+
 	echo '<h2>' . esc_html__( 'Articles', 'digimarket' ) . '</h2><table class="form-table">';
 	$f( 'articles_show', __( 'Articles menu item', 'digimarket' ), 'checkbox', __( 'Show the Articles link in the header and footer. Articles never appear on the homepage.', 'digimarket' ) );
 	$f( 'articles_label', __( 'Menu label', 'digimarket' ) );
@@ -221,13 +254,13 @@ add_action( 'dm_admin_do_save_store', function ( $r ) {
 		if ( in_array( $k, array( 'announce_on', 'bottom_nav', 'articles_show' ), true ) ) {
 			$new[ $k ] = empty( $in[ $k ] ) ? 0 : 1;
 		} elseif ( isset( $in[ $k ] ) ) {
-			if ( in_array( $k, array( 'section_count', 'seo_default_image', 'owner_photo' ), true ) ) {
+			if ( in_array( $k, array( 'section_count', 'seo_default_image', 'owner_photo', 'lp_svc_wall', 'lp_thm_cat' ), true ) ) {
 				$new[ $k ] = absint( $in[ $k ] );
 			} elseif ( in_array( $k, array( 'announce_link' ), true ) ) {
 				$new[ $k ] = esc_url_raw( $in[ $k ] );
 			} elseif ( 'announce_bg' === $k ) {
 				$new[ $k ] = sanitize_hex_color( $in[ $k ] ) ? sanitize_hex_color( $in[ $k ] ) : $d;
-			} elseif ( in_array( $k, array( 'process_steps', 'default_faq', 'social_links', 'owner_bio', 'seo_home_desc', 'header_links' ), true ) ) {
+			} elseif ( in_array( $k, array( 'process_steps', 'default_faq', 'social_links', 'owner_bio', 'seo_home_desc', 'header_links', 'lp_svc_sub', 'lp_svc_seo_desc', 'lp_thm_sub', 'lp_thm_includes', 'lp_thm_faq', 'lp_thm_seo_desc' ), true ) ) {
 				$new[ $k ] = sanitize_textarea_field( $in[ $k ] );
 			} else {
 				$new[ $k ] = sanitize_text_field( $in[ $k ] );
@@ -239,7 +272,8 @@ add_action( 'dm_admin_do_save_store', function ( $r ) {
 		$b            = isset( $r['blocks'][ $k ] ) ? (array) $r['blocks'][ $k ] : array();
 		$blocks[ $k ] = array( 'on' => empty( $b['on'] ) ? 0 : 1, 'order' => max( 1, min( 99, absint( $b['order'] ?? 50 ) ) ) );
 	}
-	$new['blocks'] = $blocks;
+	$new['blocks']        = $blocks;
+	$new['lp_svc_coupon'] = strtoupper( preg_replace( '/\s+/', '', (string) $new['lp_svc_coupon'] ) );
 	update_option( 'dm_store', $new );
 	do_action( 'dm_store_saved' );
 	dm_admin_back( __( 'Storefront settings saved.', 'digimarket' ) );

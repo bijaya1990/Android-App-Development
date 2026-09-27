@@ -8,7 +8,7 @@
 defined( 'ABSPATH' ) || exit;
 
 function dm_routes() {
-	return array( 'cart', 'checkout', 'order-received', 'account', 'dashboard', 'login', 'register', 'forgot', 'reset', 'verify', 'sell', 'shops', 'invoice', 'download', 'sale', 'review' );
+	return array( 'cart', 'checkout', 'order-received', 'account', 'dashboard', 'login', 'register', 'forgot', 'reset', 'verify', 'sell', 'shops', 'invoice', 'download', 'sale', 'review', 'website-services', 'wordpress-themes' );
 }
 
 add_action( 'init', 'dm_add_rewrites', 20 );

@@ -228,6 +228,62 @@ if n:
     check(wp('echo get_post_status(%s)."|".get_post_meta(%s,"_dm_affiliate",true)."|".get_post_meta(%s,"_dm_aff_slug",true);' % (pid, pid, pid)) == 'publish|1|partner-tool', 'affiliate published with auto short link', r.url)
     check(wp('echo get_post_meta(%s,"_dm_meta_title",true);' % pid).startswith('Partner Tool'), 'SEO title auto-filled on publish')
 
+print('== Landing pages')
+lp = json.loads(wp(r"""
+$t = wp_insert_term("WordPress Themes V2","dm_category"); $t = $t["term_id"];
+$id = wp_insert_post(array("post_type"=>"dm_product","post_status"=>"publish","post_title"=>"Temple Theme V2","post_author"=>1,"post_content"=>"<p>Theme body.</p>","post_excerpt"=>"A lovely theme"));
+wp_set_object_terms($id,array($t),"dm_category"); wp_set_object_terms($id,array("Temple","Events"),"dm_tag");
+update_post_meta($id,"_dm_price",1999); update_post_meta($id,"_dm_sale_price",999); update_post_meta($id,"_dm_delivery","file"); update_post_meta($id,"_dm_file","x.bin");
+update_post_meta($id,"_dm_demo_url","https://demo.example.com/temple"); dm_sync_effective_price($id);
+$id2 = wp_insert_post(array("post_type"=>"dm_product","post_status"=>"publish","post_title"=>"Shop Theme V2","post_author"=>1,"post_content"=>"<p>x</p>"));
+wp_set_object_terms($id2,array($t),"dm_category"); wp_set_object_terms($id2,array("Shop"),"dm_tag"); update_post_meta($id2,"_dm_price",1499); update_post_meta($id2,"_dm_delivery","file"); update_post_meta($id2,"_dm_file","x.bin"); dm_sync_effective_price($id2);
+echo json_encode(array("thm"=>$id,"thm2"=>$id2,"tcat"=>$t));"""))
+h = get('/').text
+check('class="dm-show-card is-svc"' in h and '/website-services/' in h, 'homepage shows Website services card')
+check('class="dm-show-card is-thm"' in h and '/wordpress-themes/' in h, 'homepage shows WordPress themes card')
+check('>Website Services<' in h, 'header menu links to website services')
+r = get('/website-services/')
+t = r.text
+check(r.status_code == 200 and 'School Site V2' in t, 'services landing lists service', r.status_code)
+check('Physics Notes V2' not in t and 'Temple Theme V2' not in t, 'services landing shows only websites')
+check('Order now' in t and 'wa.me/919000000001' in t, 'Order now opens WhatsApp')
+rob = re.search(r'<meta name=.robots.[^>]*>', t)
+check(not rob or 'noindex' not in rob.group(0), 'services landing indexable')
+check('rel="canonical" href="%s/website-services/"' % BASE in t, 'services landing canonical')
+check('ItemList' in json.dumps(ld(t)) and 'FAQPage' in types(t), 'services landing schema (ItemList + FAQ)')
+check('dm-lp-coupon' not in t, 'no coupon strip until a code is set')
+wp('$s=get_option("dm_store",array()); $s["lp_svc_coupon"]="FIRSTSITE"; update_option("dm_store",$s);')
+t = get('/website-services/').text
+check('dm-lp-coupon' in t and 'FIRSTSITE' in t, 'services coupon strip shows code')
+check(re.search(r'wa\.me/\d+\?text=[^"]*FIRSTSITE', t) is not None, 'coupon code goes into the WhatsApp order message')
+check('Contact details' in t and 'name="dm_action" value="enquiry"' in t, 'contact details + enquiry form on services landing')
+r = get('/wordpress-themes/')
+t = r.text
+check(r.status_code == 200 and 'Temple Theme V2' in t and 'Shop Theme V2' in t, 'themes landing lists themes', r.status_code)
+grid = t.split('class="dm-lp-themes"')[1].split('</section>')[0] if 'class="dm-lp-themes"' in t else ''
+check(grid and 'School Site V2' not in grid and 'Physics Notes V2' not in grid, 'themes grid excludes services and other products')
+check('data-tag="temple"' in t and 'data-tags="events temple"' in t, 'tag chips + card tags for filtering')
+check('https://demo.example.com/temple' in t and 'Live preview' in t, 'Live preview button uses demo URL')
+check('value="cart_add"' in t and 'name="buy_now"' in t, 'Buy now posts to cart/checkout')
+check('<del>' in t and '50% off' in t, 'theme sale price and discount shown')
+check('"@type":"Product"' in json.dumps(ld(t), separators=(',', ':')), 'themes landing Product schema')
+sm = get('/wp-sitemap-dmpages-1.xml').text
+check('/wordpress-themes/' in sm and '/website-services/' in sm, 'both landings in sitemap')
+wp('global $wpdb; $wpdb->insert(dm_table("coupons"),array("code"=>"THEME20","discount_type"=>"percent","discount_value"=>20,"active"=>1,"is_public"=>1,"created_at"=>dm_now()));')
+t = get('/wordpress-themes/').text
+check('THEME20' in t and 'Best price' in t, 'best public coupon shown on themes')
+b = requests.Session()
+page = b.get(BASE + '/wordpress-themes/').text
+n = nonce_for(page, 'cart_add')
+r = b.post(BASE + '/wordpress-themes/', data={'dm_action': 'cart_add', '_dmnonce': n, 'product_id': str(lp['thm']), 'buy_now': '1'}, allow_redirects=False)
+loc = r.headers.get('Location', '')
+check(r.status_code in (302, 303) and '/login/' in loc and 'checkout' in loc, 'guest Buy now -> login -> checkout', loc)
+check('Temple Theme V2' in b.get(BASE + '/cart/').text, 'theme is in the cart after Buy now')
+check('dm-demo-btn' in get('/product/temple-theme-v2/').text, 'product page shows Live preview')
+wp('$s=get_option("dm_store",array()); $b=dm_store()["blocks"]; $b["landing"]["on"]=0; $s["blocks"]=$b; update_option("dm_store",$s);')
+check('dm-show-card' not in get('/').text, 'landing cards block can be switched off')
+wp('$s=get_option("dm_store",array()); $b=dm_store()["blocks"]; $b["landing"]["on"]=1; $s["blocks"]=$b; update_option("dm_store",$s);')
+
 print()
 print('PASSED: %d  FAILED: %d' % (len(PASS), len(FAIL)))
 for f in FAIL:

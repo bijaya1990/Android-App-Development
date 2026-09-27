@@ -61,6 +61,7 @@ $dm_status   = $dm_p ? $dm_p->post_status : 'draft';
 				</div>
 				<div class="dm-f-digital">
 					<?php dm_render_listing_field( 'what_you_get', $dm_pid, '', true ); ?>
+					<?php dm_render_listing_field( 'demo_url', $dm_pid, '', true ); ?>
 					<div class="dm-form-grid">
 						<?php dm_render_listing_field( 'age_band', $dm_pid, '', true ); ?>
 						<?php dm_render_listing_field( 'badge', $dm_pid, '', true ); ?>

@@ -139,6 +139,10 @@ function dm_breadcrumb_trail() {
 		$trail[] = array( dm_store_opt( 'articles_label' ), dm_articles_url() );
 	} elseif ( 'sale' === dm_route() ) {
 		$trail[] = array( __( 'Sale', 'digimarket' ), dm_url( 'sale' ) );
+	} elseif ( 'website-services' === dm_route() ) {
+		$trail[] = array( __( 'Website services', 'digimarket' ), dm_url( 'website-services' ) );
+	} elseif ( 'wordpress-themes' === dm_route() ) {
+		$trail[] = array( __( 'WordPress themes', 'digimarket' ), dm_url( 'wordpress-themes' ) );
 	}
 	return $trail;
 }
@@ -161,6 +165,10 @@ function dm_render_breadcrumbs() {
  * ---------------------------------------------------------------------- */
 
 add_filter( 'pre_get_document_title', 'dm_seo_title', 20 );
+// Escape once for the <title> tag (existing entities are not double-encoded).
+add_filter( 'pre_get_document_title', function ( $t ) {
+	return '' === (string) $t ? $t : esc_html( $t );
+}, 21 );
 function dm_seo_title( $title = '' ) {
 	$site = dm_site_name();
 	$pg   = dm_paged() > 1 ? ' – ' . sprintf( /* translators: %d */ __( 'Page %d', 'digimarket' ), dm_paged() ) : '';
@@ -221,6 +229,9 @@ function dm_seo_title( $title = '' ) {
 			'sale'           => __( 'Sale – Best Deals on Notes, Templates & More', 'digimarket' ),
 			'articles'       => dm_store_opt( 'articles_label' ) . ' – ' . __( 'Guides & Tips', 'digimarket' ),
 		);
+		if ( dm_is_landing() ) {
+			return dm_lp_seo_title( $route ) . ' | ' . $site;
+		}
 		if ( isset( $names[ $route ] ) ) {
 			return $names[ $route ] . $pg . ' | ' . $site;
 		}
@@ -269,6 +280,9 @@ function dm_seo_description() {
 		}
 		return dm_trim_chars( $d, 158 );
 	}
+	if ( dm_is_landing() ) {
+		return dm_lp_seo_desc( dm_route() );
+	}
 	if ( 'sale' === dm_route() ) {
 		return __( 'Today’s best discounts on study notes, resume templates, design packs and kids worksheets. Limited-time prices — instant download after UPI payment.', 'digimarket' );
 	}
@@ -297,8 +311,8 @@ function dm_seo_canonical() {
 		$url = get_term_link( get_queried_object() );
 	} elseif ( is_post_type_archive() ) {
 		$url = get_post_type_archive_link( get_query_var( 'post_type' ) ? ( is_array( get_query_var( 'post_type' ) ) ? get_query_var( 'post_type' )[0] : get_query_var( 'post_type' ) ) : 'dm_product' );
-	} elseif ( 'sale' === dm_route() ) {
-		$url = dm_url( 'sale' );
+	} elseif ( 'sale' === dm_route() || dm_is_landing() ) {
+		$url = dm_url( dm_route() );
 	} elseif ( 'articles' === dm_route() ) {
 		$url = dm_articles_url();
 	} else {
@@ -315,7 +329,7 @@ function dm_seo_canonical() {
  */
 function dm_seo_noindex() {
 	$route = dm_route();
-	if ( $route && ! in_array( $route, array( 'sale', 'articles' ), true ) ) {
+	if ( $route && ! in_array( $route, array( 'sale', 'articles', 'website-services', 'wordpress-themes' ), true ) ) {
 		return true;
 	}
 	if ( is_search() || is_404() || is_author() || is_date() || is_attachment() ) {
@@ -421,6 +435,12 @@ function dm_seo_image() {
 		$id = get_post_thumbnail_id( get_queried_object_id() );
 	} elseif ( is_tax( 'dm_category' ) ) {
 		$id = (int) get_term_meta( get_queried_object_id(), 'dm_icon_img', true );
+	} elseif ( dm_is_landing() ) {
+		$id = 'website-services' === dm_route() ? (int) dm_store_opt( 'lp_svc_wall' ) : 0;
+		if ( ! $id ) {
+			$ids = 'website-services' === dm_route() ? dm_lp_service_ids( 1 ) : dm_lp_theme_ids( 1 );
+			$id  = $ids ? (int) get_post_thumbnail_id( $ids[0] ) : 0;
+		}
 	}
 	if ( ! $id ) {
 		$id = (int) dm_store_opt( 'seo_default_image' );
@@ -639,6 +659,8 @@ function dm_seo_schema() {
 				'wordCount'        => str_word_count( wp_strip_all_tags( get_post_field( 'post_content', $pid ) ) ),
 			)
 		);
+	} elseif ( dm_is_landing() ) {
+		$graph = array_merge( $graph, dm_lp_schema( dm_route() ) );
 	} elseif ( 'articles' === dm_route() ) {
 		$graph[] = array( '@type' => 'CollectionPage', 'url' => dm_articles_url(), 'name' => dm_store_opt( 'articles_label' ), 'isPartOf' => array( '@id' => $home . '#website' ) );
 	} elseif ( is_singular( 'dm_portfolio' ) ) {
@@ -944,13 +966,24 @@ add_action( 'transition_post_status', function ( $new, $old, $post ) {
  * ---------------------------------------------------------------------- */
 
 /* Resized images are generated as WebP (much smaller) when the server supports it. */
-add_filter( 'image_editor_output_format', function ( $formats ) {
+add_filter( 'image_editor_output_format', function ( $formats, $filename = '' ) {
 	if ( wp_image_editor_supports( array( 'mime_type' => 'image/webp' ) ) ) {
 		$formats['image/jpeg'] = 'image/webp';
-		$formats['image/png']  = 'image/webp';
+		// GD cannot write palette (8-bit) PNGs as WebP; keep those as PNG.
+		if ( ! dm_is_palette_png( $filename ) ) {
+			$formats['image/png'] = 'image/webp';
+		}
 	}
 	return $formats;
-} );
+}, 10, 2 );
+
+function dm_is_palette_png( $file ) {
+	if ( ! $file || ! is_readable( $file ) ) {
+		return false;
+	}
+	$head = (string) file_get_contents( $file, false, null, 0, 26 ); // phpcs:ignore
+	return 26 === strlen( $head ) && "\x89PNG" === substr( $head, 0, 4 ) && 3 === ord( $head[25] );
+}
 
 /* Readable default alt text for new uploads (from the file name). */
 add_action( 'add_attachment', function ( $id ) {

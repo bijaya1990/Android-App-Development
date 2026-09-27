@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,14 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.1.0 =
+* Homepage: two big showcase cards below the banner carousel — Website Services ("See details & price") and WordPress Themes ("Buy now") — with images that change by themselves.
+* New landing page /website-services/: every website type with rotating photos, what's included, price and packages, coupon code (added to the WhatsApp message), reviews, portfolio, FAQ, contact details and an "Order now" WhatsApp button.
+* New landing page /wordpress-themes/: every theme with rotating screenshots, description, tags (filter chips), price and discount, best coupon, "Buy now" straight to Razorpay checkout with instant download, and "Live preview".
+* Header, mobile menu and footer link to both pages. New "Live demo URL" field on products.
+* Settings in Marketplace → Storefront & SEO → Landing pages. Both pages have their own SEO title/description, schema and sitemap entry.
+* Palette PNG uploads are no longer converted to WebP (avoids a GD warning).
 
 = 2.0.0 =
 * New storefront design: Poppins typography, Flipkart-style header with live search suggestions, category icon row, card-style hero banner carousel, offer tiles, gradient category boxes, deals row with countdowns, services band, portfolio, testimonials, trust strip, dark footer, floating WhatsApp button, mobile bottom navigation and drawer menu, sticky mobile buy bar.

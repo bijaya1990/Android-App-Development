@@ -140,6 +140,8 @@ while ( have_posts() ) :
 							<button class="dm-btn dm-btn-cart dm-btn-lg" type="submit" data-add-to-cart="<?php echo (int) $dm_pid; ?>"><?php echo dm_icon( 'cart', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Add to cart', 'digimarket' ); ?></button>
 							<button class="dm-btn dm-btn-buy dm-btn-lg" name="buy_now" value="1" type="submit"><?php echo dm_icon( 'bolt', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Buy now', 'digimarket' ); ?></button>
 						</form>
+						<?php $dm_demo = (string) get_post_meta( $dm_pid, '_dm_demo_url', true ); ?>
+						<?php if ( $dm_demo ) : ?><a class="dm-btn dm-btn-outline dm-btn-block dm-demo-btn" href="<?php echo esc_url( $dm_demo ); ?>" target="_blank" rel="noopener nofollow"><?php echo dm_icon( 'external', 18 ); // phpcs:ignore ?> <?php esc_html_e( 'Live preview', 'digimarket' ); ?></a><?php endif; ?>
 					<?php else : ?>
 						<div class="dm-notice dm-notice-info"><?php echo esc_html( $dm_reason ); ?></div>
 					<?php endif; ?>

@@ -91,6 +91,28 @@ foreach ( array( array( 'Hostinger Premium Web Hosting', 69, 'hostinger' ), arra
 	update_post_meta( $id, '_dm_aff_pros', "Free SSL & domain\nEasy WordPress install\nIndian payment options" ); update_post_meta( $id, '_dm_aff_cons', "Renewal price is higher" );
 	dm_seo_autofill( $id );
 }
+// WordPress themes (landing page) + rotating galleries.
+$wp_cat = $cat( 'WordPress Templates' );
+$thm_ids = array( $pids[8] );
+foreach ( array( array( 'Puja Committee WordPress Theme', 1999, 999, 'hero-5-puja-committee' ), array( 'Café & Restaurant WordPress Theme', 1799, '', 'tile-school-website' ) ) as $t ) {
+	$id = wp_insert_post( array( 'post_type' => 'dm_product', 'post_status' => 'publish', 'post_title' => $t[0], 'post_excerpt' => 'Mobile-friendly WordPress theme with demo content and a step-by-step setup guide.', 'post_content' => $desc, 'post_author' => $admin ) );
+	wp_set_object_terms( $id, array( $wp_cat ), 'dm_category' );
+	set_post_thumbnail( $id, isset( $imgs[ $t[3] ] ) ? $imgs[ $t[3] ] : seed_img( $demo . $t[3] . '.webp' ) );
+	update_post_meta( $id, '_dm_price', $t[1] ); update_post_meta( $id, '_dm_sale_price', $t[2] ); update_post_meta( $id, '_dm_delivery', 'file' );
+	update_post_meta( $id, '_dm_file', 'x.bin' ); update_post_meta( $id, '_dm_file_name', 'theme.zip' ); update_post_meta( $id, '_dm_file_size', 3400000 );
+	update_post_meta( $id, '_dm_what_you_get', "Theme ZIP\nDemo content\nSetup guide" );
+	dm_sync_effective_price( $id );
+	$thm_ids[] = $id;
+}
+$tags = array( array( 'School', 'Education' ), array( 'Committee', 'Events' ), array( 'Café', 'Business' ) );
+foreach ( $thm_ids as $i => $id ) {
+	wp_set_object_terms( $id, $tags[ $i ], 'dm_tag' );
+	update_post_meta( $id, '_dm_gallery', array( $imgs['tile-committee-website'], $imgs['tile-canva-packs'] ) );
+	update_post_meta( $id, '_dm_demo_url', 'https://example.com/demo-' . $i );
+}
+foreach ( $svc_ids as $id ) {
+	update_post_meta( $id, '_dm_gallery', array( $imgs['tile-committee-website'], $imgs['tile-school-website'] ) );
+}
 // Portfolio + testimonials.
 foreach ( array( array( 'Sunrise Public School, Bhubaneswar', 'School', 'hero-2-school-website', 0 ), array( 'Durga Puja Samiti, Cuttack', 'Puja committee', 'hero-5-puja-committee', 1 ), array( 'Chai Adda Café', 'Café', 'tile-school-website', 2 ) ) as $pf ) {
 	$id = wp_insert_post( array( 'post_type' => 'dm_portfolio', 'post_status' => 'publish', 'post_title' => $pf[0], 'post_content' => '<p>A clean, fast website built on WordPress.</p>' ) );

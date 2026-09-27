@@ -645,4 +645,50 @@
 		$$('input[name="listing_type"]', box).forEach(function (r) { r.addEventListener('change', sync); });
 		sync();
 	});
+	/* ---- Self-changing image stacks (landing pages + homepage cards) ---- */
+	(function () {
+		var stacks = $$('[data-fade]');
+		if (!stacks.length || reduceMotion) { return; }
+		stacks.forEach(function (box, n) {
+			var imgs = $$('img', box);
+			var dots = $$('.dm-fade-dots i', box);
+			var i = 0, timer = null, visible = false, hover = false;
+			if (dots[0]) { dots[0].classList.add('is-on'); }
+			function show(k) {
+				imgs[i].classList.remove('is-on');
+				if (dots[i]) { dots[i].classList.remove('is-on'); }
+				i = k % imgs.length;
+				var im = imgs[i];
+				if (im.loading === 'lazy') { im.loading = 'eager'; }
+				im.classList.add('is-on');
+				if (dots[i]) { dots[i].classList.add('is-on'); }
+			}
+			function run() {
+				clearInterval(timer);
+				if (visible && !hover && !document.hidden) {
+					timer = setInterval(function () { show(i + 1); }, 3500 + (n % 4) * 400);
+				}
+			}
+			var host = box.closest('a, article, header') || box;
+			host.addEventListener('mouseenter', function () { hover = true; run(); });
+			host.addEventListener('mouseleave', function () { hover = false; run(); });
+			document.addEventListener('visibilitychange', run);
+			if ('IntersectionObserver' in window) {
+				new IntersectionObserver(function (en) { visible = en[0].isIntersecting; run(); }, { threshold: 0.2 }).observe(box);
+			} else { visible = true; run(); }
+		});
+	})();
+	/* ---- Theme tag filter chips ---- */
+	$$('[data-lp-filter]').forEach(function (bar) {
+		var list = $('.dm-lp-themes');
+		bar.addEventListener('click', function (e) {
+			var b = e.target.closest('[data-tag]');
+			if (!b || !list) { return; }
+			var tag = b.getAttribute('data-tag');
+			$$('[data-tag]', bar).forEach(function (x) { var on = x === b; x.classList.toggle('is-active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+			$$('.dm-lp-theme', list).forEach(function (card) {
+				card.hidden = !!tag && (' ' + card.getAttribute('data-tags') + ' ').indexOf(' ' + tag + ' ') < 0;
+			});
+		});
+	});
 })();

@@ -11,8 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DM_VERSION', '2.0.0' );
-define( 'DM_DB_VERSION', '2.0.0' );
+define( 'DM_VERSION', '2.1.0' );
+define( 'DM_DB_VERSION', '2.1.0' );
 define( 'DM_DIR', get_template_directory() );
 define( 'DM_URI', get_template_directory_uri() );
 
@@ -37,6 +37,7 @@ $dm_includes = array(
 	'services',
 	'seo',
 	'articles',
+	'landing',
 	'template-tags',
 );
 
