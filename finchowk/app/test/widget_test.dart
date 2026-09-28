@@ -7,6 +7,6 @@ void main() {
     await tester.pumpWidget(const FinChowkApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('FinChowk — Phase 0 setup complete'), findsOneWidget);
+    expect(find.text('FinChowk — Phase 1 design system complete'), findsOneWidget);
   });
 }

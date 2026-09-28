@@ -57,6 +57,24 @@ flutter:
   assets:
     - assets/config/offers_fallback.json
 
-  # Fonts (Poppins 600/700 headings, Inter body, Noto Sans Devanagari fallback)
-  # are added in Phase 1 once the real font files are pulled from Figma —
-  # see DESIGN_NOTES.md section "Typography".
+  # Poppins (headings 600/700), Inter (body, variable font serving 400/500),
+  # Noto Sans Devanagari (Hindi fallback) — no Figma file was available
+  # (see DESIGN_NOTES.md), so these are the Google Fonts OFL originals
+  # bundled locally rather than eyeballed or fetched at runtime.
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Variable.ttf
+          weight: 500
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+          weight: 400

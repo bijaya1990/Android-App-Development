@@ -50,9 +50,42 @@ conflict is logged here.
   Firebase project. Re-verify on a real emulator/device before Phase 1
   sign-off if that matters to you.
 
-## Typography
+## Phase 1 — Design system
 
-Poppins/Inter/Noto Sans Devanagari font files are not yet vendored into
-`app/assets/fonts/` (directory exists, empty) — they're added in Phase 1
-once sourced from the Figma file (or Google Fonts, if the owner confirms
-that's an acceptable substitute for the exact files Figma exports).
+- **Still no Figma file** (see Phase 0 note above — unchanged). Every value
+  in `lib/core/theme/tokens.dart` (colours, category gradients, type scale,
+  spacing, radius) is copied verbatim from source document section 1.3,
+  with a doc comment pointing back at that section. If a Figma file shows
+  up later with different values, Figma wins per spec 2.1 — regenerate
+  `tokens.dart` from it and update this note; don't hand-tune around it.
+- **Fonts**: Poppins-SemiBold/Bold, Inter (variable font, serving both 400
+  and 500 via Flutter's multi-weight-from-one-variable-file support), and
+  Noto Sans Devanagari were pulled from the `google/fonts` OFL repository
+  (same files Figma would have exported, since Figma specifies Google
+  Fonts by name) and bundled locally under `app/assets/fonts/` — not
+  fetched at runtime, per spec 5.4 "no remotely loaded... assets". Their
+  OFL license texts are alongside them.
+- **No Figma frames to diff against**, so the "gallery matches Figma
+  side-by-side" acceptance line from the build-order table (6.3) couldn't
+  be checked literally. What was verified instead: every component from
+  spec 2.2 (AppHeader, CategoryCard, OfferCard incl. skeleton loading,
+  PrimaryButton/SecondaryButton incl. loading/disabled, InfoChip x3
+  variants, DisclaimerBox x2 variants, StateView x4 kinds, BottomSheet,
+  SettingsTile x3 variants, LegalPage) is built as a widget in
+  `lib/core/widgets/`, shown in the dev-only `/_gallery` route
+  (`kDebugMode`-gated, never in a release build), and has a light + dark
+  golden test in `test/goldens/` (26 total) using the real bundled fonts.
+  Re-diff against Figma once a file exists.
+- **Golden-test artifact, not a real bug**: buttons in the golden PNGs show
+  a black focus-ring outline. That comes from Flutter's automated test
+  binding auto-focusing the first tappable widget when there's no real
+  input device — it does not appear on a real device/emulator. Left as-is
+  rather than suppressed, since suppressing it would risk hiding a real
+  focus-styling bug later.
+- Fixed a latent theming bug while wiring buttons: the button themes had
+  used `minimumSize: Size.fromHeight(48)`, which sets width to *infinity*.
+  That's harmless when a button is wrapped in `Expanded` (as `OfferCard`
+  and the leave-app sheet do) but crashes layout for a bare `SecondaryButton`
+  in a `Row` (e.g. "Details" next to "Apply Now"). Changed to a bounded
+  `Size(64, 48)` minimum; full-width buttons still get their width from
+  `Expanded`/an explicit `SizedBox` at the call site.

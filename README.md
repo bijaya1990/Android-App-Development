@@ -18,10 +18,11 @@ finchowk/
 
 ## Status
 
-Phase 0 (Setup) only. See `DESIGN_NOTES.md` for what's still blocked on the
-owner (a real Figma link, real Firebase projects, and approved partner
-URLs). Nothing beyond this has been built yet — remaining phases (design
-system, data layer, screens, analytics, admin panel, hardening, store
+Phase 0 (Setup) and Phase 1 (Design system: tokens, light/dark theme,
+fonts, core widgets + dev-only `/_gallery`, golden tests) are done. See
+`DESIGN_NOTES.md` for what's still blocked on the owner (a real Figma
+link, real Firebase projects, and approved partner URLs). Remaining
+phases (data layer, screens, analytics, admin panel, hardening, store
 readiness) are built one at a time with a stop for review after each, per
 the source document's instructions.
 
