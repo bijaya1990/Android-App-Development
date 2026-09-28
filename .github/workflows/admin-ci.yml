@@ -1,0 +1,26 @@
+name: Admin CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["finchowk/admin/**", ".github/workflows/admin-ci.yml"]
+  pull_request:
+    paths: ["finchowk/admin/**", ".github/workflows/admin-ci.yml"]
+
+defaults:
+  run:
+    working-directory: finchowk/admin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: finchowk/admin/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

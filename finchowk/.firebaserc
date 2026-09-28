@@ -1,0 +1,21 @@
+{
+  "projects": {
+    "default": "REPLACE_WITH_DEV_FIREBASE_PROJECT_ID",
+    "dev": "REPLACE_WITH_DEV_FIREBASE_PROJECT_ID",
+    "prod": "REPLACE_WITH_PROD_FIREBASE_PROJECT_ID"
+  },
+  "targets": {
+    "REPLACE_WITH_DEV_FIREBASE_PROJECT_ID": {
+      "hosting": {
+        "admin": ["finchowk-admin-dev"],
+        "legal": ["finchowk-legal-dev"]
+      }
+    },
+    "REPLACE_WITH_PROD_FIREBASE_PROJECT_ID": {
+      "hosting": {
+        "admin": ["finchowk-admin"],
+        "legal": ["finchowk-legal"]
+      }
+    }
+  }
+}
