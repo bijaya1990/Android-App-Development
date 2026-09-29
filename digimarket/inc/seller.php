@@ -181,6 +181,11 @@ function dm_do_seller_kyc() {
 	update_user_meta( $uid, 'dm_address', $addr );
 
 	$first = ! get_user_meta( $uid, 'dm_kyc_submitted', true );
+	$gst_err = dm_save_seller_gstin( $uid, $_POST ); // phpcs:ignore
+	if ( $gst_err ) {
+		dm_flash( 'error', $gst_err );
+		dm_back();
+	}
 	update_user_meta( $uid, 'dm_kyc_submitted', time() );
 	if ( $first || $changed || ! get_user_meta( $uid, 'dm_kyc_status', true ) ) {
 		update_user_meta( $uid, 'dm_kyc_status', 'pending' );
@@ -234,6 +239,7 @@ function dm_do_seller_submit() {
 	$status = dm_opt( 'auto_approve_sellers' ) ? 'active' : 'pending';
 	update_user_meta( $uid, 'dm_seller_status', $status );
 	update_user_meta( $uid, 'dm_seller_since', time() );
+	dm_email_seller_welcome( $uid, $status );
 	/* translators: %s shop */
 	dm_notify_admins( sprintf( __( 'New seller: %s', 'digimarket' ), dm_shop_name( $uid ) ), admin_url( 'admin.php?page=dm-sellers&seller=' . $uid ) );
 	if ( 'active' === $status ) {

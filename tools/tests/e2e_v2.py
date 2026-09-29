@@ -307,6 +307,48 @@ check('Patharla, Bijepur, Bargarh, Odisha 768032' in h and 'mailto:contact@pikac
 check('"postalCode":"768032"' in h, 'organisation schema has postal address')
 check(wp('echo get_option("wp_page_for_privacy_policy") == get_option("dm_legal_pages")["privacy"] ? "y" : "n";') == 'y', 'WordPress privacy page points to our policy')
 
+print('== GST switch, receipts, seller GST control, welcome email')
+def admin_do(page, do, data):
+    t = ad.get(BASE + page).text
+    m = re.search(r'name="do" value="%s">\s*<input type="hidden" id="_wpnonce" name="_wpnonce" value="([^"]+)"' % do, t)
+    if not m:
+        return None
+    d = {'action': 'dm_admin', 'do': do, '_wpnonce': m.group(1)}
+    d.update(data)
+    return ad.post(BASE + '/wp-admin/admin-post.php', data=d, headers={'Referer': BASE + page})
+g = ad.get(BASE + '/wp-admin/admin.php?page=dm-gst').text
+check('GST is OFF' in g and 'Turn GST ON' in g, 'GST page shows the OFF switch')
+check('GST is OFF' in ad.get(BASE + '/wp-admin/admin.php?page=dm-marketplace').text, 'GST switch card on admin Overview')
+r = admin_do('/wp-admin/admin.php?page=dm-gst', 'gst_toggle', {'to': '1'})
+check(r is not None and wp('echo dm_gst_enabled() ? "on" : "off";') == 'off', 'cannot turn GST on without a GSTIN')
+admin_do('/wp-admin/admin.php?page=dm-gst', 'gst_save', {'g[gstin]': 'BADGSTIN', 'g[rate]': '18', 'g[state]': 'Odisha', 'g[threshold]': '2000000', 'g[warn_pct]': '80'})
+check(wp('echo dm_store_gstin();') == '', 'invalid GSTIN rejected')
+admin_do('/wp-admin/admin.php?page=dm-gst', 'gst_save', {'g[gstin]': '21abcde1234f1z5', 'g[rate]': '18', 'g[state]': 'Odisha', 'g[threshold]': '2000000', 'g[warn_pct]': '80'})
+check(wp('echo dm_store_gstin();') == '21ABCDE1234F1Z5', 'valid GSTIN saved (uppercased)')
+oid = wp(r'''global $wpdb; $u=get_user_by("login","admin"); $wpdb->insert(dm_table("orders"),array("buyer_id"=>$u->ID,"buyer_name"=>"Tax Buyer","buyer_email"=>"t@b.c","subtotal"=>118,"order_total"=>118,"payment_status"=>"paid","paid_at"=>dm_now(),"created_at"=>dm_now())); $o=$wpdb->insert_id; $wpdb->insert(dm_table("order_items"),array("order_id"=>$o,"product_id"=>0,"seller_id"=>$u->ID,"product_title"=>"Tax Test Item","list_price"=>118,"price_at_purchase"=>118,"item_status"=>"paid","created_at"=>dm_now())); echo $o;''')
+t = ad.get(BASE + '/invoice/%s/' % oid).text
+check('Receipt' in t and 'GST not applicable' in t, 'GST off: receipt says GST not applicable')
+admin_do('/wp-admin/admin.php?page=dm-gst', 'gst_toggle', {'to': '1'})
+check(wp('echo dm_gst_enabled() ? "on" : "off";') == 'on', 'GST switch turns ON')
+t = ad.get(BASE + '/invoice/%s/' % oid).text
+check('Tax Invoice' in t and '21ABCDE1234F1Z5' in t and 'CGST' in t and '100.00' in t and '9.00' in t, 'GST on: tax invoice with GSTIN and CGST/SGST split')
+terms = get(json.loads(wp('$o=array(); foreach(get_option("dm_legal_pages") as $k=>$id){ $o[$k]=get_permalink($id); } echo json_encode($o);'))['terms']).text
+check('Our GSTIN is 21ABCDE1234F1Z5' in terms, 'Terms follow the GST switch')
+admin_do('/wp-admin/admin.php?page=dm-gst', 'gst_toggle', {'to': '0'})
+check(wp('echo dm_gst_enabled() ? "on" : "off";') == 'off', 'GST switch turns OFF')
+res = wp(r'''$s=get_option("dm_settings"); $s["single_seller_mode"]=0; update_option("dm_settings",$s);
+$u=wp_create_user("gstseller","gstseller123","gs@example.com"); update_user_meta($u,"dm_seller_status","active"); update_user_meta($u,"dm_shop_slug","gst-shop"); update_user_meta($u,"dm_shop_name","GST Shop"); update_user_meta($u,"dm_kyc_status","verified");
+$p=wp_insert_post(array("post_type"=>"dm_product","post_status"=>"publish","post_title"=>"GST Seller Item","post_author"=>$u)); update_post_meta($p,"_dm_price",100); update_post_meta($p,"_dm_delivery","file"); update_post_meta($p,"_dm_file","x.bin");
+$a=dm_can_purchase($p)[0]?1:0; update_user_meta($u,"dm_gst_required",1); $b=dm_can_purchase($p)[0]?1:0; update_user_meta($u,"dm_gstin","21ABCDE1234F1Z5"); $c=dm_can_purchase($p)[0]?1:0;
+echo $a.$b.$c;''')
+check(res == '101', 'GST required without GSTIN pauses purchases; valid GSTIN reopens', res)
+res = wp(r'''update_option("dm_gst", array_merge(dm_gst(), array("threshold"=>100))); delete_option("dm_gst_alert"); dm_gst_check_thresholds(0); echo get_option("dm_gst_alert");''')
+check(res.endswith(':over'), 'turnover alert fires when the limit is crossed', res)
+res = wp(r'''$u=get_user_by("login","gstseller"); update_user_meta($u->ID,"dm_agreement_accepted",array("time"=>time(),"version"=>"v1","ip"=>"1.2.3.4")); echo dm_email_seller_welcome($u->ID,"active") ? "sent" : "fail";''')
+ml = open(S + '/mail.log').read() if os.path.exists(S + '/mail.log') else ''
+check(res == 'sent' and 'seller registration successful' in ml, 'seller welcome email sent', res)
+wp('$s=get_option("dm_settings"); $s["single_seller_mode"]=1; update_option("dm_settings",$s); update_option("dm_gst", array_merge(dm_gst(), array("threshold"=>2000000)));')
+
 print()
 print('PASSED: %d  FAILED: %d' % (len(PASS), len(FAIL)))
 for f in FAIL:

@@ -330,6 +330,9 @@ function dm_can_purchase( $pid ) {
 			return array( false, __( 'This seller is completing payout verification. Purchases open soon.', 'digimarket' ) );
 		}
 	}
+	if ( function_exists( 'dm_seller_gst_blocked' ) && dm_seller_gst_blocked( $seller ) ) {
+		return array( false, __( 'This seller is updating their GST details. Purchases reopen soon.', 'digimarket' ) );
+	}
 	if ( 'license_key' === get_post_meta( $pid, '_dm_delivery', true ) && dm_license_keys_available( $pid ) < 1 ) {
 		return array( false, __( 'Sold out — no license keys left.', 'digimarket' ) );
 	}

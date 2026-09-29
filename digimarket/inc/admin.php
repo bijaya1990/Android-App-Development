@@ -73,6 +73,7 @@ function dm_admin_header( $title, $actions = '' ) {
 	if ( ! empty( $_GET['dm_err'] ) ) {
 		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( sanitize_text_field( wp_unslash( $_GET['dm_err'] ) ) ) . '</p></div>';
 	}
+	do_action( 'dm_admin_after_header' );
 }
 
 function dm_admin_back( $msg = '', $err = '' ) {
@@ -98,6 +99,7 @@ function dm_stat_card( $label, $value, $tone = '' ) {
 
 function dm_admin_overview() {
 	global $wpdb;
+	add_action( 'dm_admin_after_header', 'dm_gst_switch_card' );
 	$i     = dm_table( 'order_items' );
 	$o     = dm_table( 'orders' );
 	$tot   = $wpdb->get_row( "SELECT COALESCE(SUM(price_at_purchase),0) gross, COALESCE(SUM(commission_amount),0) comm, COUNT(DISTINCT order_id) orders FROM $i WHERE item_status = 'paid'" ); // phpcs:ignore

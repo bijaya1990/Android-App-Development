@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.2.0
+Version: 2.3.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -1383,3 +1383,29 @@ main:has(> .dm-lp > .dm-lp-band:last-child) + .dm-ft { margin-top: 0; }
 .dm-dropdown-all { color: var(--dm-primary) !important; font-weight: 600; }
 .dm-avatar-btn { border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; display: flex; }
 .dm-avatar-btn img { border-radius: 50%; width: 34px; height: 34px; background: var(--dm-surface-2); }
+
+/* GST switch card + turnover meter */
+.dm-gst-card { display: grid; gap: 12px 18px; grid-template-columns: 1fr auto; align-items: center; margin: 16px 0 20px; padding: 18px 20px; border-radius: 14px; border: 2px solid #d0d5dd; background: #fff; max-width: 860px; }
+.dm-gst-card.is-on { border-color: #15803D; background: #f0fdf4; }
+.dm-gst-card.is-off { border-color: #d0d5dd; background: #f8fafc; }
+.dm-gst-card-main { display: flex; flex-direction: column; gap: 4px; }
+.dm-gst-state { font-size: 1.35rem; font-weight: 800; color: #111; }
+.dm-gst-card.is-on .dm-gst-state { color: #15803D; }
+.dm-gst-card form { margin: 0; }
+.dm-gst-btn { font: inherit; font-size: 1rem; font-weight: 700; padding: 12px 22px; min-height: 48px; border-radius: 12px; border: 0; cursor: pointer; color: #fff; }
+.dm-gst-btn.is-on { background: #15803D; }
+.dm-gst-btn.is-off { background: #b91c1c; }
+.dm-gst-meter { grid-column: 1 / -1; position: relative; height: 26px; border-radius: 99px; background: #e5e7eb; overflow: hidden; min-width: 180px; }
+.dm-gst-meter i { position: absolute; inset: 0 auto 0 0; background: #22c55e; border-radius: 99px; }
+.dm-gst-meter.is-near i { background: #f59e0b; }
+.dm-gst-meter.is-over i { background: #dc2626; }
+.dm-gst-meter span { position: relative; z-index: 1; display: block; padding: 0 12px; line-height: 26px; font-size: 12px; font-weight: 600; color: #111; white-space: nowrap; }
+.dm-gst-warn { grid-column: 1 / -1; margin: 0; color: #b91c1c; font-weight: 600; }
+.dm-gst-mini { font: inherit; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 99px; border: 0; cursor: pointer; }
+.dm-gst-mini.is-on { background: #15803D; color: #fff; }
+.dm-gst-mini.is-off { background: #e5e7eb; color: #111; }
+.dm-gst-table td { vertical-align: middle; }
+.dm-gst-table form { margin: 0 0 4px; }
+@media (max-width: 600px) { .dm-gst-card { grid-template-columns: 1fr; } }
+.dm-gst-front .dm-gst-card { margin: 0 0 8px; max-width: none; }
+.dm-gst-fields { display: grid; gap: 8px; }

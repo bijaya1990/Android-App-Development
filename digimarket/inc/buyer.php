@@ -268,13 +268,50 @@ function dm_do_open_ticket() {
 
 function dm_render_invoice( $order_id ) {
 	$order = dm_get_order( $order_id );
-	if ( ! $order || ( (int) $order->buyer_id !== get_current_user_id() && ! current_user_can( 'dm_view_marketplace' ) ) ) {
+	$uid   = get_current_user_id();
+	$items = $order ? dm_get_order_items( $order_id ) : array();
+	$admin = current_user_can( 'dm_view_marketplace' );
+	$buyer = $order && (int) $order->buyer_id === $uid;
+	$mine  = array_values( array_filter( $items, function ( $it ) use ( $uid ) {
+		return (int) $it->seller_id === $uid;
+	} ) );
+	// A seller sees a receipt with only their own items.
+	$as_seller = $mine && ( ! $buyer || isset( $_GET['as'] ) ) && ! ( $admin && ! isset( $_GET['as'] ) ); // phpcs:ignore
+	if ( ! $order || ( ! $buyer && ! $admin && ! $mine ) ) {
 		wp_die( esc_html__( 'Invoice not found.', 'digimarket' ), '', array( 'response' => 404 ) );
 	}
 	if ( ! in_array( $order->payment_status, array( 'paid', 'refunded', 'partially_refunded' ), true ) ) {
 		wp_die( esc_html__( 'Invoices are available for paid orders only.', 'digimarket' ), '', array( 'response' => 403 ) );
 	}
-	$items = dm_get_order_items( $order_id );
+	if ( $as_seller ) {
+		$items = $mine;
+	}
+	$biz    = dm_business();
+	$rows   = array();
+	$taxed  = false;
+	$sum    = array( 'amount' => 0, 'taxable' => 0, 'cgst' => 0, 'sgst' => 0 );
+	foreach ( $items as $it ) {
+		$tax = dm_item_tax( $it );
+		if ( $tax ) {
+			$taxed = true;
+		}
+		$amount          = (float) $it->price_at_purchase;
+		$sum['amount']  += $amount;
+		$sum['taxable'] += $tax ? $tax['taxable'] : $amount;
+		$sum['cgst']    += $tax ? $tax['cgst'] : 0;
+		$sum['sgst']    += $tax ? $tax['sgst'] : 0;
+		$rows[]          = array( $it, $tax );
+	}
+	$single   = dm_single_seller_mode() || ( $as_seller && user_can( $uid, 'manage_options' ) );
+	$supplier = $single ? $biz['legal'] : ( $as_seller ? dm_shop_name( $uid ) : ( dm_opt( 'invoice_company' ) ? dm_opt( 'invoice_company' ) : $biz['legal'] ) );
+	$address  = $single || ! $as_seller ? ( dm_opt( 'invoice_address' ) ? dm_opt( 'invoice_address' ) : $biz['address'] ) : implode( ', ', array_filter( (array) get_user_meta( $uid, 'dm_address', true ) ) );
+	$gstin    = '';
+	if ( $taxed ) {
+		$gstin = $single ? dm_store_gstin() : ( $as_seller ? dm_seller_gstin( $uid ) : '' );
+	}
+	$title  = $taxed ? __( 'Tax Invoice', 'digimarket' ) : __( 'Receipt', 'digimarket' );
+	$number = dm_order_number( $order ) . ( $as_seller && ! $single ? '-S' . $uid : '' );
+	$back   = $as_seller ? dm_url( 'dashboard', 'receipts' ) : dm_url( 'account', 'orders' );
 	?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -282,52 +319,79 @@ function dm_render_invoice( $order_id ) {
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title><?php echo esc_html( sprintf( /* translators: %s */ __( 'Invoice %s', 'digimarket' ), dm_order_number( $order ) ) ); ?></title>
+<title><?php echo esc_html( $title . ' ' . $number ); ?></title>
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111;margin:0;padding:32px;background:#f5f5f7}
-.inv{max-width:800px;margin:0 auto;background:#fff;padding:40px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-h1{margin:0 0 4px;font-size:28px}.muted{color:#666;font-size:14px}.row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin:24px 0}
-table{width:100%;border-collapse:collapse;margin-top:16px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #eee;font-size:14px}th{background:#fafafa}
-.r{text-align:right}.tot td{font-weight:700;border-bottom:0}.btn{display:inline-block;background:#111;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;border:0;cursor:pointer;font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111;margin:0;padding:32px 16px;background:#f5f5f7}
+.inv{max-width:820px;margin:0 auto;background:#fff;padding:36px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+h1{margin:0 0 4px;font-size:26px}.muted{color:#555;font-size:13px;line-height:1.55}.row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin:22px 0}
+table{width:100%;border-collapse:collapse;margin-top:14px}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}th{background:#fafafa}
+.r{text-align:right}.tot td{font-weight:700;border-bottom:0;font-size:15px}.btn{display:inline-block;background:#111;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;border:0;cursor:pointer;font-size:14px}
 .status{display:inline-block;padding:2px 10px;border-radius:99px;background:#e8f7ee;color:#137a3c;font-size:12px;font-weight:600}
-@media print{body{background:#fff;padding:0}.inv{box-shadow:none}.noprint{display:none}}
+.note{margin-top:22px;padding:12px 14px;background:#fafafa;border-radius:8px}
+@media print{body{background:#fff;padding:0}.inv{box-shadow:none;padding:0}.noprint{display:none}}
 </style>
 </head>
 <body>
-<div class="noprint" style="max-width:800px;margin:0 auto 16px;display:flex;gap:8px;justify-content:flex-end">
-	<a class="btn" href="<?php echo esc_url( dm_url( 'account', 'orders' ) ); ?>" style="background:#666"><?php esc_html_e( 'Back', 'digimarket' ); ?></a>
+<div class="noprint" style="max-width:820px;margin:0 auto 16px;display:flex;gap:8px;justify-content:flex-end">
+	<a class="btn" href="<?php echo esc_url( $back ); ?>" style="background:#666"><?php esc_html_e( 'Back', 'digimarket' ); ?></a>
 	<button class="btn" onclick="window.print()"><?php esc_html_e( 'Download PDF / Print', 'digimarket' ); ?></button>
 </div>
 <div class="inv">
 	<div class="row" style="margin-top:0">
 		<div>
-			<h1><?php esc_html_e( 'Tax Invoice', 'digimarket' ); ?></h1>
-			<div class="muted"><?php echo esc_html( dm_order_number( $order ) ); ?> · <?php echo esc_html( mysql2date( get_option( 'date_format' ), $order->paid_at ? $order->paid_at : $order->created_at ) ); ?></div>
+			<h1><?php echo esc_html( $title ); ?></h1>
+			<div class="muted"><?php esc_html_e( 'No.', 'digimarket' ); ?> <?php echo esc_html( $number ); ?> · <?php echo esc_html( mysql2date( get_option( 'date_format' ), $order->paid_at ? $order->paid_at : $order->created_at ) ); ?></div>
 			<p><span class="status"><?php echo esc_html( ucwords( str_replace( '_', ' ', $order->payment_status ) ) ); ?></span></p>
 		</div>
 		<div class="muted" style="text-align:right">
-			<strong style="color:#111"><?php echo esc_html( dm_opt( 'invoice_company' ) ); ?></strong><br>
-			<?php echo nl2br( esc_html( dm_opt( 'invoice_address' ) ) ); ?>
-			<?php if ( dm_opt( 'invoice_gstin' ) ) : ?><br>GSTIN: <?php echo esc_html( dm_opt( 'invoice_gstin' ) ); ?><?php endif; ?>
+			<strong style="color:#111"><?php echo esc_html( $supplier ); ?></strong><br>
+			<?php echo nl2br( esc_html( $address ) ); ?>
+			<?php if ( $biz['email'] && ! ( $as_seller && ! $single ) ) : ?><br><?php echo esc_html( $biz['email'] ); ?><?php endif; ?>
+			<?php if ( $gstin ) : ?><br><strong>GSTIN: <?php echo esc_html( $gstin ); ?></strong><?php endif; ?>
 		</div>
 	</div>
-	<div class="muted"><strong style="color:#111"><?php esc_html_e( 'Billed to', 'digimarket' ); ?></strong><br><?php echo esc_html( $order->buyer_name ); ?><br><?php echo esc_html( $order->buyer_email ); ?></div>
+	<div class="muted"><strong style="color:#111"><?php esc_html_e( 'Billed to', 'digimarket' ); ?></strong><br><?php echo esc_html( $order->buyer_name ); ?><br><?php echo esc_html( $order->buyer_email ); ?><?php if ( $taxed ) : ?><br><?php echo esc_html( sprintf( /* translators: %s state */ __( 'Place of supply: %s', 'digimarket' ), dm_gst_opt( 'state' ) ) ); ?><?php endif; ?></div>
 	<table>
-		<thead><tr><th><?php esc_html_e( 'Item', 'digimarket' ); ?></th><th><?php esc_html_e( 'Sold by', 'digimarket' ); ?></th><th><?php esc_html_e( 'Status', 'digimarket' ); ?></th><th class="r"><?php esc_html_e( 'Amount', 'digimarket' ); ?></th></tr></thead>
+		<thead><tr>
+			<th><?php esc_html_e( 'Item', 'digimarket' ); ?></th>
+			<?php if ( ! $single && ! $as_seller ) : ?><th><?php esc_html_e( 'Sold by', 'digimarket' ); ?></th><?php endif; ?>
+			<?php if ( $taxed ) : ?><th>SAC</th><th class="r"><?php esc_html_e( 'Taxable value', 'digimarket' ); ?></th><th class="r"><?php esc_html_e( 'GST', 'digimarket' ); ?></th><?php endif; ?>
+			<th class="r"><?php esc_html_e( 'Amount', 'digimarket' ); ?></th>
+		</tr></thead>
 		<tbody>
-		<?php foreach ( $items as $it ) : ?>
-			<tr><td><?php echo esc_html( $it->product_title ); ?></td><td><?php echo esc_html( dm_shop_name( $it->seller_id ) ); ?></td><td><?php echo esc_html( ucfirst( $it->item_status ) ); ?></td><td class="r"><?php echo esc_html( dm_money( $it->list_price ) ); ?></td></tr>
+		<?php foreach ( $rows as $row ) : list( $it, $tax ) = $row; ?>
+			<tr>
+				<td><?php echo esc_html( $it->product_title ); ?><?php echo 'paid' !== $it->item_status ? ' <small>(' . esc_html( ucfirst( $it->item_status ) ) . ')</small>' : ''; ?><?php echo $it->list_price > $it->price_at_purchase ? '<br><small class="muted">' . esc_html( sprintf( /* translators: %s */ __( 'List price %s, discount applied', 'digimarket' ), dm_money( $it->list_price ) ) ) . '</small>' : ''; ?></td>
+				<?php if ( ! $single && ! $as_seller ) : ?><td><?php echo esc_html( dm_shop_name( $it->seller_id ) ); ?><?php echo $tax ? '<br><small>GSTIN ' . esc_html( $tax['gstin'] ) . '</small>' : ''; ?></td><?php endif; ?>
+				<?php if ( $taxed ) : ?>
+					<td>998439</td>
+					<td class="r"><?php echo esc_html( dm_money( $tax ? $tax['taxable'] : $it->price_at_purchase ) ); ?></td>
+					<td class="r"><?php echo $tax ? esc_html( dm_money( $tax['tax'] ) . ' (' . (float) $tax['rate'] . '%)' ) : '—'; ?></td>
+				<?php endif; ?>
+				<td class="r"><?php echo esc_html( dm_money( $it->price_at_purchase ) ); ?></td>
+			</tr>
 		<?php endforeach; ?>
 		</tbody>
 		<tfoot>
-			<tr><td colspan="3" class="r"><?php esc_html_e( 'Subtotal', 'digimarket' ); ?></td><td class="r"><?php echo esc_html( dm_money( $order->subtotal ) ); ?></td></tr>
-			<?php if ( $order->discount > 0 ) : ?>
-			<tr><td colspan="3" class="r"><?php echo esc_html( sprintf( /* translators: %s code */ __( 'Discount (%s)', 'digimarket' ), $order->coupon_code ) ); ?></td><td class="r">−<?php echo esc_html( dm_money( $order->discount ) ); ?></td></tr>
+			<?php $dm_span = 1 + ( ! $single && ! $as_seller ? 1 : 0 ) + ( $taxed ? 3 : 0 ); ?>
+			<?php if ( $taxed ) : ?>
+				<tr><td colspan="<?php echo (int) $dm_span; ?>" class="r"><?php esc_html_e( 'Taxable value', 'digimarket' ); ?></td><td class="r"><?php echo esc_html( dm_money( $sum['taxable'] ) ); ?></td></tr>
+				<tr><td colspan="<?php echo (int) $dm_span; ?>" class="r">CGST (<?php echo esc_html( (float) dm_gst_opt( 'rate' ) / 2 ); ?>%)</td><td class="r"><?php echo esc_html( dm_money( $sum['cgst'] ) ); ?></td></tr>
+				<tr><td colspan="<?php echo (int) $dm_span; ?>" class="r">SGST (<?php echo esc_html( (float) dm_gst_opt( 'rate' ) / 2 ); ?>%)</td><td class="r"><?php echo esc_html( dm_money( $sum['sgst'] ) ); ?></td></tr>
 			<?php endif; ?>
-			<tr class="tot"><td colspan="3" class="r"><?php esc_html_e( 'Total paid', 'digimarket' ); ?></td><td class="r"><?php echo esc_html( dm_money( $order->order_total ) ); ?></td></tr>
+			<?php if ( ! $as_seller && $order->discount > 0 ) : ?>
+				<tr><td colspan="<?php echo (int) $dm_span; ?>" class="r"><?php echo esc_html( sprintf( /* translators: %s code */ __( 'Coupon used (%s)', 'digimarket' ), $order->coupon_code ) ); ?></td><td class="r">−<?php echo esc_html( dm_money( $order->discount ) ); ?></td></tr>
+			<?php endif; ?>
+			<tr class="tot"><td colspan="<?php echo (int) $dm_span; ?>" class="r"><?php echo $taxed ? esc_html__( 'Total (incl. GST)', 'digimarket' ) : esc_html__( 'Total paid', 'digimarket' ); ?></td><td class="r"><?php echo esc_html( dm_money( $sum['amount'] ) ); ?></td></tr>
 		</tfoot>
 	</table>
-	<p class="muted" style="margin-top:24px"><?php esc_html_e( 'Payment reference:', 'digimarket' ); ?> <?php echo esc_html( $order->razorpay_payment_id ); ?><br><?php esc_html_e( 'Digital goods — delivered electronically. Each seller is responsible for GST on their own sales unless stated otherwise.', 'digimarket' ); ?></p>
+	<div class="note muted">
+		<?php esc_html_e( 'Payment reference:', 'digimarket' ); ?> <?php echo esc_html( $order->razorpay_payment_id ? $order->razorpay_payment_id : '—' ); ?><br>
+		<?php esc_html_e( 'Digital goods / online services — delivered electronically.', 'digimarket' ); ?>
+		<?php if ( ! $taxed ) : ?><br><?php esc_html_e( 'GST not applicable: the supplier is not registered under GST.', 'digimarket' ); ?><?php endif; ?>
+		<?php if ( $as_seller && ! $single ) : ?><br><?php echo esc_html( sprintf( /* translators: %s site */ __( 'Sold through %s. This receipt covers only this seller’s items in the order.', 'digimarket' ), $biz['name'] ) ); ?><?php endif; ?>
+		<br><?php esc_html_e( 'This is a computer-generated document and does not need a signature.', 'digimarket' ); ?>
+	</div>
 </div>
 </body>
 </html>

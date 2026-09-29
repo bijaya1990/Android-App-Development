@@ -36,6 +36,7 @@ $dm_bt   = get_user_meta( $dm_uid, 'dm_business_type', true );
 		<label><?php esc_html_e( 'City', 'digimarket' ); ?><input type="text" name="addr_city" value="<?php echo esc_attr( $dm_addr['city'] ?? '' ); ?>"></label>
 		<label><?php esc_html_e( 'State', 'digimarket' ); ?><input type="text" name="addr_state" value="<?php echo esc_attr( $dm_addr['state'] ?? '' ); ?>"></label>
 		<label><?php esc_html_e( 'PIN code', 'digimarket' ); ?><input type="text" name="addr_postal_code" inputmode="numeric" maxlength="6" value="<?php echo esc_attr( $dm_addr['postal_code'] ?? '' ); ?>"></label>
+		<div class="dm-span-2 dm-gst-fields"><?php dm_seller_gst_fields( $dm_uid ); ?></div>
 	</div>
 	<?php if ( $dm_has ) : ?><p class="dm-notice dm-notice-info"><?php esc_html_e( 'Changing bank/UPI details triggers re-verification before the next payout.', 'digimarket' ); ?></p><?php endif; ?>
 	<div class="dm-form-actions"><button class="dm-btn dm-btn-primary dm-btn-lg"><?php echo $dm_has ? esc_html__( 'Update payout details', 'digimarket' ) : esc_html__( 'Save & continue', 'digimarket' ); ?></button></div>

@@ -713,4 +713,12 @@
 		chk.addEventListener('click', function (e) { if (!accepted && chk.checked) { e.preventDefault(); open(); } });
 		if (form) { form.addEventListener('submit', function (e) { if (!chk.checked) { e.preventDefault(); open(); } }); }
 	})();
+	/* ---- GST required pop-up in the seller dashboard ---- */
+	(function () {
+		var dlg = document.getElementById('dm-gst-modal');
+		if (!dlg || typeof dlg.showModal !== 'function') { return; }
+		if (dlg.hasAttribute('data-autoopen')) { dlg.showModal(); }
+		$$('[data-gst-open]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); dlg.showModal(); }); });
+		$$('[data-gst-close]', dlg).forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
+	})();
 })();

@@ -231,6 +231,10 @@ function dm_save_product( $pid, $owner, $data ) {
 		$status = 'dm_unpublished';
 		dm_flash( 'warning', __( 'This product was unpublished by the marketplace team and cannot be republished. Contact support.', 'digimarket' ) );
 	}
+	if ( 'publish' === $status && dm_seller_gst_blocked( $owner ) ) {
+		$status = 'draft';
+		dm_flash( 'warning', __( 'Saved as draft — add your GSTIN in Shop settings to publish products.', 'digimarket' ) );
+	}
 	if ( 'publish' === $status && ! dm_is_active_seller( $owner ) && ! user_can( $owner, 'manage_options' ) ) {
 		$status = 'draft';
 		dm_flash( 'info', __( 'Saved as draft — your shop must be approved before products go live.', 'digimarket' ) );

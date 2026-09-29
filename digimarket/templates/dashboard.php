@@ -13,6 +13,7 @@ $dm_nav    = array(
 	'overview' => array( '📊', __( 'Overview', 'digimarket' ) ),
 	'products' => array( '📦', __( 'Products', 'digimarket' ) ),
 	'orders'   => array( '🧾', __( 'Orders', 'digimarket' ) ),
+	'receipts' => array( '📄', __( 'Receipts', 'digimarket' ) ),
 	'payouts'  => array( '💸', __( 'Payouts', 'digimarket' ) ),
 	'reviews'  => array( '⭐', __( 'Reviews', 'digimarket' ) ),
 	'support'  => array( '💬', __( 'Support', 'digimarket' ) ),
@@ -62,6 +63,7 @@ get_header();
 			<div class="dm-notice dm-notice-info"><?php esc_html_e( 'Payout verification is pending — you can build your shop, but live payments start once your Razorpay linked account is activated.', 'digimarket' ); ?> <a href="<?php echo esc_url( dm_url( 'dashboard', 'payouts' ) ); ?>"><?php esc_html_e( 'Check status', 'digimarket' ); ?></a></div>
 		<?php endif; ?>
 
+		<?php dm_seller_gst_popup( $dm_uid ); ?>
 		<?php
 		$dm_file = DM_DIR . '/templates/seller/' . $dm_tab . '.php';
 		if ( file_exists( $dm_file ) ) {

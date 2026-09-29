@@ -77,3 +77,57 @@ function dm_email_refund( $item, $reason = '' ) {
 	}
 	dm_mail( $order->buyer_email, __( 'Your refund has been processed', 'digimarket' ), $html, dm_url( 'account', 'orders' ), __( 'View order history', 'digimarket' ) );
 }
+
+/**
+ * Sent right after a seller finishes registration: thanks, status, the legal
+ * record of what they agreed to, GST rules and where to get help.
+ */
+function dm_email_seller_welcome( $uid, $status ) {
+	$u = get_userdata( $uid );
+	if ( ! $u ) {
+		return false;
+	}
+	$b     = dm_business();
+	$ag    = (array) get_user_meta( $uid, 'dm_agreement_accepted', true );
+	$gin   = dm_seller_gstin( $uid );
+	$pan   = dm_decrypt( get_user_meta( $uid, 'dm_pan', true ) );
+	$last4 = get_user_meta( $uid, 'dm_bank_last4', true );
+	$payto = $last4 ? '•••• ' . $last4 . ' (' . get_user_meta( $uid, 'dm_ifsc', true ) . ')' : get_user_meta( $uid, 'dm_upi', true );
+	$li    = function ( $k, $v ) {
+		return '<tr><td style="padding:6px 10px 6px 0;color:#666;vertical-align:top;white-space:nowrap">' . esc_html( $k ) . '</td><td style="padding:6px 0">' . $v . '</td></tr>';
+	};
+	$links = '';
+	foreach ( array( 'seller' => __( 'Seller Agreement', 'digimarket' ), 'terms' => __( 'Terms & Conditions', 'digimarket' ), 'privacy' => __( 'Privacy Policy', 'digimarket' ), 'refund' => __( 'Refund & Cancellation Policy', 'digimarket' ), 'content' => __( 'Content & IP Policy', 'digimarket' ) ) as $k => $label ) {
+		$links .= '<li><a href="' . esc_url( dm_legal_url( $k ) ) . '">' . esc_html( $label ) . '</a></li>';
+	}
+	$html  = '<p>' . esc_html( sprintf( /* translators: %s name */ __( 'Hi %s,', 'digimarket' ), $u->display_name ) ) . '</p>';
+	$html .= '<p><strong>' . esc_html( sprintf( /* translators: %s site */ __( 'Thank you for registering as a seller on %s!', 'digimarket' ), $b['name'] ) ) . '</strong> ' . ( 'active' === $status ? esc_html__( 'Your shop is live — you can add products and start selling now.', 'digimarket' ) : esc_html__( 'Your shop is under review. We usually review within 2 working days; you can prepare products as drafts meanwhile.', 'digimarket' ) ) . '</p>';
+	$html .= '<h3 style="margin:22px 0 6px;font-size:15px">' . esc_html__( 'Your registration record', 'digimarket' ) . '</h3><table role="presentation" style="font-size:14px;border-collapse:collapse">';
+	$html .= $li( __( 'Shop', 'digimarket' ), '<a href="' . esc_url( dm_store_url( $uid ) ) . '">' . esc_html( dm_shop_name( $uid ) ) . '</a>' );
+	$html .= $li( __( 'Registered email', 'digimarket' ), esc_html( $u->user_email ) );
+	$html .= $li( __( 'Legal name', 'digimarket' ), esc_html( get_user_meta( $uid, 'dm_legal_name', true ) ) );
+	$html .= $li( __( 'PAN', 'digimarket' ), esc_html( $pan ? dm_mask( $pan, 4 ) : '—' ) );
+	$html .= $li( __( 'Payout to', 'digimarket' ), esc_html( $payto ? $payto : '—' ) );
+	$html .= $li( __( 'GSTIN', 'digimarket' ), esc_html( $gin ? $gin : sprintf( /* translators: %s limit */ __( 'Not provided (optional until your sales cross %s in a financial year)', 'digimarket' ), dm_inr( dm_gst_opt( 'threshold' ) ) ) ) );
+	if ( ! empty( $ag['time'] ) ) {
+		$html .= $li( __( 'Seller Agreement', 'digimarket' ), esc_html( sprintf( /* translators: 1 date 2 version 3 ip */ __( 'Accepted on %1$s (version %2$s) from IP %3$s', 'digimarket' ), wp_date( 'j M Y, g:i a T', (int) $ag['time'] ), $ag['version'] ?? '', $ag['ip'] ?? '' ) ) );
+	}
+	$html .= '</table>';
+	$html .= '<h3 style="margin:22px 0 6px;font-size:15px">' . esc_html__( 'Key points you agreed to', 'digimarket' ) . '</h3><ul style="padding-left:18px;margin:0">';
+	foreach ( array(
+		__( 'Sell only digital products you created or have the right to sell. Pirated, illegal, adult, hateful or malicious content is prohibited and will be removed.', 'digimarket' ),
+		__( 'A commission is deducted from each sale at the rate shown in your dashboard at the time of sale. Your share is paid to your bank through Razorpay.', 'digimarket' ),
+		__( 'When a refund or chargeback is approved, your share and the commission for that order are reversed.', 'digimarket' ),
+		sprintf( /* translators: %s limit */ __( 'GST registration is compulsory once your turnover crosses %s in a financial year; below that it is optional. You alone are responsible for your own GST and income-tax compliance. If we mark your shop “GST required”, your products are paused until you add a valid GSTIN.', 'digimarket' ), dm_inr( dm_gst_opt( 'threshold' ) ) ),
+		__( 'You keep ownership of your products and give us a licence to display and deliver them to buyers.', 'digimarket' ),
+		__( 'Fake reviews, fraud or taking buyers off the site to avoid commission can lead to suspension.', 'digimarket' ),
+		__( 'The agreement is governed by Indian law; courts at Bargarh, Odisha have jurisdiction.', 'digimarket' ),
+	) as $pt ) {
+		$html .= '<li style="margin:4px 0">' . esc_html( $pt ) . '</li>';
+	}
+	$html .= '</ul><h3 style="margin:22px 0 6px;font-size:15px">' . esc_html__( 'Full documents', 'digimarket' ) . '</h3><ul style="padding-left:18px;margin:0">' . $links . '</ul>';
+	$html .= '<h3 style="margin:22px 0 6px;font-size:15px">' . esc_html__( 'Help & grievances', 'digimarket' ) . '</h3><p style="margin:0">' . esc_html( sprintf( /* translators: 1 officer 2 business 3 address */ __( 'Grievance Officer: %1$s, %2$s, %3$s', 'digimarket' ), $b['grievance'] ? $b['grievance'] : __( 'Grievance Officer', 'digimarket' ), $b['legal'], $b['address'] ) ) . '<br>' . esc_html__( 'Email:', 'digimarket' ) . ' <a href="mailto:' . esc_attr( $b['email'] ) . '">' . esc_html( $b['email'] ) . '</a> — ' . esc_html__( 'we acknowledge within 48 hours.', 'digimarket' ) . '</p>';
+	$html .= '<p style="margin-top:20px;color:#666;font-size:13px">' . esc_html__( 'Please keep this email for your records.', 'digimarket' ) . '</p>';
+	/* translators: %s site */
+	return dm_mail( $u->user_email, sprintf( __( 'Welcome to %s — seller registration successful', 'digimarket' ), $b['name'] ), $html, dm_url( 'dashboard' ), __( 'Go to my seller dashboard', 'digimarket' ) );
+}

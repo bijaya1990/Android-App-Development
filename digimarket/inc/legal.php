@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Bump when the page texts change; older untouched pages are refreshed on upgrade.
  */
-define( 'DM_LEGAL_VERSION', 2 );
+define( 'DM_LEGAL_VERSION', 3 );
 
 function dm_business() {
 	$email = dm_store_opt( 'business_email' ) ? dm_store_opt( 'business_email' ) : dm_opt( 'support_email' );
@@ -88,6 +88,21 @@ add_shortcode( 'pikacart_contact_card', function () {
 } );
 
 /**
+ * [pikacart_gst field="note|threshold"] — live GST wording that follows the GST switch.
+ */
+add_shortcode( 'pikacart_gst', function ( $atts ) {
+	$atts = shortcode_atts( array( 'field' => 'note' ), $atts );
+	if ( 'threshold' === $atts['field'] ) {
+		return esc_html( dm_inr( dm_gst_opt( 'threshold' ) ) );
+	}
+	if ( dm_gst_enabled() && dm_valid_gstin( dm_store_gstin() ) ) {
+		/* translators: 1 rate 2 gstin */
+		return esc_html( sprintf( __( 'All prices include GST at %1$s%%. Our GSTIN is %2$s, and every order gets a GST tax invoice.', 'digimarket' ), (float) dm_gst_opt( 'rate' ), dm_store_gstin() ) );
+	}
+	return esc_html__( 'We are not registered under GST at present, so no GST is charged and receipts state “GST not applicable”. If we register, prices and receipts will show GST from that date.', 'digimarket' );
+} );
+
+/**
  * [pikacart_legal_link page="refund"]Refund policy[/pikacart_legal_link]
  */
 add_shortcode( 'pikacart_legal_link', function ( $atts, $content = '' ) {
@@ -111,7 +126,7 @@ function dm_legal_page_defs() {
 			$upd . '<p>' . sprintf( __( 'These Terms & Conditions govern your use of %1$s ([pikacart_business field="website"]) and every purchase you make on it. The website is owned and operated by [pikacart_business field="legal"], [pikacart_business field="address"] (“we”, “us”, “our”). By using the website or placing an order you agree to these terms.', 'digimarket' ), $site ) . '</p>'
 			. '<h2>1. What we offer</h2><ul><li><strong>Digital products</strong> — study notes, resume and design templates, kids worksheets, WordPress themes and similar downloadable files, delivered online right after payment.</li><li><strong>Website services</strong> — design and development of websites. Scope, price and timeline are agreed with you in writing (WhatsApp or email) before any payment.</li><li><strong>Partner offers</strong> — links to third-party products such as web hosting. Those purchases are made on the partner’s website under the partner’s terms.</li></ul>'
 			. '<h2>2. Eligibility and accounts</h2><p>You must be 18 or older, or use the website with the consent of a parent or guardian. Keep your login details confidential; you are responsible for activity on your account. Please give accurate information so we can deliver your order and contact you.</p>'
-			. '<h2>3. Prices and payment</h2><p>All prices are in Indian Rupees (₹) and include applicable taxes unless stated otherwise. Payments are processed securely by Razorpay using UPI, debit/credit cards, net banking and wallets. We never see or store your full card details. Coupon codes have their own validity, limits and conditions shown at checkout, cannot be exchanged for cash and may be withdrawn at any time. If a price is shown wrongly because of an obvious error, we may cancel the order and refund you in full.</p>'
+			. '<h2>3. Prices and payment</h2><p>All prices are in Indian Rupees (₹). [pikacart_gst field="note"] Payments are processed securely by Razorpay using UPI, debit/credit cards, net banking and wallets. We never see or store your full card details. Coupon codes have their own validity, limits and conditions shown at checkout, cannot be exchanged for cash and may be withdrawn at any time. If a price is shown wrongly because of an obvious error, we may cancel the order and refund you in full.</p>'
 			. '<h2>4. Delivery</h2><p>Digital products are delivered electronically — nothing is shipped. See our [pikacart_legal_link page="delivery"]Shipping &amp; Delivery Policy[/pikacart_legal_link].</p>'
 			. '<h2>5. Refunds and cancellations</h2><p>See our [pikacart_legal_link page="refund"]Refund &amp; Cancellation Policy[/pikacart_legal_link].</p>'
 			. '<h2>6. Licence for digital products</h2><p>When you buy a digital product you receive a personal, non-exclusive, non-transferable licence to use it for yourself or your own organisation. Unless the product page says otherwise: a WordPress theme or website template may be used on one website per purchase; you may edit files for your own use; you may not resell, share, upload to other websites or claim the product as your own. Download links are personal and time-limited.</p>'
@@ -188,7 +203,7 @@ function dm_legal_page_defs() {
 			. '<h2>2. What you may sell</h2><p>Only digital products you created or hold the right to sell. Each listing must have an accurate title, description, preview, price and file. Pirated, stolen, illegal, adult, hateful, misleading or malicious content (including viruses or keyloggers), and products that infringe anyone’s copyright or trademark, are prohibited.</p>'
 			. '<h2>3. Prices and commission</h2><p>You set your prices in Indian Rupees. The Platform deducts a commission from each sale at the rate shown in your dashboard at the time of the sale. Rate changes are announced in advance and never affect past orders. Launch offers may set the commission to 0% for a limited time.</p>'
 			. '<h2>4. Payments and payouts</h2><p>Buyers pay through Razorpay. Your share of each sale is transferred automatically to your Razorpay linked account and settled to your bank on Razorpay’s settlement cycle. Payouts may be held while an order is under dispute, refund or fraud review.</p>'
-			. '<h2>5. Taxes</h2><p>You are responsible for your own income tax and, where applicable, GST registration and returns. The Platform may collect and deposit tax at source (such as GST TCS or income-tax TDS) where the law requires it and will share the details with you.</p>'
+			. '<h2>5. GST and taxes</h2><ul><li><strong>GST registration is compulsory once your aggregate turnover crosses [pikacart_gst field="threshold"] (twenty lakh rupees) in a financial year</strong> (1 April – 31 March), or any lower limit the law applies to you. You must then add your valid 15-character GSTIN in Shop settings.</li><li>Below that limit GST registration is optional. You may add a GSTIN at any time and choose to show it on your receipts.</li><li><strong>You alone are responsible for your own tax compliance</strong> — GST registration, tax invoices, returns and payments, and income tax. The Platform is not liable for any tax, interest or penalty arising from your sales.</li><li>When your sales on the Platform reach the limit, we may mark your shop “GST required”. Until you add a valid GSTIN, your products are paused for new purchases; existing buyers keep access.</li><li>The Platform may collect and deposit tax at source (such as GST TCS or income-tax TDS) where the law requires it and will share the details with you.</li></ul>'
 			. '<h2>6. Delivery, support and refunds</h2><p>Your files must download correctly and match the description. Respond to buyer questions within 2 working days. Refunds follow our [pikacart_legal_link page="refund"]Refund &amp; Cancellation Policy[/pikacart_legal_link]; when a refund or chargeback is approved, your share and the commission for that order are reversed.</p>'
 			. '<h2>7. Licence to the Platform</h2><p>You keep ownership of your products. You give the Platform a non-exclusive licence to host, display, promote (including previews and ads) and deliver them to buyers for as long as they are listed and for existing buyers afterwards.</p>'
 			. '<h2>8. Reviews and conduct</h2><p>Do not post fake reviews, ask buyers to change reviews for rewards, or take buyers off the Platform to avoid commission. Treat buyers respectfully.</p>'

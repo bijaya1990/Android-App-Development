@@ -10,6 +10,11 @@ $dm_days  = in_array( $dm_range, array( '7', '30', '90' ), true ) ? (int) $dm_ra
 $dm_s     = dm_seller_stats( $dm_uid, $dm_days );
 list( $dm_labels, $dm_values ) = $dm_s['series'];
 $dm_recent = dm_seller_orders_query( $dm_uid, 8, 0 );
+if ( dm_is_store_owner( $dm_uid ) && current_user_can( 'dm_manage_marketplace' ) ) {
+	echo '<div class="dm-card dm-pad dm-gst-front">';
+	dm_gst_switch_card();
+	echo '<p class="dm-small"><a href="' . esc_url( admin_url( 'admin.php?page=dm-gst' ) ) . '">' . esc_html__( 'GST settings & seller turnover →', 'digimarket' ) . '</a></p></div>';
+}
 ?>
 <div class="dm-stats">
 	<div class="dm-stat"><span><?php esc_html_e( 'Total revenue', 'digimarket' ); ?></span><strong><?php echo esc_html( dm_money( $dm_s['revenue'] ) ); ?></strong></div>
