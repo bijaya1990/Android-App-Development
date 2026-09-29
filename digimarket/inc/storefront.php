@@ -21,7 +21,7 @@ function dm_home_block_defs() {
 		'deals'      => __( 'Deals row (products on sale)', 'digimarket' ),
 		'sections'   => __( 'Category section boxes', 'digimarket' ),
 		'campaign'   => __( 'Campaign banner', 'digimarket' ),
-		'services'   => __( 'Website services band', 'digimarket' ),
+		'services'   => __( 'Website services band (featured services only)', 'digimarket' ),
 		'portfolio'  => __( 'Portfolio / our work', 'digimarket' ),
 		'new'        => __( 'New arrivals', 'digimarket' ),
 		'reviews'    => __( 'Testimonials', 'digimarket' ),
@@ -276,6 +276,7 @@ add_action( 'dm_admin_do_save_store', function ( $r ) {
 	$new['lp_svc_coupon'] = strtoupper( preg_replace( '/\s+/', '', (string) $new['lp_svc_coupon'] ) );
 	update_option( 'dm_store', $new );
 	do_action( 'dm_store_saved' );
+	do_action( 'litespeed_purge_all' ); // Show homepage changes at once on LiteSpeed hosting.
 	dm_admin_back( __( 'Storefront settings saved.', 'digimarket' ) );
 } );
 

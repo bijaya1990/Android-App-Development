@@ -260,7 +260,17 @@ function dm_home_block_campaign() {
 }
 
 function dm_home_block_services() {
-	$ids = dm_product_ids( array( 'posts_per_page' => 8, 'meta_key' => '_dm_service_mode', 'meta_value' => 1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) );
+	// Only services ticked "Featured on homepage" appear in the band.
+	$ids = dm_product_ids(
+		array(
+			'posts_per_page' => 8,
+			'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'DESC' ),
+			'meta_query'     => array( // phpcs:ignore
+				array( 'key' => '_dm_service_mode', 'value' => '1' ),
+				array( 'key' => '_dm_featured', 'value' => '1' ),
+			),
+		)
+	);
 	if ( ! $ids ) {
 		return false;
 	}
@@ -293,7 +303,9 @@ function dm_home_block_portfolio() {
 }
 
 function dm_home_block_new() {
-	$ids = dm_product_ids( array( 'posts_per_page' => 12 ) );
+	// Featured products are pinned first, then the newest.
+	$pin = dm_product_ids( array( 'posts_per_page' => 12, 'meta_key' => '_dm_featured', 'meta_value' => '1' ) );
+	$ids = array_slice( array_values( array_unique( array_merge( $pin, dm_product_ids( array( 'posts_per_page' => 12 ) ) ) ) ), 0, 12 );
 	return dm_render_row( $ids, __( 'New arrivals', 'digimarket' ), dm_products_url( array( 'sort' => 'newest' ) ) );
 }
 

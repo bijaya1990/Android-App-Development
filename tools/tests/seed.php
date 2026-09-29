@@ -70,7 +70,7 @@ foreach ( $services as $i => $p ) {
 	set_post_thumbnail( $id, $img );
 	update_post_meta( $id, '_dm_price', $p[1] ); update_post_meta( $id, '_dm_service_mode', 1 );
 	update_post_meta( $id, '_dm_included', $p[3] ); update_post_meta( $id, '_dm_turnaround', $p[4] ); update_post_meta( $id, '_dm_area_served', 'Odisha · All India (remote)' );
-	update_post_meta( $id, '_dm_show_partners', 1 );
+	update_post_meta( $id, '_dm_show_partners', 1 ); update_post_meta( $id, '_dm_featured', 1 );
 	update_post_meta( $id, '_dm_packages', array(
 		array( 'name' => 'Basic', 'price' => $p[1], 'features' => array( '5 pages', 'Mobile-friendly', 'Contact form', '-Custom domain email' ), 'popular' => 0 ),
 		array( 'name' => 'Standard', 'price' => $p[1] * 1.6, 'features' => array( '8 pages', 'Admission / enquiry form', 'Photo gallery', 'Google Maps' ), 'popular' => 1 ),

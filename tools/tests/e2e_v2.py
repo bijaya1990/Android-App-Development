@@ -284,6 +284,15 @@ wp('$s=get_option("dm_store",array()); $b=dm_store()["blocks"]; $b["landing"]["o
 check('dm-show-card' not in get('/').text, 'landing cards block can be switched off')
 wp('$s=get_option("dm_store",array()); $b=dm_store()["blocks"]; $b["landing"]["on"]=1; $s["blocks"]=$b; update_option("dm_store",$s);')
 
+print('== Featured controls the services band')
+sv = str(ids['sv'])
+wp('update_post_meta(%s,"_dm_featured",0);' % sv)
+check('class="dm-svcband"' not in get('/').text, 'services band hidden when no service is featured')
+wp('update_post_meta(%s,"_dm_featured",1);' % sv)
+check('class="dm-svcband"' in get('/').text, 'services band shows a featured service')
+wp('update_post_meta(%s,"_dm_featured",0);' % sv)
+check('class="dm-svcband"' not in get('/').text, 'unticking Featured removes the band')
+
 print()
 print('PASSED: %d  FAILED: %d' % (len(PASS), len(FAIL)))
 for f in FAIL:

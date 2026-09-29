@@ -702,6 +702,7 @@ function dm_admin_save_product( $pid, $post ) {
 	if ( current_user_can( 'dm_manage_marketplace' ) ) {
 		$was_forced = (bool) get_post_meta( $pid, '_dm_forced', true );
 		update_post_meta( $pid, '_dm_featured', empty( $d['featured'] ) ? 0 : 1 );
+		do_action( 'litespeed_purge_url', home_url( '/' ) );
 		update_post_meta( $pid, '_dm_forced', empty( $d['forced'] ) ? 0 : 1 );
 		if ( ! empty( $d['forced'] ) && ! $was_forced ) {
 			dm_audit( 'product_force_unpublish', 'product', $pid );

@@ -390,7 +390,7 @@ function dm_product_editor_box( $post ) {
 
 	echo '<h3 class="dm-ed-h">' . esc_html__( 'Display', 'digimarket' ) . '</h3><table class="form-table"><tbody>';
 	dm_render_listing_field( 'badge', $pid );
-	echo '<tr><th>' . esc_html__( 'Featured', 'digimarket' ) . '</th><td><label><input type="checkbox" name="dm[featured]" value="1"' . checked( $val( 'featured' ), 1, false ) . '> ' . esc_html__( 'Pin to the top of homepage rows', 'digimarket' ) . '</label></td></tr>';
+	echo '<tr><th>' . esc_html__( 'Featured on homepage', 'digimarket' ) . '</th><td><label><input type="checkbox" name="dm[featured]" value="1"' . checked( $val( 'featured' ), 1, false ) . '> ' . esc_html__( 'Show on the homepage', 'digimarket' ) . '</label><p class="description">' . esc_html__( 'Services: shown in the big “Website services” band on the homepage (untick to remove). Other products: pinned first in “New arrivals”.', 'digimarket' ) . '</p></td></tr>';
 	if ( ! dm_single_seller_mode() ) {
 		echo '<tr><th>' . esc_html__( 'Moderation lock', 'digimarket' ) . '</th><td><label><input type="checkbox" name="dm[forced]" value="1"' . checked( $val( 'forced' ), 1, false ) . '> ' . esc_html__( 'Force-unpublished (seller cannot republish)', 'digimarket' ) . '</label></td></tr>';
 	} else {
