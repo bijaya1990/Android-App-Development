@@ -61,12 +61,11 @@ function dm_store_defaults() {
 		'social_links'      => '',
 		'area_served'       => 'India',
 		'business_phone'    => '',
-		'business_email'    => '',
 		'affiliate_note'    => __( 'Some links on this page are affiliate links — PikaCart may earn a commission at no extra cost to you.', 'digimarket' ),
 		'owner_name'        => '',
 		'owner_bio'         => '',
 		'owner_photo'       => 0,
-	) + dm_landing_defaults();
+	) + dm_landing_defaults() + dm_legal_defaults();
 }
 
 function dm_store() {
@@ -236,10 +235,17 @@ function dm_admin_storefront() {
 	$f( 'area_served', __( 'Area served', 'digimarket' ), 'text', __( 'e.g. Odisha · All India', 'digimarket' ) );
 	$f( 'business_phone', __( 'Business phone', 'digimarket' ), 'tel' );
 	$f( 'business_email', __( 'Business email', 'digimarket' ), 'email' );
+	$f( 'business_legal_name', __( 'Legal business name', 'digimarket' ), 'text', __( 'Shown in legal pages and invoices. Leave blank to use the site name.', 'digimarket' ) );
+	$f( 'business_address', __( 'Business address', 'digimarket' ), 'text', __( 'Shown in the footer, Contact page, Terms and Privacy Policy (required for Razorpay and Indian e-commerce rules).', 'digimarket' ) );
+	$f( 'grievance_name', __( 'Grievance Officer name', 'digimarket' ), 'text', __( 'Required by the Consumer Protection (E-Commerce) Rules and IT Rules. Uses the business email.', 'digimarket' ) );
 	$f( 'affiliate_note', __( 'Affiliate disclosure', 'digimarket' ), 'text', __( 'Shown on every page that contains partner links.', 'digimarket' ) );
 	echo '</table>';
 
 	submit_button( __( 'Save storefront settings', 'digimarket' ) );
+	echo '</form>';
+	echo '<h2 id="legal">' . esc_html__( 'Legal pages', 'digimarket' ) . '</h2><p class="description">' . esc_html__( 'Terms, Privacy, Refund, Shipping & Delivery, Contact, About, Affiliate and Content & IP pages use the business details above automatically. Use this button to rewrite all of them with the latest launch-ready text (your own edits to those pages will be replaced; WordPress keeps the old version in Revisions).', 'digimarket' ) . '</p>';
+	dm_admin_form_open( 'refresh_legal' );
+	submit_button( __( 'Update all legal pages to the latest text', 'digimarket' ), 'secondary', 'submit', false, array( 'onclick' => "return confirm('" . esc_js( __( 'Rewrite all legal pages with the latest text?', 'digimarket' ) ) . "');" ) );
 	echo '</form></div>';
 }
 

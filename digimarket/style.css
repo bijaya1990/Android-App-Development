@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.1.3
+Version: 2.2.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -1350,3 +1350,36 @@ main:has(> .dm-lp > .dm-lp-band:last-child) + .dm-ft { margin-top: 0; }
 .dm-wall-grid i { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .28); color: #fff; }
 .dm-lp-hero .dm-wall-grid { top: 18%; right: 8%; opacity: .6; }
 @media (max-width: 719px) { .dm-show-card .dm-wall-grid { grid-template-columns: repeat(4, 48px); top: 16px; right: 16px; transform: none; } .dm-show-card .dm-wall-grid i { width: 48px; height: 48px; border-radius: 14px; } }
+/* Legal pages: business details card */
+.dm-bizcard { width: 100%; max-width: 640px; border-collapse: collapse; margin: 12px 0 20px; background: var(--dm-surface); border: 1px solid var(--dm-border); border-radius: 12px; overflow: hidden; }
+.dm-bizcard th, .dm-bizcard td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--dm-border); vertical-align: top; font-size: .95rem; }
+.dm-bizcard tr:last-child th, .dm-bizcard tr:last-child td { border-bottom: 0; }
+.dm-bizcard th { width: 38%; color: var(--dm-muted); font-weight: 600; background: var(--dm-surface-2); }
+@media (max-width: 520px) { .dm-bizcard th, .dm-bizcard td { display: block; width: auto; } .dm-bizcard th { border-bottom: 0; padding-bottom: 2px; } }
+.dm-ft-biz a { color: #fff; }
+/* Seller Agreement pop-up */
+.dm-agree-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 16px; margin: 0 0 12px; border-radius: 12px; background: var(--dm-surface-2); border: 1px solid var(--dm-border); }
+.dm-agree-box p { margin: 0; flex: 1 1 260px; }
+.dm-agree-ok { display: inline-flex; align-items: center; gap: 6px; color: var(--dm-good); font-weight: 700; }
+.dm-agree-modal { width: min(760px, calc(100vw - 24px)); max-height: calc(100vh - 32px); padding: 0; border: 0; border-radius: 18px; background: var(--dm-surface); color: var(--dm-text); box-shadow: 0 24px 80px rgba(0, 0, 0, .35); }
+.dm-agree-modal[open] { display: flex; flex-direction: column; }
+.dm-agree-modal::backdrop { background: rgba(15, 12, 40, .6); }
+.dm-agree-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--dm-border); }
+.dm-agree-head h2 { margin: 0; font-size: 1.2rem; }
+.dm-agree-body { overflow-y: auto; padding: 8px 22px 16px; flex: 1; min-height: 200px; max-height: 60vh; font-size: .92rem; line-height: 1.65; }
+.dm-agree-body h2 { font-size: 1rem; margin: 18px 0 6px; }
+.dm-agree-foot { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--dm-border); }
+.dm-agree-foot small { margin-right: auto; }
+.dm-agree-foot .dm-btn[disabled] { opacity: .5; cursor: not-allowed; }
+/* Account menu dropdown (logged-in header) */
+.dm-cat-menu, .dm-user-menu { position: relative; }
+.dm-dropdown { position: absolute; top: calc(100% + 8px); left: 0; min-width: 220px; background: var(--dm-surface); border: 1px solid var(--dm-border); border-radius: 12px; box-shadow: var(--dm-shadow-lg); padding: 6px; display: none; z-index: 150; }
+.dm-dropdown-right { left: auto; right: 0; }
+.is-open > .dm-dropdown { display: block; }
+.dm-dropdown a, .dm-dropdown button { display: block; width: 100%; text-align: left; padding: .55em .8em; border-radius: 8px; color: var(--dm-text); background: none; border: 0; cursor: pointer; font: inherit; font-size: .92rem; text-decoration: none !important; }
+.dm-dropdown a:hover, .dm-dropdown button:hover { background: var(--dm-surface-2); }
+.dm-dropdown form { margin: 0; }
+.dm-dropdown-head { padding: .5em .8em; font-weight: 700; border-bottom: 1px solid var(--dm-border); margin-bottom: 4px; }
+.dm-dropdown-all { color: var(--dm-primary) !important; font-weight: 600; }
+.dm-avatar-btn { border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; display: flex; }
+.dm-avatar-btn img { border-radius: 50%; width: 34px; height: 34px; background: var(--dm-surface-2); }

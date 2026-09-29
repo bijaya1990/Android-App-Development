@@ -74,10 +74,26 @@ $dm_labels = array( 1 => __( 'Account', 'digimarket' ), 2 => __( 'Shop', 'digima
 			<p><a href="<?php echo esc_url( dm_url( 'dashboard', 'settings' ) ); ?>"><?php esc_html_e( 'Edit shop', 'digimarket' ); ?></a> · <a href="<?php echo esc_url( dm_store_url( $dm_uid ) ); ?>" target="_blank"><?php esc_html_e( 'Preview my shop', 'digimarket' ); ?></a></p>
 			<form method="post" class="dm-form">
 				<?php dm_nonce_field( 'seller_submit' ); ?>
-				<label class="dm-check"><input type="checkbox" name="agree" value="1" required> <span><?php echo wp_kses_post( sprintf( /* translators: %s url */ __( 'I accept the <a href="%s" target="_blank">Seller Agreement</a>, including the commission terms.', 'digimarket' ), esc_url( dm_legal_url( 'seller' ) ) ) ); ?></span></label>
+				<?php $dm_ag = dm_seller_agreement_post(); ?>
+				<div class="dm-agree-box">
+					<p><strong><?php esc_html_e( 'Seller Agreement', 'digimarket' ); ?></strong> — <?php esc_html_e( 'please read and accept it before launching your shop.', 'digimarket' ); ?></p>
+					<button type="button" class="dm-btn dm-btn-outline" data-agree-open><?php esc_html_e( 'Read Seller Agreement', 'digimarket' ); ?></button>
+					<span class="dm-agree-ok" hidden><?php echo dm_icon( 'check', 16 ); // phpcs:ignore ?> <?php esc_html_e( 'Agreement accepted', 'digimarket' ); ?></span>
+				</div>
+				<label class="dm-check"><input type="checkbox" name="agree" value="1" required data-agree-check> <span><?php echo wp_kses_post( sprintf( /* translators: %s url */ __( 'I have read and accept the <a href="%s" target="_blank" data-agree-open>Seller Agreement</a>, including the commission terms.', 'digimarket' ), esc_url( dm_legal_url( 'seller' ) ) ) ); ?></span></label>
+				<input type="hidden" name="agreement_version" value="<?php echo esc_attr( dm_seller_agreement_version() ); ?>">
 				<label class="dm-check"><input type="checkbox" name="own_rights" value="1" required> <span><?php echo wp_kses_post( sprintf( /* translators: %s url */ __( 'I confirm I own the rights to everything I will sell (<a href="%s" target="_blank">Content & IP Policy</a>).', 'digimarket' ), esc_url( dm_legal_url( 'content' ) ) ) ); ?></span></label>
 				<button class="dm-btn dm-btn-primary dm-btn-lg"><?php echo dm_opt( 'auto_approve_sellers' ) ? esc_html__( 'Launch my shop 🚀', 'digimarket' ) : esc_html__( 'Submit for review', 'digimarket' ); ?></button>
 			</form>
+			<dialog class="dm-agree-modal" id="dm-agree-modal" aria-labelledby="dm-agree-title">
+				<div class="dm-agree-head"><h2 id="dm-agree-title"><?php esc_html_e( 'Seller Agreement', 'digimarket' ); ?></h2><button type="button" class="dm-icon-btn" data-agree-close aria-label="<?php esc_attr_e( 'Close', 'digimarket' ); ?>"><?php echo dm_icon( 'close', 20 ); // phpcs:ignore ?></button></div>
+				<div class="dm-agree-body dm-prose" tabindex="0"><?php echo $dm_ag ? apply_filters( 'the_content', $dm_ag->post_content ) : ''; // phpcs:ignore ?></div>
+				<div class="dm-agree-foot">
+					<small class="dm-muted" data-agree-hint><?php esc_html_e( 'Scroll to the end to continue.', 'digimarket' ); ?></small>
+					<button type="button" class="dm-btn dm-btn-outline" data-agree-close><?php esc_html_e( 'Cancel', 'digimarket' ); ?></button>
+					<button type="button" class="dm-btn dm-btn-primary" data-agree-accept disabled><?php esc_html_e( 'I agree', 'digimarket' ); ?></button>
+				</div>
+			</dialog>
 		</div>
 	<?php endif; ?>
 </div>

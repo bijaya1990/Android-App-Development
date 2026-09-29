@@ -691,4 +691,26 @@
 			});
 		});
 	});
+	/* ---- Seller Agreement clickwrap: read (scroll to end) → I agree → launch ---- */
+	(function () {
+		var dlg = document.getElementById('dm-agree-modal');
+		var chk = $('[data-agree-check]');
+		if (!dlg || !chk || typeof dlg.showModal !== 'function') { return; }
+		var body = $('.dm-agree-body', dlg), ok = $('[data-agree-accept]', dlg), hint = $('[data-agree-hint]', dlg);
+		var form = chk.closest('form'), done = $('.dm-agree-ok'), accepted = false;
+		function atEnd() {
+			if (body.scrollTop + body.clientHeight >= body.scrollHeight - 24) { ok.disabled = false; if (hint) { hint.hidden = true; } }
+		}
+		function open(e) { if (e) { e.preventDefault(); } dlg.showModal(); body.scrollTop = 0; requestAnimationFrame(atEnd); }
+		body.addEventListener('scroll', atEnd);
+		$$('[data-agree-open]').forEach(function (b) { b.addEventListener('click', open); });
+		$$('[data-agree-close]', dlg).forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
+		ok.addEventListener('click', function () {
+			accepted = true; chk.checked = true; dlg.close();
+			if (done) { done.hidden = false; }
+			var sub = form && form.querySelector('button:not([type="button"])'); if (sub) { sub.focus(); }
+		});
+		chk.addEventListener('click', function (e) { if (!accepted && chk.checked) { e.preventDefault(); open(); } });
+		if (form) { form.addEventListener('submit', function (e) { if (!chk.checked) { e.preventDefault(); open(); } }); }
+	})();
 })();

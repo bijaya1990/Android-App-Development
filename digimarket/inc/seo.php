@@ -488,6 +488,21 @@ function dm_seo_schema() {
 	if ( $same ) {
 		$org['sameAs'] = $same;
 	}
+	$addr = (string) dm_store_opt( 'business_address' );
+	if ( $addr ) {
+		$org['address'] = array_filter(
+			array(
+				'@type'          => 'PostalAddress',
+				'streetAddress'  => $addr,
+				'postalCode'     => preg_match( '/\b(\d{6})\b/', $addr, $m ) ? $m[1] : null,
+				'addressRegion'  => false !== stripos( $addr, 'odisha' ) ? 'Odisha' : null,
+				'addressCountry' => 'IN',
+			)
+		);
+	}
+	if ( dm_store_opt( 'business_legal_name' ) ) {
+		$org['legalName'] = dm_store_opt( 'business_legal_name' );
+	}
 	$phone = dm_store_opt( 'business_phone' ) ? dm_store_opt( 'business_phone' ) : dm_opt( 'whatsapp_number' );
 	$email = dm_store_opt( 'business_email' ) ? dm_store_opt( 'business_email' ) : dm_opt( 'support_email' );
 	if ( $phone || $email ) {

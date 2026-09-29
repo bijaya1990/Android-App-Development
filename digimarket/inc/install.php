@@ -370,22 +370,12 @@ function dm_install() {
 
 function dm_create_legal_pages() {
 	$pages = get_option( 'dm_legal_pages', array() );
-	$site  = get_bloginfo( 'name' );
-	$defs  = array(
-		'terms'   => array( __( 'Terms of Service', 'digimarket' ), "<h2>1. About {$site}</h2><p>{$site} is a marketplace where independent sellers list and sell digital products directly to buyers. {$site} provides the platform and payment processing; each seller is responsible for the products they sell.</p><h2>2. Buyer terms</h2><p>When you buy a product you receive a personal, non-transferable licence to use it as described on the product page. Redistribution or resale is not permitted unless the product page says otherwise. Download links are personal and time-limited.</p><h2>3. Seller terms</h2><p>Sellers must own or hold the rights to everything they sell, keep their payout (KYC) details accurate, and follow our Content &amp; IP Policy. A platform commission is deducted automatically from every sale as described in the Seller Agreement. Sellers are responsible for their own GST registration and filing unless the platform states otherwise.</p><h2>4. Payments</h2><p>Payments are processed by Razorpay. We never store card details. Money is split automatically between the seller and the platform at the time of payment.</p><h2>5. Suspension</h2><p>We may suspend accounts involved in fraud, chargeback abuse, or policy violations.</p><p><em>This is a starter template. Please have it reviewed by a lawyer before launch.</em></p>" ),
-		'privacy' => array( __( 'Privacy Policy', 'digimarket' ), "<h2>What we collect</h2><p>Account details (name, email, phone), order history, and — for sellers — payout/KYC details (legal name, PAN, bank account or UPI). Sensitive seller details are encrypted at rest.</p><h2>How we use it</h2><p>To deliver purchases, pay sellers, prevent fraud, send transactional emails and comply with tax law.</p><h2>Sharing</h2><p>Payment and KYC data is shared with Razorpay to process payments and payouts. Buyers' names and emails are shared with the seller of the product purchased.</p><h2>Your rights</h2><p>You can export or delete your personal data from your account settings or by contacting us.</p><p><em>This is a starter template. Please have it reviewed before launch.</em></p>" ),
-		'refund'  => array( __( 'Refund & Cancellation Policy', 'digimarket' ), '<p>Because digital products can be downloaded instantly, refunds are generally available only <strong>before the product has been downloaded or accessed</strong>, within ' . (int) dm_opt( 'refund_window_days', 7 ) . ' days of purchase. Faulty or not-as-described items are handled case by case. To request a refund, open a support ticket from <em>My Account → Support</em> and choose the order.</p><p>When a refund is issued, both the seller’s share and the platform commission are reversed, and access to the product is revoked.</p>' ),
-		'seller'  => array( __( 'Seller Agreement', 'digimarket' ), "<h2>Commission</h2><p>{$site} deducts a commission from every sale. The rate applied is the one in force at the time of each sale; later rate changes never affect past orders. Launch promotions may temporarily set the commission to 0%.</p><h2>Payouts</h2><p>Your share is transferred automatically to your Razorpay linked account and settled to your bank on Razorpay’s settlement cycle.</p><h2>Content ownership</h2><p>You keep ownership of your products and grant {$site} a licence to display and deliver them to buyers.</p><h2>Prohibited items</h2><p>Pirated, stolen, illegal, adult, hateful or malicious content is prohibited and will be removed.</p>" ),
-		'about'     => array( __( 'About Us', 'digimarket' ), "<p>Hi! {$site} is run by a web developer who builds professional websites for schools, colleges, puja committees, shops and small businesses — and sells ready-to-use digital products like study notes, resume templates, design packs and kids worksheets.</p><h2>What we do</h2><ul><li>Custom WordPress websites with clear starting prices, discussed on WhatsApp before any payment.</li><li>Digital products you can download instantly after a secure UPI/card payment.</li></ul><h2>Why people trust us</h2><p>Every service comes with a written refund promise, every product review comes from a verified buyer or client, and you can always reach us on WhatsApp.</p><p><em>Edit this page: add your name, photo, city and a few projects you are proud of.</em></p>" ),
-		'contact'   => array( __( 'Contact Us', 'digimarket' ), '<p>' . __( 'The fastest way to reach us is WhatsApp — use the green chat button on any page. You can also email us and we reply within one working day.', 'digimarket' ) . '</p><ul><li><strong>' . __( 'Email:', 'digimarket' ) . '</strong> ' . esc_html( dm_opt( 'support_email' ) ) . '</li><li><strong>' . __( 'WhatsApp:', 'digimarket' ) . '</strong> ' . esc_html( dm_opt( 'whatsapp_number' ) ? '+' . dm_opt( 'whatsapp_number' ) : __( 'add your number in Marketplace → Settings', 'digimarket' ) ) . '</li><li><strong>' . __( 'Hours:', 'digimarket' ) . '</strong> ' . __( 'Mon–Sat, 10am–7pm IST', 'digimarket' ) . '</li></ul><p>' . __( 'For an order problem, open a support ticket from My Account → Support so we can see your order details.', 'digimarket' ) . '</p>' ),
-		'delivery'  => array( __( 'Delivery & Service Policy', 'digimarket' ), '<h2>' . __( 'Digital products', 'digimarket' ) . '</h2><p>' . __( 'Digital products are delivered instantly after payment: the download button appears on the confirmation page, in your email, and always in My Account → My Purchases. Download links are personal and expire after a short time for security — you can generate a fresh link from your account any time.', 'digimarket' ) . '</p><h2>' . __( 'Website services', 'digimarket' ) . '</h2><p>' . __( 'Website services are not paid on this site. You enquire on WhatsApp or through the enquiry form, we agree the scope, price and timeline in writing, and you pay us directly (UPI/bank transfer) as agreed. Turnaround times shown on each service start after we confirm your requirements and receive your content.', 'digimarket' ) . '</p><p><strong>' . __( 'Refund promise:', 'digimarket' ) . '</strong> ' . __( 'If we cannot deliver what was agreed, you get a full refund of any amount already paid.', 'digimarket' ) . '</p>' ),
-		'affiliate' => array( __( 'Affiliate Disclosure', 'digimarket' ), '<p>' . __( 'Some links on this site are affiliate links, for example to web hosting companies. If you buy through them we may earn a commission at no extra cost to you. We only recommend services we use or have tested, and our reviews list honest pros and cons.', 'digimarket' ) . '</p>' ),
-		'content' => array( __( 'Content & IP Policy', 'digimarket' ), '<p>Sellers must confirm they own the rights to everything they upload. If you believe a product infringes your copyright or trademark, report it using the “Report” link on the product page or contact us with proof of ownership. We will review and remove infringing listings promptly.</p>' ),
-	);
+	$defs  = dm_legal_page_defs();
 	foreach ( $defs as $key => $def ) {
 		if ( ! empty( $pages[ $key ] ) && get_post( $pages[ $key ] ) && 'trash' !== get_post_status( $pages[ $key ] ) ) {
 			if ( 'draft' === get_post_status( $pages[ $key ] ) && 'privacy' === $key ) {
 				wp_update_post( array( 'ID' => $pages[ $key ], 'post_status' => 'publish', 'post_content' => $def[1] ) );
+				update_post_meta( $pages[ $key ], '_dm_legal_hash', md5( (string) get_post_field( 'post_content', $pages[ $key ] ) ) );
 			}
 			continue;
 		}
@@ -394,6 +384,7 @@ function dm_create_legal_pages() {
 			if ( 'publish' !== $existing->post_status ) {
 				// e.g. WordPress' default draft "Privacy Policy" page.
 				wp_update_post( array( 'ID' => $existing->ID, 'post_status' => 'publish', 'post_content' => $def[1] ) );
+				update_post_meta( $existing->ID, '_dm_legal_hash', md5( (string) get_post_field( 'post_content', $existing->ID ) ) );
 			}
 			$pages[ $key ] = $existing->ID;
 			continue;
@@ -406,8 +397,10 @@ function dm_create_legal_pages() {
 				'post_content' => $def[1],
 			)
 		);
+		update_post_meta( $pages[ $key ], '_dm_legal_hash', md5( (string) get_post_field( 'post_content', $pages[ $key ] ) ) );
 	}
 	update_option( 'dm_legal_pages', $pages );
+	dm_legal_upgrade();
 }
 
 function dm_legal_url( $key ) {

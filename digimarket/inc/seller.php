@@ -198,6 +198,19 @@ function dm_do_seller_kyc() {
 	dm_redirect( $first ? dm_url( 'sell' ) : dm_url( 'dashboard', 'payouts' ) );
 }
 
+function dm_seller_agreement_post() {
+	$pages = get_option( 'dm_legal_pages', array() );
+	return ! empty( $pages['seller'] ) ? get_post( $pages['seller'] ) : null;
+}
+
+/**
+ * Version of the agreement being accepted: the page's last-modified time.
+ */
+function dm_seller_agreement_version() {
+	$p = dm_seller_agreement_post();
+	return $p ? gmdate( 'Y-m-d H:i', strtotime( $p->post_modified_gmt ) ) . ' UTC' : '';
+}
+
 function dm_do_seller_submit() {
 	dm_require_login();
 	$uid = get_current_user_id();
@@ -208,6 +221,16 @@ function dm_do_seller_submit() {
 		dm_flash( 'error', __( 'Please accept the Seller Agreement and confirm you own the rights to what you sell.', 'digimarket' ) );
 		dm_back();
 	}
+	// Record the acceptance (clickwrap evidence).
+	update_user_meta(
+		$uid,
+		'dm_agreement_accepted',
+		array(
+			'time'    => time(),
+			'version' => sanitize_text_field( wp_unslash( $_POST['agreement_version'] ?? dm_seller_agreement_version() ) ),
+			'ip'      => dm_client_ip(),
+		)
+	);
 	$status = dm_opt( 'auto_approve_sellers' ) ? 'active' : 'pending';
 	update_user_meta( $uid, 'dm_seller_status', $status );
 	update_user_meta( $uid, 'dm_seller_since', time() );

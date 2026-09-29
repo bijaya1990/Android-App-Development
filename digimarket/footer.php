@@ -64,8 +64,8 @@ $dm_route  = dm_route();
 					<li><a href="<?php echo esc_url( dm_legal_url( 'about' ) ); ?>"><?php esc_html_e( 'About us', 'digimarket' ); ?></a></li>
 					<li><a href="<?php echo esc_url( dm_legal_url( 'contact' ) ); ?>"><?php esc_html_e( 'Contact us', 'digimarket' ); ?></a></li>
 					<li><a href="<?php echo esc_url( dm_url( 'account' ) ); ?>"><?php esc_html_e( 'My account', 'digimarket' ); ?></a></li>
-					<li><a href="<?php echo esc_url( dm_legal_url( 'delivery' ) ); ?>"><?php esc_html_e( 'Delivery & service policy', 'digimarket' ); ?></a></li>
-					<li><a href="<?php echo esc_url( dm_legal_url( 'refund' ) ); ?>"><?php esc_html_e( 'Refund policy', 'digimarket' ); ?></a></li>
+					<li><a href="<?php echo esc_url( dm_legal_url( 'delivery' ) ); ?>"><?php esc_html_e( 'Shipping & delivery', 'digimarket' ); ?></a></li>
+					<li><a href="<?php echo esc_url( dm_legal_url( 'refund' ) ); ?>"><?php esc_html_e( 'Refund & cancellation', 'digimarket' ); ?></a></li>
 					<?php if ( dm_store_opt( 'articles_show' ) ) : ?><li><a href="<?php echo esc_url( dm_articles_url() ); ?>"><?php echo esc_html( dm_store_opt( 'articles_label' ) ); ?></a></li><?php endif; ?>
 					<?php if ( wp_count_posts( 'dm_portfolio' )->publish ) : ?><li><a href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php esc_html_e( 'Our work', 'digimarket' ); ?></a></li><?php endif; ?>
 				</ul>
@@ -73,7 +73,7 @@ $dm_route  = dm_route();
 			<div>
 				<h2 class="dm-ft-title"><?php esc_html_e( 'Legal', 'digimarket' ); ?></h2>
 				<ul>
-					<li><a href="<?php echo esc_url( dm_legal_url( 'terms' ) ); ?>"><?php esc_html_e( 'Terms of Service', 'digimarket' ); ?></a></li>
+					<li><a href="<?php echo esc_url( dm_legal_url( 'terms' ) ); ?>"><?php esc_html_e( 'Terms & Conditions', 'digimarket' ); ?></a></li>
 					<li><a href="<?php echo esc_url( dm_legal_url( 'privacy' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'digimarket' ); ?></a></li>
 					<li><a href="<?php echo esc_url( dm_legal_url( 'affiliate' ) ); ?>"><?php esc_html_e( 'Affiliate disclosure', 'digimarket' ); ?></a></li>
 					<?php if ( ! dm_single_seller_mode() ) : ?>
@@ -95,7 +95,8 @@ $dm_route  = dm_route();
 		</div>
 		<div class="dm-ft-bottom">
 			<span>&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></span>
-			<span><?php echo esc_html( sprintf( /* translators: %s email */ __( 'Support: %s', 'digimarket' ), dm_opt( 'support_email' ) ) ); ?></span>
+			<?php $dm_biz = dm_business(); ?>
+			<span class="dm-ft-biz"><?php echo esc_html( implode( ' · ', array_filter( array( $dm_biz['legal'], $dm_biz['address'] ) ) ) ); ?><?php if ( $dm_biz['email'] ) : ?> · <a href="mailto:<?php echo esc_attr( $dm_biz['email'] ); ?>"><?php echo esc_html( $dm_biz['email'] ); ?></a><?php endif; ?></span>
 		</div>
 	</div>
 </footer>

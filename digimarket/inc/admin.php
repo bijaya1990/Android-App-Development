@@ -270,6 +270,11 @@ function dm_admin_seller_detail( $uid ) {
 		__( 'Bank', 'digimarket' )          => esc_html( ( get_user_meta( $uid, 'dm_bank_last4', true ) ? '•••• ' . get_user_meta( $uid, 'dm_bank_last4', true ) . ' / ' . get_user_meta( $uid, 'dm_ifsc', true ) : '—' ) ),
 		__( 'UPI', 'digimarket' )           => esc_html( get_user_meta( $uid, 'dm_upi', true ) ),
 		__( 'Address', 'digimarket' )       => esc_html( implode( ', ', array_filter( $addr ) ) ),
+		__( 'Seller Agreement', 'digimarket' ) => ( function () use ( $uid ) {
+			$a = get_user_meta( $uid, 'dm_agreement_accepted', true );
+			/* translators: 1 date 2 version 3 IP */
+			return is_array( $a ) ? esc_html( sprintf( __( 'Accepted %1$s (version %2$s, IP %3$s)', 'digimarket' ), wp_date( 'j M Y, g:i a', (int) $a['time'] ), $a['version'], $a['ip'] ) ) : esc_html__( 'Not recorded', 'digimarket' );
+		} )(),
 		__( 'Razorpay account', 'digimarket' ) => esc_html( get_user_meta( $uid, 'dm_rzp_account_id', true ) ? get_user_meta( $uid, 'dm_rzp_account_id', true ) : '—' ) . ' ' . dm_status_badge( get_user_meta( $uid, 'dm_rzp_activation', true ) ? get_user_meta( $uid, 'dm_rzp_activation', true ) : 'pending' ),
 		__( 'KYC error', 'digimarket' )     => esc_html( get_user_meta( $uid, 'dm_kyc_error', true ) ),
 	);

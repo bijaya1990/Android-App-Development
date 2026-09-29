@@ -293,6 +293,20 @@ check('class="dm-svcband"' in get('/').text, 'services band shows a featured ser
 wp('update_post_meta(%s,"_dm_featured",0);' % sv)
 check('class="dm-svcband"' not in get('/').text, 'unticking Featured removes the band')
 
+print('== Legal pages & business details')
+lp_urls = json.loads(wp('$o=array(); foreach(get_option("dm_legal_pages") as $k=>$id){ $o[$k]=get_permalink($id); } echo json_encode($o);'))
+for k in ('terms', 'privacy', 'refund', 'delivery', 'contact', 'about'):
+    r = get(lp_urls[k])
+    check(r.status_code == 200 and 'contact@pikacart.in' in r.text and '[pikacart_' not in r.text, 'legal page %s live with business email' % k, r.status_code)
+t = get(lp_urls['terms']).text
+check('Bijaya Nanda' in t and '768032' in t and '48 hours' in t, 'terms name grievance officer, address and timelines')
+check('Shipping &amp; Delivery' in get(lp_urls['delivery']).text or 'Shipping & Delivery' in get(lp_urls['delivery']).text, 'shipping & delivery policy page')
+check('starter template' not in t, 'no starter-template text left')
+h = get('/').text
+check('Patharla, Bijepur, Bargarh, Odisha 768032' in h and 'mailto:contact@pikacart.in' in h, 'footer shows business address + email')
+check('"postalCode":"768032"' in h, 'organisation schema has postal address')
+check(wp('echo get_option("wp_page_for_privacy_policy") == get_option("dm_legal_pages")["privacy"] ? "y" : "n";') == 'y', 'WordPress privacy page points to our policy')
+
 print()
 print('PASSED: %d  FAILED: %d' % (len(PASS), len(FAIL)))
 for f in FAIL:
