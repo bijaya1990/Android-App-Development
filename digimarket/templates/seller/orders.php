@@ -22,7 +22,7 @@ if ( $dm_view && (int) $dm_view->seller_id !== $dm_uid ) {
 			<dt><?php esc_html_e( 'Product', 'digimarket' ); ?></dt><dd><?php echo esc_html( $dm_view->product_title ); ?></dd>
 			<dt><?php esc_html_e( 'Date', 'digimarket' ); ?></dt><dd><?php echo esc_html( mysql2date( 'M j, Y H:i', $dm_o->created_at ) ); ?></dd>
 			<dt><?php esc_html_e( 'Amount paid', 'digimarket' ); ?></dt><dd><?php echo esc_html( dm_money( $dm_view->price_at_purchase ) ); ?><?php echo $dm_view->list_price > $dm_view->price_at_purchase ? ' <small class="dm-muted">(' . esc_html__( 'coupon applied', 'digimarket' ) . ')</small>' : ''; ?></dd>
-			<dt><?php esc_html_e( 'Commission', 'digimarket' ); ?></dt><dd><?php echo esc_html( dm_money( $dm_view->commission_amount ) . ' (' . (float) $dm_view->commission_percent_applied . '%)' ); ?></dd>
+			<dt><?php esc_html_e( 'Commission', 'digimarket' ); ?></dt><dd><?php echo esc_html( dm_money( $dm_view->commission_amount ) . ' (' . (float) $dm_view->commission_percent_applied . '%)' ); ?><?php if ( (float) ( $dm_view->commission_gst ?? 0 ) > 0 ) : ?> + <?php echo esc_html( sprintf( /* translators: %s */ __( '%s GST on commission', 'digimarket' ), dm_money( $dm_view->commission_gst ) ) ); ?><?php endif; ?></dd>
 			<dt><?php esc_html_e( 'Net credited to you', 'digimarket' ); ?></dt><dd><strong><?php echo esc_html( dm_money( $dm_view->seller_net_amount ) ); ?></strong></dd>
 			<dt><?php esc_html_e( 'Transfer', 'digimarket' ); ?></dt><dd><?php echo dm_status_badge( $dm_view->transfer_status ); // phpcs:ignore ?> <code><?php echo esc_html( $dm_view->transfer_id ); ?></code> <?php echo esc_html( $dm_view->transfer_note ); ?></dd>
 			<dt><?php esc_html_e( 'Downloads', 'digimarket' ); ?></dt><dd><?php echo (int) $dm_view->download_count; ?></dd>
@@ -61,7 +61,7 @@ if ( $dm_view && (int) $dm_view->seller_id !== $dm_uid ) {
 					<td><?php echo esc_html( $dm_r->product_title ); ?></td>
 					<td><?php echo esc_html( mysql2date( 'M j, Y', $dm_r->created_at ) ); ?></td>
 					<td><?php echo esc_html( dm_money( $dm_r->price_at_purchase ) ); ?></td>
-					<td>−<?php echo esc_html( dm_money( $dm_r->commission_amount ) ); ?></td>
+					<td>−<?php echo esc_html( dm_money( (float) $dm_r->commission_amount + (float) ( $dm_r->commission_gst ?? 0 ) ) ); ?><?php if ( (float) ( $dm_r->commission_gst ?? 0 ) > 0 ) : ?><br><small class="dm-muted"><?php esc_html_e( 'incl. GST', 'digimarket' ); ?></small><?php endif; ?></td>
 					<td><strong><?php echo esc_html( dm_money( $dm_r->seller_net_amount ) ); ?></strong></td>
 					<td><?php echo dm_status_badge( 'paid' === $dm_r->item_status ? 'success' : $dm_r->item_status ); // phpcs:ignore ?></td>
 				</tr>

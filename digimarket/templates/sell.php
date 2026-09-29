@@ -37,7 +37,7 @@ $dm_labels = array( 1 => __( 'Account', 'digimarket' ), 2 => __( 'Shop', 'digima
 				?>
 				<div class="dm-notice dm-notice-success"><?php echo esc_html( sprintf( /* translators: %s date */ __( 'Launch offer: 0%% commission until %s — keep 100%% of every sale.', 'digimarket' ), date_i18n( get_option( 'date_format' ), strtotime( $dm_start ) ) ) ); ?></div>
 			<?php else : ?>
-				<p class="dm-muted"><?php echo esc_html( sprintf( /* translators: %s percent */ __( 'Simple pricing: a %s%% commission per sale. No monthly fees.', 'digimarket' ), number_format_i18n( (float) dm_opt( 'commission_global' ), 1 ) ) ); ?></p>
+				<p class="dm-muted"><?php echo esc_html( sprintf( /* translators: %s percent */ __( 'Simple pricing: a %s%% commission per sale (+ GST on the commission when applicable). No monthly fees. Your share goes to your bank automatically.', 'digimarket' ), number_format_i18n( (float) dm_opt( 'commission_global' ), 1 ) ) ); ?></p>
 			<?php endif; ?>
 			<div class="dm-hero-cta">
 				<a class="dm-btn dm-btn-primary dm-btn-lg" href="<?php echo esc_url( dm_url( 'register', '', '', array( 'intent' => 'seller' ) ) ); ?>"><?php esc_html_e( 'Create seller account', 'digimarket' ); ?></a>

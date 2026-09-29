@@ -60,6 +60,7 @@ function dm_install() {
   price_at_purchase decimal(12,2) NOT NULL DEFAULT 0,
   commission_percent_applied decimal(5,2) NOT NULL DEFAULT 0,
   commission_amount decimal(12,2) NOT NULL DEFAULT 0,
+  commission_gst decimal(12,2) NOT NULL DEFAULT 0,
   seller_net_amount decimal(12,2) NOT NULL DEFAULT 0,
   item_status varchar(32) NOT NULL DEFAULT 'pending',
   transfer_id varchar(64) NOT NULL DEFAULT '',

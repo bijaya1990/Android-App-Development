@@ -334,7 +334,10 @@ t = ad.get(BASE + '/invoice/%s/' % oid).text
 check('Tax Invoice' in t and '21ABCDE1234F1Z5' in t and 'CGST' in t and '100.00' in t and '9.00' in t, 'GST on: tax invoice with GSTIN and CGST/SGST split')
 terms = get(json.loads(wp('$o=array(); foreach(get_option("dm_legal_pages") as $k=>$id){ $o[$k]=get_permalink($id); } echo json_encode($o);'))['terms']).text
 check('Our GSTIN is 21ABCDE1234F1Z5' in terms, 'Terms follow the GST switch')
+res = wp('$s=get_user_by("login","admin")->ID; $u=wp_create_user("commseller","commseller123","cs@example.com"); echo dm_commission_gst(6,$u)."|".dm_commission_gst(6,$s);')
+check(res == '1.08|0', 'GST ON: 18% GST on 6% commission charged to sellers, never on own sales', res)
 admin_do('/wp-admin/admin.php?page=dm-gst', 'gst_toggle', {'to': '0'})
+check(wp('echo dm_commission_gst(6, get_user_by("login","commseller")->ID);') == '0', 'GST OFF: no GST on commission')
 check(wp('echo dm_gst_enabled() ? "on" : "off";') == 'off', 'GST switch turns OFF')
 res = wp(r'''$s=get_option("dm_settings"); $s["single_seller_mode"]=0; update_option("dm_settings",$s);
 $u=wp_create_user("gstseller","gstseller123","gs@example.com"); update_user_meta($u,"dm_seller_status","active"); update_user_meta($u,"dm_shop_slug","gst-shop"); update_user_meta($u,"dm_shop_name","GST Shop"); update_user_meta($u,"dm_kyc_status","verified");

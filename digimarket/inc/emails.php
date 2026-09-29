@@ -116,7 +116,7 @@ function dm_email_seller_welcome( $uid, $status ) {
 	$html .= '<h3 style="margin:22px 0 6px;font-size:15px">' . esc_html__( 'Key points you agreed to', 'digimarket' ) . '</h3><ul style="padding-left:18px;margin:0">';
 	foreach ( array(
 		__( 'Sell only digital products you created or have the right to sell. Pirated, illegal, adult, hateful or malicious content is prohibited and will be removed.', 'digimarket' ),
-		__( 'A commission is deducted from each sale at the rate shown in your dashboard at the time of sale. Your share is paid to your bank through Razorpay.', 'digimarket' ),
+		__( 'A commission is deducted from each sale at the rate shown in your dashboard at the time of sale (plus GST on the commission while our GST is active). Your share is paid automatically to your bank through Razorpay.', 'digimarket' ),
 		__( 'When a refund or chargeback is approved, your share and the commission for that order are reversed.', 'digimarket' ),
 		sprintf( /* translators: %s limit */ __( 'GST registration is compulsory once your turnover crosses %s in a financial year; below that it is optional. You alone are responsible for your own GST and income-tax compliance. If we mark your shop “GST required”, your products are paused until you add a valid GSTIN.', 'digimarket' ), dm_inr( dm_gst_opt( 'threshold' ) ) ),
 		__( 'You keep ownership of your products and give us a licence to display and deliver them to buyers.', 'digimarket' ),

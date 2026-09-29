@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.4.0
+Stable tag: 2.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,11 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.5.0 =
+* Marketplace payouts: while the GST switch is ON, GST (default 18%, editable on the GST page) is charged on the platform commission and deducted from the seller's share; while OFF, only the commission is deducted. Shown in seller orders, admin transactions and CSV exports.
+* Seller payout details: bank account + IFSC and full address (street, city, state from a list, 6-digit PIN) are now required so the Razorpay Route linked account can be created and every sale is paid out automatically. UPI is optional.
+* Seller Agreement, welcome email and Start selling page mention GST on commission.
 
 = 2.4.0 =
 * New homepage layout like a professional store: main nav row (Home, Shop, Categories menu, Offers, Website Services, WordPress Themes, Articles, Contact) with trust points; Bestsellers panel + Shop by category + Limited time offer with Days/Hours/Mins/Secs countdown; uniform white panels; collections in equal boxes; "What our customers say" slider with real reviews and testimonials.

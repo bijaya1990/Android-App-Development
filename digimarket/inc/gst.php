@@ -17,6 +17,7 @@ function dm_gst_defaults() {
 		'state'     => 'Odisha',
 		'threshold' => 2000000,
 		'warn_pct'  => 80,
+		'comm_rate' => 18,
 	);
 }
 
@@ -65,6 +66,17 @@ function dm_valid_gstin( $g ) {
 
 function dm_seller_gstin( $uid ) {
 	return strtoupper( (string) get_user_meta( $uid, 'dm_gstin', true ) );
+}
+
+/**
+ * GST charged to a seller on the platform commission: only when GST is ON,
+ * never on the store owner's own sales.
+ */
+function dm_commission_gst( $commission, $seller_id ) {
+	if ( ! dm_gst_enabled() || $commission <= 0 || user_can( $seller_id, 'manage_options' ) ) {
+		return 0.0;
+	}
+	return dm_round( $commission * (float) dm_gst_opt( 'comm_rate' ) / 100 );
 }
 
 /* -------------------------------------------------------------------------
@@ -228,6 +240,7 @@ function dm_admin_gst() {
 	echo '<table class="form-table">';
 	echo '<tr><th><label for="dmg_gstin">' . esc_html__( 'Store GSTIN', 'digimarket' ) . '</label></th><td><input class="regular-text" id="dmg_gstin" name="g[gstin]" maxlength="15" style="text-transform:uppercase" value="' . esc_attr( dm_store_gstin() ) . '" placeholder="21ABCDE1234F1Z5"><p class="description">' . esc_html__( '15 characters. Odisha GSTINs start with 21. Needed before GST can be turned on.', 'digimarket' ) . '</p></td></tr>';
 	echo '<tr><th><label for="dmg_rate">' . esc_html__( 'GST rate (%)', 'digimarket' ) . '</label></th><td><input class="small-text" type="number" step="0.01" min="0" max="28" id="dmg_rate" name="g[rate]" value="' . esc_attr( $g['rate'] ) . '"><p class="description">' . esc_html__( 'Prices you enter are treated as GST-inclusive. Most digital products and website services are 18%. Confirm your rate with your CA.', 'digimarket' ) . '</p></td></tr>';
+	echo '<tr><th><label for="dmg_cr">' . esc_html__( 'GST on commission (%)', 'digimarket' ) . '</label></th><td><input class="small-text" type="number" step="0.01" min="0" max="28" id="dmg_cr" name="g[comm_rate]" value="' . esc_attr( $g['comm_rate'] ) . '"><p class="description">' . esc_html__( 'While GST is ON, this GST is added to the platform commission and deducted from the seller’s share (e.g. ₹100 sale, 6% commission: ₹6 + ₹1.08 GST, seller gets ₹92.92). While GST is OFF, only the commission is deducted.', 'digimarket' ) . '</p></td></tr>';
 	echo '<tr><th><label for="dmg_state">' . esc_html__( 'Your state', 'digimarket' ) . '</label></th><td><input class="regular-text" id="dmg_state" name="g[state]" value="' . esc_attr( $g['state'] ) . '"><p class="description">' . esc_html__( 'Place of supply on receipts (tax shown as CGST + SGST).', 'digimarket' ) . '</p></td></tr>';
 	echo '<tr><th><label for="dmg_th">' . esc_html__( 'Registration limit (₹)', 'digimarket' ) . '</label></th><td><input class="regular-text" type="number" min="0" step="1000" id="dmg_th" name="g[threshold]" value="' . esc_attr( (int) $g['threshold'] ) . '"> <input class="small-text" type="number" min="10" max="99" name="g[warn_pct]" value="' . esc_attr( (int) $g['warn_pct'] ) . '">% ' . esc_html__( 'early warning', 'digimarket' ) . '<p class="description">' . esc_html__( 'Default ₹20,00,000 per financial year. You get a notification and email at the warning level and when the limit is crossed — for your store and for each seller.', 'digimarket' ) . '</p></td></tr>';
 	echo '</table>';
@@ -297,6 +310,7 @@ add_action( 'dm_admin_do_gst_save', function ( $r ) {
 	$g['state']     = sanitize_text_field( $in['state'] ?? 'Odisha' );
 	$g['threshold'] = max( 0, absint( $in['threshold'] ?? 2000000 ) );
 	$g['warn_pct']  = max( 10, min( 99, absint( $in['warn_pct'] ?? 80 ) ) );
+	$g['comm_rate'] = max( 0, min( 28, (float) ( $in['comm_rate'] ?? 18 ) ) );
 	if ( '' === $gi ) {
 		$g['enabled'] = 0;
 	}

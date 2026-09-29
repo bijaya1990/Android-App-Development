@@ -149,8 +149,18 @@ function dm_do_seller_kyc() {
 	if ( $upi && ! preg_match( '/^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/', $upi ) ) {
 		$errors[] = __( 'Enter a valid UPI ID (e.g. name@bank).', 'digimarket' );
 	}
-	if ( ! $has_bank && ! $upi ) {
-		$errors[] = __( 'Add a bank account + IFSC, or a UPI ID.', 'digimarket' );
+	// Automatic Razorpay payouts need a bank account; UPI is only an extra.
+	if ( ! $has_bank ) {
+		$errors[] = __( 'Add your bank account number and IFSC — your share of every sale is paid there automatically.', 'digimarket' );
+	}
+	if ( '' === $addr['street'] || '' === $addr['city'] ) {
+		$errors[] = __( 'Enter your full address (street and city).', 'digimarket' );
+	}
+	if ( ! in_array( $addr['state'], dm_indian_states(), true ) ) {
+		$errors[] = __( 'Choose your state.', 'digimarket' );
+	}
+	if ( ! preg_match( '/^[1-9][0-9]{5}$/', $addr['postal_code'] ) ) {
+		$errors[] = __( 'Enter a valid 6-digit PIN code.', 'digimarket' );
 	}
 	if ( ! in_array( $btype, array( 'individual', 'proprietorship', 'partnership', 'private_limited', 'public_limited', 'llp' ), true ) ) {
 		$btype = 'individual';
@@ -214,6 +224,13 @@ function dm_seller_agreement_post() {
 function dm_seller_agreement_version() {
 	$p = dm_seller_agreement_post();
 	return $p ? gmdate( 'Y-m-d H:i', strtotime( $p->post_modified_gmt ) ) . ' UTC' : '';
+}
+
+/**
+ * Indian states and union territories (names as Razorpay expects them).
+ */
+function dm_indian_states() {
+	return array( 'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal' );
 }
 
 function dm_do_seller_submit() {
@@ -454,9 +471,9 @@ function dm_dashboard_early_actions() {
 		$rows = dm_seller_orders_query( get_current_user_id(), 5000, 0 );
 		$out  = array();
 		foreach ( $rows['items'] as $r ) {
-			$out[] = array( dm_order_number( $r->order_id ), $r->created_at, $r->buyer_name, $r->buyer_email, $r->product_title, $r->price_at_purchase, $r->commission_percent_applied, $r->commission_amount, $r->seller_net_amount, $r->item_status, $r->transfer_status, $r->transfer_id );
+			$out[] = array( dm_order_number( $r->order_id ), $r->created_at, $r->buyer_name, $r->buyer_email, $r->product_title, $r->price_at_purchase, $r->commission_percent_applied, $r->commission_amount, $r->commission_gst ?? 0, $r->seller_net_amount, $r->item_status, $r->transfer_status, $r->transfer_id );
 		}
-		dm_output_csv( 'orders-' . gmdate( 'Y-m-d' ) . '.csv', array( 'Order', 'Date', 'Buyer', 'Buyer email', 'Product', 'Amount paid', 'Commission %', 'Commission', 'Net credited', 'Payment status', 'Transfer status', 'Transfer ID' ), $out );
+		dm_output_csv( 'orders-' . gmdate( 'Y-m-d' ) . '.csv', array( 'Order', 'Date', 'Buyer', 'Buyer email', 'Product', 'Amount paid', 'Commission %', 'Commission', 'GST on commission', 'Net credited', 'Payment status', 'Transfer status', 'Transfer ID' ), $out );
 	}
 	if ( 'file' === dm_tab() ) {
 		$pid = absint( dm_route_id() );

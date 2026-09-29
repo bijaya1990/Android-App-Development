@@ -247,6 +247,8 @@ function dm_create_order( $uid, $user, $totals ) {
 		// Commission is snapshotted at the time of the transaction.
 		$rate       = dm_commission_rate( $l['seller'], $pid );
 		$commission = dm_round( $l['final'] * $rate / 100 );
+		// GST on the platform commission, only while the store's GST switch is ON.
+		$comm_gst   = dm_commission_gst( $commission, $l['seller'] );
 		$wpdb->insert(
 			dm_table( 'order_items' ),
 			array(
@@ -258,7 +260,8 @@ function dm_create_order( $uid, $user, $totals ) {
 				'price_at_purchase'          => $l['final'],
 				'commission_percent_applied' => $rate,
 				'commission_amount'          => $commission,
-				'seller_net_amount'          => dm_round( $l['final'] - $commission ),
+				'commission_gst'             => $comm_gst,
+				'seller_net_amount'          => dm_round( $l['final'] - $commission - $comm_gst ),
 				'item_status'                => 'pending',
 				'transfer_status'            => 'pending',
 				'created_at'                 => dm_now(),

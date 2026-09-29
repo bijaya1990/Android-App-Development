@@ -333,7 +333,7 @@ function dm_admin_items_table( $items ) {
 	foreach ( $items as $r ) {
 		echo '<tr><td><a href="' . esc_url( dm_admin_url( 'dm-transactions', array( 'order' => $r->order_id ) ) ) . '">' . esc_html( dm_order_number( $r->order_id ) ) . '</a></td>';
 		echo '<td>' . esc_html( mysql2date( 'M j, Y H:i', $r->created_at ) ) . '</td><td>' . esc_html( $r->buyer_name ) . '</td><td>' . esc_html( $r->product_title ) . '</td><td>' . esc_html( dm_shop_name( $r->seller_id ) ) . '</td>';
-		echo '<td>' . esc_html( dm_money( $r->price_at_purchase ) ) . '</td><td>' . esc_html( dm_money( $r->commission_amount ) ) . ' <small>(' . esc_html( (float) $r->commission_percent_applied ) . '%)</small></td><td>' . esc_html( dm_money( $r->seller_net_amount ) ) . '</td>';
+		echo '<td>' . esc_html( dm_money( $r->price_at_purchase ) ) . '</td><td>' . esc_html( dm_money( $r->commission_amount ) ) . ' <small>(' . esc_html( (float) $r->commission_percent_applied ) . '%)</small>' . ( (float) ( $r->commission_gst ?? 0 ) > 0 ? '<br><small>+ ' . esc_html( dm_money( $r->commission_gst ) ) . ' GST</small>' : '' ) . '</td><td>' . esc_html( dm_money( $r->seller_net_amount ) ) . '</td>';
 		echo '<td>' . dm_status_badge( $r->item_status ) . '</td><td>' . dm_status_badge( $r->transfer_status ) . ( $r->transfer_id ? '<br><small>' . esc_html( $r->transfer_id ) . '</small>' : '' ) . '</td><td>'; // phpcs:ignore
 		if ( 'paid' === $r->item_status && current_user_can( 'dm_manage_marketplace' ) ) {
 			echo '<a class="button button-small" onclick="return confirm(\'' . esc_js( __( 'Refund this item? Both the seller share and the commission will be reversed.', 'digimarket' ) ) . '\')" href="' . esc_url( dm_admin_action_url( 'refund_item', array( 'item' => $r->id ) ) ) . '">' . esc_html__( 'Refund', 'digimarket' ) . '</a>';
@@ -728,9 +728,9 @@ function dm_admin_handle() {
 		$res = dm_admin_ledger_query( 100000, 0 );
 		$out = array();
 		foreach ( $res['items'] as $r ) {
-			$out[] = array( dm_order_number( $r->order_id ), $r->created_at, $r->buyer_name, $r->buyer_email, dm_shop_name( $r->seller_id ), $r->product_title, $r->price_at_purchase, $r->commission_percent_applied, $r->commission_amount, $r->seller_net_amount, $r->item_status, $r->gateway, $r->razorpay_payment_id, $r->transfer_id, $r->transfer_status );
+			$out[] = array( dm_order_number( $r->order_id ), $r->created_at, $r->buyer_name, $r->buyer_email, dm_shop_name( $r->seller_id ), $r->product_title, $r->price_at_purchase, $r->commission_percent_applied, $r->commission_amount, $r->commission_gst ?? 0, $r->seller_net_amount, $r->item_status, $r->gateway, $r->razorpay_payment_id, $r->transfer_id, $r->transfer_status );
 		}
-		dm_output_csv( 'ledger-' . gmdate( 'Y-m-d' ) . '.csv', array( 'Order', 'Date', 'Buyer', 'Buyer email', 'Seller', 'Product', 'Gross', 'Commission %', 'Commission', 'Seller net', 'Status', 'Gateway', 'Payment ID', 'Transfer ID', 'Transfer status' ), $out );
+		dm_output_csv( 'ledger-' . gmdate( 'Y-m-d' ) . '.csv', array( 'Order', 'Date', 'Buyer', 'Buyer email', 'Seller', 'Product', 'Gross', 'Commission %', 'Commission', 'GST on commission', 'Seller net', 'Status', 'Gateway', 'Payment ID', 'Transfer ID', 'Transfer status' ), $out );
 	}
 	if ( ! current_user_can( 'dm_manage_marketplace' ) ) {
 		wp_die( esc_html__( 'You can view but not change marketplace settings.', 'digimarket' ), 403 );
