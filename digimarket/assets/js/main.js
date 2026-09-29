@@ -335,6 +335,18 @@
 		payBtn.addEventListener('click', function (e) { e.preventDefault(); open(); });
 		window.addEventListener('load', function () { setTimeout(open, 300); });
 	}
+	/* ---- Cashfree checkout (redirects back to /checkout/cf-return/{order}) ---- */
+	var cfBtn = $('#dm-cf-pay');
+	if (cfBtn) {
+		var cfStatus = $('#dm-pay-status');
+		function cfOpen() {
+			if (typeof window.Cashfree !== 'function') { if (cfStatus) { cfStatus.textContent = i18n.error; cfStatus.className = 'dm-pay-status is-error'; } return; }
+			cfBtn.disabled = true;
+			window.Cashfree({ mode: cfBtn.getAttribute('data-mode') }).checkout({ paymentSessionId: cfBtn.getAttribute('data-session'), redirectTarget: '_self' });
+			setTimeout(function () { cfBtn.disabled = false; }, 4000);
+		}
+		cfBtn.addEventListener('click', function (e) { e.preventDefault(); cfOpen(); });
+	}
 	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	function beacon(action, data) {

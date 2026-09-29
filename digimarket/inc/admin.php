@@ -652,6 +652,10 @@ function dm_admin_settings() {
 			echo '<label><input type="checkbox" id="dm_' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']" value="1"' . checked( ! empty( $s[ $key ] ), true, false ) . '> ' . esc_html( $help ) . '</label>';
 		} elseif ( 'textarea' === $type ) {
 			echo '<textarea class="large-text" rows="3" id="dm_' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']">' . esc_textarea( $s[ $key ] ) . '</textarea>' . ( $help ? '<p class="description">' . esc_html( $help ) . '</p>' : '' );
+		} elseif ( 'password' === $type ) {
+			// Never print saved secrets into the page; blank keeps the saved value.
+			$saved = '' !== (string) $s[ $key ];
+			echo '<input class="regular-text" type="password" id="dm_' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']" value="" placeholder="' . esc_attr( $saved ? __( '•••••••• saved — leave blank to keep', 'digimarket' ) : '' ) . '" ' . $attrs . '>' . ( $help ? '<p class="description">' . esc_html( $help ) . '</p>' : '' ); // phpcs:ignore
 		} else {
 			echo '<input class="regular-text" type="' . esc_attr( $type ) . '" id="dm_' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']" value="' . esc_attr( is_array( $s[ $key ] ) ? '' : $s[ $key ] ) . '" ' . $attrs . '>' . ( $help ? '<p class="description">' . esc_html( $help ) . '</p>' : '' ); // phpcs:ignore
 		}
@@ -672,12 +676,17 @@ function dm_admin_settings() {
 	echo '<p class="description">' . esc_html__( 'Blank = global rate. Per-seller overrides are set on each seller’s page.', 'digimarket' ) . '</p></td></tr></table>';
 
 	echo '<h2>' . esc_html__( 'Payments (Razorpay Route)', 'digimarket' ) . '</h2><table class="form-table">';
-	echo '<tr><th>' . esc_html__( 'Gateway mode', 'digimarket' ) . '</th><td><select name="s[gateway]"><option value="demo"' . selected( $s['gateway'], 'demo', false ) . '>' . esc_html__( 'Demo (no real money — for testing)', 'digimarket' ) . '</option><option value="razorpay"' . selected( $s['gateway'], 'razorpay', false ) . '>' . esc_html__( 'Razorpay (use test keys for sandbox)', 'digimarket' ) . '</option></select></td></tr>';
+	echo '<tr><th>' . esc_html__( 'Gateway mode', 'digimarket' ) . '</th><td><select name="s[gateway]"><option value="demo"' . selected( $s['gateway'], 'demo', false ) . '>' . esc_html__( 'Demo (no real money — for testing)', 'digimarket' ) . '</option><option value="razorpay"' . selected( $s['gateway'], 'razorpay', false ) . '>' . esc_html__( 'Razorpay (use test keys for sandbox)', 'digimarket' ) . '</option><option value="cashfree"' . selected( $s['gateway'], 'cashfree', false ) . '>' . esc_html__( 'Cashfree Payments', 'digimarket' ) . '</option></select><p class="description">' . esc_html__( 'Only the selected gateway is used for new checkouts. Keep the other gateway’s keys saved for a while so its older orders can still be refunded.', 'digimarket' ) . '</p></td></tr>';
 	$field( 'rzp_key_id', __( 'Key ID', 'digimarket' ), 'text', 'rzp_test_… / rzp_live_…' );
 	$field( 'rzp_key_secret', __( 'Key secret', 'digimarket' ), 'password', '', 'autocomplete="new-password"' );
 	$field( 'rzp_webhook_secret', __( 'Webhook secret', 'digimarket' ), 'password', sprintf( /* translators: %s url */ __( 'Webhook URL: %s — enable events payment.captured, payment.failed, transfer.processed, transfer.failed, refund.processed, payment.dispute.*', 'digimarket' ), rest_url( 'dm/v1/razorpay-webhook' ) ), 'autocomplete="new-password"' );
 	$field( 'rzp_profile_category', __( 'Linked account business category', 'digimarket' ), 'text', __( 'Razorpay profile category for sellers (see Razorpay docs).', 'digimarket' ) );
 	$field( 'rzp_profile_subcategory', __( 'Linked account sub-category', 'digimarket' ) );
+	echo '</table><h2>' . esc_html__( 'Cashfree Payments', 'digimarket' ) . '</h2><table class="form-table">';
+	echo '<tr><th>' . esc_html__( 'Environment', 'digimarket' ) . '</th><td><select name="s[cf_env]"><option value="sandbox"' . selected( $s['cf_env'], 'sandbox', false ) . '>' . esc_html__( 'Sandbox (test)', 'digimarket' ) . '</option><option value="production"' . selected( $s['cf_env'], 'production', false ) . '>' . esc_html__( 'Production (live money)', 'digimarket' ) . '</option></select></td></tr>';
+	$field( 'cf_app_id', __( 'App ID (Client ID)', 'digimarket' ), 'text', __( 'Cashfree Dashboard → Developers → API Keys. Sandbox and Production keys are different.', 'digimarket' ) );
+	$field( 'cf_secret', __( 'Secret Key', 'digimarket' ), 'password', sprintf( /* translators: %s url */ __( 'Leave blank to keep the saved key. Webhook URL: %s — add it in Cashfree → Developers → Webhooks (Payments: success, failed, user dropped; Refunds). Webhooks are signed with this Secret Key.', 'digimarket' ), rest_url( 'dm/v1/cashfree-webhook' ) ), 'autocomplete="new-password"' );
+	echo '</table><h2>' . esc_html__( 'Sellers', 'digimarket' ) . '</h2><table class="form-table">';
 	$field( 'allow_sales_without_kyc', __( 'Sales before KYC', 'digimarket' ), 'checkbox', __( 'Allow sales for sellers without a verified linked account (payouts are held as failed until fixed).', 'digimarket' ) );
 	$field( 'currency_symbol', __( 'Currency symbol', 'digimarket' ) );
 	$field( 'currency_code', __( 'Currency code', 'digimarket' ) );
@@ -942,9 +951,10 @@ function dm_admin_handle() {
 					$new[ $k ] = is_numeric( $def ) ? (float) $in[ $k ] : ( 'invoice_address' === $k || 'allowed_extensions' === $k ? sanitize_textarea_field( $in[ $k ] ) : sanitize_text_field( $in[ $k ] ) );
 				}
 			}
-			$new['gateway']           = in_array( $new['gateway'], array( 'demo', 'razorpay' ), true ) ? $new['gateway'] : 'demo';
+			$new['gateway']           = in_array( $new['gateway'], array( 'demo', 'razorpay', 'cashfree' ), true ) ? $new['gateway'] : 'demo';
+			$new['cf_env']            = 'production' === ( $new['cf_env'] ?? '' ) ? 'production' : 'sandbox';
 			$new['commission_global'] = max( 0, min( 100, (float) $new['commission_global'] ) );
-			foreach ( array( 'rzp_key_secret', 'rzp_webhook_secret' ) as $secret ) {
+			foreach ( array( 'rzp_key_secret', 'rzp_webhook_secret', 'cf_secret' ) as $secret ) {
 				if ( '' === (string) ( $in[ $secret ] ?? '' ) ) {
 					$new[ $secret ] = $old[ $secret ]; // Keep existing secret when left blank.
 				}

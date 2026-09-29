@@ -178,9 +178,18 @@ function dm_do_place_order() {
 		dm_cart_set( array_keys( $totals['lines'] ) );
 		dm_redirect( dm_url( 'cart' ) );
 	}
-	if ( $totals['total'] > 0 && 'razorpay' === dm_opt( 'gateway' ) && ! dm_rzp_ready() ) {
+	if ( $totals['total'] > 0 && ( ( 'razorpay' === dm_opt( 'gateway' ) && ! dm_rzp_ready() ) || ( 'cashfree' === dm_opt( 'gateway' ) && ! dm_cf_ready() ) ) ) {
 		dm_flash( 'error', __( 'Payments are not configured yet. Please try again later.', 'digimarket' ) );
 		dm_redirect( dm_url( 'checkout' ) );
+	}
+	// Cashfree needs the buyer's mobile number.
+	if ( $totals['total'] > 0 && 'cashfree' === dm_opt( 'gateway' ) && ! dm_cf_phone( $uid ) ) {
+		$phone = preg_replace( '/\D/', '', (string) wp_unslash( $_POST['phone'] ?? '' ) );
+		update_user_meta( $uid, 'dm_phone', $phone );
+		if ( ! dm_cf_phone( $uid ) ) {
+			dm_flash( 'error', __( 'Please enter a valid 10-digit mobile number for payment.', 'digimarket' ) );
+			dm_redirect( dm_url( 'checkout' ) );
+		}
 	}
 
 	$order_id = dm_create_order( $uid, $user, $totals );
@@ -217,6 +226,14 @@ function dm_do_place_order() {
 		}
 		global $wpdb;
 		$wpdb->update( dm_table( 'orders' ), array( 'razorpay_order_id' => $rzp['id'] ), array( 'id' => $order_id ) );
+	} elseif ( 'cashfree' === dm_opt( 'gateway' ) ) {
+		$cf = dm_cf_create_session( $order_id );
+		if ( is_wp_error( $cf ) ) {
+			global $wpdb;
+			$wpdb->update( dm_table( 'orders' ), array( 'payment_status' => 'failed', 'note' => $cf->get_error_message() ), array( 'id' => $order_id ) );
+			dm_flash( 'error', 'phone' === $cf->get_error_code() ? $cf->get_error_message() : __( 'The payment gateway is unavailable right now. Please try again in a moment.', 'digimarket' ) );
+			dm_redirect( dm_url( 'checkout' ) );
+		}
 	}
 	dm_redirect( dm_url( 'checkout', 'pay', $order_id ) );
 }
@@ -363,6 +380,17 @@ function dm_do_retry_payment() {
 		if ( ! is_wp_error( $rzp ) ) {
 			$wpdb->update( dm_table( 'orders' ), array( 'razorpay_order_id' => $rzp['id'] ), array( 'id' => $order->id ) );
 		}
+	} elseif ( 'cashfree' === $order->gateway && dm_cf_configured() ) {
+		// A failed Cashfree order may already have been paid (late webhook) — check first.
+		if ( 'paid' === dm_cf_confirm( dm_get_order( $order->id ) ) ) {
+			dm_cart_set( array() );
+			dm_cart_set_coupon( '' );
+			dm_redirect( dm_url( 'order-received', $order->id ) );
+		}
+		$cf = dm_cf_create_session( $order->id );
+		if ( is_wp_error( $cf ) ) {
+			dm_flash( 'error', $cf->get_error_message() );
+		}
 	}
 	dm_redirect( dm_url( 'checkout', 'pay', $order->id ) );
 }
@@ -421,6 +449,12 @@ function dm_fulfill_order( $order_id, $payment_id ) {
 	if ( $order->coupon_code ) {
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . dm_table( 'coupons' ) . ' SET times_used = times_used + 1 WHERE code = %s', $order->coupon_code ) );
 	}
+	// Paid products leave the buyer's saved cart, even when the payment was
+	// confirmed by a webhook while the buyer was away.
+	$cart = get_user_meta( $order->buyer_id, 'dm_cart', true );
+	if ( is_array( $cart ) && $cart ) {
+		update_user_meta( $order->buyer_id, 'dm_cart', array_values( array_diff( array_map( 'absint', $cart ), array_map( 'absint', wp_list_pluck( $items, 'product_id' ) ) ) ) );
+	}
 	dm_process_transfers( $order_id );
 	dm_notify( $order->buyer_id, sprintf( /* translators: %s order */ __( 'Order %s confirmed — your downloads are ready.', 'digimarket' ), dm_order_number( $order_id ) ), dm_url( 'account', 'purchases' ) );
 	dm_email_order_confirmation( $order_id );
@@ -478,6 +512,16 @@ function dm_process_transfers( $order_id ) {
 		return;
 	}
 	$items = array_merge( ...array_values( $by_seller ) );
+
+	// Cashfree: automatic seller split (Easy Split) is not connected yet — the
+	// seller's share stays pending for a manual payout from Marketplace → Payouts.
+	if ( 'cashfree' === $order->gateway ) {
+		foreach ( $items as $it ) {
+			$wpdb->update( dm_table( 'order_items' ), array( 'transfer_status' => 'pending', 'transfer_note' => 'Manual payout (Cashfree split not enabled)' ), array( 'id' => $it->id ) );
+			$wpdb->update( dm_table( 'payouts' ), array( 'status' => 'pending', 'note' => 'Manual payout (Cashfree split not enabled)' ), array( 'order_item_id' => $it->id ) );
+		}
+		return;
+	}
 
 	// Demo / non-Razorpay: simulate an instant transfer so dashboards reflect the split.
 	if ( ! in_array( $order->gateway, array( 'razorpay' ), true ) ) {
@@ -554,6 +598,12 @@ function dm_refund_item( $item_id, $reason = '' ) {
 		return new WP_Error( 'state', __( 'Only paid items can be refunded.', 'digimarket' ) );
 	}
 	$order = dm_get_order( $item->order_id );
+	if ( 'cashfree' === $order->gateway && $item->price_at_purchase > 0 ) {
+		$ref = dm_cf_refund_item( $item, $order, $reason );
+		if ( is_wp_error( $ref ) ) {
+			return $ref;
+		}
+	}
 	if ( 'razorpay' === $order->gateway && $item->price_at_purchase > 0 ) {
 		if ( ! dm_rzp_ready() ) {
 			return new WP_Error( 'rzp', __( 'Razorpay is not configured.', 'digimarket' ) );

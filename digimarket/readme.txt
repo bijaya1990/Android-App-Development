@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.5.0
+Stable tag: 2.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,15 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.6.0 =
+* New payment gateway: Cashfree Payments. Choose Demo / Razorpay / Cashfree in Marketplace → Settings (one active at a time). Sandbox and Production environments.
+* Cashfree flow: order + payment session, Cashfree checkout, verification with Cashfree's API when the buyer returns, signed webhook (HMAC-SHA256) as a safety net, retry, and refunds. Amount mismatches are never fulfilled.
+* Refunds always go through the gateway that took the payment, even after switching gateways.
+* Checkout asks for a 10-digit mobile number when Cashfree is active and none is saved.
+* Paid products are removed from the buyer's saved cart even when a webhook confirms the payment.
+* Settings no longer print saved secret keys into the page (leave blank to keep).
+* With Cashfree, other sellers' shares stay pending for manual payout (automatic split needs Cashfree Easy Split approval).
 
 = 2.5.0 =
 * Marketplace payouts: while the GST switch is ON, GST (default 18%, editable on the GST page) is charged on the platform commission and deducted from the seller's share; while OFF, only the commission is deducted. Shown in seller orders, admin transactions and CSV exports.

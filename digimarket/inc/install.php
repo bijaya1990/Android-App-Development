@@ -38,6 +38,7 @@ function dm_install() {
   gateway varchar(32) NOT NULL DEFAULT '',
   razorpay_order_id varchar(64) NOT NULL DEFAULT '',
   razorpay_payment_id varchar(64) NOT NULL DEFAULT '',
+  pay_session varchar(255) NOT NULL DEFAULT '',
   disputed tinyint(1) NOT NULL DEFAULT 0,
   note text NULL,
   ip varchar(64) NOT NULL DEFAULT '',

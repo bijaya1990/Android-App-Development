@@ -7,6 +7,11 @@
 
 $dm_uid = get_current_user_id();
 
+/* ---------- Back from Cashfree checkout ---------- */
+if ( 'cf-return' === dm_tab() ) {
+	dm_cf_handle_return( absint( dm_route_id() ) );
+}
+
 /* ---------- Payment step ---------- */
 if ( 'pay' === dm_tab() ) {
 	$dm_order = dm_get_order( absint( dm_route_id() ) );
@@ -19,6 +24,14 @@ if ( 'pay' === dm_tab() ) {
 	$dm_items = dm_get_order_items( $dm_order->id );
 	if ( 'razorpay' === $dm_order->gateway ) {
 		wp_enqueue_script( 'razorpay-checkout', 'https://checkout.razorpay.com/v1/checkout.js', array(), null, true ); // phpcs:ignore
+	} elseif ( 'cashfree' === $dm_order->gateway ) {
+		// A late webhook may already have confirmed this order.
+		if ( 'pending' === $dm_order->payment_status && 'paid' === dm_cf_confirm( $dm_order ) ) {
+			dm_cart_set( array() );
+			dm_cart_set_coupon( '' );
+			dm_redirect( dm_url( 'order-received', $dm_order->id ) );
+		}
+		wp_enqueue_script( 'cashfree-checkout', 'https://sdk.cashfree.com/js/v3/cashfree.js', array(), null, true ); // phpcs:ignore
 	}
 	get_header();
 	?>
@@ -50,6 +63,13 @@ if ( 'pay' === dm_tab() ) {
 				?>
 				<button class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" id="dm-rzp-pay" data-config="<?php echo esc_attr( wp_json_encode( $dm_cfg ) ); ?>"><?php esc_html_e( 'Pay securely with Razorpay', 'digimarket' ); ?></button>
 				<div class="dm-pay-status" id="dm-pay-status" role="status" aria-live="polite"></div>
+			<?php elseif ( 'cashfree' === $dm_order->gateway ) : ?>
+				<?php if ( $dm_order->pay_session ) : ?>
+					<button class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" id="dm-cf-pay" data-session="<?php echo esc_attr( $dm_order->pay_session ); ?>" data-mode="<?php echo esc_attr( dm_cf_mode() ); ?>"><?php esc_html_e( 'Pay securely with Cashfree', 'digimarket' ); ?></button>
+				<?php else : ?>
+					<form method="post"><?php dm_nonce_field( 'retry_payment' ); ?><input type="hidden" name="order_id" value="<?php echo (int) $dm_order->id; ?>"><button class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block"><?php esc_html_e( 'Continue to payment', 'digimarket' ); ?></button></form>
+				<?php endif; ?>
+				<div class="dm-pay-status" id="dm-pay-status" role="status" aria-live="polite"></div>
 			<?php else : ?>
 				<div class="dm-notice dm-notice-info"><?php esc_html_e( 'Demo payment mode: no real money is charged. The site admin must connect Razorpay before launch.', 'digimarket' ); ?></div>
 				<form method="post"><?php dm_nonce_field( 'demo_pay' ); ?><input type="hidden" name="order_id" value="<?php echo (int) $dm_order->id; ?>">
@@ -57,7 +77,7 @@ if ( 'pay' === dm_tab() ) {
 					<button class="dm-btn dm-btn-ghost dm-btn-block" name="simulate_fail" value="1"><?php esc_html_e( 'Simulate a failed payment', 'digimarket' ); ?></button>
 				</form>
 			<?php endif; ?>
-			<p class="dm-secure">🔒 <?php esc_html_e( 'Payments are processed by Razorpay. We never see or store your card details.', 'digimarket' ); ?></p>
+			<p class="dm-secure">🔒 <?php echo esc_html( 'cashfree' === $dm_order->gateway ? __( 'Payments are processed by Cashfree Payments. We never see or store your card details.', 'digimarket' ) : __( 'Payments are processed by Razorpay. We never see or store your card details.', 'digimarket' ) ); ?></p>
 		</div>
 	</div>
 	<?php
@@ -103,6 +123,9 @@ $dm_user = wp_get_current_user();
 			</dl>
 			<form method="post">
 				<?php dm_nonce_field( 'place_order' ); ?>
+				<?php if ( $dm_t['total'] > 0 && 'cashfree' === dm_opt( 'gateway' ) && ! dm_cf_phone( $dm_uid ) ) : ?>
+					<label><?php esc_html_e( 'Mobile number (for payment)', 'digimarket' ); ?> *<input type="tel" name="phone" required inputmode="numeric" maxlength="13" pattern="(\+?91)?[6-9][0-9]{9}" placeholder="98XXXXXXXX" autocomplete="tel"></label>
+				<?php endif; ?>
 				<label class="dm-check"><input type="checkbox" name="agree" value="1" required> <span><?php echo wp_kses_post( sprintf( /* translators: 1 terms 2 refund */ __( 'I agree to the <a href="%1$s" target="_blank">Terms</a> and <a href="%2$s" target="_blank">Refund Policy</a>.', 'digimarket' ), esc_url( dm_legal_url( 'terms' ) ), esc_url( dm_legal_url( 'refund' ) ) ) ); ?></span></label>
 				<button class="dm-btn dm-btn-primary dm-btn-lg dm-btn-block" type="submit"><?php echo $dm_t['total'] > 0 ? esc_html__( 'Continue to payment', 'digimarket' ) : esc_html__( 'Get it free', 'digimarket' ); ?></button>
 			</form>

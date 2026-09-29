@@ -25,6 +25,9 @@ function dm_default_settings() {
 		'rzp_webhook_secret'     => '',
 		'rzp_profile_category'   => 'ecommerce',
 		'rzp_profile_subcategory'=> 'digital_goods',
+		'cf_app_id'              => '',
+		'cf_secret'              => '',
+		'cf_env'                 => 'sandbox',
 		'allow_sales_without_kyc'=> 0,
 		'admin_2fa'              => 0,
 		'admin_idle_minutes'     => 30,
@@ -325,7 +328,7 @@ function dm_can_purchase( $pid ) {
 	if ( 'active' !== dm_seller_status( $seller ) && ! user_can( $seller, 'manage_options' ) ) {
 		return array( false, __( 'This shop is not accepting orders right now.', 'digimarket' ) );
 	}
-	if ( 'razorpay' === dm_opt( 'gateway' ) && dm_product_price( $pid ) > 0 && ! dm_opt( 'allow_sales_without_kyc' ) && ! user_can( $seller, 'manage_options' ) ) {
+	if ( in_array( dm_opt( 'gateway' ), array( 'razorpay', 'cashfree' ), true ) && dm_product_price( $pid ) > 0 && ! dm_opt( 'allow_sales_without_kyc' ) && ! user_can( $seller, 'manage_options' ) ) {
 		if ( 'verified' !== get_user_meta( $seller, 'dm_kyc_status', true ) || ! get_user_meta( $seller, 'dm_rzp_account_id', true ) ) {
 			return array( false, __( 'This seller is completing payout verification. Purchases open soon.', 'digimarket' ) );
 		}

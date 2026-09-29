@@ -11,8 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DM_VERSION', '2.5.0' );
-define( 'DM_DB_VERSION', '2.5.0' );
+define( 'DM_VERSION', '2.6.0' );
+define( 'DM_DB_VERSION', '2.6.0' );
 define( 'DM_DIR', get_template_directory() );
 define( 'DM_URI', get_template_directory_uri() );
 
@@ -27,6 +27,7 @@ $dm_includes = array(
 	'seller',
 	'cart',
 	'payments',
+	'cashfree',
 	'delivery',
 	'reviews',
 	'buyer',
