@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.1.2
+Version: 2.1.3
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -539,8 +539,8 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -.015em; }
 .dm-btn-cart:hover { background: #f5a300; }
 .dm-btn-buy { background: var(--dm-buy); color: #fff; }
 .dm-btn-buy:hover { background: #9A3412; }
-.dm-btn-light { background: #fff; color: var(--dm-ink); }
-.dm-btn-light:hover { background: #f3f3ff; }
+.dm-btn-light, .dm-ft a.dm-btn-light, .dm-ft a.dm-btn-light:hover { background: #fff; color: #1E1B4B; }
+.dm-btn-light:hover, .dm-ft a.dm-btn-light:hover { background: #f3f3ff; color: #1E1B4B; }
 
 /* ==========================================================================
    Announcement bar
@@ -799,7 +799,7 @@ body.dm-noscroll { overflow: hidden; }
 .dm-pc-media img, .dm-pc-media .dm-thumb-placeholder { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; aspect-ratio: 1; min-height: 0; }
 .dm-pc:hover .dm-pc-media img { transform: scale(1.05); }
 .dm-pc-badges { position: absolute; left: 8px; top: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; z-index: 1; }
-.dm-badge2 { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .02em; padding: 3px 8px; border-radius: 6px; background: #fff; color: var(--dm-ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); line-height: 1.4; white-space: nowrap; }
+.dm-badge2 { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .02em; padding: 3px 8px; border-radius: 6px; background: #fff; color: #1E1B4B; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); line-height: 1.4; white-space: nowrap; }
 .dm-badge2.is-off { background: var(--dm-off); color: #fff; }
 .dm-badge2.is-service { background: #EEF2FF; color: #3F2BE0; }
 .dm-badge2.is-partner { background: #FFF7ED; color: #C2410C; }
@@ -1235,7 +1235,7 @@ body.dm-noscroll { overflow: hidden; }
 .dm-show-card .dm-btn { transition: transform .2s; }
 
 /* Landing hero */
-.dm-lp-hero { position: relative; display: flex; align-items: flex-end; min-height: 420px; padding: 18px 0 34px; color: #fff; isolation: isolate; overflow: hidden; background: var(--dm-ink); }
+.dm-lp-hero { position: relative; display: flex; align-items: flex-end; min-height: 420px; padding: 18px 0 34px; color: #fff; isolation: isolate; overflow: hidden; background: #1E1B4B; }
 @media (min-width: 900px) { .dm-lp-hero { min-height: 460px; } }
 .dm-lp-hero > .dm-fade { position: absolute; inset: 0; aspect-ratio: auto; z-index: -2; }
 .dm-lp-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(30, 27, 75, .96), rgba(30, 27, 75, .82) 55%, rgba(30, 27, 75, .5)); }

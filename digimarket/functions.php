@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DM_VERSION', '2.1.2' );
+define( 'DM_VERSION', '2.1.3' );
 define( 'DM_DB_VERSION', '2.1.2' );
 define( 'DM_DIR', get_template_directory() );
 define( 'DM_URI', get_template_directory_uri() );

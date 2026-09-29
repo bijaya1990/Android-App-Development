@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.1.3 =
+* Fixed white text on white buttons: "Become a seller" in the footer, and white buttons/badges in dark mode.
 
 = 2.1.2 =
 * "Featured on homepage" now works: only featured services appear in the big Website services band (untick to remove it); featured products are pinned first in New arrivals.
