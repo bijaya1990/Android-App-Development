@@ -66,11 +66,11 @@ add_action( 'add_meta_boxes_dm_portfolio', function () {
 		$mob = (int) $g( 'mobile' );
 		echo '<table class="form-table">';
 		echo '<tr><th>' . esc_html__( 'Live demo URL', 'digimarket' ) . '</th><td><input type="url" class="large-text" name="pf[url]" value="' . esc_attr( $g( 'url' ) ) . '" placeholder="https://"></td></tr>';
-		echo '<tr><th>' . esc_html__( 'Kind', 'digimarket' ) . '</th><td><select name="pf[kind]"><option value="client"' . selected( $g( 'kind' ), 'client', false ) . '>' . esc_html__( 'Client work', 'digimarket' ) . '</option><option value="demo"' . selected( $g( 'kind' ), 'demo', false ) . '>' . esc_html__( 'Demo / sample site', 'digimarket' ) . '</option></select><p class="description">' . esc_html__( 'Shown as a label so visitors know what is real client work.', 'digimarket' ) . '</p></td></tr>';
+		echo '<tr><th>' . esc_html__( 'Kind', 'digimarket' ) . '</th><td><select name="pf[kind]"><option value="demo"' . selected( 'client' !== $g( 'kind' ), true, false ) . '>' . esc_html__( 'Sample design', 'digimarket' ) . '</option><option value="client"' . selected( $g( 'kind' ), 'client', false ) . '>' . esc_html__( 'Real client project', 'digimarket' ) . '</option></select><p class="description">' . esc_html__( 'Choose “Real client project” only for websites you actually delivered to a client. Everything else is labelled “Sample”.', 'digimarket' ) . '</p></td></tr>';
 		echo '<tr><th>' . esc_html__( 'Client type', 'digimarket' ) . '</th><td><input type="text" class="regular-text" name="pf[client]" value="' . esc_attr( $g( 'client' ) ) . '" placeholder="' . esc_attr__( 'School, Puja committee, Café…', 'digimarket' ) . '"></td></tr>';
 		echo '<tr><th>' . esc_html__( 'Related service', 'digimarket' ) . '</th><td><select name="pf[service]">' . dm_service_options( $g( 'service' ) ) . '</select><p class="description">' . esc_html__( 'The item appears on that service’s page.', 'digimarket' ) . '</p></td></tr>'; // phpcs:ignore
 		echo '<tr><th>' . esc_html__( 'Mobile screenshot', 'digimarket' ) . '</th><td><input type="number" min="0" id="pf_mobile" name="pf[mobile]" value="' . esc_attr( $mob ) . '" style="width:90px"> <button type="button" class="button dm-media-pick" data-target="pf_mobile">' . esc_html__( 'Choose image', 'digimarket' ) . '</button> <span class="dm-media-preview" id="pf_mobile_prev">' . ( $mob ? wp_get_attachment_image( $mob, array( 60, 100 ) ) : '' ) . '</span><p class="description">' . esc_html__( 'Desktop screenshot = Featured image.', 'digimarket' ) . '</p></td></tr>';
-		foreach ( array( 'problem' => __( 'The problem', 'digimarket' ), 'built' => __( 'What we built', 'digimarket' ), 'result' => __( 'The result', 'digimarket' ) ) as $k => $l ) {
+		foreach ( array( 'problem' => __( 'Who it is for', 'digimarket' ), 'built' => __( 'What the website includes', 'digimarket' ), 'result' => __( 'How it helps', 'digimarket' ) ) as $k => $l ) {
 			echo '<tr><th>' . esc_html( $l ) . '</th><td><textarea class="large-text" rows="3" name="pf[' . esc_attr( $k ) . ']">' . esc_textarea( $g( $k ) ) . '</textarea></td></tr>';
 		}
 		echo '</table>';
@@ -161,13 +161,14 @@ function dm_portfolio_card( $p ) {
 	$cli  = get_post_meta( $p->ID, '_dm_pf_client', true );
 	echo '<article class="dm-pf-card"><a class="dm-pf-media" href="' . esc_url( get_permalink( $p ) ) . '">';
 	echo has_post_thumbnail( $p ) ? get_the_post_thumbnail( $p, 'dm-card', array( 'loading' => 'lazy' ) ) : '<span class="dm-thumb-placeholder"><span>' . esc_html( mb_substr( $p->post_title, 0, 1 ) ) . '</span></span>';
-	echo '<span class="dm-pf-kind' . ( 'demo' === $kind ? ' is-demo' : '' ) . '">' . ( 'demo' === $kind ? esc_html__( 'Demo', 'digimarket' ) : esc_html__( 'Client work', 'digimarket' ) ) . '</span></a>';
+	$real = 'client' === $kind;
+	echo '<span class="dm-pf-kind' . ( $real ? '' : ' is-demo' ) . '">' . ( $real ? esc_html__( 'Client project', 'digimarket' ) : esc_html__( 'Sample', 'digimarket' ) ) . '</span></a>';
 	echo '<div class="dm-pf-body"><h3><a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( $p->post_title ) . '</a></h3>';
 	if ( $cli ) {
 		echo '<p class="dm-muted">' . esc_html( $cli ) . '</p>';
 	}
 	if ( $url ) {
-		echo '<a class="dm-pf-live" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html__( 'View live site', 'digimarket' ) . ' ' . dm_icon( 'external', 14 ) . '</a>'; // phpcs:ignore
+		echo '<a class="dm-pf-live" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . ( 'client' === $kind ? esc_html__( 'View live site', 'digimarket' ) : esc_html__( 'View sample', 'digimarket' ) ) . ' ' . dm_icon( 'external', 14 ) . '</a>'; // phpcs:ignore
 	}
 	echo '</div></article>';
 }

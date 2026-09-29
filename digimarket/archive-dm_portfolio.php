@@ -11,8 +11,8 @@ get_header();
 	<?php dm_render_breadcrumbs(); ?>
 	<header class="dm-cat-head">
 		<div>
-			<h1><?php esc_html_e( 'Our work', 'digimarket' ); ?></h1>
-			<p class="dm-muted"><?php esc_html_e( 'Websites we have built for schools, committees, shops and cafés. Open any live demo to see it for yourself.', 'digimarket' ); ?></p>
+			<h1><?php esc_html_e( 'Sample websites', 'digimarket' ); ?></h1>
+			<p class="dm-muted"><?php esc_html_e( 'Sample website designs for schools, committees, shops and cafés. Pick a style you like — we build yours with your own name, photos and content.', 'digimarket' ); ?></p>
 		</div>
 	</header>
 	<?php if ( have_posts() ) : ?>

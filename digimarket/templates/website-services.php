@@ -102,7 +102,7 @@ $dm_email = dm_store_opt( 'business_email' ) ? dm_store_opt( 'business_email' ) 
 
 		<?php $dm_pf = dm_get_portfolio( 0, 6 ); ?>
 		<?php if ( $dm_pf ) : ?>
-			<section class="dm-lp-sec"><div class="dm-lp-head"><h2><?php esc_html_e( 'Websites we have built', 'digimarket' ); ?></h2><a class="dm-more" href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php esc_html_e( 'All work', 'digimarket' ); ?> <?php echo dm_icon( 'arrow', 16 ); // phpcs:ignore ?></a></div><div class="dm-pf-grid"><?php foreach ( $dm_pf as $dm_p ) { dm_portfolio_card( $dm_p ); } ?></div></section>
+			<section class="dm-lp-sec"><div class="dm-lp-head"><h2><?php esc_html_e( 'Sample websites you can get', 'digimarket' ); ?></h2><a class="dm-more" href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php esc_html_e( 'See all samples', 'digimarket' ); ?> <?php echo dm_icon( 'arrow', 16 ); // phpcs:ignore ?></a></div><div class="dm-pf-grid"><?php foreach ( $dm_pf as $dm_p ) { dm_portfolio_card( $dm_p ); } ?></div></section>
 		<?php endif; ?>
 
 		<div class="dm-lp-sec"><?php dm_render_faq( dm_parse_pairs( dm_store_opt( 'default_faq' ) ) ); ?></div>

@@ -55,8 +55,6 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 		</form>
 
 		<nav class="dm-hd-actions" aria-label="<?php esc_attr_e( 'Account', 'digimarket' ); ?>">
-			<?php if ( isset( $dm_lp['website-services'] ) ) : ?><a class="dm-hd-textlink dm-hide-sm" href="<?php echo esc_url( dm_url( 'website-services' ) ); ?>"<?php echo 'website-services' === dm_route() ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $dm_lp['website-services'] ); ?></a><?php endif; ?>
-			<?php if ( dm_store_opt( 'articles_show' ) ) : ?><a class="dm-hd-textlink dm-hide-sm" href="<?php echo esc_url( dm_articles_url() ); ?>"><?php echo esc_html( dm_store_opt( 'articles_label' ) ); ?></a><?php endif; ?>
 			<button class="dm-icon-btn dm-mode-toggle dm-hide-sm" aria-label="<?php esc_attr_e( 'Toggle dark mode', 'digimarket' ); ?>"><span class="dm-sun"><?php echo dm_icon( 'sun', 20 ); // phpcs:ignore ?></span><span class="dm-moon"><?php echo dm_icon( 'moon', 20 ); // phpcs:ignore ?></span></button>
 			<?php if ( $dm_uid ) : ?>
 				<?php $dm_unread = dm_unread_notifications( $dm_uid ); ?>
@@ -92,18 +90,32 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 			<?php endif; ?>
 		</nav>
 	</div>
-	<?php if ( ! is_front_page() ) : ?>
-	<nav class="dm-hd-nav" aria-label="<?php esc_attr_e( 'Categories', 'digimarket' ); ?>">
-		<div class="dm-container dm-hd-nav-track">
-			<?php foreach ( array_slice( $dm_cats, 0, 9 ) as $dm_cat ) : ?>
-				<a href="<?php echo esc_url( get_term_link( $dm_cat ) ); ?>"<?php echo ( is_tax( 'dm_category', $dm_cat->term_id ) ) ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $dm_cat->name ); ?></a>
-			<?php endforeach; ?>
-			<?php if ( dm_sale_product_ids( 1 ) ) : ?><a class="is-sale" href="<?php echo esc_url( dm_url( 'sale' ) ); ?>"><?php esc_html_e( 'Sale', 'digimarket' ); ?></a><?php endif; ?>
-			<?php foreach ( $dm_lp as $dm_r => $dm_n ) : ?><a class="is-lp" href="<?php echo esc_url( dm_url( $dm_r ) ); ?>"<?php echo dm_route() === $dm_r ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $dm_n ); ?></a><?php endforeach; ?>
-			<?php foreach ( $dm_links as $dm_l ) : ?><a href="<?php echo esc_url( $dm_l[1] ); ?>"><?php echo esc_html( $dm_l[0] ); ?></a><?php endforeach; ?>
+	<nav class="dm-hd-nav" aria-label="<?php esc_attr_e( 'Main', 'digimarket' ); ?>">
+		<div class="dm-container dm-hd-nav-in">
+			<div class="dm-hd-links">
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>"<?php echo is_front_page() ? ' aria-current="page"' : ''; ?>><?php esc_html_e( 'Home', 'digimarket' ); ?></a>
+				<a href="<?php echo esc_url( dm_products_url() ); ?>"<?php echo is_post_type_archive( 'dm_product' ) ? ' aria-current="page"' : ''; ?>><?php esc_html_e( 'Shop', 'digimarket' ); ?></a>
+				<div class="dm-cat-menu">
+					<button type="button" class="dm-cat-toggle" aria-haspopup="true" aria-expanded="false"><?php esc_html_e( 'Categories', 'digimarket' ); ?> <?php echo dm_icon( 'chev-d', 16 ); // phpcs:ignore ?></button>
+					<div class="dm-dropdown dm-cat-dd" role="menu">
+						<?php foreach ( $dm_cats as $dm_i => $dm_cat ) : ?>
+							<a role="menuitem" href="<?php echo esc_url( get_term_link( $dm_cat ) ); ?>"><?php echo dm_category_icon_html( $dm_cat, $dm_i ); // phpcs:ignore ?> <?php echo esc_html( $dm_cat->name ); ?></a>
+						<?php endforeach; ?>
+						<a role="menuitem" class="dm-dropdown-all" href="<?php echo esc_url( dm_products_url() ); ?>"><?php esc_html_e( 'All products', 'digimarket' ); ?></a>
+					</div>
+				</div>
+				<?php if ( dm_sale_product_ids( 1 ) ) : ?><a class="is-sale" href="<?php echo esc_url( dm_url( 'sale' ) ); ?>"<?php echo 'sale' === dm_route() ? ' aria-current="page"' : ''; ?>><?php esc_html_e( 'Offers', 'digimarket' ); ?></a><?php endif; ?>
+				<?php foreach ( $dm_lp as $dm_r => $dm_n ) : ?><a href="<?php echo esc_url( dm_url( $dm_r ) ); ?>"<?php echo dm_route() === $dm_r ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $dm_n ); ?></a><?php endforeach; ?>
+				<?php if ( dm_store_opt( 'articles_show' ) ) : ?><a href="<?php echo esc_url( dm_articles_url() ); ?>"<?php echo 'articles' === dm_route() || is_singular( 'post' ) ? ' aria-current="page"' : ''; ?>><?php echo esc_html( dm_store_opt( 'articles_label' ) ); ?></a><?php endif; ?>
+				<a href="<?php echo esc_url( dm_legal_url( 'contact' ) ); ?>"><?php esc_html_e( 'Contact', 'digimarket' ); ?></a>
+				<?php foreach ( $dm_links as $dm_l ) : ?><a href="<?php echo esc_url( $dm_l[1] ); ?>"><?php echo esc_html( $dm_l[0] ); ?></a><?php endforeach; ?>
+			</div>
+			<ul class="dm-hd-trust" aria-label="<?php esc_attr_e( 'Why shop with us', 'digimarket' ); ?>">
+				<li><?php echo dm_icon( 'shield', 22 ); // phpcs:ignore ?><span><strong><?php esc_html_e( '100% secure payments', 'digimarket' ); ?></strong><small><?php esc_html_e( 'UPI · Cards · Netbanking', 'digimarket' ); ?></small></span></li>
+				<li><?php echo dm_icon( 'bolt', 22 ); // phpcs:ignore ?><span><strong><?php esc_html_e( 'Instant download', 'digimarket' ); ?></strong><small><?php esc_html_e( 'Right after payment', 'digimarket' ); ?></small></span></li>
+			</ul>
 		</div>
 	</nav>
-	<?php endif; ?>
 </header>
 
 <div class="dm-drawer" id="dm-drawer" hidden>
@@ -127,7 +139,7 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 			<?php endforeach; ?>
 			<div class="dm-drawer-label"><?php esc_html_e( 'More', 'digimarket' ); ?></div>
 			<?php if ( dm_store_opt( 'articles_show' ) ) : ?><a href="<?php echo esc_url( dm_articles_url() ); ?>"><?php echo dm_icon( 'book', 20 ); // phpcs:ignore ?> <?php echo esc_html( dm_store_opt( 'articles_label' ) ); ?></a><?php endif; ?>
-			<?php if ( post_type_exists( 'dm_portfolio' ) && wp_count_posts( 'dm_portfolio' )->publish ) : ?><a href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php echo dm_icon( 'layout', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Our work', 'digimarket' ); ?></a><?php endif; ?>
+			<?php if ( post_type_exists( 'dm_portfolio' ) && wp_count_posts( 'dm_portfolio' )->publish ) : ?><a href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php echo dm_icon( 'layout', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Sample websites', 'digimarket' ); ?></a><?php endif; ?>
 			<?php foreach ( $dm_links as $dm_l ) : ?><a href="<?php echo esc_url( $dm_l[1] ); ?>"><?php echo dm_icon( 'arrow', 20 ); // phpcs:ignore ?> <?php echo esc_html( $dm_l[0] ); ?></a><?php endforeach; ?>
 			<?php if ( $dm_uid ) : ?>
 				<a href="<?php echo esc_url( dm_url( 'account', 'purchases' ) ); ?>"><?php echo dm_icon( 'download', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'My purchases', 'digimarket' ); ?></a>

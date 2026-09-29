@@ -19,18 +19,18 @@ while ( have_posts() ) :
 		<?php dm_render_breadcrumbs(); ?>
 		<header class="dm-cat-head">
 			<div>
-				<span class="dm-pf-kind<?php echo 'demo' === $dm_kind ? ' is-demo' : ''; ?>"><?php echo 'demo' === $dm_kind ? esc_html__( 'Demo site', 'digimarket' ) : esc_html__( 'Client work', 'digimarket' ); ?></span>
+				<span class="dm-pf-kind<?php echo 'client' === $dm_kind ? '' : ' is-demo'; ?>"><?php echo 'client' === $dm_kind ? esc_html__( 'Client project', 'digimarket' ) : esc_html__( 'Sample design', 'digimarket' ); ?></span>
 				<h1><?php the_title(); ?></h1>
 				<?php if ( get_post_meta( $dm_id, '_dm_pf_client', true ) ) : ?><p class="dm-muted"><?php echo esc_html( get_post_meta( $dm_id, '_dm_pf_client', true ) ); ?></p><?php endif; ?>
 			</div>
-			<?php if ( $dm_url ) : ?><a class="dm-btn dm-btn-primary" href="<?php echo esc_url( $dm_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View live site', 'digimarket' ); ?> <?php echo dm_icon( 'external', 16 ); // phpcs:ignore ?></a><?php endif; ?>
+			<?php if ( $dm_url ) : ?><a class="dm-btn dm-btn-primary" href="<?php echo esc_url( $dm_url ); ?>" target="_blank" rel="noopener"><?php echo 'client' === $dm_kind ? esc_html__( 'View live site', 'digimarket' ) : esc_html__( 'View sample', 'digimarket' ); ?> <?php echo dm_icon( 'external', 16 ); // phpcs:ignore ?></a><?php endif; ?>
 		</header>
 		<div class="dm-pf-shots">
 			<?php if ( has_post_thumbnail() ) : ?><figure class="dm-pf-desk"><?php the_post_thumbnail( 'full', array( 'loading' => 'eager', 'fetchpriority' => 'high' ) ); ?></figure><?php endif; ?>
 			<?php if ( $dm_mob ) : ?><figure class="dm-pf-mob"><?php echo wp_get_attachment_image( $dm_mob, 'large' ); ?></figure><?php endif; ?>
 		</div>
 		<div class="dm-pf-case">
-			<?php foreach ( array( 'problem' => __( 'The problem', 'digimarket' ), 'built' => __( 'What we built', 'digimarket' ), 'result' => __( 'The result', 'digimarket' ) ) as $dm_k => $dm_l ) : ?>
+			<?php foreach ( array( 'problem' => __( 'Who it is for', 'digimarket' ), 'built' => __( 'What the website includes', 'digimarket' ), 'result' => __( 'How it helps', 'digimarket' ) ) as $dm_k => $dm_l ) : ?>
 				<?php $dm_v = get_post_meta( $dm_id, '_dm_pf_' . $dm_k, true ); ?>
 				<?php if ( $dm_v ) : ?><section><h2><?php echo esc_html( $dm_l ); ?></h2><p><?php echo nl2br( esc_html( $dm_v ) ); ?></p></section><?php endif; ?>
 			<?php endforeach; ?>

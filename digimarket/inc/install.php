@@ -355,6 +355,7 @@ function dm_install() {
 	}
 
 	dm_create_legal_pages();
+	dm_home_layout_migrate();
 
 	if ( ! get_option( 'permalink_structure' ) ) {
 		// Marketplace URLs (/cart/, /store/{shop}/) need pretty permalinks.

@@ -129,10 +129,10 @@ function dm_breadcrumb_trail() {
 		}
 		$trail[] = array( get_the_title(), get_permalink() );
 	} elseif ( is_singular( 'dm_portfolio' ) ) {
-		$trail[] = array( __( 'Our work', 'digimarket' ), get_post_type_archive_link( 'dm_portfolio' ) );
+		$trail[] = array( __( 'Sample websites', 'digimarket' ), get_post_type_archive_link( 'dm_portfolio' ) );
 		$trail[] = array( get_the_title(), get_permalink() );
 	} elseif ( is_post_type_archive( 'dm_portfolio' ) ) {
-		$trail[] = array( __( 'Our work', 'digimarket' ), get_post_type_archive_link( 'dm_portfolio' ) );
+		$trail[] = array( __( 'Sample websites', 'digimarket' ), get_post_type_archive_link( 'dm_portfolio' ) );
 	} elseif ( is_page() ) {
 		$trail[] = array( get_the_title(), get_permalink() );
 	} elseif ( 'articles' === dm_route() ) {
@@ -290,7 +290,7 @@ function dm_seo_description() {
 		return __( 'Helpful guides on websites for schools, committees and small businesses, plus study and career tips.', 'digimarket' );
 	}
 	if ( is_post_type_archive( 'dm_portfolio' ) ) {
-		return __( 'Websites we have built for schools, puja committees, shops and cafés — see live demos and what each client got.', 'digimarket' );
+		return __( 'Sample website designs for schools, puja committees, shops and cafés — see what your website can look like, with clear starting prices.', 'digimarket' );
 	}
 	if ( is_post_type_archive( 'dm_product' ) ) {
 		/* translators: %s site */

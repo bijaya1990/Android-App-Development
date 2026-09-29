@@ -67,7 +67,7 @@ $dm_route  = dm_route();
 					<li><a href="<?php echo esc_url( dm_legal_url( 'delivery' ) ); ?>"><?php esc_html_e( 'Shipping & delivery', 'digimarket' ); ?></a></li>
 					<li><a href="<?php echo esc_url( dm_legal_url( 'refund' ) ); ?>"><?php esc_html_e( 'Refund & cancellation', 'digimarket' ); ?></a></li>
 					<?php if ( dm_store_opt( 'articles_show' ) ) : ?><li><a href="<?php echo esc_url( dm_articles_url() ); ?>"><?php echo esc_html( dm_store_opt( 'articles_label' ) ); ?></a></li><?php endif; ?>
-					<?php if ( wp_count_posts( 'dm_portfolio' )->publish ) : ?><li><a href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php esc_html_e( 'Our work', 'digimarket' ); ?></a></li><?php endif; ?>
+					<?php if ( wp_count_posts( 'dm_portfolio' )->publish ) : ?><li><a href="<?php echo esc_url( get_post_type_archive_link( 'dm_portfolio' ) ); ?>"><?php esc_html_e( 'Sample websites', 'digimarket' ); ?></a></li><?php endif; ?>
 				</ul>
 			</div>
 			<div>

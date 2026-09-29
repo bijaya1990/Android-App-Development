@@ -14,19 +14,20 @@ defined( 'ABSPATH' ) || exit;
 
 function dm_home_block_defs() {
 	return array(
-		'categories' => __( 'Category icon row', 'digimarket' ),
 		'hero'       => __( 'Hero banner carousel', 'digimarket' ),
 		'landing'    => __( 'Website services & WordPress themes cards', 'digimarket' ),
+		'spotlight'  => __( 'Bestsellers + Shop by category + Limited time offer', 'digimarket' ),
 		'tiles'      => __( 'Offer tiles', 'digimarket' ),
 		'deals'      => __( 'Deals row (products on sale)', 'digimarket' ),
-		'sections'   => __( 'Category section boxes', 'digimarket' ),
 		'campaign'   => __( 'Campaign banner', 'digimarket' ),
 		'services'   => __( 'Website services band (featured services only)', 'digimarket' ),
-		'portfolio'  => __( 'Portfolio / our work', 'digimarket' ),
 		'new'        => __( 'New arrivals', 'digimarket' ),
-		'reviews'    => __( 'Testimonials', 'digimarket' ),
+		'sections'   => __( 'Category collections', 'digimarket' ),
+		'portfolio'  => __( 'Portfolio / our work', 'digimarket' ),
+		'reviews'    => __( 'What our customers say (reviews)', 'digimarket' ),
 		'trust'      => __( 'Trust strip', 'digimarket' ),
 		'content'    => __( 'Homepage page content', 'digimarket' ),
+		'categories' => __( 'Category icon row (top)', 'digimarket' ),
 	);
 }
 
@@ -34,7 +35,7 @@ function dm_store_defaults() {
 	$blocks = array();
 	$i      = 1;
 	foreach ( array_keys( dm_home_block_defs() ) as $k ) {
-		$blocks[ $k ] = array( 'on' => 1, 'order' => $i++ );
+		$blocks[ $k ] = array( 'on' => 'categories' === $k ? 0 : 1, 'order' => $i++ );
 	}
 	return array(
 		'blocks'            => $blocks,

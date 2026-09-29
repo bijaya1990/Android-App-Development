@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.1.3
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,20 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.4.0 =
+* New homepage layout like a professional store: main nav row (Home, Shop, Categories menu, Offers, Website Services, WordPress Themes, Articles, Contact) with trust points; Bestsellers panel + Shop by category + Limited time offer with Days/Hours/Mins/Secs countdown; uniform white panels; collections in equal boxes; "What our customers say" slider with real reviews and testimonials.
+* New arrivals show digital products only. Existing sites get the new block order once (your on/off choices are kept).
+* Portfolio is now labelled honestly: "Sample websites you can get", "Sample" badges and "View sample"; "Real client project" only when chosen. Existing items are marked as samples on upgrade.
+
+= 2.3.0 =
+* GST & tax: big GST ON/OFF switch (GST page, admin Overview, owner dashboard), store GSTIN/rate/state, financial-year turnover meter against the Rs 20 lakh limit, alerts by notification and email.
+* Per-seller "GST required" toggle: the seller gets an email and a dashboard pop-up, and purchases/publishing pause until a valid GSTIN is added. Optional seller GSTIN with "show on receipts".
+* Receipts: "Receipt" (GST not applicable) or "Tax Invoice" with taxable value and CGST/SGST; sellers download their own receipts from the new Receipts tab.
+* Seller welcome email after registration with the legal record (agreement acceptance, key terms, GST rule, grievance contact). Seller Agreement and Terms include the GST clauses.
+
+= 2.2.0 =
+* Launch-ready legal pages (Terms, Privacy, Refund & Cancellation, Shipping & Delivery, Contact, About, Affiliate, Content & IP, Seller Agreement) with business email, address and Grievance Officer; seller agreement pop-up before shop launch; account menu styling restored.
 
 = 2.1.3 =
 * Fixed white text on white buttons: "Become a seller" in the footer, and white buttons/badges in dark mode.

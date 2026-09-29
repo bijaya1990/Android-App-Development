@@ -201,7 +201,7 @@ while ( have_posts() ) :
 			$dm_tabs['packages'] = __( 'Packages', 'digimarket' );
 		}
 		if ( $dm_pf ) {
-			$dm_tabs['work'] = __( 'Our work', 'digimarket' );
+			$dm_tabs['work'] = __( 'Samples', 'digimarket' );
 		}
 		if ( $dm_faq ) {
 			$dm_tabs['faq'] = __( 'FAQ', 'digimarket' );
@@ -260,7 +260,7 @@ while ( have_posts() ) :
 				dm_render_process_steps();
 				echo '</section>';
 				if ( $dm_pf ) {
-					echo '<section class="dm-psec" id="work"><h2>' . esc_html__( 'Websites we have built', 'digimarket' ) . '</h2><div class="dm-pf-grid">';
+					echo '<section class="dm-psec" id="work"><h2>' . esc_html__( 'Sample websites you can get', 'digimarket' ) . '</h2><div class="dm-pf-grid">';
 					foreach ( $dm_pf as $dm_p ) {
 						dm_portfolio_card( $dm_p );
 					}

@@ -240,9 +240,10 @@ function dm_home_block_sections() {
 				'orderby'        => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ),
 			)
 		);
-		if ( ! $ids ) {
+		if ( count( $ids ) < 2 ) {
 			continue;
 		}
+		$ids  = array_slice( $ids, 0, 2 );
 		$g    = $grads[ $i % count( $grads ) ];
 		$done = true;
 		echo '<div class="dm-box dm-box-n' . count( $ids ) . '" style="--g1:' . esc_attr( $g[0] ) . ';--g2:' . esc_attr( $g[1] ) . '"><div class="dm-box-head"><h2>' . esc_html( sprintf( /* translators: %s */ __( 'Best of %s', 'digimarket' ), $t->name ) ) . '</h2><a class="dm-box-go" href="' . esc_url( get_term_link( $t ) ) . '" aria-label="' . esc_attr( sprintf( /* translators: %s */ __( 'See all %s', 'digimarket' ), $t->name ) ) . '">' . dm_icon( 'arrow', 18 ) . '</a></div><div class="dm-box-grid">'; // phpcs:ignore
@@ -294,32 +295,22 @@ function dm_home_block_portfolio() {
 	if ( ! $items ) {
 		return false;
 	}
-	echo '<section class="dm-block"><div class="dm-container"><div class="dm-block-head"><h2>' . esc_html__( 'Websites we have built', 'digimarket' ) . '</h2><a class="dm-more" href="' . esc_url( get_post_type_archive_link( 'dm_portfolio' ) ) . '">' . esc_html__( 'All work', 'digimarket' ) . ' ' . dm_icon( 'arrow', 16 ) . '</a></div><div class="dm-pf-grid">'; // phpcs:ignore
+	echo '<section class="dm-block"><div class="dm-container"><div class="dm-panel">';
+	dm_panel_head( __( 'Sample websites you can get', 'digimarket' ), get_post_type_archive_link( 'dm_portfolio' ), __( 'See all samples', 'digimarket' ) );
+	echo '<div class="dm-pf-grid">';
 	foreach ( $items as $p ) {
 		dm_portfolio_card( $p );
 	}
-	echo '</div></div></section>';
+	echo '</div></div></div></section>';
 	return true;
 }
 
 function dm_home_block_new() {
 	// Featured products are pinned first, then the newest.
-	$pin = dm_product_ids( array( 'posts_per_page' => 12, 'meta_key' => '_dm_featured', 'meta_value' => '1' ) );
-	$ids = array_slice( array_values( array_unique( array_merge( $pin, dm_product_ids( array( 'posts_per_page' => 12 ) ) ) ) ), 0, 12 );
+	// Digital products only — services have their own band and landing page.
+	$pin = dm_product_ids( array( 'posts_per_page' => 12, 'meta_query' => array( 'relation' => 'AND', array( 'key' => '_dm_featured', 'value' => '1' ), dm_digital_meta_query() ) ) ); // phpcs:ignore
+	$ids = array_slice( array_values( array_unique( array_merge( $pin, dm_product_ids( array( 'posts_per_page' => 12, 'meta_query' => dm_digital_meta_query() ) ) ) ) ), 0, 12 ); // phpcs:ignore
 	return dm_render_row( $ids, __( 'New arrivals', 'digimarket' ), dm_products_url( array( 'sort' => 'newest' ) ) );
-}
-
-function dm_home_block_reviews() {
-	$items = dm_get_testimonials( 0, 3 );
-	if ( ! $items ) {
-		return false;
-	}
-	echo '<section class="dm-block"><div class="dm-container"><div class="dm-block-head"><h2>' . esc_html__( 'What our clients say', 'digimarket' ) . '</h2></div><div class="dm-testi-grid">';
-	foreach ( $items as $t ) {
-		dm_testimonial_card( $t );
-	}
-	echo '</div></div></section>';
-	return true;
 }
 
 function dm_trust_items() {

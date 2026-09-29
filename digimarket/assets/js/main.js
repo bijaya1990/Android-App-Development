@@ -721,4 +721,20 @@
 		$$('[data-gst-open]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); dlg.showModal(); }); });
 		$$('[data-gst-close]', dlg).forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
 	})();
+	/* ---- Offer countdown boxes (Days / Hours / Mins / Secs) ---- */
+	$$('[data-cd]').forEach(function (box) {
+		var end = parseInt(box.getAttribute('data-cd'), 10) * 1000;
+		var el = { d: $('[data-cd-d]', box), h: $('[data-cd-h]', box), m: $('[data-cd-m]', box), s: $('[data-cd-s]', box) };
+		function pad(n) { return (n < 10 ? '0' : '') + n; }
+		function tick() {
+			var left = Math.max(0, Math.floor((end - Date.now()) / 1000));
+			el.d.textContent = pad(Math.floor(left / 86400));
+			el.h.textContent = pad(Math.floor(left % 86400 / 3600));
+			el.m.textContent = pad(Math.floor(left % 3600 / 60));
+			el.s.textContent = pad(left % 60);
+			if (!left) { clearInterval(t); }
+		}
+		tick();
+		var t = setInterval(tick, 1000);
+	});
 })();
