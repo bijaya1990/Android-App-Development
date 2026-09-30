@@ -34,6 +34,7 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 <?php wp_body_open(); ?>
 <a class="dm-skip" href="#dm-main"><?php esc_html_e( 'Skip to content', 'digimarket' ); ?></a>
 <?php dm_render_announcement(); ?>
+<?php dm_apply_render_bar(); ?>
 <header class="dm-hd" id="dm-header">
 	<div class="dm-container dm-hd-row">
 		<button class="dm-icon-btn dm-menu-toggle" aria-controls="dm-drawer" aria-expanded="false" aria-label="<?php esc_attr_e( 'Open menu', 'digimarket' ); ?>"><?php echo dm_icon( 'menu', 24 ); // phpcs:ignore ?></button>
@@ -109,9 +110,12 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 				<?php if ( dm_store_opt( 'articles_show' ) ) : ?><a href="<?php echo esc_url( dm_articles_url() ); ?>"<?php echo 'articles' === dm_route() || is_singular( 'post' ) ? ' aria-current="page"' : ''; ?>><?php echo esc_html( dm_store_opt( 'articles_label' ) ); ?></a><?php endif; ?>
 				<a href="<?php echo esc_url( dm_legal_url( 'contact' ) ); ?>"><?php esc_html_e( 'Contact', 'digimarket' ); ?></a>
 				<?php foreach ( $dm_links as $dm_l ) : ?><a href="<?php echo esc_url( $dm_l[1] ); ?>"><?php echo esc_html( $dm_l[0] ); ?></a><?php endforeach; ?>
+				<?php if ( dm_apply_open() && ! dm_is_seller() ) : ?><a class="dm-apply-pill" href="<?php echo esc_url( dm_apply_url() ); ?>" data-dm-apply><?php echo dm_icon( 'briefcase', 15 ); // phpcs:ignore ?> <?php esc_html_e( 'Sell on PikaCart', 'digimarket' ); ?></a><?php endif; ?>
 			</div>
 			<ul class="dm-hd-trust" aria-label="<?php esc_attr_e( 'Why shop with us', 'digimarket' ); ?>">
+				<?php if ( ! dm_apply_open() || dm_is_seller() ) : // The "Sell on PikaCart" pill takes this space while applications are open. ?>
 				<li><?php echo dm_icon( 'shield', 22 ); // phpcs:ignore ?><span><strong><?php esc_html_e( '100% secure payments', 'digimarket' ); ?></strong><small><?php esc_html_e( 'UPI · Cards · Netbanking', 'digimarket' ); ?></small></span></li>
+				<?php endif; ?>
 				<li><?php echo dm_icon( 'bolt', 22 ); // phpcs:ignore ?><span><strong><?php esc_html_e( 'Instant download', 'digimarket' ); ?></strong><small><?php esc_html_e( 'Right after payment', 'digimarket' ); ?></small></span></li>
 			</ul>
 		</div>
@@ -148,7 +152,8 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 			<?php if ( has_nav_menu( 'primary' ) ) : ?>
 				<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'depth' => 1 ) ); ?>
 			<?php endif; ?>
-			<?php if ( ! dm_single_seller_mode() ) : ?><a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php echo dm_icon( 'briefcase', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a><?php endif; ?>
+			<?php if ( dm_apply_open() && ! dm_is_seller() ) : ?><a class="dm-drawer-apply" href="<?php echo esc_url( dm_apply_url() ); ?>" data-dm-apply><?php echo dm_icon( 'briefcase', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Apply to sell on PikaCart', 'digimarket' ); ?></a>
+			<?php elseif ( ! dm_single_seller_mode() ) : ?><a href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php echo dm_icon( 'briefcase', 20 ); // phpcs:ignore ?> <?php esc_html_e( 'Become a seller', 'digimarket' ); ?></a><?php endif; ?>
 			<button class="dm-drawer-mode dm-mode-toggle" type="button"><span class="dm-sun"><?php echo dm_icon( 'sun', 20 ); // phpcs:ignore ?></span><span class="dm-moon"><?php echo dm_icon( 'moon', 20 ); // phpcs:ignore ?></span> <?php esc_html_e( 'Dark mode', 'digimarket' ); ?></button>
 		</nav>
 	</div>

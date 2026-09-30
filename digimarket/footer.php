@@ -12,7 +12,16 @@ $dm_route  = dm_route();
 </main>
 <footer class="dm-ft">
 	<div class="dm-container">
-		<?php if ( ! dm_single_seller_mode() ) : ?>
+		<?php if ( dm_apply_open() && ! dm_is_seller() ) : ?>
+			<div class="dm-ft-cta dm-ft-apply">
+				<div>
+					<span class="dm-ft-kicker"><?php echo esc_html( dm_apply_batch_label( dm_apply_opt( 'batch' ) ) . ' · ' . dm_apply_opt( 'headline' ) ); ?></span>
+					<h2><?php esc_html_e( 'Sell your ebooks, themes, courses & designs on PikaCart', 'digimarket' ); ?></h2>
+					<p><?php esc_html_e( 'Low commission, weekly payouts to your bank or UPI, and your own seller dashboard. Limited seats in every batch.', 'digimarket' ); ?></p>
+				</div>
+				<?php echo dm_apply_button( '', 'dm-btn dm-btn-light dm-btn-lg' ); // phpcs:ignore ?>
+			</div>
+		<?php elseif ( ! dm_single_seller_mode() ) : ?>
 			<div class="dm-ft-cta">
 				<div>
 					<h2><?php esc_html_e( 'Sell your digital products here', 'digimarket' ); ?></h2>

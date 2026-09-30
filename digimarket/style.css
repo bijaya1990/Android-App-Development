@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.7.0
+Version: 2.8.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -1532,3 +1532,68 @@ main:has(> .dm-lp > .dm-lp-band:last-child) + .dm-ft { margin-top: 0; }
 .dm-boxes .dm-mc-img { aspect-ratio: 4 / 3; }
 .dm-boxes .dm-mc-img img, .dm-boxes .dm-mc-img .dm-thumb-placeholder { object-fit: cover; aspect-ratio: auto; }
 .dm-panel .dm-pf-card { box-shadow: none; border: 1px solid var(--dm-border); }
+
+/* ==========================================================================
+   Seller applications (apply bar, button, pop-up form)
+   ========================================================================== */
+.dm-apply-bar { background: linear-gradient(90deg, #1e1a4d, #3f2be0 55%, #6d4bff); color: #fff; font-size: .86rem; }
+.dm-apply-bar .dm-container { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; text-align: center; }
+.dm-apply-bar a { color: #fff; font-weight: 700; background: rgba(255, 255, 255, .16); padding: 3px 12px; border-radius: 99px; text-decoration: none; margin-left: 4px; }
+.dm-apply-bar a:hover { background: #fff; color: #3f2be0; }
+.dm-apply-bar-sep { opacity: .6; }
+.dm-apply-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: #3ddc97; box-shadow: 0 0 0 0 rgba(61, 220, 151, .7); animation: dm-pulse 1.8s infinite; }
+@keyframes dm-pulse { 70% { box-shadow: 0 0 0 8px rgba(61, 220, 151, 0); } 100% { box-shadow: 0 0 0 0 rgba(61, 220, 151, 0); } }
+@media (prefers-reduced-motion: reduce) { .dm-apply-bar-dot { animation: none; } }
+.dm-hd-links .dm-apply-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px !important; border-radius: 99px; background: linear-gradient(135deg, #5b4bff, #8b5cf6); color: #fff !important; font-weight: 700; white-space: nowrap; box-shadow: 0 4px 14px rgba(91, 75, 255, .3); }
+.dm-hd-links .dm-apply-pill:hover { filter: brightness(1.08); }
+.dm-drawer-apply { color: var(--dm-primary) !important; font-weight: 700; }
+.dm-apply-btn { gap: 8px; }
+.dm-apply-sc { margin: 1.4em 0; }
+.dm-ft-apply { background: linear-gradient(135deg, #3f2be0 0%, #5b4bff 55%, #8b5cf6 100%) !important; }
+.dm-ft-kicker { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: rgba(255, 255, 255, .18); padding: 3px 10px; border-radius: 99px; margin-bottom: 8px; }
+.dm-apply-modal { width: min(880px, calc(100vw - 20px)); }
+.dm-apply-head { display: flex; justify-content: space-between; gap: 16px; padding: 22px 24px 18px; background: linear-gradient(135deg, #3f2be0 0%, #5b4bff 55%, #8b5cf6 100%); color: #fff; }
+.dm-apply-head h2 { margin: 4px 0 4px; font-size: clamp(1.3rem, 3.4vw, 1.7rem); color: #fff; }
+.dm-apply-head p { margin: 0; opacity: .9; font-size: .92rem; }
+.dm-apply-head .dm-icon-btn { color: #fff; background: rgba(255, 255, 255, .15); flex: none; }
+.dm-apply-kicker { font-size: .74rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: rgba(255, 255, 255, .18); padding: 3px 10px; border-radius: 99px; }
+.dm-apply-body { overflow-y: auto; padding: 20px 24px 26px; overscroll-behavior: contain; }
+.dm-apply-perks { list-style: none; margin: 0 0 18px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.dm-apply-perks li { display: flex; align-items: center; gap: 8px; background: var(--dm-surface-2); border: 1px solid var(--dm-border); border-radius: 10px; padding: 9px 12px; font-size: .86rem; font-weight: 600; }
+.dm-apply-perks svg { color: var(--dm-primary); flex: none; }
+.dm-aps { border: 1px solid var(--dm-border); border-radius: 14px; padding: 16px 18px 18px; margin: 0 0 16px; min-width: 0; }
+.dm-aps legend { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.02rem; padding: 0 6px; }
+.dm-aps legend span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--dm-primary); color: #fff; font-size: .82rem; }
+.dm-apg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.dm-apf { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.dm-apf-wide { grid-column: 1 / -1; }
+.dm-apf-l { font-weight: 600; font-size: .88rem; }
+.dm-apf-l em { color: #d93a3a; font-style: normal; }
+.dm-apf-l small { color: var(--dm-muted); font-weight: 500; }
+.dm-apf input, .dm-apf select, .dm-apf textarea { width: 100%; }
+.dm-apf-h { color: var(--dm-muted); font-size: .76rem; line-height: 1.4; }
+.dm-apf-err { color: #d93a3a; font-size: .8rem; font-weight: 600; }
+.dm-apf.is-bad input, .dm-apf.is-bad select, .dm-apf.is-bad textarea, .dm-apf.is-bad .dm-apf-file-ui { border-color: #d93a3a; }
+.dm-apf-file { position: relative; display: block; }
+.dm-apf-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.dm-apf-file-ui { display: flex; align-items: center; gap: 10px; padding: 14px; border: 2px dashed var(--dm-border); border-radius: 12px; background: var(--dm-surface-2); color: var(--dm-muted); font-size: .86rem; overflow-wrap: anywhere; }
+.dm-apf-file:hover .dm-apf-file-ui, .dm-apf-file input:focus-visible + .dm-apf-file-ui { border-color: var(--dm-primary); color: var(--dm-primary); }
+.dm-apf-file.has-file .dm-apf-file-ui { border-style: solid; border-color: #12805c; color: #12805c; background: rgba(18, 128, 92, .07); }
+.dm-apply-secure { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 0; font-size: .8rem; color: var(--dm-muted); }
+.dm-apply-secure svg { color: #12805c; flex: none; margin-top: 2px; }
+.dm-aps .dm-check { margin: 6px 0; }
+.dm-apply-submit { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.dm-apply-hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.dm-apply-done { text-align: center; padding: 24px 8px; }
+.dm-apply-done-icon { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; display: grid; place-items: center; background: rgba(18, 128, 92, .12); color: #12805c; }
+.dm-apply-done h3 { font-size: 1.4rem; margin: 0 0 8px; }
+.dm-apply-done strong { font-size: 1.1rem; letter-spacing: .03em; }
+.dm-apply-closed { background: var(--dm-surface-2); border: 1px solid var(--dm-border); border-radius: 12px; padding: 12px 16px; }
+@media (max-width: 640px) {
+  .dm-apg { grid-template-columns: 1fr; }
+  .dm-apply-head { padding: 18px 16px 14px; }
+  .dm-apply-body { padding: 16px 14px 22px; }
+  .dm-aps { padding: 12px 12px 14px; }
+  .dm-apply-modal { width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0; max-width: 100vw; }
+  .dm-apply-bar .dm-container { font-size: .8rem; }
+}

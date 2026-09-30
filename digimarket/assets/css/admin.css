@@ -101,3 +101,17 @@
 .dm-gst-table td { vertical-align: middle; }
 .dm-gst-table form { margin: 0 0 4px; }
 @media (max-width: 600px) { .dm-gst-card { grid-template-columns: 1fr; } }
+
+/* Seller applications */
+.dm-admin .dm-apply-ctl { display: grid; gap: 12px; }
+.dm-admin .dm-apply-ctl-state { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.dm-admin .dm-apply-light { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+.dm-admin .dm-apply-light.is-on { background: #12805c; box-shadow: 0 0 0 4px #e7f6ef; }
+.dm-admin .dm-apply-light.is-off { background: #b3261e; box-shadow: 0 0 0 4px #fdecee; }
+.dm-admin .dm-apply-cats { display: flex; flex-wrap: wrap; gap: 8px; }
+.dm-admin .dm-apply-cats span { background: #fff; border: 1px solid #dcdcde; border-radius: 99px; padding: 3px 12px; font-size: 12px; }
+.dm-admin .dm-apply-dl th { width: 170px; padding: 8px 10px 8px 0; }
+.dm-admin .dm-apply-dl td { padding: 8px 0; }
+.dm-admin .dm-apply-rubric { max-width: 520px; margin-bottom: 14px; }
+.dm-admin .dm-apply-wide { flex-basis: 100%; }
+.dm-admin .dm-apply-table code { font-size: 12px; }

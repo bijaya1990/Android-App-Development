@@ -199,6 +199,31 @@ function dm_install() {
   KEY user_id (user_id)
 ) $c;";
 
+	$tables[] = "CREATE TABLE {$p}applications (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  batch int(11) NOT NULL DEFAULT 1,
+  status varchar(20) NOT NULL DEFAULT 'new',
+  name varchar(190) NOT NULL DEFAULT '',
+  email varchar(190) NOT NULL DEFAULT '',
+  phone varchar(32) NOT NULL DEFAULT '',
+  category varchar(64) NOT NULL DEFAULT '',
+  shop_name varchar(190) NOT NULL DEFAULT '',
+  state varchar(64) NOT NULL DEFAULT '',
+  score tinyint(4) NOT NULL DEFAULT -1,
+  data longtext NULL,
+  docs text NULL,
+  admin_note text NULL,
+  seller_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  ip varchar(64) NOT NULL DEFAULT '',
+  created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  reviewed_at datetime NULL,
+  PRIMARY KEY  (id),
+  KEY batch (batch),
+  KEY status (status),
+  KEY email (email),
+  KEY created_at (created_at)
+) $c;";
+
 	$tables[] = "CREATE TABLE {$p}tickets (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   user_id bigint(20) unsigned NOT NULL DEFAULT 0,

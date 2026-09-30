@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.7.0
+Stable tag: 2.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,15 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.8.0 =
+* Seller applications: a professional "Apply now for a seller account" button, switched ON/OFF from Marketplace → Seller applications. While it is on, it appears in the top bar (with batch and closing date), the header ("Sell on PikaCart"), the mobile menu, the footer and anywhere you use [pikacart_apply_button].
+* Large pop-up application form in 6 sections: personal details and address; shop and products (with sample links and course hosting); PAN and tax (GSTIN optional, not compulsory below ₹20 lakh yearly sales); bank details; PAN card and bank proof uploads (JPG/PNG/PDF, max 5 MB); declarations. No age is asked. Submits without reloading the page, with field-by-field errors.
+* Security: PAN and account numbers are encrypted, documents are kept in the private folder (admin-only view), the form has a honeypot and a rate limit, and each email can apply only once per batch.
+* Batches: Batch 1, Batch 2 and so on. "Start Batch N" opens a new batch. There is an optional closing date that hides the button automatically.
+* Admin review screen: stats by status and category, filters (batch, status, category, date range, search), newest/oldest ("first come") sorting, CSV export, full detail with documents, a 10-point quality-check score, decisions (needs changes / waiting list / rejected) emailed to the applicant, private notes, and delete.
+* "Approve & create seller" creates the account with the PAN, bank and address already saved as verified payout details. The seller only accepts the Seller Agreement and starts listing.
+* Applicants get a confirmation email with their reference (e.g. PK-B1-0001), and the admin gets an alert.
 
 = 2.7.0 =
 * Add sellers manually (Marketplace → Sellers → "Add a seller manually"): creates the account, shop and optional commission, and emails a set-password link. Works in single-seller mode, where public seller signup stays closed.

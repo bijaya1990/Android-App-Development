@@ -725,6 +725,68 @@
 		chk.addEventListener('click', function (e) { if (!accepted && chk.checked) { e.preventDefault(); open(); } });
 		if (form) { form.addEventListener('submit', function (e) { if (!chk.checked) { e.preventDefault(); open(); } }); }
 	})();
+	/* ---- Seller application pop-up: open, validate, submit with fetch ---- */
+	(function () {
+		var dlg = document.getElementById('dm-apply-modal');
+		if (!dlg) { return; }
+		var form = $('[data-apply-form]', dlg), done = $('[data-apply-done]', dlg), perks = $('.dm-apply-perks', dlg);
+		function open(e) {
+			if (typeof dlg.showModal !== 'function') { return; }
+			if (e) { e.preventDefault(); }
+			if (!dlg.open) { dlg.showModal(); }
+			var body = $('.dm-apply-body', dlg); if (body) { body.scrollTop = 0; }
+		}
+		$$('[data-dm-apply]').forEach(function (b) { b.addEventListener('click', open); });
+		$$('[data-apply-close]', dlg).forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
+		dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } });
+		if (dlg.hasAttribute('data-autoopen') || location.hash === '#apply') { open(); }
+		if (!form) { return; }
+		$$('input[type="file"]', form).forEach(function (inp) {
+			inp.addEventListener('change', function () {
+				var n = inp.closest('.dm-apf-file').querySelector('[data-file-name]');
+				if (n && inp.files[0]) { n.textContent = inp.files[0].name; inp.closest('.dm-apf-file').classList.add('has-file'); }
+			});
+		});
+		var cat = form.querySelector('[name="category"]'), host = form.querySelector('[name="hosting"]');
+		function toggleHost() { if (host) { host.closest('.dm-apf').hidden = !(cat && /course/i.test(cat.value)); } }
+		if (cat) { cat.addEventListener('change', toggleHost); toggleHost(); }
+		function clear() { $$('[data-err]', form).forEach(function (x) { x.hidden = true; x.textContent = ''; }); $$('.dm-apf.is-bad', form).forEach(function (x) { x.classList.remove('is-bad'); }); }
+		function show(errors) {
+			var first = null;
+			Object.keys(errors).forEach(function (k) {
+				var el = form.querySelector('[data-err="' + k + '"]');
+				if (!el) { el = form.querySelector('[data-err="declaration"]'); }
+				if (el) { el.textContent = errors[k]; el.hidden = false; var w = el.closest('.dm-apf'); if (w) { w.classList.add('is-bad'); } first = first || el; }
+			});
+			if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+		}
+		form.addEventListener('submit', function (e) {
+			if (!window.fetch || !window.FormData) { return; }
+			e.preventDefault(); clear();
+			var local = {};
+			$$('[required]', form).forEach(function (inp) {
+				var bad = inp.type === 'checkbox' ? !inp.checked : (inp.type === 'file' ? !inp.files.length : !inp.value.trim());
+				if (bad) { local[inp.type === 'checkbox' ? 'declaration' : inp.name] = inp.type === 'checkbox' ? 'Please tick all three declarations.' : 'This field is required.'; }
+			});
+			var a1 = form.querySelector('[name="acct"]'), a2 = form.querySelector('[name="acct2"]');
+			if (a1 && a2 && a1.value && a2.value && a1.value.replace(/\D/g, '') !== a2.value.replace(/\D/g, '')) { local.acct2 = 'Account numbers do not match.'; }
+			if (Object.keys(local).length) { show(local); return; }
+			var btn = $('[data-apply-submit]', form), label = btn.textContent;
+			btn.disabled = true; btn.textContent = 'Submitting…';
+			var fd = new FormData(form); fd.append('ajax', '1');
+			fetch(form.action, { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With': 'fetch' } })
+				.then(function (r) { return r.json(); })
+				.then(function (j) {
+					if (j && j.success) {
+						form.hidden = true; if (perks) { perks.hidden = true; }
+						$('[data-apply-ref]', dlg).textContent = j.ref; done.hidden = false;
+						var body = $('.dm-apply-body', dlg); if (body) { body.scrollTop = 0; }
+					} else { show((j && j.errors) || { form: 'Something went wrong. Please try again.' }); }
+				})
+				.catch(function () { show({ form: 'Network error. Please check your connection and try again.' }); })
+				.then(function () { btn.disabled = false; btn.textContent = label; });
+		});
+	})();
 	/* ---- GST required pop-up in the seller dashboard ---- */
 	(function () {
 		var dlg = document.getElementById('dm-gst-modal');

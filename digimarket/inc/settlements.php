@@ -384,21 +384,26 @@ function dm_admin_invite_seller_form() {
 	echo '<p><button class="button button-primary">' . esc_html__( 'Add seller & send invite', 'digimarket' ) . '</button></p></form></details>';
 }
 
-add_action( 'dm_admin_do_seller_invite', function ( $r ) {
-	$email = sanitize_email( $r['email'] ?? '' );
-	$name  = sanitize_text_field( $r['name'] ?? '' );
-	$shop  = sanitize_text_field( $r['shop'] ?? '' );
+/**
+ * Create (or upgrade) a seller account the admin invited and email the invite.
+ * $prefill = payout/KYC meta already collected (e.g. from a seller application).
+ * Returns the user ID or a WP_Error.
+ */
+function dm_create_invited_seller( $email, $name, $shop, $commission = '', $prefill = array() ) {
+	$email = sanitize_email( $email );
+	$name  = sanitize_text_field( $name );
+	$shop  = sanitize_text_field( $shop );
 	if ( ! is_email( $email ) || '' === $name || '' === $shop || mb_strlen( $shop ) > 60 ) {
-		dm_admin_back( '', __( 'Enter a valid email, name and shop name.', 'digimarket' ) );
+		return new WP_Error( 'invalid', __( 'Enter a valid email, name and shop name.', 'digimarket' ) );
 	}
 	$user = get_user_by( 'email', $email );
 	$new  = false;
 	if ( $user ) {
 		if ( user_can( $user, 'manage_options' ) ) {
-			dm_admin_back( '', __( 'That email belongs to an administrator.', 'digimarket' ) );
+			return new WP_Error( 'admin', __( 'That email belongs to an administrator.', 'digimarket' ) );
 		}
 		if ( dm_is_seller( $user->ID ) ) {
-			dm_admin_back( '', __( 'That person is already a seller.', 'digimarket' ) );
+			return new WP_Error( 'exists', __( 'That person is already a seller.', 'digimarket' ) );
 		}
 		$uid = $user->ID;
 	} else {
@@ -420,7 +425,7 @@ add_action( 'dm_admin_do_seller_invite', function ( $r ) {
 			)
 		);
 		if ( is_wp_error( $uid ) ) {
-			dm_admin_back( '', $uid->get_error_message() );
+			return $uid;
 		}
 		update_user_meta( $uid, 'dm_email_verified', 1 );
 		$new = true;
@@ -436,11 +441,19 @@ add_action( 'dm_admin_do_seller_invite', function ( $r ) {
 	update_user_meta( $uid, 'dm_shop_created', time() );
 	update_user_meta( $uid, 'dm_seller_status', 'draft' );
 	update_user_meta( $uid, 'dm_invited', time() );
-	if ( '' !== trim( (string) ( $r['commission'] ?? '' ) ) ) {
-		update_user_meta( $uid, 'dm_commission_override', max( 0, min( 100, (float) $r['commission'] ) ) );
+	if ( '' !== trim( (string) $commission ) ) {
+		update_user_meta( $uid, 'dm_commission_override', max( 0, min( 100, (float) $commission ) ) );
 	}
-	$html = '<p>' . sprintf( /* translators: 1 name 2 site */ esc_html__( 'Hi %1$s, you have been added as a seller on %2$s.', 'digimarket' ), esc_html( $name ), esc_html( get_bloginfo( 'name' ) ) ) . '</p>';
-	$html .= '<p>' . sprintf( /* translators: %s shop */ esc_html__( 'Your shop “%s” is ready. Two quick steps remain: add your payout details (bank account or UPI, where we send your earnings) and accept the Seller Agreement. After that you can list products.', 'digimarket' ), esc_html( $shop ) ) . '</p>';
+	foreach ( $prefill as $k => $v ) {
+		update_user_meta( $uid, $k, $v );
+	}
+	$ready = ! empty( $prefill['dm_kyc_submitted'] );
+	$html  = '<p>' . sprintf( /* translators: 1 name 2 site */ esc_html__( 'Hi %1$s, you have been added as a seller on %2$s.', 'digimarket' ), esc_html( $name ), esc_html( get_bloginfo( 'name' ) ) ) . '</p>';
+	if ( $ready ) {
+		$html .= '<p>' . sprintf( /* translators: %s shop */ esc_html__( 'Your shop “%s” is ready and the payout details from your application are already saved. One step remains: accept the Seller Agreement. After that you can list products.', 'digimarket' ), esc_html( $shop ) ) . '</p>';
+	} else {
+		$html .= '<p>' . sprintf( /* translators: %s shop */ esc_html__( 'Your shop “%s” is ready. Two quick steps remain: add your payout details (bank account or UPI, where we send your earnings) and accept the Seller Agreement. After that you can list products.', 'digimarket' ), esc_html( $shop ) ) . '</p>';
+	}
 	if ( $new ) {
 		$token = wp_generate_password( 32, false );
 		update_user_meta( $uid, 'dm_reset_token', wp_hash( $token ) );
@@ -455,8 +468,16 @@ add_action( 'dm_admin_do_seller_invite', function ( $r ) {
 	/* translators: %s site */
 	dm_mail( $email, sprintf( __( 'You are now a seller on %s', 'digimarket' ), get_bloginfo( 'name' ) ), $html, $cta, $label );
 	dm_audit( 'seller_invite', 'seller', $uid, array( 'email' => $email, 'new_user' => $new ) );
+	return $uid;
+}
+
+add_action( 'dm_admin_do_seller_invite', function ( $r ) {
+	$uid = dm_create_invited_seller( $r['email'] ?? '', $r['name'] ?? '', $r['shop'] ?? '', $r['commission'] ?? '' );
+	if ( is_wp_error( $uid ) ) {
+		dm_admin_back( '', $uid->get_error_message() );
+	}
 	/* translators: %s email */
-	dm_admin_back( sprintf( __( 'Seller added and invite emailed to %s.', 'digimarket' ), $email ) );
+	dm_admin_back( sprintf( __( 'Seller added and invite emailed to %s.', 'digimarket' ), sanitize_email( $r['email'] ?? '' ) ) );
 } );
 
 /* -------------------------------------------------------------------------
