@@ -1032,8 +1032,8 @@ add_action( 'wp_enqueue_scripts', function () {
 }, 100 );
 
 add_action( 'wp_head', function () {
-	foreach ( array( 400, 700 ) as $w ) {
-		echo '<link rel="preload" href="' . esc_url( DM_URI . '/assets/fonts/poppins-' . $w . '.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+	foreach ( array( 'figtree-latin', 'source-serif-latin' ) as $f ) {
+		echo '<link rel="preload" href="' . esc_url( DM_URI . '/assets/fonts/' . $f . '.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 	}
 	echo '<meta name="theme-color" content="#5B4BFF">' . "\n";
 }, 1 );

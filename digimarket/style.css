@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.9.0
+Version: 2.10.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -1644,3 +1644,90 @@ main:has(> .dm-lp > .dm-lp-band:last-child) + .dm-ft { margin-top: 0; }
 .dm-req-badge { font-size: .72rem; font-weight: 700; background: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 99px; }
 .dm-photo-count { font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: #FDECEE; color: #B3261E; }
 .dm-photo-count.is-ok { background: #E7F6EF; color: #12805C; }
+
+/* ==========================================================================
+   Etsy-style look: Figtree + serif headings, black pill buttons, open layout
+   ========================================================================== */
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 300 900; font-display: swap; src: url(assets/fonts/figtree-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Figtree"; font-style: normal; font-weight: 300 900; font-display: swap; src: url(assets/fonts/figtree-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Source Serif"; font-style: normal; font-weight: 300 800; font-display: swap; src: url(assets/fonts/source-serif-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2122, U+2212; }
+@font-face { font-family: "Figtree Fallback"; src: local("Arial"); size-adjust: 102%; ascent-override: 95%; descent-override: 25%; line-gap-override: 0%; }
+:root {
+	--dm-font: "Figtree", "Figtree Fallback", ui-sans-serif, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	--dm-serif: "Source Serif", Georgia, "Times New Roman", serif;
+	--dm-radius-sm: 999px;
+}
+:root:not([data-theme="dark"]) { --dm-text: #222222; --dm-muted: #595959; --dm-border: #e6e6e6; --dm-surface-2: #f5f5f4; --dm-ink: #222222; }
+body { font-family: var(--dm-font); font-size: 16px; letter-spacing: 0; }
+h1, h2, h3, h4 { letter-spacing: -.005em; }
+h1, h2:not(.dm-pc-title) { font-family: var(--dm-serif); font-weight: 500; }
+.dm-dash h1, .dm-dash h2, .dm-pdp-title, .dm-auth h1, .dm-checkout h1, .dm-cart h1, .dm-dropdown h2 { font-family: var(--dm-font); font-weight: 700; }
+.dm-pdp-title { font-weight: 500 !important; font-size: clamp(1.25rem, 1rem + .9vw, 1.7rem); line-height: 1.35; }
+a { text-underline-offset: 2px; }
+
+/* Buttons: Etsy pills */
+.dm-btn { border-radius: 999px; font-weight: 600; letter-spacing: 0; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+.dm-btn:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0, 0, 0, .15); }
+.dm-btn-primary, .dm-btn-cart { background: #222; color: #fff; border-color: #222; box-shadow: none; }
+.dm-btn-primary:hover, .dm-btn-cart:hover { background: #000; color: #fff; }
+.dm-btn-buy { background: #fff; color: #222; border: 2px solid #222; }
+.dm-btn-buy:hover { background: #fff; color: #222; }
+.dm-btn-outline, .dm-btn-ghost { border-radius: 999px; }
+.dm-buy-form .dm-btn { text-transform: none; letter-spacing: 0; min-height: 50px; font-size: 1rem; }
+[data-theme="dark"] .dm-btn-primary, [data-theme="dark"] .dm-btn-cart { background: #fff; color: #111; border-color: #fff; }
+[data-theme="dark"] .dm-btn-buy { background: transparent; color: #fff; border-color: #fff; }
+
+/* Header: pill search, plain nav, no trust icons */
+.dm-hd { box-shadow: 0 1px 0 var(--dm-border); }
+.dm-srch { border-radius: 999px; border: 2px solid #222; background: var(--dm-surface); }
+.dm-srch:focus-within { border-color: #222; box-shadow: 0 0 0 4px rgba(34, 34, 34, .08); }
+.dm-srch-btn { width: 38px; padding: 0; border-radius: 50%; margin-right: 3px; background: var(--dm-primary); }
+[data-theme="dark"] .dm-srch { border-color: var(--dm-border); }
+.dm-hd-links > a, .dm-hd-links .dm-cat-toggle { font-weight: 500; font-size: .95rem; }
+.dm-hd-links > a:hover, .dm-hd-links > a[aria-current], .dm-hd-links .dm-cat-toggle:hover { color: var(--dm-text); }
+.dm-hd-links > a[aria-current]::after { background: var(--dm-text); }
+.dm-hd-links > a:hover::after { background: var(--dm-text); }
+.dm-hd-trust { display: none !important; }
+
+/* Hero: soft background, dark serif headline */
+.dm-hero2-card { background: linear-gradient(115deg, #F4F1FF 0%, #FBF3EC 100%); color: var(--dm-text); border-radius: 24px; }
+.dm-hero2 h1 { color: #222; font-weight: 500; font-size: clamp(1.8rem, 1.2rem + 2.6vw, 3.2rem); line-height: 1.1; }
+.dm-hero2 p { color: #444; opacity: 1; }
+.dm-hero2-chip { background: #fff; color: #222; border: 1px solid var(--dm-border); }
+.dm-hero2 .dm-btn-light { background: #222; color: #fff; }
+.dm-hero2-tile { box-shadow: 0 10px 30px rgba(34, 34, 60, .12); color: #222; }
+.dm-hero2-tile .dm-i { color: var(--dm-primary); }
+.dm-hero2-admin { background: rgba(0, 0, 0, .06); color: #222; }
+[data-theme="dark"] .dm-hero2-card { background: linear-gradient(115deg, #1c1a2e, #221c1a); }
+[data-theme="dark"] .dm-hero2 h1 { color: #fff; }
+[data-theme="dark"] .dm-hero2 p { color: #d6d6de; }
+[data-theme="dark"] .dm-hero2 .dm-btn-light { background: #fff; color: #111; }
+
+/* Open sections instead of boxes */
+.dm-home .dm-panel, .dm-home .dm-rowbox { background: transparent; border: 0; box-shadow: none; padding: 0; border-radius: 0; }
+.dm-home .dm-block { margin: 40px 0; }
+.dm-home .dm-panel-head h2, .dm-home .dm-rowbox .dm-block-head h2, .dm-home .dm-block-head h2 { font-family: var(--dm-serif); font-weight: 500; font-size: clamp(1.35rem, 1.1rem + .9vw, 1.75rem); }
+.dm-more { color: var(--dm-text); text-decoration: underline; font-weight: 600; }
+.dm-more:hover { color: var(--dm-primary); }
+.dm-cat-grid { gap: 22px 12px; }
+.dm-cat-cell { font-size: .88rem; font-weight: 600; }
+.dm-cat-cell .dm-cat-ico { width: 84px; height: 84px; box-shadow: 0 0 0 1px var(--dm-border); transition: transform .2s ease, box-shadow .2s ease; }
+.dm-cat-cell:hover .dm-cat-ico { transform: scale(1.04); box-shadow: 0 6px 18px rgba(0, 0, 0, .14); }
+.dm-cat-cell:hover { text-decoration: underline !important; }
+.dm-bs-off { background: #fff; color: #0B7A43; border: 1px solid #cfe9dc; }
+.dm-bs-title { font-weight: 400; }
+.dm-offer { border-radius: 20px; box-shadow: none; }
+.dm-say { border-color: var(--dm-border); border-radius: 16px; box-shadow: none; }
+
+/* Ratings: plain black stars like Etsy */
+.dm-rchip, .dm-rchip.is-ok, .dm-rchip.is-low { background: transparent; color: var(--dm-text); padding: 0; font-size: .8rem; }
+.dm-rchip .dm-i { color: #222; fill: currentColor; }
+[data-theme="dark"] .dm-rchip .dm-i { color: #fff; }
+
+/* Badges: soft pills */
+.dm-badge2 { font-size: .7rem; padding: 3px 9px; }
+.dm-badge2.is-best { background: #FDEBD2; color: #7A3E00; }
+.dm-badge2.is-off { background: #fff; color: #0B7A43; }
+.dm-badge2.is-new { background: #fff; color: #222; }
+.single-dm_product .dm-main h2, .single-dm_product .dm-main h3 { font-family: var(--dm-font); font-weight: 700; }
+.single-dm_product .dm-main .dm-block-head h2 { font-family: var(--dm-serif); font-weight: 500; }

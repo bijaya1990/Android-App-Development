@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.9.0
+Stable tag: 2.10.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,12 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.10.0 =
+* Etsy-style look. New self-hosted fonts: Figtree for text and Source Serif for big headings (OFL licensed, preloaded, no Google requests).
+* Black pill buttons: "Add to cart" is black and "Buy now" is outlined, no more capital letters. Pill search bar with a round search button. The header nav is plain text links with the trust icons removed.
+* Homepage: a soft light hero with a dark serif headline, open sections without boxes, serif section titles, larger round category icons, plain black star ratings and softer badges.
+* Dark mode keeps the same style with white buttons.
 
 = 2.9.0 =
 * Admin can see every seller's wallet. Marketplace → Overview shows "Seller wallets" with the total owed to sellers and each seller's balance, sales, commission + GST, refunds, earnings, amount paid and last payment (UTR). Payouts has a new "Seller wallets" tab, and "Pay now" jumps to that seller in Weekly settlement.
