@@ -48,6 +48,19 @@ function dm_store_defaults() {
 		'bottom_nav'        => 1,
 		'articles_show'     => 1,
 		'show_tags'         => 0,
+		'home_design'       => 'market',
+		'util_left'         => __( 'Instant download right after payment', 'digimarket' ),
+		'util_center'       => __( 'Big Deals | Best Quality | Secure UPI Checkout', 'digimarket' ),
+		'util_right'        => '',
+		'hero_line1'        => __( 'Notes, Templates', 'digimarket' ),
+		'hero_line2'        => __( '& Websites', 'digimarket' ),
+		'hero_sub'          => __( 'Latest Collection | Best Prices | Instant Download', 'digimarket' ),
+		'hero_cta'          => __( 'Shop Now', 'digimarket' ),
+		'hero_img'          => 0,
+		'mk_trust'          => '',
+		'newsletter_on'     => 1,
+		'app_android'       => '',
+		'app_ios'           => '',
 		'articles_label'    => __( 'Articles', 'digimarket' ),
 		'header_links'      => '',
 		'trust_projects'    => '',
@@ -157,7 +170,23 @@ function dm_admin_storefront() {
 		echo '</td></tr>';
 	};
 
-	echo '<h2>' . esc_html__( 'Homepage blocks', 'digimarket' ) . '</h2><table class="form-table"><tr><th>' . esc_html__( 'Show & order', 'digimarket' ) . '</th><td><table class="dm-block-table">';
+	echo '<h2>' . esc_html__( 'Homepage design', 'digimarket' ) . '</h2><table class="form-table">';
+	echo '<tr><th><label for="dms_home_design">' . esc_html__( 'Design', 'digimarket' ) . '</label></th><td><select id="dms_home_design" name="st[home_design]"><option value="market"' . selected( $s['home_design'], 'market', false ) . '>' . esc_html__( 'Marketplace (orange) — slider, categories, flash sale, best sellers, promos', 'digimarket' ) . '</option><option value="classic"' . selected( $s['home_design'], 'classic', false ) . '>' . esc_html__( 'Classic (purple) — the block layout below', 'digimarket' ) . '</option></select><p class="description">' . esc_html__( 'Marketplace design: add “Main slider (full width)” and “Promo card” banners in Marketplace → Banners to replace the automatic slides and promo cards.', 'digimarket' ) . '</p></td></tr>';
+	$f( 'util_left', __( 'Top bar — left', 'digimarket' ) );
+	$f( 'util_center', __( 'Top bar — middle', 'digimarket' ) );
+	$f( 'util_right', __( 'Top bar — right', 'digimarket' ), 'text', __( 'Leave blank to show “Support:” with your business phone or WhatsApp number.', 'digimarket' ) );
+	$f( 'hero_line1', __( 'Slider headline (dark line)', 'digimarket' ) );
+	$f( 'hero_line2', __( 'Slider headline (orange line)', 'digimarket' ) );
+	$f( 'hero_sub', __( 'Slider subtitle', 'digimarket' ) );
+	$f( 'hero_cta', __( 'Slider button text', 'digimarket' ) );
+	$f( 'hero_img', __( 'Slider picture', 'digimarket' ), 'media', __( 'Optional cut-out picture (PNG, transparent background, about 900×600) for the right side of the first slide. Leave empty to show your best products.', 'digimarket' ) );
+	$f( 'mk_trust', __( 'Trust row', 'digimarket' ), 'textarea', __( 'Up to 4 lines: Title | Small text. Leave blank for Instant download, Secure payment, Refund policy and WhatsApp support.', 'digimarket' ) );
+	$f( 'newsletter_on', __( 'Newsletter band', 'digimarket' ), 'checkbox', __( 'Show “Get Exclusive Offers & Updates” above the footer. Emails are saved in Marketplace → Leads.', 'digimarket' ) );
+	$f( 'app_android', __( 'Android app link', 'digimarket' ), 'url', __( 'Google Play link. The “Download Our App” footer column only appears when you have an app link.', 'digimarket' ) );
+	$f( 'app_ios', __( 'iPhone app link', 'digimarket' ), 'url' );
+	echo '</table>';
+
+	echo '<h2>' . esc_html__( 'Homepage blocks (classic design)', 'digimarket' ) . '</h2><table class="form-table"><tr><th>' . esc_html__( 'Show & order', 'digimarket' ) . '</th><td><table class="dm-block-table">';
 	$blocks = $s['blocks'];
 	$defs   = dm_home_block_defs();
 	uksort(
@@ -260,16 +289,16 @@ add_action( 'dm_admin_do_save_store', function ( $r ) {
 		if ( 'blocks' === $k ) {
 			continue;
 		}
-		if ( in_array( $k, array( 'announce_on', 'bottom_nav', 'articles_show', 'show_tags' ), true ) ) {
+		if ( in_array( $k, array( 'announce_on', 'bottom_nav', 'articles_show', 'show_tags', 'newsletter_on' ), true ) ) {
 			$new[ $k ] = empty( $in[ $k ] ) ? 0 : 1;
 		} elseif ( isset( $in[ $k ] ) ) {
-			if ( in_array( $k, array( 'section_count', 'seo_default_image', 'owner_photo', 'lp_svc_wall', 'lp_thm_cat' ), true ) ) {
+			if ( in_array( $k, array( 'section_count', 'seo_default_image', 'owner_photo', 'lp_svc_wall', 'lp_thm_cat', 'hero_img' ), true ) ) {
 				$new[ $k ] = absint( $in[ $k ] );
-			} elseif ( in_array( $k, array( 'announce_link' ), true ) ) {
+			} elseif ( in_array( $k, array( 'announce_link', 'app_android', 'app_ios' ), true ) ) {
 				$new[ $k ] = esc_url_raw( $in[ $k ] );
 			} elseif ( 'announce_bg' === $k ) {
 				$new[ $k ] = sanitize_hex_color( $in[ $k ] ) ? sanitize_hex_color( $in[ $k ] ) : $d;
-			} elseif ( in_array( $k, array( 'process_steps', 'default_faq', 'social_links', 'owner_bio', 'seo_home_desc', 'header_links', 'lp_svc_sub', 'lp_svc_seo_desc', 'lp_thm_sub', 'lp_thm_includes', 'lp_thm_faq', 'lp_thm_seo_desc' ), true ) ) {
+			} elseif ( in_array( $k, array( 'process_steps', 'default_faq', 'social_links', 'owner_bio', 'seo_home_desc', 'header_links', 'lp_svc_sub', 'lp_svc_seo_desc', 'lp_thm_sub', 'lp_thm_includes', 'lp_thm_faq', 'lp_thm_seo_desc', 'mk_trust' ), true ) ) {
 				$new[ $k ] = sanitize_textarea_field( $in[ $k ] );
 			} else {
 				$new[ $k ] = sanitize_text_field( $in[ $k ] );
@@ -387,6 +416,8 @@ function dm_banner_placements() {
 		'hero'     => array( __( 'Hero card (top carousel)', 'digimarket' ), '1000×500 px (2:1)' ),
 		'tile'     => array( __( 'Offer tile', 'digimarket' ), '600×600 px square + typed label & caption' ),
 		'campaign' => array( __( 'Campaign banner (homepage)', 'digimarket' ), '1460×325 px + optional 1080×540 mobile' ),
+		'mainslide' => array( __( 'Main slider (full width, marketplace design)', 'digimarket' ), '1920×450 px + optional 1080×720 mobile' ),
+		'promo'    => array( __( 'Promo card (3 in a row, marketplace design)', 'digimarket' ), '800×320 px' ),
 		'category' => array( __( 'Category page top', 'digimarket' ), '1460×325 px + optional 1080×540 mobile' ),
 		'articles' => array( __( 'Articles page top', 'digimarket' ), '1460×325 px + optional 1080×540 mobile' ),
 		'cart'     => array( __( 'Cart / checkout strip', 'digimarket' ), '1200×150 px' ),

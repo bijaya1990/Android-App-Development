@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.10.1
+Stable tag: 2.11.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,20 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.11.0 =
+* New marketplace homepage design (orange), now the default. You can switch back in Storefront & SEO → Homepage design.
+* Header: navy top bar (3 editable messages plus a support number), orange logo, wide search with an orange search button, Account / Wishlist / Cart, "All Categories" menu, category links and a red "Offers" pill.
+* Homepage sections:
+  * Full-width slider using "Main slider" banners, or automatic slides built from your products, website services and themes, with a condensed headline and an "Up to X% Off" badge.
+  * Round category icons with "More Categories".
+  * Flash Sale band with an hours/minutes/seconds countdown and product cards that show % OFF, price, stars and Add to Cart.
+  * Best Sellers grid with green Bestseller badges.
+  * Three promo cards (from "Promo card" banners, or automatic: Website Services, WordPress Themes, top category).
+  * Trust row and customer reviews.
+* Newsletter band ("Get Exclusive Offers & Updates") saves subscribers to Marketplace → Leads, with coloured social icons.
+* New footer with Shop By Category, Customer Service, My Account and Contact Us columns. The "Download Our App" column with store badges appears only when an app link is set.
+* The Etsy-style fonts and layer were removed. Poppins is back, and Barlow Condensed is used for slider headlines.
 
 = 2.10.1 =
 * WP Admin product editor: new "Product photos (4 needed)" box under the Featured image. The Featured image is photo 1. "Add photos" opens the media library with multi-select, each photo can be removed with ×, and a live "x of 4 photos added" counter shows progress. Saving a published product with fewer than 4 photos shows a reminder.

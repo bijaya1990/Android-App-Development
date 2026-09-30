@@ -7,6 +7,12 @@
 
 get_header();
 
+if ( dm_mk() ) {
+	get_template_part( 'template-parts/home-market' );
+	get_footer();
+	return;
+}
+
 $dm_blocks = dm_home_blocks();
 $dm_has_banner_hero = in_array( 'hero', $dm_blocks, true ) && dm_get_banners( 'hero', 0, 1 );
 ?>

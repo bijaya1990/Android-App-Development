@@ -195,6 +195,7 @@ rd = get('/old-offer/', allow_redirects=False)
 check(rd.status_code == 301 and rd.headers.get('Location', '').endswith('/sale/'), 'custom 301 redirect', (rd.status_code, rd.headers.get('Location')))
 
 print('== Search suggestions, banners, blocks')
+wp('$s=get_option("dm_store",array()); $s["home_design"]="classic"; update_option("dm_store",$s);')  # classic homepage blocks
 sg = get('/wp-admin/admin-ajax.php?action=dm_suggest&q=physics').json()
 check(sg['success'] and any('Physics Notes V2' in i['title'] for i in sg['data']['items']), 'search suggestions return products', sg)
 bid = wp(r'''$img = wp_insert_attachment(array("post_mime_type"=>"image/webp","post_title"=>"b","post_status"=>"inherit"), DM_DIR."/assets/demo/hero-1-dussehra-sale.webp");
@@ -293,6 +294,7 @@ check('class="dm-svcband"' in get('/').text, 'services band shows a featured ser
 wp('update_post_meta(%s,"_dm_featured",0);' % sv)
 check('class="dm-svcband"' not in get('/').text, 'unticking Featured removes the band')
 
+wp('$s=get_option("dm_store",array()); $s["home_design"]="market"; update_option("dm_store",$s);')
 print('== Legal pages & business details')
 lp_urls = json.loads(wp('$o=array(); foreach(get_option("dm_legal_pages") as $k=>$id){ $o[$k]=get_permalink($id); } echo json_encode($o);'))
 for k in ('terms', 'privacy', 'refund', 'delivery', 'contact', 'about'):

@@ -139,6 +139,7 @@
 			if (res && res.success) {
 				$$('.dm-cart-count').forEach(function (c) { c.textContent = res.data.count; c.hidden = false; c.classList.remove('dm-bump'); void c.offsetWidth; c.classList.add('dm-bump'); });
 				btn.classList.add('is-added');
+				if (btn.classList.contains('mk-btn-add')) { btn.textContent = 'Added to cart ✓'; }
 				toast(res.data.message || i18n.added);
 			} else {
 				toast((res && res.data && res.data.message) || i18n.error, true);
@@ -867,8 +868,8 @@
 		function pad(n) { return (n < 10 ? '0' : '') + n; }
 		function tick() {
 			var left = Math.max(0, Math.floor((end - Date.now()) / 1000));
-			el.d.textContent = pad(Math.floor(left / 86400));
-			el.h.textContent = pad(Math.floor(left % 86400 / 3600));
+			if (el.d) { el.d.textContent = pad(Math.floor(left / 86400)); }
+			el.h.textContent = pad(el.d ? Math.floor(left % 86400 / 3600) : Math.floor(left / 3600));
 			el.m.textContent = pad(Math.floor(left % 3600 / 60));
 			el.s.textContent = pad(left % 60);
 			if (!left) { clearInterval(t); }

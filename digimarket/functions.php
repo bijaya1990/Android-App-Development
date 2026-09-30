@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DM_VERSION', '2.10.1' );
+define( 'DM_VERSION', '2.11.0' );
 define( 'DM_DB_VERSION', '2.8.0' );
 define( 'DM_DIR', get_template_directory() );
 define( 'DM_URI', get_template_directory_uri() );
@@ -45,6 +45,7 @@ $dm_includes = array(
 	'gst',
 	'template-tags',
 	'home',
+	'market',
 );
 
 foreach ( $dm_includes as $dm_file ) {
