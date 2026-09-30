@@ -645,6 +645,27 @@ function dm_refresh_product_rating( $pid ) {
 add_action( 'add_meta_boxes_dm_product', 'dm_add_product_metabox' );
 function dm_add_product_metabox() {
 	add_meta_box( 'dm_product_data', __( 'Product data', 'digimarket' ), 'dm_product_metabox', 'dm_product', 'normal', 'high' );
+	add_meta_box( 'dm_product_photos', __( 'Product photos (4 needed)', 'digimarket' ), 'dm_product_photos_box', 'dm_product', 'side', 'low' );
+}
+
+/**
+ * wp-admin: photos 2–4 (and up to 5 extra) next to the Featured image, which is photo 1.
+ */
+function dm_product_photos_box( $post ) {
+	$gallery = array_values( array_filter( array_map( 'absint', (array) get_post_meta( $post->ID, '_dm_gallery', true ) ) ) );
+	$have    = ( has_post_thumbnail( $post ) ? 1 : 0 ) + count( $gallery );
+	echo '<p class="description">' . esc_html__( 'Photo 1 is the Featured image. Add photos 2–4 here (you can select several at once). Product cards turn through these 4 photos like book pages.', 'digimarket' ) . '</p>';
+	echo '<p><strong class="dm-gal-count' . ( $have >= DM_REQUIRED_PHOTOS ? ' is-ok' : '' ) . '" data-have-thumb="' . ( has_post_thumbnail( $post ) ? 1 : 0 ) . '">' . esc_html( sprintf( /* translators: 1 have 2 need */ __( '%1$d of %2$d photos added', 'digimarket' ), min( $have, DM_REQUIRED_PHOTOS ), DM_REQUIRED_PHOTOS ) ) . '</strong></p>';
+	echo '<ul class="dm-gal-list">';
+	foreach ( $gallery as $id ) {
+		$src = wp_get_attachment_image_url( $id, 'thumbnail' );
+		if ( $src ) {
+			echo '<li data-id="' . (int) $id . '"><img src="' . esc_url( $src ) . '" alt=""><button type="button" class="dm-gal-remove" aria-label="' . esc_attr__( 'Remove photo', 'digimarket' ) . '">&times;</button></li>';
+		}
+	}
+	echo '</ul><input type="hidden" name="dm_gallery_ids" id="dm_gallery_ids" value="' . esc_attr( implode( ',', $gallery ) ) . '">';
+	echo '<p><button type="button" class="button button-primary dm-gal-add" data-max="5">' . esc_html__( 'Add photos', 'digimarket' ) . '</button></p>';
+	echo '<p class="description">' . esc_html__( 'Square images (1:1), at least 800 × 800 px, look best. Photos show in the order you add them.', 'digimarket' ) . '</p>';
 }
 
 add_action( 'post_edit_form_tag', function ( $post ) {
@@ -725,6 +746,20 @@ function dm_admin_save_product( $pid, $post ) {
 	foreach ( dm_validate_listing_fields( $d ) as $msg ) {
 		set_transient( 'dm_admin_notice_' . get_current_user_id(), $msg, 60 );
 	}
+	if ( isset( $_POST['dm_gallery_ids'] ) ) {
+		$gal = array();
+		foreach ( explode( ',', sanitize_text_field( wp_unslash( $_POST['dm_gallery_ids'] ) ) ) as $gid ) {
+			$gid = absint( $gid );
+			if ( $gid && wp_attachment_is_image( $gid ) && (int) $gid !== (int) get_post_thumbnail_id( $pid ) && ! in_array( $gid, $gal, true ) ) {
+				$gal[] = $gid;
+			}
+		}
+		update_post_meta( $pid, '_dm_gallery', array_slice( $gal, 0, 5 ) );
+	}
+	if ( 'publish' === $post->post_status && dm_product_photo_count( $pid ) < DM_REQUIRED_PHOTOS ) {
+		/* translators: 1 required 2 current */
+		set_transient( 'dm_admin_notice_' . get_current_user_id(), sprintf( __( 'This product has %2$d of %1$d photos. Set a Featured image and add the rest in “Product photos” so the card can turn through 4 photos.', 'digimarket' ), DM_REQUIRED_PHOTOS, dm_product_photo_count( $pid ) ), 60 );
+	}
 	if ( 'publish' === $post->post_status ) {
 		dm_seo_autofill( $pid );
 	}
@@ -779,3 +814,23 @@ function dm_save_category_commission( $term_id ) {
 		dm_audit( 'commission_category_change', 'category', $term_id, array( 'from' => $old, 'to' => $new ) );
 	}
 }
+
+/**
+ * Product search also matches tags, so hidden tags still help buyers find products.
+ */
+add_filter( 'posts_search', function ( $search, $q ) {
+	global $wpdb;
+	$term = $q->get( 's' );
+	$pt   = (array) $q->get( 'post_type' );
+	if ( '' === (string) $term || ( is_admin() && ! wp_doing_ajax() ) || ! in_array( 'dm_product', $pt, true ) || '' === trim( $search ) ) {
+		return $search;
+	}
+	$like = '%' . $wpdb->esc_like( trim( (string) $term ) ) . '%';
+	$ids  = $wpdb->prepare(
+		"SELECT tr.object_id FROM {$wpdb->term_relationships} tr INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id WHERE tt.taxonomy = 'dm_tag' AND t.name LIKE %s",
+		$like
+	);
+	// Wrap WordPress's own clause: ( original ) OR ID IN ( tagged products ).
+	$inner = preg_replace( '/^\s*AND\s*/', '', $search );
+	return " AND ( ( {$inner} ) OR {$wpdb->posts}.ID IN ( {$ids} ) ) ";
+}, 10, 2 );

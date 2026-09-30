@@ -138,7 +138,7 @@ if ( $dm_search && ! dm_single_seller_mode() ) {
 				<?php endif; ?>
 				<?php
 				$dm_tags = get_terms( array( 'taxonomy' => 'dm_tag', 'number' => 15, 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => true ) );
-				if ( $dm_tags && ! is_wp_error( $dm_tags ) && ( ! $dm_term || 'dm_category' === $dm_term->taxonomy ) ) :
+				if ( dm_store_opt( 'show_tags' ) && $dm_tags && ! is_wp_error( $dm_tags ) && ( ! $dm_term || 'dm_category' === $dm_term->taxonomy ) ) :
 					?>
 					<fieldset>
 						<legend><?php esc_html_e( 'Tags', 'digimarket' ); ?></legend>

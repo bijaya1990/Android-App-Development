@@ -125,3 +125,11 @@
 .dm-admin .dm-wallet-bal { font-size: 15px; }
 .dm-admin .dm-wallet-bal.is-due { color: #5b4bff; }
 .dm-admin .dm-settle tr:target td { background: #f1efff; }
+
+/* Product photos box (product editor) */
+#dm_product_photos .dm-gal-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; }
+#dm_product_photos .dm-gal-list li { position: relative; margin: 0; }
+#dm_product_photos .dm-gal-list img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; display: block; border: 1px solid #dcdcde; }
+#dm_product_photos .dm-gal-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; line-height: 18px; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 0, 0, .7); color: #fff; cursor: pointer; font-size: 14px; }
+#dm_product_photos .dm-gal-count { display: inline-block; padding: 2px 10px; border-radius: 99px; background: #fdecee; color: #b3261e; }
+#dm_product_photos .dm-gal-count.is-ok { background: #e7f6ef; color: #12805c; }

@@ -186,7 +186,7 @@ while ( have_posts() ) :
 					</div>
 				<?php endif; ?>
 
-				<?php if ( $dm_tags && ! is_wp_error( $dm_tags ) ) : ?>
+				<?php if ( dm_store_opt( 'show_tags' ) && $dm_tags && ! is_wp_error( $dm_tags ) ) : ?>
 					<div class="dm-chips">
 						<?php foreach ( $dm_tags as $dm_tag ) : ?><a class="dm-chip-link" href="<?php echo esc_url( get_term_link( $dm_tag ) ); ?>">#<?php echo esc_html( $dm_tag->name ); ?></a><?php endforeach; ?>
 					</div>
@@ -344,6 +344,20 @@ while ( have_posts() ) :
 				'orderby'        => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ),
 			)
 		);
+		// Products sharing a tag come first ("You may also like"), then the same category.
+		$dm_tag_ids = $dm_tags && ! is_wp_error( $dm_tags ) ? wp_list_pluck( $dm_tags, 'term_id' ) : array();
+		if ( $dm_tag_ids ) {
+			$dm_by_tag  = dm_product_ids(
+				array(
+					'posts_per_page' => 10,
+					'post__not_in'   => array( $dm_pid ),
+					'tax_query'      => array( array( 'taxonomy' => 'dm_tag', 'terms' => $dm_tag_ids ) ),
+					'meta_key'       => '_dm_sales',
+					'orderby'        => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ),
+				)
+			);
+			$dm_related = array_slice( array_values( array_unique( array_merge( $dm_by_tag, (array) $dm_related ) ) ), 0, 10 );
+		}
 		if ( $dm_related ) {
 			echo '<div class="dm-pdp-related">';
 			dm_render_row( $dm_related, __( 'You may also like', 'digimarket' ) );

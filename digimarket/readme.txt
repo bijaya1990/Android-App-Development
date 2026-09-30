@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.10.0
+Stable tag: 2.10.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,11 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.10.1 =
+* WP Admin product editor: new "Product photos (4 needed)" box under the Featured image. The Featured image is photo 1. "Add photos" opens the media library with multi-select, each photo can be removed with ×, and a live "x of 4 photos added" counter shows progress. Saving a published product with fewer than 4 photos shows a reminder.
+* Product tags are hidden from visitors by default: no #tag chips on product pages and no Tags filter in the shop. You can turn them back on in Storefront & SEO → "Show product tags".
+* Hidden tags still work behind the scenes. Store search matches tags, "You may also like" shows products that share a tag first, and product schema lists the tags as keywords.
 
 = 2.10.0 =
 * Etsy-style look. New self-hosted fonts: Figtree for text and Source Serif for big headings (OFL licensed, preloaded, no Google requests).

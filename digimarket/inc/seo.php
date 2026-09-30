@@ -626,6 +626,10 @@ function dm_seo_schema() {
 			if ( $imgs ) {
 				$node['image'] = $imgs;
 			}
+			$kw = wp_get_object_terms( $pid, 'dm_tag', array( 'fields' => 'names' ) );
+			if ( $kw && ! is_wp_error( $kw ) ) {
+				$node['keywords'] = implode( ', ', $kw );
+			}
 			$term = dm_primary_term( $pid );
 			if ( $term ) {
 				$node['category'] = $term->name;

@@ -47,6 +47,7 @@ function dm_store_defaults() {
 		'announce_bg'       => '#1E1B4B',
 		'bottom_nav'        => 1,
 		'articles_show'     => 1,
+		'show_tags'         => 0,
 		'articles_label'    => __( 'Articles', 'digimarket' ),
 		'header_links'      => '',
 		'trust_projects'    => '',
@@ -223,6 +224,7 @@ function dm_admin_storefront() {
 
 	echo '<h2>' . esc_html__( 'Articles', 'digimarket' ) . '</h2><table class="form-table">';
 	$f( 'articles_show', __( 'Articles menu item', 'digimarket' ), 'checkbox', __( 'Show the Articles link in the header and footer. Articles never appear on the homepage.', 'digimarket' ) );
+	$f( 'show_tags', __( 'Show product tags', 'digimarket' ), 'checkbox', __( 'Show #tags on product pages and a Tags filter in the shop. When off, tags stay hidden from visitors but still power search, related products and product schema.', 'digimarket' ) );
 	$f( 'articles_label', __( 'Menu label', 'digimarket' ) );
 	echo '</table>';
 
@@ -258,7 +260,7 @@ add_action( 'dm_admin_do_save_store', function ( $r ) {
 		if ( 'blocks' === $k ) {
 			continue;
 		}
-		if ( in_array( $k, array( 'announce_on', 'bottom_nav', 'articles_show' ), true ) ) {
+		if ( in_array( $k, array( 'announce_on', 'bottom_nav', 'articles_show', 'show_tags' ), true ) ) {
 			$new[ $k ] = empty( $in[ $k ] ) ? 0 : 1;
 		} elseif ( isset( $in[ $k ] ) ) {
 			if ( in_array( $k, array( 'section_count', 'seo_default_image', 'owner_photo', 'lp_svc_wall', 'lp_thm_cat' ), true ) ) {

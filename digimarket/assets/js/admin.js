@@ -17,6 +17,34 @@
 		frame.open();
 	});
 
+	/* Product photos (gallery) box: multi-select, remove, live "x of 4" count */
+	function galSync() {
+		var $list = $('.dm-gal-list'), ids = $list.children('li').map(function () { return $(this).data('id'); }).get();
+		$('#dm_gallery_ids').val(ids.join(','));
+		var thumb = $('#_thumbnail_id').length ? (parseInt($('#_thumbnail_id').val(), 10) > 0 ? 1 : 0) : (parseInt($('.dm-gal-count').data('have-thumb'), 10) || 0);
+		var n = Math.min(ids.length + thumb, 4);
+		$('.dm-gal-count').text(n + ' of 4 photos added').toggleClass('is-ok', ids.length + thumb >= 4);
+		$('.dm-gal-add').prop('disabled', ids.length >= 5);
+	}
+	$(document).on('click', '.dm-gal-add', function (e) {
+		e.preventDefault();
+		var frame = wp.media({ title: 'Add product photos', library: { type: 'image' }, multiple: 'add', button: { text: 'Add photos' } });
+		frame.on('select', function () {
+			var $list = $('.dm-gal-list');
+			frame.state().get('selection').each(function (m) {
+				var a = m.toJSON();
+				if ($list.children('li').length >= 5 || $list.children('li[data-id="' + a.id + '"]').length) { return; }
+				var url = (a.sizes && (a.sizes.thumbnail || a.sizes.medium) || a).url;
+				$list.append($('<li>').attr('data-id', a.id).append($('<img alt="">').attr('src', url), '<button type="button" class="dm-gal-remove" aria-label="Remove photo">&times;</button>'));
+			});
+			galSync();
+		});
+		frame.open();
+	});
+	$(document).on('click', '.dm-gal-remove', function () { $(this).closest('li').remove(); galSync(); });
+	$(document).on('change', '#_thumbnail_id', galSync);
+	$(document).ajaxComplete(function () { if ($('.dm-gal-list').length) { galSync(); } });
+
 	/* Confirm links */
 	$(document).on('click', 'a[data-confirm]', function (e) {
 		if (!window.confirm('Are you sure?')) { e.preventDefault(); }
