@@ -169,6 +169,9 @@ while ( have_posts() ) :
 					<button type="button" class="dm-tool dm-copy" data-copy="<?php echo esc_attr( get_permalink() ); ?>"><?php echo dm_icon( 'copy', 18 ); // phpcs:ignore ?> <?php esc_html_e( 'Copy link', 'digimarket' ); ?></button>
 				</div>
 
+				<?php if ( dm_single_seller_mode() && dm_show_sold_by( $dm_seller ) ) : ?>
+					<p class="dm-muted dm-small dm-soldby"><?php echo esc_html( sprintf( /* translators: %s shop */ __( 'Sold by %s · payment & delivery handled by this store', 'digimarket' ), dm_shop_name( $dm_seller ) ) ); ?></p>
+				<?php endif; ?>
 				<?php if ( ! dm_single_seller_mode() ) : ?>
 					<?php $dm_shop_r = dm_shop_rating( $dm_seller ); ?>
 					<div class="dm-seller-card">

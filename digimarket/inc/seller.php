@@ -49,6 +49,7 @@ function dm_ajax_check_slug() {
 function dm_do_seller_shop() {
 	dm_require_login();
 	$uid      = get_current_user_id();
+	dm_single_mode_seller_gate( $uid );
 	$is_new   = ! get_user_meta( $uid, 'dm_shop_slug', true );
 	$name     = sanitize_text_field( wp_unslash( $_POST['shop_name'] ?? '' ) );
 	$slug     = sanitize_title( wp_unslash( $_POST['shop_slug'] ?? '' ) );
@@ -116,6 +117,7 @@ function dm_do_seller_shop() {
 function dm_do_seller_kyc() {
 	dm_require_login();
 	$uid   = get_current_user_id();
+	dm_single_mode_seller_gate( $uid );
 	$legal = sanitize_text_field( wp_unslash( $_POST['legal_name'] ?? '' ) );
 	$pan   = strtoupper( preg_replace( '/\s+/', '', (string) wp_unslash( $_POST['pan'] ?? '' ) ) );
 	$phone = preg_replace( '/[^0-9+]/', '', (string) wp_unslash( $_POST['phone'] ?? '' ) );
@@ -199,7 +201,7 @@ function dm_do_seller_kyc() {
 	update_user_meta( $uid, 'dm_kyc_submitted', time() );
 	if ( $first || $changed || ! get_user_meta( $uid, 'dm_kyc_status', true ) ) {
 		update_user_meta( $uid, 'dm_kyc_status', 'pending' );
-		if ( 'razorpay' === dm_opt( 'gateway' ) ) {
+		if ( 'razorpay' === dm_opt( 'gateway' ) && ! dm_manual_payouts() ) {
 			$res = dm_rzp_sync_linked_account( $uid );
 			if ( is_wp_error( $res ) ) {
 				update_user_meta( $uid, 'dm_kyc_error', $res->get_error_message() );
@@ -236,6 +238,7 @@ function dm_indian_states() {
 function dm_do_seller_submit() {
 	dm_require_login();
 	$uid = get_current_user_id();
+	dm_single_mode_seller_gate( $uid );
 	if ( dm_onboarding_step( $uid ) < 4 ) {
 		dm_redirect( dm_url( 'sell' ) );
 	}
@@ -253,7 +256,8 @@ function dm_do_seller_submit() {
 			'ip'      => dm_client_ip(),
 		)
 	);
-	$status = dm_opt( 'auto_approve_sellers' ) ? 'active' : 'pending';
+	// Sellers the admin invited are trusted: they go live straight away.
+	$status = dm_opt( 'auto_approve_sellers' ) || get_user_meta( $uid, 'dm_invited', true ) ? 'active' : 'pending';
 	update_user_meta( $uid, 'dm_seller_status', $status );
 	update_user_meta( $uid, 'dm_seller_since', time() );
 	dm_email_seller_welcome( $uid, $status );
@@ -265,6 +269,16 @@ function dm_do_seller_submit() {
 		dm_flash( 'info', __( 'Thanks! Your shop is under review. You can add products as drafts meanwhile.', 'digimarket' ) );
 	}
 	dm_redirect( dm_url( 'dashboard' ) );
+}
+
+/**
+ * In single-seller mode only invited sellers (and the owner) may run seller onboarding.
+ */
+function dm_single_mode_seller_gate( $uid ) {
+	if ( dm_single_seller_mode() && ! dm_is_seller( $uid ) && ! user_can( $uid, 'manage_options' ) ) {
+		dm_flash( 'error', __( 'Selling on this store is by invitation only.', 'digimarket' ) );
+		dm_redirect( home_url( '/' ) );
+	}
 }
 
 function dm_notify_admins( $message, $link = '' ) {

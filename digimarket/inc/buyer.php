@@ -302,7 +302,7 @@ function dm_render_invoice( $order_id ) {
 		$sum['sgst']    += $tax ? $tax['sgst'] : 0;
 		$rows[]          = array( $it, $tax );
 	}
-	$single   = dm_single_seller_mode() || ( $as_seller && user_can( $uid, 'manage_options' ) );
+	$single   = $as_seller ? user_can( $uid, 'manage_options' ) : dm_single_seller_mode();
 	$supplier = $single ? $biz['legal'] : ( $as_seller ? dm_shop_name( $uid ) : ( dm_opt( 'invoice_company' ) ? dm_opt( 'invoice_company' ) : $biz['legal'] ) );
 	$address  = $single || ! $as_seller ? ( dm_opt( 'invoice_address' ) ? dm_opt( 'invoice_address' ) : $biz['address'] ) : implode( ', ', array_filter( (array) get_user_meta( $uid, 'dm_address', true ) ) );
 	$gstin    = '';

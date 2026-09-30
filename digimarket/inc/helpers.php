@@ -46,6 +46,8 @@ function dm_default_settings() {
 		'order_prefix'           => 'DM-',
 		'single_seller_mode'     => 0,
 		'whatsapp_number'        => '',
+		'payout_mode'            => 'auto',
+		'payout_tds_percent'     => 0,
 	);
 }
 
@@ -54,6 +56,31 @@ function dm_default_settings() {
  */
 function dm_single_seller_mode() {
 	return (bool) dm_opt( 'single_seller_mode' );
+}
+
+/**
+ * Manual payouts: the store collects the full payment and the admin pays each
+ * seller's share (minus commission) by bank/UPI from Marketplace → Payouts.
+ * Always on in single-seller mode (invited sellers) and with Cashfree (no split yet).
+ */
+function dm_manual_payouts( $gateway = '' ) {
+	$gateway = $gateway ? $gateway : dm_opt( 'gateway' );
+	return dm_single_seller_mode() || 'manual' === dm_opt( 'payout_mode' ) || 'cashfree' === $gateway;
+}
+
+/**
+ * A seller the admin added by hand (works in single-seller mode too).
+ */
+function dm_is_invited_seller( $uid ) {
+	return $uid && get_user_meta( $uid, 'dm_invited', true ) && dm_is_seller( $uid );
+}
+
+/**
+ * Show a product's seller name publicly? In multi-vendor mode always; in
+ * single-seller mode only for invited sellers (not the store's own products).
+ */
+function dm_show_sold_by( $seller_id ) {
+	return ! dm_single_seller_mode() || ( ! user_can( $seller_id, 'manage_options' ) && dm_is_seller( $seller_id ) );
 }
 
 /**
@@ -329,7 +356,12 @@ function dm_can_purchase( $pid ) {
 		return array( false, __( 'This shop is not accepting orders right now.', 'digimarket' ) );
 	}
 	if ( in_array( dm_opt( 'gateway' ), array( 'razorpay', 'cashfree' ), true ) && dm_product_price( $pid ) > 0 && ! dm_opt( 'allow_sales_without_kyc' ) && ! user_can( $seller, 'manage_options' ) ) {
-		if ( 'verified' !== get_user_meta( $seller, 'dm_kyc_status', true ) || ! get_user_meta( $seller, 'dm_rzp_account_id', true ) ) {
+		if ( dm_manual_payouts() ) {
+			// Manual payouts only need the seller's bank/UPI details on file.
+			if ( ! get_user_meta( $seller, 'dm_kyc_submitted', true ) || 'rejected' === get_user_meta( $seller, 'dm_kyc_status', true ) ) {
+				return array( false, __( 'This seller is completing payout verification. Purchases open soon.', 'digimarket' ) );
+			}
+		} elseif ( 'verified' !== get_user_meta( $seller, 'dm_kyc_status', true ) || ! get_user_meta( $seller, 'dm_rzp_account_id', true ) ) {
 			return array( false, __( 'This seller is completing payout verification. Purchases open soon.', 'digimarket' ) );
 		}
 	}

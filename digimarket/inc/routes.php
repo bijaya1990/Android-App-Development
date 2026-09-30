@@ -155,6 +155,11 @@ function dm_route_guard() {
 			}
 			break;
 		case 'sell':
+			// Single-seller mode: only sellers the admin invited can onboard.
+			if ( dm_single_seller_mode() && ! dm_is_seller() ) {
+				dm_redirect( home_url( '/' ) );
+			}
+			break;
 		case 'shops':
 			if ( dm_single_seller_mode() ) {
 				dm_redirect( home_url( '/' ) );

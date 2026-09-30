@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.6.0
+Version: 2.7.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -453,6 +453,27 @@ p.dm-notice { padding-right: 16px; }
 .dm-file-current { background: var(--dm-surface-2); padding: 10px 12px; border-radius: 10px; font-size: .9rem; }
 details > summary { cursor: pointer; }
 details.dm-card > summary { font-weight: 700; }
+
+
+/* Seller wallet */
+.dm-wallet { background: linear-gradient(135deg, #3f2be0 0%, #5b4bff 55%, #8b5cf6 100%); color: #fff; border-radius: calc(var(--dm-radius) + 6px); padding: 22px; margin: 0 0 18px; box-shadow: 0 10px 30px rgba(63, 43, 224, .25); }
+.dm-wallet-main { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
+.dm-wallet-label, .dm-wallet-last span { display: block; font-size: .82rem; font-weight: 600; opacity: .85; text-transform: uppercase; letter-spacing: .04em; }
+.dm-wallet-amount { display: block; font-size: clamp(2rem, 7vw, 2.9rem); line-height: 1.1; letter-spacing: -.03em; margin: 4px 0; }
+.dm-wallet-sub { font-size: .88rem; opacity: .85; }
+.dm-wallet-last { text-align: right; background: rgba(255, 255, 255, .12); border-radius: var(--dm-radius); padding: 10px 14px; }
+.dm-wallet-last strong { display: block; font-size: 1.2rem; }
+.dm-wallet-last small { font-size: .75rem; opacity: .85; }
+.dm-wallet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 18px; }
+.dm-wallet-grid > div { background: rgba(255, 255, 255, .12); border-radius: var(--dm-radius); padding: 10px 12px; min-width: 0; }
+.dm-wallet-grid span { display: block; font-size: .75rem; opacity: .85; font-weight: 600; }
+.dm-wallet-grid strong { display: block; font-size: 1.05rem; overflow-wrap: anywhere; }
+.dm-wallet-grid small { font-size: .72rem; opacity: .8; }
+.dm-wallet-grid .is-good { background: rgba(255, 255, 255, .95); color: #12805c; }
+.dm-wallet .dm-small { color: #fff; opacity: .9; margin: 12px 0 0; }
+.dm-wallet-history .dm-card-head { flex-wrap: wrap; gap: 10px; }
+.dm-wallet-history tr.dm-muted td { color: var(--dm-muted); }
+@media (max-width: 560px) { .dm-wallet { padding: 18px 16px; } .dm-wallet-last { text-align: left; width: 100%; } }
 
 /* ==========================================================================
    Blog

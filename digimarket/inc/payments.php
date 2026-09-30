@@ -513,12 +513,13 @@ function dm_process_transfers( $order_id ) {
 	}
 	$items = array_merge( ...array_values( $by_seller ) );
 
-	// Cashfree: automatic seller split (Easy Split) is not connected yet — the
-	// seller's share stays pending for a manual payout from Marketplace → Payouts.
-	if ( 'cashfree' === $order->gateway ) {
+	// Manual payouts (single-seller mode with invited sellers, the "Manual"
+	// payout setting, or Cashfree without Easy Split): the seller's share stays
+	// pending until the admin pays it and marks it paid in Marketplace → Payouts.
+	if ( dm_manual_payouts( $order->gateway ) ) {
 		foreach ( $items as $it ) {
-			$wpdb->update( dm_table( 'order_items' ), array( 'transfer_status' => 'pending', 'transfer_note' => 'Manual payout (Cashfree split not enabled)' ), array( 'id' => $it->id ) );
-			$wpdb->update( dm_table( 'payouts' ), array( 'status' => 'pending', 'note' => 'Manual payout (Cashfree split not enabled)' ), array( 'order_item_id' => $it->id ) );
+			$wpdb->update( dm_table( 'order_items' ), array( 'transfer_status' => 'pending', 'transfer_note' => 'Manual payout' ), array( 'id' => $it->id ) );
+			$wpdb->update( dm_table( 'payouts' ), array( 'status' => 'pending', 'note' => 'Manual payout — pay by bank/UPI' ), array( 'order_item_id' => $it->id ) );
 		}
 		return;
 	}
@@ -644,7 +645,10 @@ function dm_mark_item_refunded( $item, $reason = '' ) {
 		),
 		array( 'id' => $item->id )
 	);
-	$wpdb->update( dm_table( 'payouts' ), array( 'status' => 'reversed', 'note' => 'Refunded' ), array( 'order_item_id' => $item->id ) );
+	$paid_out = $wpdb->get_row( $wpdb->prepare( 'SELECT status, reference FROM ' . dm_table( 'payouts' ) . ' WHERE order_item_id = %d', $item->id ) );
+	// A manual payout already sent can't be pulled back automatically — flag it so the admin recovers it.
+	$note = $paid_out && 'settled' === $paid_out->status && ! $item->transfer_id && $item->seller_net_amount > 0 ? 'Refunded after manual payout — recover from seller' : 'Refunded';
+	$wpdb->update( dm_table( 'payouts' ), array( 'status' => 'reversed', 'note' => $note ), array( 'order_item_id' => $item->id ) );
 	// Release the license key back? No — keys may have been seen; mark used.
 	update_post_meta( $item->product_id, '_dm_sales', max( 0, (int) get_post_meta( $item->product_id, '_dm_sales', true ) - 1 ) );
 	dm_recalc_order_status( $item->order_id );

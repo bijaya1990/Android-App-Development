@@ -1021,7 +1021,7 @@ add_action( 'admin_menu', function () {
 	$first = array();
 	$rest  = array();
 	foreach ( $items as $it ) {
-		if ( dm_single_seller_mode() && in_array( $it[2], array( 'dm-sellers', 'dm-payouts', 'dm-moderation' ), true ) ) {
+		if ( dm_single_seller_mode() && in_array( $it[2], array( 'dm-moderation' ), true ) ) {
 			continue;
 		}
 		if ( 'dm-marketplace' === $it[2] ) {

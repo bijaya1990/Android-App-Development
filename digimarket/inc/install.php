@@ -86,6 +86,7 @@ function dm_install() {
   amount decimal(12,2) NOT NULL DEFAULT 0,
   status varchar(32) NOT NULL DEFAULT 'pending',
   reference varchar(128) NOT NULL DEFAULT '',
+  tds_amount decimal(12,2) NOT NULL DEFAULT 0,
   note varchar(255) NOT NULL DEFAULT '',
   created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   settled_at datetime NULL,

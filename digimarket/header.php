@@ -73,7 +73,7 @@ foreach ( dm_lines( dm_store_opt( 'header_links' ) ) as $dm_line ) {
 						<?php if ( current_user_can( 'dm_view_marketplace' ) ) : ?>
 							<a role="menuitem" href="<?php echo esc_url( admin_url( 'admin.php?page=dm-marketplace' ) ); ?>"><?php esc_html_e( 'Admin dashboard', 'digimarket' ); ?></a>
 						<?php endif; ?>
-						<?php if ( dm_is_seller() && ! dm_single_seller_mode() ) : ?>
+						<?php if ( dm_is_seller() ) : ?>
 							<a role="menuitem" href="<?php echo esc_url( dm_url( 'dashboard' ) ); ?>"><?php esc_html_e( 'Seller dashboard', 'digimarket' ); ?></a>
 						<?php elseif ( ! dm_single_seller_mode() ) : ?>
 							<a role="menuitem" href="<?php echo esc_url( dm_url( 'sell' ) ); ?>"><?php esc_html_e( 'Start selling', 'digimarket' ); ?></a>

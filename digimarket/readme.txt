@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.6.0
+Stable tag: 2.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,15 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.7.0 =
+* Add sellers manually (Marketplace → Sellers → "Add a seller manually"): creates the account, shop and optional commission, and emails a set-password link. Works in single-seller mode, where public seller signup stays closed.
+* Invited sellers add payout details and accept the Seller Agreement, then go live. Their products show "Sold by <shop>".
+* Manual payouts: new setting "Seller payouts" (Automatic Route split / Manual). Single-seller mode and Cashfree always use manual payouts.
+* New Payouts → Weekly settlement dashboard: each seller's sales per week (Mon–Sun), discount, refunds, commission, GST on commission, seller net, already paid and due now. It also shows full bank/UPI details, a UPI app link, CSV export, and "Mark paid" with the UTR, which emails the seller a payout statement.
+* Seller wallet on the seller dashboard (Overview and Payouts): a large balance card showing what the store still owes. It drops to ₹0 after you mark a payment as paid. It also shows total sales, platform commission, GST on commission, refunds, TDS, earnings, amount paid and the last payment with its UTR. Earnings history can be filtered week-wise, month-wise or year-wise, followed by a list of payments received.
+* Optional TDS (Sec. 194-O) deduction on payouts; a refund after a manual payout is recovered from the seller's next payout.
+* Professional receipt email: PikaCart logo, receipt number, date, payment method and transaction ID, billed-to details, itemised table (price, discount, amount, sold by, GST), subtotal, discount, total paid and invoice link. All emails now use the logo header and a footer with the business address and policy links.
 
 = 2.6.0 =
 * New payment gateway: Cashfree Payments. Choose Demo / Razorpay / Cashfree in Marketplace → Settings (one active at a time). Sandbox and Production environments.

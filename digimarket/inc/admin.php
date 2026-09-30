@@ -208,6 +208,7 @@ function dm_admin_sellers() {
 	}
 	$q = new WP_User_Query( $args );
 	dm_admin_header( __( 'Sellers', 'digimarket' ) );
+	dm_admin_invite_seller_form();
 	echo '<ul class="subsubsub">';
 	foreach ( array( '' => __( 'All', 'digimarket' ), 'pending' => __( 'Pending approval', 'digimarket' ), 'active' => __( 'Active', 'digimarket' ), 'suspended' => __( 'Suspended', 'digimarket' ), 'draft' => __( 'Onboarding', 'digimarket' ), 'rejected' => __( 'Rejected', 'digimarket' ) ) as $k => $label ) {
 		echo '<li><a class="' . ( $k === $status ? 'current' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-sellers', $k ? array( 'status' => $k ) : array() ) ) . '">' . esc_html( $label ) . '</a> | </li>';
@@ -485,13 +486,22 @@ function dm_admin_transactions() {
 
 function dm_admin_payouts() {
 	global $wpdb;
+	$view = isset( $_GET['view'] ) ? sanitize_key( $_GET['view'] ) : ( isset( $_GET['status'] ) ? 'entries' : 'weekly' );
+	$tabs = '<nav class="nav-tab-wrapper"><a class="nav-tab' . ( 'weekly' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts' ) ) . '">' . esc_html__( 'Weekly settlement', 'digimarket' ) . '</a><a class="nav-tab' . ( 'entries' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts', array( 'view' => 'entries' ) ) ) . '">' . esc_html__( 'All payout entries', 'digimarket' ) . '</a></nav>';
+	if ( 'weekly' === $view ) {
+		dm_admin_header( __( 'Seller payouts', 'digimarket' ) );
+		echo $tabs; // phpcs:ignore
+		dm_admin_settlements();
+		echo '</div>';
+		return;
+	}
 	$status = isset( $_GET['status'] ) ? sanitize_key( $_GET['status'] ) : '';
 	$where  = $status ? $wpdb->prepare( 'WHERE p.status = %s', $status ) : '';
 	$rows   = $wpdb->get_results( 'SELECT p.*, i.order_id, i.product_title, i.transfer_note FROM ' . dm_table( 'payouts' ) . ' p LEFT JOIN ' . dm_table( 'order_items' ) . " i ON i.id = p.order_item_id $where ORDER BY p.id DESC LIMIT 200" ); // phpcs:ignore
-	dm_admin_header( __( 'Payout oversight', 'digimarket' ) );
-	echo '<ul class="subsubsub">';
+	dm_admin_header( __( 'Seller payouts', 'digimarket' ) );
+	echo $tabs . '<ul class="subsubsub">'; // phpcs:ignore
 	foreach ( array( '' => __( 'All', 'digimarket' ), 'pending' => __( 'Pending', 'digimarket' ), 'settled' => __( 'Settled', 'digimarket' ), 'failed' => __( 'Failed', 'digimarket' ), 'reversed' => __( 'Reversed', 'digimarket' ) ) as $k => $l ) {
-		echo '<li><a class="' . ( $k === $status ? 'current' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts', $k ? array( 'status' => $k ) : array() ) ) . '">' . esc_html( $l ) . '</a> | </li>';
+		echo '<li><a class="' . ( $k === $status ? 'current' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts', $k ? array( 'status' => $k ) : array( 'view' => 'entries' ) ) ) . '">' . esc_html( $l ) . '</a> | </li>';
 	}
 	echo '</ul><table class="widefat striped dm-table"><thead><tr><th>' . esc_html__( 'Seller', 'digimarket' ) . '</th><th>' . esc_html__( 'KYC / linked account', 'digimarket' ) . '</th><th>' . esc_html__( 'Order', 'digimarket' ) . '</th><th>' . esc_html__( 'Amount', 'digimarket' ) . '</th><th>' . esc_html__( 'Status', 'digimarket' ) . '</th><th>' . esc_html__( 'Reference', 'digimarket' ) . '</th><th>' . esc_html__( 'Note', 'digimarket' ) . '</th><th></th></tr></thead><tbody>';
 	foreach ( $rows as $r ) {
@@ -687,6 +697,8 @@ function dm_admin_settings() {
 	$field( 'cf_app_id', __( 'App ID (Client ID)', 'digimarket' ), 'text', __( 'Cashfree Dashboard → Developers → API Keys. Sandbox and Production keys are different.', 'digimarket' ) );
 	$field( 'cf_secret', __( 'Secret Key', 'digimarket' ), 'password', sprintf( /* translators: %s url */ __( 'Leave blank to keep the saved key. Webhook URL: %s — add it in Cashfree → Developers → Webhooks (Payments: success, failed, user dropped; Refunds). Webhooks are signed with this Secret Key.', 'digimarket' ), rest_url( 'dm/v1/cashfree-webhook' ) ), 'autocomplete="new-password"' );
 	echo '</table><h2>' . esc_html__( 'Sellers', 'digimarket' ) . '</h2><table class="form-table">';
+	echo '<tr><th><label for="dm_payout_mode">' . esc_html__( 'Seller payouts', 'digimarket' ) . '</label></th><td><select id="dm_payout_mode" name="s[payout_mode]"><option value="auto"' . selected( $s['payout_mode'], 'auto', false ) . '>' . esc_html__( 'Automatic split (Razorpay Route)', 'digimarket' ) . '</option><option value="manual"' . selected( $s['payout_mode'], 'manual', false ) . '>' . esc_html__( 'Manual — I pay sellers weekly by bank/UPI', 'digimarket' ) . '</option></select><p class="description">' . esc_html__( 'Manual: the full payment comes to your account; Marketplace → Payouts shows what each seller is owed week by week (after commission and GST) and you mark it paid with the UTR. Single-seller mode and Cashfree always use manual payouts.', 'digimarket' ) . '</p></td></tr>';
+	$field( 'payout_tds_percent', __( 'TDS on payouts (%)', 'digimarket' ), 'number', __( 'Income-tax Sec. 194-O: an e-commerce operator deducts TDS (currently 0.1%) on sellers’ gross sales, with exemptions for small individual sellers. Leave 0 unless your CA tells you to deduct.', 'digimarket' ), 'step="0.01" min="0" max="5"' );
 	$field( 'allow_sales_without_kyc', __( 'Sales before KYC', 'digimarket' ), 'checkbox', __( 'Allow sales for sellers without a verified linked account (payouts are held as failed until fixed).', 'digimarket' ) );
 	$field( 'currency_symbol', __( 'Currency symbol', 'digimarket' ) );
 	$field( 'currency_code', __( 'Currency code', 'digimarket' ) );
@@ -953,6 +965,8 @@ function dm_admin_handle() {
 			}
 			$new['gateway']           = in_array( $new['gateway'], array( 'demo', 'razorpay', 'cashfree' ), true ) ? $new['gateway'] : 'demo';
 			$new['cf_env']            = 'production' === ( $new['cf_env'] ?? '' ) ? 'production' : 'sandbox';
+			$new['payout_mode']       = 'manual' === ( $new['payout_mode'] ?? '' ) ? 'manual' : 'auto';
+			$new['payout_tds_percent'] = max( 0, min( 5, (float) ( $new['payout_tds_percent'] ?? 0 ) ) );
 			$new['commission_global'] = max( 0, min( 100, (float) $new['commission_global'] ) );
 			foreach ( array( 'rzp_key_secret', 'rzp_webhook_secret', 'cf_secret' ) as $secret ) {
 				if ( '' === (string) ( $in[ $secret ] ?? '' ) ) {

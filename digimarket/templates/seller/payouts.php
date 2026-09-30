@@ -11,17 +11,21 @@ $dm_sum  = $wpdb->get_row( $wpdb->prepare( "SELECT COALESCE(SUM(CASE WHEN status
 $dm_kyc  = get_user_meta( $dm_uid, 'dm_kyc_status', true );
 $dm_kyc  = $dm_kyc ? $dm_kyc : 'pending';
 $dm_act  = get_user_meta( $dm_uid, 'dm_rzp_activation', true );
+if ( ! user_can( $dm_uid, 'manage_options' ) ) {
+	get_template_part( 'template-parts/seller-wallet' );
+}
 ?>
 <div class="dm-stats">
-	<div class="dm-stat accent"><span><?php esc_html_e( 'Available / in transit', 'digimarket' ); ?></span><strong><?php echo esc_html( dm_money( $dm_sum->pending ) ); ?></strong></div>
-	<div class="dm-stat"><span><?php esc_html_e( 'Total transferred', 'digimarket' ); ?></span><strong><?php echo esc_html( dm_money( $dm_sum->settled ) ); ?></strong></div>
-	<div class="dm-stat"><span><?php esc_html_e( 'Last payout', 'digimarket' ); ?></span><strong><?php echo $dm_sum->last_at ? esc_html( mysql2date( 'M j, Y', $dm_sum->last_at ) ) : '—'; ?></strong></div>
-	<div class="dm-stat"><span><?php esc_html_e( 'Payout status', 'digimarket' ); ?></span><strong><?php echo 'verified' === $dm_kyc ? '✅ ' . esc_html__( 'Verified & active', 'digimarket' ) : ( 'rejected' === $dm_kyc ? '⛔ ' . esc_html__( 'Rejected', 'digimarket' ) : '⏳ ' . esc_html__( 'Pending KYC / under review', 'digimarket' ) ); ?></strong><?php if ( $dm_act ) : ?><small><?php echo esc_html( 'Razorpay: ' . $dm_act ); ?></small><?php endif; ?></div>
+	<div class="dm-stat"><span><?php esc_html_e( 'Payout status', 'digimarket' ); ?></span><strong><?php echo 'verified' === $dm_kyc || ( dm_manual_payouts() && 'rejected' !== $dm_kyc && get_user_meta( $dm_uid, 'dm_kyc_submitted', true ) ) ? '✅ ' . esc_html__( 'Verified & active', 'digimarket' ) : ( 'rejected' === $dm_kyc ? '⛔ ' . esc_html__( 'Rejected', 'digimarket' ) : '⏳ ' . esc_html__( 'Pending KYC / under review', 'digimarket' ) ); ?></strong><?php if ( $dm_act && ! dm_manual_payouts() ) : ?><small><?php echo esc_html( 'Razorpay: ' . $dm_act ); ?></small><?php endif; ?></div>
 </div>
 <?php if ( get_user_meta( $dm_uid, 'dm_kyc_error', true ) ) : ?>
 	<div class="dm-notice dm-notice-warning"><?php echo esc_html( sprintf( /* translators: %s */ __( 'Verification note: %s', 'digimarket' ), get_user_meta( $dm_uid, 'dm_kyc_error', true ) ) ); ?></div>
 <?php endif; ?>
+<?php if ( dm_manual_payouts() ) : ?>
+<p class="dm-muted dm-small"><?php echo esc_html( sprintf( /* translators: %d days */ __( 'Payouts are made by bank transfer / UPI to the account below. Your share (sale price minus commission) becomes payable after the %d-day refund window and is usually paid within 7 working days after that. You get an email with the payment reference (UTR) when it is sent.', 'digimarket' ), (int) dm_opt( 'refund_window_days', 7 ) ) ); ?></p>
+<?php else : ?>
 <p class="dm-muted dm-small"><?php esc_html_e( 'Your share of every sale is transferred to your Razorpay linked account automatically at the moment of payment, then settled to your bank on Razorpay’s settlement cycle (usually T+2 working days).', 'digimarket' ); ?></p>
+<?php endif; ?>
 
 <div class="dm-card dm-table-wrap">
 	<table class="dm-table">

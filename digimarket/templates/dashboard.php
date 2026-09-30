@@ -33,7 +33,7 @@ get_header();
 	<aside class="dm-dash-side">
 		<div class="dm-dash-shop">
 			<?php echo dm_shop_logo( $dm_uid, 'dm-avatar' ); // phpcs:ignore ?>
-			<div><strong><?php echo esc_html( dm_shop_name( $dm_uid ) ); ?></strong><a class="dm-small" href="<?php echo esc_url( dm_store_url( $dm_uid ) ); ?>" target="_blank"><?php esc_html_e( 'View shop ↗', 'digimarket' ); ?></a></div>
+			<div><strong><?php echo esc_html( dm_shop_name( $dm_uid ) ); ?></strong><?php if ( ! dm_single_seller_mode() ) : ?><a class="dm-small" href="<?php echo esc_url( dm_store_url( $dm_uid ) ); ?>" target="_blank"><?php esc_html_e( 'View shop ↗', 'digimarket' ); ?></a><?php endif; ?></div>
 		</div>
 		<nav class="dm-dash-nav" aria-label="<?php esc_attr_e( 'Seller dashboard', 'digimarket' ); ?>">
 			<?php foreach ( $dm_nav as $dm_k => $dm_n ) : ?>

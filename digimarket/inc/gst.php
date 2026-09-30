@@ -142,7 +142,7 @@ function dm_item_tax( $item ) {
 		return null;
 	}
 	$seller = (int) $item->seller_id;
-	if ( user_can( $seller, 'manage_options' ) || dm_single_seller_mode() ) {
+	if ( user_can( $seller, 'manage_options' ) ) {
 		$gstin = dm_store_gstin();
 	} else {
 		$gstin = get_user_meta( $seller, 'dm_gst_show', true ) ? dm_seller_gstin( $seller ) : '';
@@ -172,7 +172,7 @@ add_action( 'dm_order_paid', 'dm_gst_check_thresholds', 20 );
 function dm_gst_check_thresholds( $order_id = 0 ) {
 	$fy      = substr( dm_fy_start(), 0, 4 );
 	$targets = array( 0 );
-	if ( $order_id && ! dm_single_seller_mode() ) {
+	if ( $order_id ) {
 		foreach ( dm_get_order_items( $order_id ) as $it ) {
 			$targets[] = (int) $it->seller_id;
 		}
@@ -247,8 +247,8 @@ function dm_admin_gst() {
 	submit_button( __( 'Save GST settings', 'digimarket' ) );
 	echo '</form>';
 
-	if ( dm_single_seller_mode() ) {
-		echo '<p class="description">' . esc_html__( 'Single seller mode: only your own store is tracked. Seller GST controls appear when marketplace sellers are enabled.', 'digimarket' ) . '</p></div>';
+	if ( dm_single_seller_mode() && ! get_users( array( 'meta_key' => 'dm_invited', 'number' => 1, 'fields' => 'ID' ) ) ) {
+		echo '<p class="description">' . esc_html__( 'Single seller mode: only your own store is tracked. Seller GST controls appear when you add sellers.', 'digimarket' ) . '</p></div>';
 		return;
 	}
 	$sellers = get_users( array( 'meta_key' => 'dm_seller_status', 'meta_value' => array( 'active', 'pending', 'suspended' ), 'meta_compare' => 'IN', 'number' => 500 ) );

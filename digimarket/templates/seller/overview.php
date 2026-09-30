@@ -15,6 +15,9 @@ if ( dm_is_store_owner( $dm_uid ) && current_user_can( 'dm_manage_marketplace' )
 	dm_gst_switch_card();
 	echo '<p class="dm-small"><a href="' . esc_url( admin_url( 'admin.php?page=dm-gst' ) ) . '">' . esc_html__( 'GST settings & seller turnover →', 'digimarket' ) . '</a></p></div>';
 }
+if ( ! user_can( $dm_uid, 'manage_options' ) ) {
+	get_template_part( 'template-parts/seller-wallet' );
+}
 ?>
 <div class="dm-stats">
 	<div class="dm-stat"><span><?php esc_html_e( 'Total revenue', 'digimarket' ); ?></span><strong><?php echo esc_html( dm_money( $dm_s['revenue'] ) ); ?></strong></div>
