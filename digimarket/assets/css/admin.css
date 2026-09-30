@@ -115,3 +115,13 @@
 .dm-admin .dm-apply-rubric { max-width: 520px; margin-bottom: 14px; }
 .dm-admin .dm-apply-wide { flex-basis: 100%; }
 .dm-admin .dm-apply-table code { font-size: 12px; }
+
+/* Seller wallets */
+.dm-admin .dm-wallets-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 12px; }
+.dm-admin .dm-wallets-total { background: linear-gradient(135deg, #3f2be0, #5b4bff 55%, #8b5cf6); color: #fff; border-radius: 12px; padding: 12px 18px; min-width: 220px; }
+.dm-admin .dm-wallets-total span { display: block; font-size: 12px; font-weight: 600; opacity: .85; text-transform: uppercase; letter-spacing: .03em; }
+.dm-admin .dm-wallets-total strong { display: block; font-size: 26px; line-height: 1.25; }
+.dm-admin .dm-wallets-total small { opacity: .85; }
+.dm-admin .dm-wallet-bal { font-size: 15px; }
+.dm-admin .dm-wallet-bal.is-due { color: #5b4bff; }
+.dm-admin .dm-settle tr:target td { background: #f1efff; }

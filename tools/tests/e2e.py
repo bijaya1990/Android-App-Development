@@ -62,6 +62,10 @@ class Client:
 
 PNG = open(S + '/../../../../../home/user/Android-App-Development/digimarket/screenshot.png', 'rb').read() if False else open('/home/user/Android-App-Development/digimarket/screenshot.png', 'rb').read()
 
+
+def photos(img, extra=None):
+    return [('thumbnail', ('t.png', img, 'image/png'))] + [('gallery[]', ('g%d.png' % i, img, 'image/png')) for i in range(3)] + list((extra or {}).items())
+
 print('== Seller onboarding')
 seller = Client('seller')
 r = seller.form('/register/?intent=seller', 'register', {'name': 'Sara Seller', 'email': 'sara@example.com', 'phone': '+919876543210', 'password': 'secretpass1', 'agree': '1', 'intent': 'seller'})
@@ -96,18 +100,24 @@ check(rr.status_code == 200 and 'Creative Templates Hub' in rr.text, 'public sto
 
 print('== Products')
 r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Notion Planner Pro', 'short_description': 'Plan your life', 'full_description': '<h2>Great</h2><p>Planner <script>alert(1)</script></p>', 'category': wp('echo get_term_by("name","Templates","dm_category")->term_id;'), 'tags': 'notion, planner', 'price': '499', 'sale_price': '299', 'delivery': 'file', 'download_limit': '3', 'access_days': '0', 'status': 'publish', 'meta_title': 'Planner SEO', 'meta_desc': 'desc'},
-                files={'thumbnail': ('t.png', PNG, 'image/png'), 'gallery[]': ('g1.png', PNG, 'image/png'), 'digital_file': ('planner.pdf', b'%PDF-1.4 test file content', 'application/pdf')})
+                files=photos(PNG, {'digital_file': ('planner.pdf', b'%PDF-1.4 test file content', 'application/pdf')}))
 check('/dashboard/edit/' in r.url, 'product saved', flashes(r.text))
 p1 = re.search(r'/dashboard/edit/(\d+)/', r.url).group(1)
 check(wp('echo get_post_status(%s);' % p1) == 'publish', 'product 1 published')
 check('<script>' not in wp('echo get_post_field("post_content",%s);' % p1), 'rich text sanitised')
-r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Photo Editor License', 'category': wp('echo get_term_by("name","Software","dm_category")->term_id;'), 'price': '999', 'delivery': 'license_key', 'license_keys': 'KEY-AAA-111\nKEY-BBB-222\nKEY-CCC-333', 'status': 'publish'}, files={'thumbnail': ('t.png', PNG, 'image/png')})
+r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Photo Editor License', 'category': wp('echo get_term_by("name","Software","dm_category")->term_id;'), 'price': '999', 'delivery': 'license_key', 'license_keys': 'KEY-AAA-111\nKEY-BBB-222\nKEY-CCC-333', 'status': 'publish'}, files=photos(PNG))
 p2 = re.search(r'/dashboard/edit/(\d+)/', r.url).group(1)
 check(wp('echo get_post_status(%s);' % p2) == 'publish', 'license product published', flashes(r.text))
-r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Course Access', 'category': wp('echo get_term_by("name","Courses","dm_category")->term_id;'), 'price': '1500', 'delivery': 'external_link', 'external_url': 'https://example.com/course', 'status': 'publish', 'access_days': '30'}, files={'thumbnail': ('t.png', PNG, 'image/png')})
+r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Course Access', 'category': wp('echo get_term_by("name","Courses","dm_category")->term_id;'), 'price': '1500', 'delivery': 'external_link', 'external_url': 'https://example.com/course', 'status': 'publish', 'access_days': '30'}, files=photos(PNG))
 p3 = re.search(r'/dashboard/edit/(\d+)/', r.url).group(1)
-r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Free Icons', 'category': wp('echo get_term_by("name","Graphics","dm_category")->term_id;'), 'price': '0', 'delivery': 'file', 'status': 'publish'}, files={'thumbnail': ('t.png', PNG, 'image/png'), 'digital_file': ('icons.zip', b'PK\x03\x04zip', 'application/zip')})
+r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Free Icons', 'category': wp('echo get_term_by("name","Graphics","dm_category")->term_id;'), 'price': '0', 'delivery': 'file', 'status': 'publish'}, files=photos(PNG, {'digital_file': ('icons.zip', b'PK\x03\x04zip', 'application/zip')}))
 p4 = re.search(r'/dashboard/edit/(\d+)/', r.url).group(1)
+r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'One Photo Only', 'price': '10', 'delivery': 'file', 'status': 'publish'}, files={'thumbnail': ('t.png', PNG, 'image/png'), 'digital_file': ('x.pdf', b'%PDF-1.4 x', 'application/pdf')})
+p_one = re.search(r'/dashboard/edit/(\d+)/', r.url).group(1)
+check(wp('echo get_post_status(%s);' % p_one) == 'draft' and any('4 photos' in m for t, m in flashes(r.text)), 'new product needs 4 photos to publish', flashes(r.text))
+check('0 of 4 added' not in r.text and '1 of 4 added' in r.text and '4 required' in r.text, 'editor shows the photo counter')
+pc = requests.get(BASE + '/?post_type=dm_product&s=Planner').text
+check('data-flip' in pc and pc.count('dm-flip-page') >= 4 and 'data-src=' in pc, 'product card turns through 4 photos (extra pages lazy-loaded)')
 r = seller.form('/dashboard/edit/', 'seller_product_save', {'product_id': '0', 'title': 'Missing file', 'price': '10', 'delivery': 'file', 'status': 'publish'})
 p5 = re.search(r'/dashboard/edit/(\d+)/', r.url).group(1)
 check(wp('echo get_post_status(%s);' % p5) == 'draft', 'publish blocked without thumbnail/file', flashes(r.text))

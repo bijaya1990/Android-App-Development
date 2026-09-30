@@ -3,7 +3,7 @@ Theme Name: PikaCart
 Theme URI: https://example.com/digimarket
 Author: DigiMarket
 Description: PikaCart storefront — a Flipkart-style shop for digital products (study notes, templates, kids worksheets), WhatsApp-quoted website services and hosting partner offers. Banner carousel with scheduling, category icons, deals with countdowns, service packages, portfolio, verified reviews, enquiry leads, articles, coupons, built-in SEO (titles, schema, sitemaps, redirects) and Razorpay checkout. Also runs as a multi-vendor marketplace. No plugins required.
-Version: 2.8.0
+Version: 2.9.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -1597,3 +1597,50 @@ main:has(> .dm-lp > .dm-lp-band:last-child) + .dm-ft { margin-top: 0; }
   .dm-apply-modal { width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0; max-width: 100vw; }
   .dm-apply-bar .dm-container { font-size: .8rem; }
 }
+
+/* ==========================================================================
+   Clean storefront (Etsy-style) + page-turning product photos
+   ========================================================================== */
+:root:not([data-theme="dark"]) { --dm-bg: #ffffff; --dm-shadow-card: none; }
+.dm-main, .dm-home { background: var(--dm-bg); }
+/* Product cards: no box, rounded photo, quiet text */
+.dm-pc { background: transparent; border: 0; border-radius: 0; overflow: visible; box-shadow: none; }
+.dm-pc:hover { box-shadow: none; transform: none; }
+.dm-pc-media { border-radius: 12px; background: var(--dm-surface-2); transition: box-shadow .2s ease; isolation: isolate; }
+.dm-pc:hover .dm-pc-media { box-shadow: 0 8px 22px rgba(20, 20, 40, .16); }
+.dm-pc:hover .dm-pc-media img { transform: none; }
+.dm-pc-body { padding: 8px 2px 4px; gap: 3px; }
+.dm-pc-title { font-weight: 400; font-size: .9rem; color: var(--dm-text); letter-spacing: 0; }
+.dm-pc-title a { color: inherit; }
+.dm-pc:hover .dm-pc-title a { text-decoration: underline !important; text-underline-offset: 2px; }
+.dm-pc-price { font-size: .98rem; }
+.dm-pc-meta { font-size: .74rem; }
+.dm-pc-act { width: 34px; height: 34px; background: #fff; color: var(--dm-text); border: 1px solid rgba(0, 0, 0, .12); box-shadow: 0 1px 4px rgba(0, 0, 0, .1); right: 4px; bottom: 6px; }
+.dm-pc-act:hover { background: var(--dm-primary); color: #fff; border-color: var(--dm-primary); transform: none; }
+.dm-pc-act.is-wa { background: #fff; color: var(--dm-wa-dark); border-color: rgba(37, 211, 102, .4); box-shadow: 0 1px 4px rgba(0, 0, 0, .1); }
+.dm-pc-act.is-wa:hover { background: var(--dm-wa); color: #fff; }
+.dm-pc-act.is-added { background: var(--dm-good); color: #fff; border-color: var(--dm-good); }
+.dm-pc-badges { z-index: 70; }
+.dm-badge2 { border-radius: 99px; box-shadow: 0 1px 2px rgba(0, 0, 0, .1); font-weight: 600; }
+.dm-wish { z-index: 71; }
+[data-theme="dark"] .dm-pc-act { background: var(--dm-surface); color: var(--dm-text); border-color: var(--dm-border); }
+/* Page turn */
+.dm-flip { perspective: 1600px; }
+.dm-flip::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; z-index: 60; pointer-events: none; background: linear-gradient(90deg, rgba(0, 0, 0, .16), rgba(0, 0, 0, 0)); }
+.dm-flip-page { position: absolute; inset: 0; display: block; background: var(--dm-surface-2); transform-origin: left center; backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform; }
+.dm-flip-page img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dm-flip-page::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .28) 0%, rgba(0, 0, 0, 0) 35%, rgba(255, 255, 255, .18) 75%, rgba(0, 0, 0, .1) 100%); }
+.dm-flip-page.is-turning { animation: dm-page-turn .9s cubic-bezier(.45, .05, .3, 1) forwards; }
+.dm-flip-page.is-turning::after { animation: dm-page-shade .9s ease forwards; }
+.dm-flip-page.is-fading { transition: opacity .45s ease; opacity: 0; }
+@keyframes dm-page-turn { from { transform: rotateY(0); } to { transform: rotateY(-180deg); } }
+@keyframes dm-page-shade { 0% { opacity: 0; } 45% { opacity: 1; } 100% { opacity: 1; } }
+.dm-flip-dots { position: absolute; left: 0; right: 0; bottom: 8px; z-index: 65; display: flex; justify-content: center; gap: 4px; pointer-events: none; }
+.dm-flip-dots i { width: 6px; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, .6); box-shadow: 0 0 2px rgba(0, 0, 0, .35); transition: width .25s ease, background .25s ease; }
+.dm-flip-dots i.is-on { width: 14px; background: #fff; }
+/* Editor: photo requirement */
+.dm-photos-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dm-photos-head .dm-h3 { display: flex; align-items: center; gap: 8px; margin: 0; }
+.dm-req-badge { font-size: .72rem; font-weight: 700; background: #FEF3C7; color: #92400E; padding: 2px 8px; border-radius: 99px; }
+.dm-photo-count { font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: #FDECEE; color: #B3261E; }
+.dm-photo-count.is-ok { background: #E7F6EF; color: #12805C; }

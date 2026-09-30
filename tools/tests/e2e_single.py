@@ -99,7 +99,7 @@ r = seller.form('/dashboard/edit/', 'seller_product_save', {
     'product_id': '0', 'title': 'School Website Package', 'price': '5000', 'category': cat,
     'status': 'publish', 'delivery': 'file', 'service_mode': '1',
     'service_whatsapp': '919776144085', 'service_message': 'Hi, School Website enquiry',
-}, files={'thumbnail': ('t.png', PNG, 'image/png')})
+}, files=[('thumbnail', ('t.png', PNG, 'image/png'))] + [('gallery[]', ('g%d.png' % i, PNG, 'image/png')) for i in range(3)])
 m = re.search(r'/dashboard/edit/(\d+)/', r.url)
 check(bool(m), 'service product created without needing a file', r.url)
 spid = m.group(1) if m else None

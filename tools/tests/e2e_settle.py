@@ -134,6 +134,13 @@ check('No seller sales in this week' in last, 'last week is empty')
 csv = ad.get(BASE + '/wp-admin/admin-post.php?action=dm_admin&do=settlement_csv&week=due&_wpnonce=' + re.search(r'do=settlement_csv&(?:#038;|amp;)?week=due&(?:#038;|amp;)?_wpnonce=([a-f0-9]+)', pg).group(1)).text
 check('Ravi Notes' in csv and '123456789012' in csv and 'HDFC0001234' in csv, 'CSV export for bank upload', csv[:200])
 
+print('== Admin: every seller wallet')
+ov = ad.get(BASE + '/wp-admin/admin.php?page=dm-marketplace').text
+check('Seller wallets' in ov and 'Total owed to sellers' in ov and 'Ravi Notes' in ov and '₹200.00' in ov, 'overview shows seller wallets and total owed')
+wt = ad.get(BASE + '/wp-admin/admin.php?page=dm-payouts&view=wallets').text
+check('Seller wallets' in wt and 'Ravi Notes' in wt and 'Pay now' in wt and '#seller-%d' % sid in wt, 'payouts has a Seller wallets tab with Pay now', re.findall(r'₹[\d,.]+', wt)[:8])
+check('id="seller-%d"' % sid in ad.get(BASE + '/wp-admin/admin.php?page=dm-payouts').text, 'Pay now jumps to the seller row in weekly settlement')
+
 print('== TDS option')
 wp('$s=get_option("dm_settings"); $s["payout_tds_percent"]=1; update_option("dm_settings",$s);')
 pg = ad.get(BASE + '/wp-admin/admin.php?page=dm-payouts').text
@@ -154,6 +161,9 @@ pg = ad.get(BASE + '/wp-admin/admin.php?page=dm-payouts').text
 check('Nothing to pay' in pg, 'nothing left to pay')
 sp = sl.get(BASE + '/dashboard/payouts/').text
 check('UTR123456' in sp and 'bank transfer / UPI' in sp, 'seller sees the payout reference and manual-payout note')
+
+wt = ad.get(BASE + '/wp-admin/admin.php?page=dm-payouts&view=wallets').text
+check('UTR123456' in wt and 'Pay now' not in wt, 'admin wallet list shows 0 balance and last UTR after payment')
 
 print('== Seller wallet')
 ov = sl.get(BASE + '/dashboard/').text

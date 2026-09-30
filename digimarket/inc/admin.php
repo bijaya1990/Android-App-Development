@@ -156,6 +156,7 @@ function dm_admin_overview() {
 	dm_stat_card( __( 'Live products', 'digimarket' ), number_format_i18n( $prods ) );
 	dm_stat_card( __( 'Paid orders', 'digimarket' ), number_format_i18n( $tot->orders ) );
 	echo '</div>';
+	do_action( 'dm_admin_overview_after_stats' );
 
 	echo '<p class="dm-range">';
 	foreach ( array( 7, 30, 90, 365 ) as $d ) {
@@ -487,7 +488,21 @@ function dm_admin_transactions() {
 function dm_admin_payouts() {
 	global $wpdb;
 	$view = isset( $_GET['view'] ) ? sanitize_key( $_GET['view'] ) : ( isset( $_GET['status'] ) ? 'entries' : 'weekly' );
-	$tabs = '<nav class="nav-tab-wrapper"><a class="nav-tab' . ( 'weekly' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts' ) ) . '">' . esc_html__( 'Weekly settlement', 'digimarket' ) . '</a><a class="nav-tab' . ( 'entries' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts', array( 'view' => 'entries' ) ) ) . '">' . esc_html__( 'All payout entries', 'digimarket' ) . '</a></nav>';
+	$tabs = '<nav class="nav-tab-wrapper"><a class="nav-tab' . ( 'weekly' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts' ) ) . '">' . esc_html__( 'Weekly settlement', 'digimarket' ) . '</a><a class="nav-tab' . ( 'wallets' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts', array( 'view' => 'wallets' ) ) ) . '">' . esc_html__( 'Seller wallets', 'digimarket' ) . '</a><a class="nav-tab' . ( 'entries' === $view ? ' nav-tab-active' : '' ) . '" href="' . esc_url( dm_admin_url( 'dm-payouts', array( 'view' => 'entries' ) ) ) . '">' . esc_html__( 'All payout entries', 'digimarket' ) . '</a></nav>';
+	if ( 'wallets' === $view ) {
+		dm_admin_header( __( 'Seller payouts', 'digimarket' ) );
+		echo $tabs; // phpcs:ignore
+		$rows = dm_all_seller_wallets();
+		echo '<div class="dm-stats">';
+		dm_stat_card( __( 'Total owed to sellers', 'digimarket' ), dm_money( array_sum( wp_list_pluck( $rows, 'balance' ) ) ), 'accent' );
+		dm_stat_card( __( 'Seller sales', 'digimarket' ), dm_money( array_sum( wp_list_pluck( $rows, 'sales' ) ) ) );
+		dm_stat_card( __( 'Commission + GST', 'digimarket' ), dm_money( array_sum( wp_list_pluck( $rows, 'deductions' ) ) ) );
+		dm_stat_card( __( 'Paid to sellers', 'digimarket' ), dm_money( array_sum( wp_list_pluck( $rows, 'paid' ) ) ) );
+		echo '</div><div class="dm-panel">';
+		dm_admin_wallets_table( $rows );
+		echo '</div></div>';
+		return;
+	}
 	if ( 'weekly' === $view ) {
 		dm_admin_header( __( 'Seller payouts', 'digimarket' ) );
 		echo $tabs; // phpcs:ignore

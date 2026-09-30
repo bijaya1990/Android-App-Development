@@ -222,7 +222,7 @@ if n:
     ed = ad.get(BASE + '/dashboard/edit/')
     n = nonce_for(ed.text, 'seller_product_save')
     png = open('/home/user/Android-App-Development/digimarket/screenshot.png', 'rb').read()
-    r = ad.post(BASE + '/dashboard/edit/', data={'dm_action': 'seller_product_save', '_dmnonce': n, 'product_id': '0', 'title': 'Partner Tool', 'price': '99', 'category': ids['cat2'], 'status': 'publish', 'listing_type': 'affiliate', 'aff_url': 'https://tool.example.com/?r=1', 'aff_suffix': '/month', 'what_you_get': 'x'}, files={'thumbnail': ('t.png', png, 'image/png')})
+    r = ad.post(BASE + '/dashboard/edit/', data={'dm_action': 'seller_product_save', '_dmnonce': n, 'product_id': '0', 'title': 'Partner Tool', 'price': '99', 'category': ids['cat2'], 'status': 'publish', 'listing_type': 'affiliate', 'aff_url': 'https://tool.example.com/?r=1', 'aff_suffix': '/month', 'what_you_get': 'x'}, files=[('thumbnail', ('t.png', png, 'image/png'))] + [('gallery[]', ('g%d.png' % i, png, 'image/png')) for i in range(3)])
     m = re.search(r'/dashboard/edit/(\d+)/', r.url)
     pid = m.group(1) if m else '0'
     check(wp('echo get_post_status(%s)."|".get_post_meta(%s,"_dm_affiliate",true)."|".get_post_meta(%s,"_dm_aff_slug",true);' % (pid, pid, pid)) == 'publish|1|partner-tool', 'affiliate published with auto short link', r.url)

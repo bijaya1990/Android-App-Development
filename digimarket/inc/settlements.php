@@ -200,7 +200,7 @@ function dm_admin_settlements() {
 		$sid = (int) $r->seller_id;
 		$pay = dm_seller_pay_to( $sid, $can );
 		$u   = get_userdata( $sid );
-		echo '<tr><td><strong><a href="' . esc_url( dm_admin_url( 'dm-sellers', array( 'seller' => $sid ) ) ) . '">' . esc_html( dm_shop_name( $sid ) ) . '</a></strong><br><small>' . esc_html( $u ? $u->user_email : '' ) . '</small></td>';
+		echo '<tr id="seller-' . (int) $sid . '"><td><strong><a href="' . esc_url( dm_admin_url( 'dm-sellers', array( 'seller' => $sid ) ) ) . '">' . esc_html( dm_shop_name( $sid ) ) . '</a></strong><br><small>' . esc_html( $u ? $u->user_email : '' ) . '</small></td>';
 		echo '<td>' . (int) $r->orders . ' / ' . (int) $r->items . '</td>';
 		echo '<td>' . esc_html( dm_money( $r->gross ) ) . ( $r->list_total > $r->gross ? '<br><small>' . esc_html( sprintf( /* translators: %s */ __( 'after %s discount', 'digimarket' ), dm_money( $r->list_total - $r->gross ) ) ) . '</small>' : '' ) . '</td>';
 		echo '<td>' . ( $r->refunded > 0 ? '−' . esc_html( dm_money( $r->refunded ) ) : '—' ) . '</td>';
@@ -599,3 +599,68 @@ function dm_wallet_period_label( $key, $group ) {
 	$start = ( new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) ) )->setISODate( (int) $y, (int) $w, 1 )->setTime( 12, 0 );
 	return dm_week_label( $start->format( 'Y-m-d H:i:s' ) );
 }
+
+/* -------------------------------------------------------------------------
+ * Admin: every seller's wallet
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Wallet summary for every non-admin seller, highest balance first.
+ */
+function dm_all_seller_wallets() {
+	$ids  = get_users( array( 'meta_key' => 'dm_seller_status', 'meta_value' => array( 'draft', 'pending', 'active', 'suspended', 'rejected' ), 'meta_compare' => 'IN', 'fields' => 'ID', 'number' => 1000 ) );
+	$rows = array();
+	foreach ( $ids as $uid ) {
+		if ( user_can( (int) $uid, 'manage_options' ) ) {
+			continue;
+		}
+		$w      = dm_seller_wallet( (int) $uid, 'week', 1 );
+		$rows[] = (object) array(
+			'uid'        => (int) $uid,
+			'balance'    => $w['balance'],
+			'sales'      => $w['life']['sales'],
+			'deductions' => $w['life']['commission'] + $w['life']['gst'],
+			'earned'     => $w['life']['net'],
+			'paid'       => $w['life']['paid'],
+			'refunded'   => $w['life']['refunded'],
+			'last'       => $w['last'],
+			'orders'     => count( $w['life']['orders'] ),
+		);
+	}
+	usort( $rows, function ( $a, $b ) {
+		return $b->balance <=> $a->balance ?: $b->sales <=> $a->sales;
+	} );
+	return $rows;
+}
+
+function dm_admin_wallets_table( $rows, $limit = 0 ) {
+	$shown = $limit ? array_slice( $rows, 0, $limit ) : $rows;
+	echo '<table class="widefat striped dm-table dm-wallets"><thead><tr><th>' . esc_html__( 'Seller', 'digimarket' ) . '</th><th>' . esc_html__( 'Wallet balance', 'digimarket' ) . '</th><th>' . esc_html__( 'Sales', 'digimarket' ) . '</th><th>' . esc_html__( 'Commission + GST', 'digimarket' ) . '</th><th>' . esc_html__( 'Refunds', 'digimarket' ) . '</th><th>' . esc_html__( 'Earned', 'digimarket' ) . '</th><th>' . esc_html__( 'Paid', 'digimarket' ) . '</th><th>' . esc_html__( 'Last payment', 'digimarket' ) . '</th><th></th></tr></thead><tbody>';
+	foreach ( $shown as $r ) {
+		$u    = get_userdata( $r->uid );
+		$pay  = dm_seller_pay_to( $r->uid );
+		echo '<tr><td><strong><a href="' . esc_url( dm_admin_url( 'dm-sellers', array( 'seller' => $r->uid ) ) ) . '">' . esc_html( dm_shop_name( $r->uid ) ) . '</a></strong><br><small>' . esc_html( $u ? $u->user_email : '' ) . '</small>' . ( ! $pay['acct'] && ! $pay['upi'] ? '<br><small class="dm-warn">' . esc_html__( 'No payout details', 'digimarket' ) . '</small>' : '' ) . '</td>';
+		echo '<td><strong class="dm-wallet-bal' . ( $r->balance > 0 ? ' is-due' : '' ) . '">' . esc_html( dm_money( $r->balance ) ) . '</strong></td>';
+		echo '<td>' . esc_html( dm_money( $r->sales ) ) . '<br><small>' . esc_html( sprintf( /* translators: %d */ _n( '%d order', '%d orders', $r->orders, 'digimarket' ), $r->orders ) ) . '</small></td>';
+		echo '<td>' . ( $r->deductions > 0 ? '−' . esc_html( dm_money( $r->deductions ) ) : '—' ) . '</td><td>' . ( $r->refunded > 0 ? '−' . esc_html( dm_money( $r->refunded ) ) : '—' ) . '</td>';
+		echo '<td>' . esc_html( dm_money( $r->earned ) ) . '</td><td>' . esc_html( dm_money( $r->paid ) ) . '</td>';
+		echo '<td>' . ( $r->last ? esc_html( dm_money( $r->last['amount'] ) ) . '<br><small>' . esc_html( mysql2date( 'j M Y', $r->last['date'] ) . ' · ' . $r->last['ref'] ) . '</small>' : '—' ) . '</td>';
+		echo '<td>' . ( $r->balance > 0 && current_user_can( 'dm_manage_marketplace' ) ? '<a class="button button-small button-primary" href="' . esc_url( dm_admin_url( 'dm-payouts' ) . '#seller-' . $r->uid ) . '">' . esc_html__( 'Pay now', 'digimarket' ) . '</a>' : '' ) . '</td></tr>';
+	}
+	if ( ! $shown ) {
+		echo '<tr><td colspan="9">' . esc_html__( 'No sellers yet.', 'digimarket' ) . '</td></tr>';
+	}
+	echo '</tbody></table>';
+}
+
+/* Overview: total owed + top wallets. */
+add_action( 'dm_admin_overview_after_stats', function () {
+	$rows  = dm_all_seller_wallets();
+	$owed  = array_sum( wp_list_pluck( $rows, 'balance' ) );
+	$due_n = count( array_filter( $rows, function ( $r ) {
+		return $r->balance > 0;
+	} ) );
+	echo '<div class="dm-panel dm-wallets-panel"><div class="dm-wallets-head"><div><h2>' . esc_html__( 'Seller wallets', 'digimarket' ) . '</h2><p class="description">' . esc_html__( 'What each seller has earned and what you still owe them. Balances go back to ₹0 when you mark a payout as paid.', 'digimarket' ) . '</p></div><div class="dm-wallets-total"><span>' . esc_html__( 'Total owed to sellers', 'digimarket' ) . '</span><strong>' . esc_html( dm_money( $owed ) ) . '</strong><small>' . esc_html( sprintf( /* translators: %d */ _n( '%d seller to pay', '%d sellers to pay', $due_n, 'digimarket' ), $due_n ) ) . '</small></div></div>';
+	dm_admin_wallets_table( $rows, 10 );
+	echo '<p><a class="button" href="' . esc_url( dm_admin_url( 'dm-payouts', array( 'view' => 'wallets' ) ) ) . '">' . esc_html__( 'All seller wallets →', 'digimarket' ) . '</a> <a class="button button-primary" href="' . esc_url( dm_admin_url( 'dm-payouts' ) ) . '">' . esc_html__( 'Weekly settlement & pay', 'digimarket' ) . '</a></p></div>';
+} );

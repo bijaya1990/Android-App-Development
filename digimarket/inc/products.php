@@ -88,6 +88,23 @@ function dm_register_content_types() {
  * Private storage
  * ---------------------------------------------------------------------- */
 
+/* Photos a listing needs before it can go live (cover + 3 gallery photos). */
+if ( ! defined( 'DM_REQUIRED_PHOTOS' ) ) {
+	define( 'DM_REQUIRED_PHOTOS', 4 );
+}
+
+/**
+ * Cover + gallery image IDs of a product, cover first.
+ */
+function dm_product_photo_ids( $pid ) {
+	$ids = array_merge( array( (int) get_post_thumbnail_id( $pid ) ), array_map( 'absint', (array) get_post_meta( $pid, '_dm_gallery', true ) ) );
+	return array_values( array_unique( array_filter( $ids ) ) );
+}
+
+function dm_product_photo_count( $pid ) {
+	return count( dm_product_photo_ids( $pid ) );
+}
+
 function dm_private_dir() {
 	$key = get_option( 'dm_private_key' );
 	if ( ! $key ) {
@@ -190,6 +207,7 @@ function dm_upload_image( $field, $owner, $index = null, $parent = 0 ) {
  * @return int|WP_Error
  */
 function dm_save_product( $pid, $owner, $data ) {
+	$was_live = $pid && 'publish' === get_post_status( $pid );
 	$data   = dm_normalise_listing_type( $data );
 	$errors = new WP_Error();
 	foreach ( dm_validate_listing_fields( $data ) as $msg ) {
@@ -361,8 +379,15 @@ function dm_save_product( $pid, $owner, $data ) {
 	// Validate requirements for publishing.
 	if ( 'publish' === $status ) {
 		$missing = array();
-		if ( ! has_post_thumbnail( $pid ) ) {
-			$missing[] = __( 'a thumbnail image', 'digimarket' );
+		$photos = dm_product_photo_count( $pid );
+		if ( $photos < DM_REQUIRED_PHOTOS ) {
+			if ( $was_live ) {
+				/* translators: 1 required 2 current */
+				dm_flash( 'warning', sprintf( __( 'Please add %1$d photos (cover + %2$d more) — this product has %3$d. Listings with 4 photos flip through them like book pages and sell better.', 'digimarket' ), DM_REQUIRED_PHOTOS, DM_REQUIRED_PHOTOS - 1, $photos ) );
+			} else {
+				/* translators: 1 required 2 current */
+				$missing[] = sprintf( __( '%1$d photos (a cover photo + %2$d more; you have %3$d)', 'digimarket' ), DM_REQUIRED_PHOTOS, DM_REQUIRED_PHOTOS - 1, $photos );
+			}
 		}
 		if ( ! $service && ! $affiliate ) {
 			if ( 'file' === $delivery && ! get_post_meta( $pid, '_dm_file', true ) ) {

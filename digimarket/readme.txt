@@ -3,7 +3,7 @@ Contributors: digimarket
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.8.0
+Stable tag: 2.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,12 @@ DigiMarket turns WordPress into a Gumroad + Etsy style marketplace:
 /products, /category-products/{slug}, /product/{slug}, /sale, /articles, /articles/{slug}, /portfolio, /go/{partner}, /review/{token}, /cart, /checkout, /account, /dashboard, /login, /register, /forgot, /admin/login (→ wp-login with 2FA). Marketplace mode also: /shops, /store/{shop}, /sell.
 
 == Changelog ==
+
+= 2.9.0 =
+* Admin can see every seller's wallet. Marketplace → Overview shows "Seller wallets" with the total owed to sellers and each seller's balance, sales, commission + GST, refunds, earnings, amount paid and last payment (UTR). Payouts has a new "Seller wallets" tab, and "Pay now" jumps to that seller in Weekly settlement.
+* Cleaner, Etsy-style storefront: white page, product cards without boxes, rounded photos with a soft hover shadow, lighter titles, and white cart / WhatsApp buttons.
+* Products need 4 photos (a cover plus 3 more) before they can be published from the seller dashboard. The editor shows a live "x of 4 added" counter. Products already live get a reminder instead of being unpublished.
+* Product cards turn through the 4 photos automatically like book pages, with page dots. Extra photos load only when the card is on screen, and a gentle fade replaces the page turn for visitors who prefer reduced motion.
 
 = 2.8.0 =
 * Seller applications: a professional "Apply now for a seller account" button, switched ON/OFF from Marketplace → Seller applications. While it is on, it appears in the top bar (with batch and closing date), the header ("Sell on PikaCart"), the mobile menu, the footer and anywhere you use [pikacart_apply_button].

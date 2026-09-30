@@ -725,6 +725,71 @@
 		chk.addEventListener('click', function (e) { if (!accepted && chk.checked) { e.preventDefault(); open(); } });
 		if (form) { form.addEventListener('submit', function (e) { if (!chk.checked) { e.preventDefault(); open(); } }); }
 	})();
+	/* ---- Product cards: turn through the 4 photos like book pages ---- */
+	(function () {
+		var books = $$('[data-flip]');
+		if (!books.length) { return; }
+		var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		function setup(book) {
+			if (book._pages) { return; }
+			book._pages = $$('.dm-flip-page', book);
+			book._dots = $$('.dm-flip-dots i', book);
+			book._at = 0;
+			book._pages.forEach(function (p) { var im = p.querySelector('img[data-src]'); if (im) { im.src = im.getAttribute('data-src'); im.removeAttribute('data-src'); } });
+			stack(book);
+		}
+		function stack(book) {
+			var n = book._pages.length;
+			book._pages.forEach(function (p, i) { var pos = (i - book._at + n) % n; p.style.zIndex = n - pos; p.classList.toggle('is-top', pos === 0); });
+			book._dots.forEach(function (d, i) { d.classList.toggle('is-on', i === book._at); });
+		}
+		function turn(book) {
+			if (book._busy || document.hidden) { return; }
+			var top = book._pages[book._at];
+			book._busy = true;
+			top.classList.add(still ? 'is-fading' : 'is-turning');
+			setTimeout(function () {
+				top.classList.remove('is-turning', 'is-fading');
+				book._at = (book._at + 1) % book._pages.length;
+				stack(book);
+				book._busy = false;
+			}, still ? 450 : 900);
+		}
+		var visible = [];
+		function tick() { visible.forEach(function (b, i) { setTimeout(function () { turn(b); }, i * 260); }); }
+		if ('IntersectionObserver' in window) {
+			var io = new IntersectionObserver(function (es) {
+				es.forEach(function (e) {
+					var b = e.target, k = visible.indexOf(b);
+					if (e.isIntersecting) { setup(b); if (k < 0) { visible.push(b); } } else if (k >= 0) { visible.splice(k, 1); }
+				});
+			}, { rootMargin: '100px' });
+			books.forEach(function (b) { io.observe(b); });
+		} else { books.forEach(function (b) { setup(b); visible.push(b); }); }
+		books.forEach(function (b) {
+			var card = b.closest('.dm-pc') || b;
+			card.addEventListener('mouseenter', function () { setup(b); turn(b); });
+		});
+		setInterval(tick, 3200);
+	})();
+	/* ---- Product editor: live "x of 4 photos" counter ---- */
+	(function () {
+		var c = $('[data-photo-count]');
+		if (!c) { return; }
+		var have = parseInt(c.getAttribute('data-have'), 10) || 0, need = 4;
+		var cover = $('[data-photo-input="cover"]'), gal = $('[data-photo-input="gallery"]');
+		var hadCover = !!$('.dm-thumb-preview img');
+		function upd() {
+			var n = have;
+			if (cover && cover.files.length && !hadCover) { n += 1; }
+			if (gal) { n += gal.files.length; }
+			n -= $$('input[name="gallery_remove[]"]:checked').length;
+			c.textContent = Math.min(n, need) + ' of ' + need + ' added';
+			c.classList.toggle('is-ok', n >= need);
+		}
+		[cover, gal].forEach(function (i) { if (i) { i.addEventListener('change', upd); } });
+		$$('input[name="gallery_remove[]"]').forEach(function (i) { i.addEventListener('change', upd); });
+	})();
 	/* ---- Seller application pop-up: open, validate, submit with fetch ---- */
 	(function () {
 		var dlg = document.getElementById('dm-apply-modal');

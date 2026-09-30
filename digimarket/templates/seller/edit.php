@@ -93,21 +93,26 @@ $dm_status   = $dm_p ? $dm_p->post_status : 'draft';
 			</div>
 
 			<div class="dm-card dm-pad">
-				<h2 class="dm-h3"><?php esc_html_e( 'Images', 'digimarket' ); ?></h2>
+				<?php $dm_photo_n = ( $dm_pid && has_post_thumbnail( $dm_pid ) ? 1 : 0 ) + count( $dm_gallery ); ?>
+				<div class="dm-photos-head">
+					<h2 class="dm-h3"><?php esc_html_e( 'Product photos', 'digimarket' ); ?> <span class="dm-req-badge"><?php echo esc_html( sprintf( /* translators: %d */ __( '%d required', 'digimarket' ), DM_REQUIRED_PHOTOS ) ); ?></span></h2>
+					<span class="dm-photo-count<?php echo $dm_photo_n >= DM_REQUIRED_PHOTOS ? ' is-ok' : ''; ?>" data-photo-count data-have="<?php echo (int) $dm_photo_n; ?>"><?php echo esc_html( sprintf( /* translators: 1 have 2 need */ __( '%1$d of %2$d added', 'digimarket' ), min( $dm_photo_n, DM_REQUIRED_PHOTOS ), DM_REQUIRED_PHOTOS ) ); ?></span>
+				</div>
+				<p class="dm-muted dm-small"><?php esc_html_e( 'Upload 4 photos: a cover plus 3 more (inside pages, preview, what’s included). On the website your product card turns through them like the pages of a book. Square images (1:1), at least 800 × 800 px, look best.', 'digimarket' ); ?></p>
 				<div class="dm-form-grid">
-					<label><?php esc_html_e( 'Thumbnail', 'digimarket' ); ?> *
+					<label><?php esc_html_e( 'Photo 1 — cover', 'digimarket' ); ?> *
 						<span class="dm-upload-preview dm-thumb-preview"><?php echo $dm_pid && has_post_thumbnail( $dm_pid ) ? get_the_post_thumbnail( $dm_pid, 'dm-card' ) : ''; ?></span>
-						<input type="file" name="thumbnail" accept="image/*" data-preview>
+						<input type="file" name="thumbnail" accept="image/*" data-preview data-photo-input="cover">
 					</label>
 					<div>
-						<div class="dm-label"><?php esc_html_e( 'Gallery (up to 5)', 'digimarket' ); ?></div>
+						<div class="dm-label"><?php esc_html_e( 'Photos 2–4', 'digimarket' ); ?> * <small class="dm-muted"><?php esc_html_e( '(up to 5 extra photos)', 'digimarket' ); ?></small></div>
 						<div class="dm-gallery-edit">
 							<?php foreach ( $dm_gallery as $dm_g ) : ?>
 								<label class="dm-gallery-item"><?php echo wp_get_attachment_image( $dm_g, 'thumbnail' ); ?><span class="dm-check"><input type="checkbox" name="gallery_remove[]" value="<?php echo (int) $dm_g; ?>"> <?php esc_html_e( 'Remove', 'digimarket' ); ?></span></label>
 							<?php endforeach; ?>
 						</div>
 						<?php if ( count( $dm_gallery ) < 5 ) : ?>
-							<input type="file" name="gallery[]" accept="image/*" multiple data-max="<?php echo (int) ( 5 - count( $dm_gallery ) ); ?>">
+							<input type="file" name="gallery[]" accept="image/*" multiple data-max="<?php echo (int) ( 5 - count( $dm_gallery ) ); ?>" data-photo-input="gallery">
 						<?php endif; ?>
 					</div>
 				</div>

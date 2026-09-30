@@ -75,6 +75,25 @@ function dm_card_meta_line( $pid ) {
 /**
  * Product card (grid).
  */
+/**
+ * Extra photos (after the cover) for the page-turning card thumbnail: up to 3.
+ * Returns [ [url, w, h], … ] or an empty array when the product has only a cover.
+ */
+function dm_product_flip_pages( $pid ) {
+	if ( ! has_post_thumbnail( $pid ) ) {
+		return array();
+	}
+	$out = array();
+	foreach ( array_slice( dm_product_photo_ids( $pid ), 1, DM_REQUIRED_PHOTOS - 1 ) as $id ) {
+		dm_ensure_image_size( $id, 'dm-square' );
+		$src = wp_get_attachment_image_src( $id, 'dm-square' );
+		if ( $src ) {
+			$out[] = array( $src[0], $src[1], $src[2] );
+		}
+	}
+	return $out;
+}
+
 function dm_render_product_card( $pid, $args = array() ) {
 	$args  = wp_parse_args( $args, array( 'eager' => false, 'class' => '', 'h' => 'h3' ) );
 	$htag  = 'h2' === $args['h'] ? 'h2' : 'h3';
@@ -83,8 +102,17 @@ function dm_render_product_card( $pid, $args = array() ) {
 	$title = get_the_title( $pid );
 	$off   = dm_discount_percent( $pid );
 	echo '<article class="dm-pc dm-pc-' . esc_attr( $type ) . ( $args['class'] ? ' ' . esc_attr( $args['class'] ) : '' ) . '">';
-	echo '<a class="dm-pc-media" href="' . esc_url( $url ) . '" tabindex="-1" aria-hidden="true">';
-	echo dm_product_thumb( $pid, 'dm-square', $args['eager'] ? array( 'loading' => 'eager' ) : array() ); // phpcs:ignore
+	$pages = dm_product_flip_pages( $pid );
+	echo '<a class="dm-pc-media' . ( $pages ? ' dm-flip' : '' ) . '" href="' . esc_url( $url ) . '" tabindex="-1" aria-hidden="true"' . ( $pages ? ' data-flip' : '' ) . '>';
+	if ( $pages ) {
+		echo '<span class="dm-flip-page">' . dm_product_thumb( $pid, 'dm-square', $args['eager'] ? array( 'loading' => 'eager' ) : array() ) . '</span>'; // phpcs:ignore
+		foreach ( $pages as $pg ) {
+			echo '<span class="dm-flip-page"><img class="dm-thumb-img" alt="" decoding="async" width="' . (int) $pg[1] . '" height="' . (int) $pg[2] . '" data-src="' . esc_url( $pg[0] ) . '"></span>';
+		}
+		echo '<span class="dm-flip-dots" aria-hidden="true">' . str_repeat( '<i></i>', count( $pages ) + 1 ) . '</span>';
+	} else {
+		echo dm_product_thumb( $pid, 'dm-square', $args['eager'] ? array( 'loading' => 'eager' ) : array() ); // phpcs:ignore
+	}
 	$badges = dm_product_badges( $pid, $off >= 5 ? 1 : 2 );
 	if ( $off >= 5 || $badges ) {
 		echo '<span class="dm-pc-badges">';
