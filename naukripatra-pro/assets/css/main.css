@@ -368,3 +368,17 @@ h2{font-size:20px;font-weight:700}
 .np-kv__head{background:var(--np-zebra)!important;border-bottom:1px solid var(--np-border)}
 .np-kv__head .np-kv__k,.np-kv__head .np-kv__v{font-weight:800;opacity:1}
 @media (max-width:560px){.np-kv__row{padding:9px 12px;font-size:15px}}
+
+/* ===== Vacancy-style tables: compact, full width, readable in light + dark ===== */
+.np-reader .np-vtable-wrap{overflow-x:auto;margin:1.2em 0;border:1px solid var(--np-border);border-radius:10px;background:var(--np-surface)!important}
+.np-reader .np-vtable{width:100%;min-width:100%;border-collapse:collapse;font-size:.92em;table-layout:auto;margin:0}
+.np-reader .np-vtable th,.np-reader .np-vtable td{min-width:0;padding:10px 12px;border:0;border-bottom:1px solid var(--np-border);border-right:1px solid var(--np-border);text-align:left;vertical-align:middle;font-weight:400;overflow-wrap:break-word;color:var(--np-text)!important;background:transparent!important}
+.np-reader .np-vtable th:last-child,.np-reader .np-vtable td:last-child{border-right:0}
+.np-reader .np-vtable tr:last-child td{border-bottom:0}
+.np-reader .np-vtable th{font-weight:800;background:var(--np-zebra)!important;border-bottom:2px solid var(--np-border);white-space:nowrap}
+.np-reader .np-vtable td:first-child{font-weight:600}
+.np-reader .np-vtable td.np-num{text-align:center;font-variant-numeric:tabular-nums}
+.np-reader .np-vtable th:not(:first-child){text-align:center}
+.np-reader .np-vtable .np-vtable__total td{font-weight:800;background:var(--np-zebra)!important;border-top:2px solid var(--np-border)}
+@media (max-width:560px){.np-reader .np-vtable{font-size:13.5px}.np-reader .np-vtable th,.np-reader .np-vtable td{padding:8px 7px}.np-reader .np-vtable th{white-space:normal}}
+@media (max-width:560px){.np-reader .np-vtable{font-size:13px}.np-reader .np-vtable th,.np-reader .np-vtable td{padding:8px 6px}.np-reader .np-vtable th{font-size:12.5px;letter-spacing:0}.np-reader .np-vtable td:first-child{font-weight:700;overflow-wrap:anywhere}}

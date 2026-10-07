@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'NPPRO_VERSION', '1.0.8' );
+define( 'NPPRO_VERSION', '1.0.9' );
 define( 'NPPRO_DIR', get_stylesheet_directory() );
 define( 'NPPRO_URI', get_stylesheet_directory_uri() );
 

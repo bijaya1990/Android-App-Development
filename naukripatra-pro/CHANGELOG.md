@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.9
+- Vacancy-style tables (header + 3 or more columns) are now one compact full-width table (header row, centred numbers, bold Total row) on the website and in the app/REST, instead of one card per row.
+
 ## 1.0.8
 - One Job Overview only: when the article has its own overview table it is kept (as a label | value card) and the theme-generated overview is hidden. Key/value tables keep label and value side by side on mobile, header row supported.
 

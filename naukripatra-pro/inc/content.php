@@ -239,18 +239,35 @@ function nppro_tables_to_cards( $html, $inline = false ) {
 		if ( ! $has_head ) {
 			return $tbl;
 		}
+		// Header + rows with 3+ columns (vacancy lists etc.): a clean, compact, full-width table.
 		$head = array_shift( $rows );
-		$out  = '<div' . $cl( 'np-cards' ) . $st( 'grid' ) . '>' . ( $title ? '<div' . $cl( 'np-cards__title' ) . ( $inline ? ' style="font-weight:700;margin:0 0 8px"' : '' ) . '>' . esc_html( $title ) . '</div>' : '' );
-		foreach ( $rows as $row ) {
-			$cells = $row[0];
-			$out  .= '<div' . $cl( 'np-vcard' ) . $st( 'card' ) . '><div' . $cl( 'np-vcard__t' ) . $st( 'ctit' ) . '>' . $val( array_shift( $cells ) ) . '</div>';
-			foreach ( $cells as $i => $cv ) {
-				$label = isset( $head[0][ $i + 1 ] ) ? trim( wp_strip_all_tags( $head[0][ $i + 1 ] ) ) : '';
-				$out  .= '<div' . $cl( 'np-vcard__f' ) . $st( 'row' ) . '>' . ( '' !== $label ? '<div' . $cl( 'np-vcard__k' ) . $st( 'k' ) . '>' . esc_html( $label ) . '</div>' : '' ) . '<div' . $cl( 'np-vcard__v' ) . $st( 'v' ) . '>' . $val( $cv ) . '</div></div>';
-			}
-			$out .= '</div>';
+		$ts   = $inline ? array(
+			'wrap'  => ' style="overflow-x:auto;margin:14px 0"',
+			'table' => ' style="width:100%;border-collapse:collapse;border:1px solid rgba(128,128,128,.4)"',
+			'th'    => ' style="padding:8px 10px;text-align:left;font-weight:700;background:rgba(128,128,128,.18);border:1px solid rgba(128,128,128,.4)"',
+			'td'    => 'padding:8px 10px;border:1px solid rgba(128,128,128,.35);vertical-align:top',
+		) : array( 'wrap' => ' class="np-vtable-wrap"', 'table' => ' class="np-vtable"', 'th' => '', 'td' => '' );
+		$out = '<div' . $ts['wrap'] . '>' . ( $title ? '<div' . ( $inline ? ' style="font-weight:700;margin:0 0 8px"' : ' class="np-cards__title"' ) . '>' . esc_html( $title ) . '</div>' : '' ) . '<table' . $ts['table'] . '><thead><tr>';
+		foreach ( $head[0] as $h ) {
+			$out .= '<th' . $ts['th'] . '>' . $val( $h ) . '</th>';
 		}
-		return $out . '</div>';
+		$out .= '</tr></thead><tbody>';
+		foreach ( $rows as $row ) {
+			$total = (bool) preg_match( '/^\s*(grand\s+)?total/i', wp_strip_all_tags( $row[0][0] ) );
+			$out  .= '<tr' . ( $total && ! $inline ? ' class="np-vtable__total"' : '' ) . '>';
+			for ( $i = 0; $i < $cols; $i++ ) {
+				$cv    = isset( $row[0][ $i ] ) ? $row[0][ $i ] : '';
+				$plain = trim( wp_strip_all_tags( $cv ) );
+				$num   = $i > 0 && '' !== $plain && preg_match( '/^[\d,.\s%\x{20B9}+\/-]+$/u', $plain );
+				if ( $inline ) {
+					$out .= '<td style="' . $ts['td'] . ( $num ? ';text-align:center' : '' ) . ( $total ? ';font-weight:700;background:rgba(128,128,128,.12)' : '' ) . '">' . $val( $cv ) . '</td>';
+				} else {
+					$out .= '<td' . ( $num ? ' class="np-num"' : '' ) . '>' . $val( $cv ) . '</td>';
+				}
+			}
+			$out .= '</tr>';
+		}
+		return $out . '</tbody></table></div>';
 	}, $html );
 }
 
