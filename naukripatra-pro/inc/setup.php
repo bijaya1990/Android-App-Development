@@ -152,3 +152,39 @@ add_action( 'wp_head', function () {
 		echo '<link rel="preload" href="' . esc_url( NPPRO_URI . '/assets/fonts/inter-var.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 	}
 }, 2 );
+
+/**
+ * Header/footer menus: a menu item named like a section (Result, Admit Card, Latest Jobs ...) always links to
+ * that section's category archive, even if the saved menu points to a custom link, page or another system.
+ * Switch off in NaukriPatra Control > General.
+ */
+add_filter( 'wp_nav_menu_objects', 'nppro_menu_section_links', 20, 2 );
+function nppro_menu_section_links( $items, $args ) {
+	if ( ! nppro_opt( 'menu_force_cats' ) ) {
+		return $items;
+	}
+	$alias = array( 'results' => 'result', 'latest-job' => 'latest-jobs', 'jobs' => 'latest-jobs', 'admit-cards' => 'admit-card', 'answer-keys' => 'answer-key', 'admissions' => 'admission', 'latest-result' => 'result', 'live-result' => 'result' );
+	foreach ( $items as $item ) {
+		if ( 'taxonomy' === $item->type && 'category' === $item->object ) {
+			continue; // Already a category link.
+		}
+		if ( ! empty( $item->menu_item_parent ) && 'custom' !== $item->type && 'post_type' !== $item->type ) {
+			continue;
+		}
+		$slug = sanitize_title( $item->title );
+		$slug = isset( $alias[ $slug ] ) ? $alias[ $slug ] : $slug;
+		if ( ! in_array( $slug, nppro_section_slugs(), true ) ) {
+			continue;
+		}
+		$term = get_term_by( 'slug', $slug, 'category' );
+		if ( $term ) {
+			$item->url    = get_category_link( $term );
+			$item->object = 'category';
+			$item->type   = 'taxonomy';
+			if ( is_category( $term->term_id ) ) {
+				$item->classes[] = 'current-menu-item';
+			}
+		}
+	}
+	return $items;
+}
