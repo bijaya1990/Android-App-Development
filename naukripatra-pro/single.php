@@ -87,7 +87,7 @@ while ( have_posts() ) :
 
 		<?php if ( $rows ) : ?>
 			<section class="np-card" aria-labelledby="np-ov"><h2 id="np-ov" class="np-h2"><?php esc_html_e( 'Job Overview', 'naukripatra' ); ?></h2>
-				<div class="np-table-wrap"><table class="np-overview"><tbody>
+				<div class="np-overview-wrap"><table class="np-overview"><tbody>
 					<?php foreach ( $rows as $label => $val ) : ?><tr><th scope="row"><?php echo esc_html( $label ); ?></th><td><?php echo esc_html( $val ); ?></td></tr><?php endforeach; ?>
 				</tbody></table></div>
 			</section>

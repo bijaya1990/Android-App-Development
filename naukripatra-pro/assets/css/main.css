@@ -316,3 +316,12 @@ h2{font-size:20px;font-weight:700}
 /* App / WebView view: ?np_app=1&theme=dark */
 .np-app .np-header,.np-app .np-nav,.np-app .np-footer,.np-app .np-sidebar,.np-app .np-ad,.np-app .np-crumbs,.np-app .np-ticker,.np-app .np-prevnext,.np-app .np-skip{display:none!important}
 .np-app .np-layout{display:block;margin:0}.np-app .np-wrap{padding:0 12px}.np-app .np-main{padding:8px 0}
+
+/* ===== Overview: always a plain two-column table (no colours, no zebra) ===== */
+.np-overview-wrap{width:100%;overflow-x:auto}
+.np-overview{width:100%;table-layout:auto;border-collapse:collapse;border-spacing:0;font-size:15px;background:transparent}
+.np-overview th,.np-overview td{padding:9px 12px;border:1px solid var(--np-border);text-align:left;vertical-align:top;background:transparent!important;color:var(--np-text);font-weight:400;overflow-wrap:anywhere}
+.np-overview th{width:32%;font-weight:700;white-space:normal}
+.np-overview tr:nth-child(even) td,.np-overview tr:nth-child(even) th{background:transparent!important}
+@media (max-width:520px){.np-overview th{width:40%}.np-overview th,.np-overview td{padding:8px 9px;font-size:14.5px}}
+.np-overview tr,.np-overview tr:nth-child(even),.np-overview tr:nth-child(odd),.np-overview tbody{background:transparent!important}

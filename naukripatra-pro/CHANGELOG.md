@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.5
+- Overview is now always a plain two-column bordered table (no colours or zebra).
+
 ## 1.0.4
 - App/REST: article content.rendered now has inline colours/backgrounds removed (setting in Control > General) so the app is readable in dark mode. Keys unchanged; no ads/TOC in REST.
 
