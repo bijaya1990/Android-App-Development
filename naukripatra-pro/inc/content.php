@@ -10,11 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_filter( 'the_content', 'nppro_clean_content', 20 );
-function nppro_clean_content( $html ) {
-	if ( is_admin() || ! in_the_loop() || ! is_main_query() || ( ! is_singular( 'post' ) && ! is_page() ) ) {
-		return $html;
-	}
-	// Remove presentational attributes from EVERY tag except media (so no leftover colour/background can break dark mode).
+
+/**
+ * Strip inline colours, backgrounds, sizes and classes from every tag except media, and drop <font>/<center>.
+ * Shared by the website reader and the REST output so imported HTML is readable in light AND dark.
+ */
+function nppro_strip_presentation( $html ) {
 	$html = preg_replace_callback(
 		'#<(?!(?:img|iframe|video|audio|source|svg|path|script|style)\b)([a-z][a-z0-9]*)\b([^>]*)>#i',
 		function ( $m ) {
@@ -23,6 +24,17 @@ function nppro_clean_content( $html ) {
 		},
 		$html
 	);
+	return preg_replace( '#</?(?:font|center)\b[^>]*>#i', '', $html );
+}
+function nppro_clean_content( $html ) {
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		// App / REST output: same JSON keys, but readable HTML (no inline colours). No ads, TOC or wrappers.
+		return nppro_opt( 'rest_clean' ) ? nppro_strip_presentation( $html ) : $html;
+	}
+	if ( is_admin() || ! in_the_loop() || ! is_main_query() || ( ! is_singular( 'post' ) && ! is_page() ) ) {
+		return $html;
+	}
+	$html = nppro_strip_presentation( $html );
 	if ( is_singular( 'post' ) ) {
 		$html = nppro_strip_overview_table( $html, get_the_ID() );
 	}

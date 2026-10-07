@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.4
+- App/REST: article content.rendered now has inline colours/backgrounds removed (setting in Control > General) so the app is readable in dark mode. Keys unchanged; no ads/TOC in REST.
+
 ## 1.0.3
 - Article page redesign: quick-facts tiles, full-width justified text, centred tables, styled headings, Quick Links box moved to end (setting), empty ad slots collapse, app view ?np_app=1&theme=dark|light.
 

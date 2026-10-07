@@ -52,6 +52,7 @@ function nppro_default_settings() {
 		'inline_css'     => 1,
 		'menu_force_cats' => 1,
 		'toc_mode'        => 'end',
+		'rest_clean'      => 1,
 		'meta_prefix'    => '',
 		'rows_per_page'  => 20,
 		'new_badge_days' => 3,
