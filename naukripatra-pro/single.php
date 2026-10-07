@@ -87,9 +87,9 @@ while ( have_posts() ) :
 
 		<?php if ( $rows ) : ?>
 			<section class="np-card" aria-labelledby="np-ov"><h2 id="np-ov" class="np-h2"><?php esc_html_e( 'Job Overview', 'naukripatra' ); ?></h2>
-				<div class="np-overview-wrap"><table class="np-overview"><tbody>
-					<?php foreach ( $rows as $label => $val ) : ?><tr><th scope="row"><?php echo esc_html( $label ); ?></th><td><?php echo esc_html( $val ); ?></td></tr><?php endforeach; ?>
-				</tbody></table></div>
+				<div class="np-kv">
+					<?php foreach ( $rows as $label => $val ) : ?><div class="np-kv__row"><div class="np-kv__k"><?php echo esc_html( $label ); ?></div><div class="np-kv__v"><?php echo esc_html( $val ); ?></div></div><?php endforeach; ?>
+				</div>
 			</section>
 		<?php endif; ?>
 		<?php nppro_ad( 'infeed' ); ?>

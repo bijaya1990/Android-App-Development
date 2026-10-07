@@ -29,7 +29,7 @@ function nppro_strip_presentation( $html ) {
 function nppro_clean_content( $html ) {
 	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 		// App / REST output: same JSON keys, but readable HTML (no inline colours). No ads, TOC or wrappers.
-		return nppro_opt( 'rest_clean' ) ? nppro_strip_presentation( $html ) : $html;
+		return nppro_opt( 'rest_clean' ) ? nppro_tables_to_cards( nppro_strip_presentation( $html ), true ) : $html;
 	}
 	if ( is_admin() || ! in_the_loop() || ! is_main_query() || ( ! is_singular( 'post' ) && ! is_page() ) ) {
 		return $html;
@@ -51,7 +51,9 @@ function nppro_clean_content( $html ) {
 		return '<img' . $a . '>';
 	}, $html );
 
-	// Mobile-safe tables.
+	$html = nppro_tables_to_cards( $html, false );
+
+	// Mobile-safe tables (the ones that stay tables).
 	$html = preg_replace( '#(<table\b.*?</table>)#is', '<div class="np-table-wrap">$1</div>', $html );
 
 	if ( ! is_singular( 'post' ) ) {
@@ -152,5 +154,102 @@ function nppro_strip_overview_table( $html, $post_id ) {
 			return '';
 		}
 		return $m[0];
+	}, $html );
+}
+
+/**
+ * Turn article tables into cards that read well on phones, in light and dark mode.
+ * - Two-column tables (Important Dates, key/value) -> one card with label/value rows.
+ * - Header + rows tables (vacancy, category-wise posts) -> one card per row, labelled fields.
+ * Very large tables (12+ rows, 7+ columns), nested tables and rowspan tables stay as plain tables.
+ * $inline = true adds neutral inline styles for the app/REST (no theme CSS there; colours stay inherited).
+ *
+ * @param string $html   Article HTML.
+ * @param bool   $inline Inline styles for REST output.
+ * @return string
+ */
+function nppro_tables_to_cards( $html, $inline = false ) {
+	return preg_replace_callback( '#<table\b.*?</table>#is', function ( $m ) use ( $inline ) {
+		$tbl = $m[0];
+		if ( substr_count( strtolower( $tbl ), '<table' ) > 1 || preg_match( '#rowspan\s*=#i', $tbl ) || ! preg_match_all( '#<tr\b[^>]*>(.*?)</tr>#is', $tbl, $r ) ) {
+			return $tbl;
+		}
+		$rows = array();
+		foreach ( $r[1] as $row ) {
+			if ( ! preg_match_all( '#<(t[dh])\b([^>]*)>(.*?)</\1>#is', $row, $c, PREG_SET_ORDER ) ) {
+				continue;
+			}
+			$cells = array();
+			$th    = true;
+			foreach ( $c as $x ) {
+				$cells[] = trim( $x[3] );
+				$th      = $th && 'th' === strtolower( $x[1] );
+			}
+			$rows[] = array( $cells, $th );
+		}
+		if ( ! $rows ) {
+			return $tbl;
+		}
+		$title = '';
+		if ( 1 === count( $rows[0][0] ) && count( $rows ) > 1 ) { // Full-width title row.
+			$title = wp_strip_all_tags( $rows[0][0][0] );
+			array_shift( $rows );
+		}
+		$cols = 0;
+		foreach ( $rows as $row ) {
+			$cols = max( $cols, count( $row[0] ) );
+		}
+		if ( $cols < 2 || $cols > 6 || count( $rows ) > 13 ) {
+			return $tbl;
+		}
+		$st = function ( $k ) use ( $inline ) {
+			$s = array(
+				'box'   => 'border:1px solid rgba(128,128,128,.4);border-radius:10px;margin:14px 0;overflow:hidden',
+				'title' => 'padding:9px 14px;font-weight:700;background:rgba(128,128,128,.16)',
+				'row'   => 'padding:9px 14px;border-top:1px solid rgba(128,128,128,.28)',
+				'k'     => 'display:block;font-size:.85em;font-weight:700;opacity:.72',
+				'v'     => 'display:block',
+				'grid'  => 'margin:14px 0',
+				'card'  => 'border:1px solid rgba(128,128,128,.4);border-radius:10px;margin:0 0 10px;overflow:hidden',
+				'ctit'  => 'padding:9px 14px;font-weight:700;background:rgba(128,128,128,.16)',
+			);
+			return $inline ? ' style="' . $s[ $k ] . '"' : '';
+		};
+		$cl = function ( $c ) use ( $inline ) {
+			return $inline ? '' : ' class="' . $c . '"';
+		};
+		$val = function ( $v ) {
+			$t = trim( wp_strip_all_tags( $v ) );
+			return '' === $t ? '&mdash;' : $v;
+		};
+		$out = '';
+		$has_head = $rows[0][1] || ( $cols >= 3 && count( $rows ) >= 3 );
+		if ( 2 === $cols && ! ( $rows[0][1] && count( $rows ) < 2 ) ) { // Key / value card.
+			if ( $rows[0][1] ) {
+				array_shift( $rows ); // Drop a "Event | Date" style header row.
+			}
+			$out = '<div' . $cl( 'np-kv' ) . $st( 'box' ) . '>' . ( $title ? '<div' . $cl( 'np-kv__title' ) . $st( 'title' ) . '>' . esc_html( $title ) . '</div>' : '' );
+			foreach ( $rows as $i => $row ) {
+				$k    = isset( $row[0][0] ) ? $row[0][0] : '';
+				$v    = isset( $row[0][1] ) ? $row[0][1] : '';
+				$out .= '<div' . $cl( 'np-kv__row' ) . ( $inline && ( $i || $title ) ? $st( 'row' ) : ( $inline ? ' style="padding:9px 14px"' : '' ) ) . '><div' . $cl( 'np-kv__k' ) . $st( 'k' ) . '>' . $val( $k ) . '</div><div' . $cl( 'np-kv__v' ) . $st( 'v' ) . '>' . $val( $v ) . '</div></div>';
+			}
+			return $out . '</div>';
+		}
+		if ( ! $has_head ) {
+			return $tbl;
+		}
+		$head = array_shift( $rows );
+		$out  = '<div' . $cl( 'np-cards' ) . $st( 'grid' ) . '>' . ( $title ? '<div' . $cl( 'np-cards__title' ) . ( $inline ? ' style="font-weight:700;margin:0 0 8px"' : '' ) . '>' . esc_html( $title ) . '</div>' : '' );
+		foreach ( $rows as $row ) {
+			$cells = $row[0];
+			$out  .= '<div' . $cl( 'np-vcard' ) . $st( 'card' ) . '><div' . $cl( 'np-vcard__t' ) . $st( 'ctit' ) . '>' . $val( array_shift( $cells ) ) . '</div>';
+			foreach ( $cells as $i => $cv ) {
+				$label = isset( $head[0][ $i + 1 ] ) ? trim( wp_strip_all_tags( $head[0][ $i + 1 ] ) ) : '';
+				$out  .= '<div' . $cl( 'np-vcard__f' ) . $st( 'row' ) . '>' . ( '' !== $label ? '<div' . $cl( 'np-vcard__k' ) . $st( 'k' ) . '>' . esc_html( $label ) . '</div>' : '' ) . '<div' . $cl( 'np-vcard__v' ) . $st( 'v' ) . '>' . $val( $cv ) . '</div></div>';
+			}
+			$out .= '</div>';
+		}
+		return $out . '</div>';
 	}, $html );
 }

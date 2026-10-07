@@ -341,3 +341,23 @@ h2{font-size:20px;font-weight:700}
 .np-reader table{min-width:100%;width:max-content;max-width:none}
 .np-reader .np-table-wrap table{width:100%;min-width:100%}
 @media (max-width:600px){.np-reader .np-table-wrap table{width:max-content;min-width:100%}}
+
+/* ===== Cards: overview, key/value tables, vacancy tables (light + dark) ===== */
+.np-kv{border:1px solid var(--np-border);border-radius:12px;overflow:hidden;margin:1.2em 0;background:var(--np-surface)!important}
+.np-article section>.np-kv,.np-article section .np-kv:first-of-type{margin:0}
+.np-kv__title,.np-cards__title{padding:10px 16px;font-weight:800;background:var(--np-zebra)!important;border-bottom:1px solid var(--np-border);text-align:left}
+.np-cards__title{border:0;background:transparent!important;padding:0 0 8px;font-size:1.05em}
+.np-kv__row{display:grid;grid-template-columns:minmax(110px,30%) 1fr;gap:4px 16px;padding:11px 16px;border-bottom:1px solid var(--np-border);align-items:start}
+.np-kv__row:last-child{border-bottom:0}
+.np-kv__k{font-weight:700;opacity:.78;text-align:left}
+.np-kv__v{text-align:left;overflow-wrap:anywhere}
+@media (max-width:560px){.np-kv__row{grid-template-columns:1fr;gap:2px;padding:10px 14px}.np-kv__k{font-size:.82em;text-transform:uppercase;letter-spacing:.4px}}
+.np-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:1.2em 0}
+.np-cards__title{grid-column:1/-1}
+.np-vcard{border:1px solid var(--np-border);border-radius:12px;overflow:hidden;background:var(--np-surface)!important}
+.np-vcard__t{padding:10px 14px;font-weight:800;background:var(--np-zebra)!important;border-bottom:1px solid var(--np-border);text-align:left}
+.np-vcard__f{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;border-bottom:1px solid var(--np-border);align-items:baseline}
+.np-vcard__f:last-child{border-bottom:0}
+.np-vcard__k{font-size:.85em;font-weight:700;opacity:.75;text-align:left;flex:none}
+.np-vcard__v{text-align:right;overflow-wrap:anywhere}
+.np-reader .np-kv__k,.np-reader .np-kv__v,.np-reader .np-vcard__k,.np-reader .np-vcard__v{color:inherit!important}

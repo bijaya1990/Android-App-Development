@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.7
+- Overview, two-column tables (Important Dates) and vacancy tables are now cards on the website and in the app/REST output (neutral inline styles for the app, works in light and dark). Big tables (13+ rows, 7+ columns) stay plain tables.
+
 ## 1.0.6
 - All article tables now use the same plain style as Overview; narrow screens scroll sideways instead of breaking words.
 
