@@ -1,0 +1,14 @@
+/* Tools + Post Job form: loaded only on their own pages. */
+.np-grid2{display:grid;grid-template-columns:1fr;gap:0 var(--np-s2)}
+@media (min-width:600px){.np-grid2{grid-template-columns:1fr 1fr}}
+.np-tool-ui canvas,.np-tool-ui img{max-width:100%;height:auto;border:1px solid var(--np-border);background:#fff}
+.np-resume{display:grid;gap:var(--np-s2)}
+@media (min-width:900px){.np-resume{grid-template-columns:360px 1fr}}
+.np-resume__preview{background:#fff;color:#111;border:1px solid var(--np-border);padding:28px;min-height:480px;font:14px/1.5 Georgia,serif}
+.np-resume__preview h3{margin:0;font-size:26px}.np-resume__preview h4{margin:16px 0 4px;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #999}
+.np-resume__preview ul{margin:0;padding-left:18px}.np-resume__preview p{margin:2px 0}
+.np-resume__preview.t-modern{font-family:system-ui,sans-serif;border-top:10px solid #1D4ED8}
+.np-resume__preview.t-modern h4{color:#1D4ED8;border-color:#1D4ED8}
+.np-resume__preview.t-compact{font:12px/1.35 system-ui,sans-serif;padding:18px}
+.np-resume__preview.t-compact h3{font-size:20px}
+@media print{body.np-printing .np-header,body.np-printing .np-nav,body.np-printing .np-footer,body.np-printing .np-resume__form,body.np-printing .np-prose>*:not(.np-tool-ui){display:none!important}body.np-printing .np-resume{display:block}body.np-printing .np-resume__preview{border:0}}

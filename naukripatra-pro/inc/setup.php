@@ -51,8 +51,25 @@ function np_assets() {
 		wp_dequeue_style( 'generate-font-icons' );
 	}
 
-	wp_enqueue_style( 'np-main', NP_URI . '/assets/css/main.css', array(), NP_VERSION );
+	np_print_css();
+	if ( np_ads_present() ) {
+		wp_enqueue_script( 'np-ads', NP_URI . '/assets/js/ads.js', array(), NP_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
+		wp_localize_script( 'np-ads', 'npAds', array( 'delay' => (int) np_opt( 'ad_delay' ) ) );
+	}
 	wp_enqueue_script( 'np-main', NP_URI . '/assets/js/main.js', array(), NP_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
+	wp_localize_script( 'np-main', 'npData', array( 'view' => is_singular( 'post' ) ? esc_url_raw( rest_url( 'naukripatra/v1/view/' . get_queried_object_id() ) ) : '' ) );
+	// Page-specific assets (tools load only on their own pages).
+	$tools = array( 'photo-resizer' => 'tool-photo', 'signature-scanner' => 'tool-signature', 'resume-maker' => 'tool-resume' );
+	foreach ( $tools as $slug => $handle ) {
+		if ( is_page( $slug ) ) {
+			wp_enqueue_style( 'np-tools', NP_URI . '/assets/css/tools.css', array(), NP_VERSION );
+			wp_enqueue_script( 'np-' . $handle, NP_URI . '/assets/js/' . $handle . '.js', array(), NP_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
+		}
+	}
+	if ( is_page( 'post-job' ) ) {
+		wp_enqueue_style( 'np-tools', NP_URI . '/assets/css/tools.css', array(), NP_VERSION );
+		wp_enqueue_script( 'np-post-form', NP_URI . '/assets/js/post-form.js', array(), NP_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
+	}
 }
 
 // Remove emoji script, embeds, version leaks, XML-RPC.
@@ -92,15 +109,46 @@ function np_brand_html() {
 	return esc_html( np_opt( 'brand_text' ) );
 }
 
-/**
- * May the current visitor see the Post Job button?
- *
- * @return bool
- */
-function np_can_post() {
-	if ( ! np_opt( 'show_post_btn' ) || ! is_user_logged_in() ) {
+/** May the current user submit jobs (logged in + role setting)? */
+function np_user_may_post() {
+	if ( ! is_user_logged_in() ) {
 		return false;
 	}
 	$role = np_opt( 'post_role' );
 	return ( 'any' === $role ) ? true : current_user_can( $role );
 }
+
+/** Show the Post Job button? */
+function np_can_post() {
+	return np_opt( 'show_post_btn' ) && np_user_may_post();
+}
+
+/**
+ * Print theme CSS: inlined (minified, cached) by default, otherwise a normal stylesheet.
+ */
+function np_print_css() {
+	$file = NP_DIR . '/assets/css/main.css';
+	$font = file_exists( NP_DIR . '/assets/fonts/inter-var.woff2' ) ? '@font-face{font-family:Inter;font-weight:100 900;font-display:swap;src:url(' . NP_URI . '/assets/fonts/inter-var.woff2) format("woff2")}' : '';
+	$vars = ':root{--np-soon:' . esc_attr( np_opt( 'color_soon' ) ) . ';--np-expired:' . esc_attr( np_opt( 'color_expired' ) ) . '}';
+	if ( np_opt( 'inline_css' ) ) {
+		$css = get_transient( 'np_css_' . NP_VERSION . filemtime( $file ) );
+		if ( false === $css ) {
+			$css = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			$css = preg_replace( array( '#/\*.*?\*/#s', '#\s+#', '#\s*([{};:,>])\s*#' ), array( '', ' ', '$1' ), $css );
+			set_transient( 'np_css_' . NP_VERSION . filemtime( $file ), $css, WEEK_IN_SECONDS );
+		}
+		wp_register_style( 'np-main', false, array(), NP_VERSION );
+		wp_enqueue_style( 'np-main' );
+		wp_add_inline_style( 'np-main', $font . $vars . $css );
+	} else {
+		wp_enqueue_style( 'np-main', NP_URI . '/assets/css/main.css', array(), NP_VERSION );
+		wp_add_inline_style( 'np-main', $font . $vars );
+	}
+}
+
+// Preload the self-hosted font if it was added.
+add_action( 'wp_head', function () {
+	if ( file_exists( NP_DIR . '/assets/fonts/inter-var.woff2' ) ) {
+		echo '<link rel="preload" href="' . esc_url( NP_URI . '/assets/fonts/inter-var.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+	}
+}, 2 );

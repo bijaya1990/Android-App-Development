@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $social = (array) np_opt( 'social' );
 $labels = array( 'telegram' => 'Telegram', 'whatsapp' => 'WhatsApp', 'youtube' => 'YouTube', 'playstore' => 'Play Store' );
 ?>
+<?php np_ad( 'end', 'np-wrap' ); ?>
 </main>
 
 <footer class="np-footer">
@@ -26,6 +27,11 @@ $labels = array( 'telegram' => 'Telegram', 'whatsapp' => 'WhatsApp', 'youtube' =
 			)
 		);
 		?>
+		<?php if ( np_opt( 'footer_states' ) ) : ?>
+		<nav class="np-footer__states" aria-label="<?php esc_attr_e( 'Jobs by state', 'naukripatra' ); ?>"><strong><?php esc_html_e( 'Jobs by State:', 'naukripatra' ); ?></strong>
+			<?php foreach ( np_locations() as $loc ) : ?><a href="<?php echo esc_url( $loc[2] ); ?>"><?php echo esc_html( $loc[1] ); ?></a> <?php endforeach; ?>
+		</nav>
+		<?php endif; ?>
 		<ul class="np-social">
 			<?php foreach ( $labels as $key => $label ) : ?>
 				<?php if ( ! empty( $social[ $key ] ) ) : ?>

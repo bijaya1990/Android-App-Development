@@ -60,5 +60,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 	</div>
 </nav>
+<?php np_ad( 'header', 'np-wrap' ); ?>
 
 <main id="main" class="np-main">
