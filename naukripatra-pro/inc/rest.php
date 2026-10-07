@@ -70,3 +70,28 @@ add_action( 'save_post_post', function ( $id ) {
 	}
 	update_post_meta( $id, 'advt_no', sanitize_text_field( wp_unslash( isset( $_POST['np_advt_no'] ) ? $_POST['np_advt_no'] : '' ) ) );
 } );
+
+/**
+ * Additive field "content_clean": article HTML with inline colours/backgrounds/widths removed, so an app
+ * (WebView) can show it in dark or light mode. The existing "content" output is NOT changed.
+ */
+add_action( 'rest_api_init', function () {
+	global $wp_rest_additional_fields;
+	if ( isset( $wp_rest_additional_fields['post']['content_clean'] ) ) {
+		return;
+	}
+	register_rest_field( 'post', 'content_clean', array(
+		'get_callback' => function ( $obj ) {
+			$html = (string) get_post_field( 'post_content', $obj['id'] );
+			$html = preg_replace_callback(
+				'#<(?!(?:img|iframe|video|audio|source|svg|path)\b)([a-z][a-z0-9]*)\b([^>]*)>#i',
+				function ( $m ) {
+					return '<' . $m[1] . preg_replace( '#\s+(?:style|bgcolor|color|face|size|border|bordercolor|cellpadding|cellspacing|width|height|align|valign|background|class)\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $m[2] ) . '>';
+				},
+				$html
+			);
+			return wp_kses_post( preg_replace( '#</?(?:font|center)\b[^>]*>#i', '', $html ) );
+		},
+		'schema' => array( 'type' => 'string', 'context' => array( 'view' ) ),
+	) );
+}, 100 );

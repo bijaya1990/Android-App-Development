@@ -14,15 +14,18 @@ function nppro_clean_content( $html ) {
 	if ( is_admin() || ! in_the_loop() || ! is_main_query() || ( ! is_singular( 'post' ) && ! is_page() ) ) {
 		return $html;
 	}
-	// Remove presentational attributes on text/table tags (never on img/iframe).
+	// Remove presentational attributes from EVERY tag except media (so no leftover colour/background can break dark mode).
 	$html = preg_replace_callback(
-		'#<(table|thead|tbody|tfoot|tr|td|th|p|div|span|h[1-6]|ul|ol|li|a|strong|b|em|i|u|center|section|article)\b([^>]*)>#i',
+		'#<(?!(?:img|iframe|video|audio|source|svg|path|script|style)\b)([a-z][a-z0-9]*)\b([^>]*)>#i',
 		function ( $m ) {
-			$attrs = preg_replace( '#\s+(?:style|bgcolor|color|face|size|border|cellpadding|cellspacing|width|height|align|valign|class)\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $m[2] );
+			$attrs = preg_replace( '#\s+(?:style|bgcolor|color|face|size|border|bordercolor|cellpadding|cellspacing|width|height|align|valign|background|class)\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $m[2] );
 			return '<' . $m[1] . $attrs . '>';
 		},
 		$html
 	);
+	if ( is_singular( 'post' ) ) {
+		$html = nppro_strip_overview_table( $html, get_the_ID() );
+	}
 	$html = preg_replace( '#</?(?:font|center)\b[^>]*>#i', '', $html );
 	$html = preg_replace( '#<(p|div|span)[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>#i', '', $html );
 
@@ -99,4 +102,39 @@ function nppro_inject_ads( $html ) {
 		}
 	}
 	return $out;
+}
+
+
+/**
+ * The theme already prints a clean Overview table from the post data. If the article carries its own
+ * overview-style table (3+ label rows), remove that first table so the overview is not shown twice.
+ */
+function nppro_strip_overview_table( $html, $post_id ) {
+	if ( count( nppro_overview_rows( $post_id ) ) < 3 ) {
+		return $html;
+	}
+	$syn  = nppro_synonyms();
+	$done = false;
+	return preg_replace_callback( '#<table\b.*?</table>#is', function ( $m ) use ( $syn, &$done ) {
+		if ( $done || ! preg_match_all( '#<tr[^>]*>(.*?)</tr>#is', $m[0], $rows ) ) {
+			return $m[0];
+		}
+		$hits = 0;
+		foreach ( $rows[1] as $row ) {
+			if ( preg_match_all( '#<t[dh][^>]*>(.*?)</t[dh]>#is', $row, $c ) && count( $c[1] ) >= 2 ) {
+				$label = nppro_norm_label( $c[1][0] );
+				foreach ( $syn as $labels ) {
+					if ( in_array( $label, $labels, true ) ) {
+						++$hits;
+						break;
+					}
+				}
+			}
+		}
+		if ( $hits >= 3 ) {
+			$done = true;
+			return '';
+		}
+		return $m[0];
+	}, $html );
 }

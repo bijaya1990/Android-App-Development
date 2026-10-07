@@ -237,3 +237,23 @@ h2{font-size:20px;font-weight:700}
 .np-fade{opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}.np-fade.is-in{opacity:1;transform:none}
 .np-header,.np-nav,.np-footer{transition:background-color .2s}
 .np-prose>.np-form,.np-prose>.np-tool-ui,.np-prose>.np-notice{max-width:100%}
+
+/* ===== Reader hardening: readable in light AND dark, whatever the imported HTML contains ===== */
+.np-reader,.np-reader *{border-color:var(--np-border)}
+.np-reader :where(p,li,td,th,span,div,strong,b,em,i,u,small,sub,sup,font,section,article,h1,h2,h3,h4,h5,h6,caption,label,dd,dt,center){color:inherit!important;background-color:transparent!important}
+.np-reader th{background-color:var(--np-zebra)!important}
+.np-reader tr:nth-child(even)>td{background-color:var(--np-zebra)!important}
+.np-reader a{color:var(--np-link)!important;background:transparent!important}
+.np-reader mark{background:#FDE68A!important;color:#1B2333!important;padding:0 3px;border-radius:3px}
+.np-reader small{font-size:.88em}
+.np-reader blockquote{background:var(--np-zebra)!important;color:var(--np-text)!important;border-left:4px solid var(--np-blue)}
+.np-reader pre,.np-reader code{background:var(--np-zebra)!important;color:var(--np-text)!important;border-radius:6px;font-size:.9em}
+.np-reader pre{padding:12px;overflow-x:auto}.np-reader code{padding:1px 5px}
+.np-reader hr{border:0;border-top:1px solid var(--np-border);margin:1.5em 0}
+.np-reader table{min-width:100%}
+.np-reader th,.np-reader td{min-width:96px}
+.np-reader td:first-child,.np-reader th:first-child{min-width:0}
+.np-reader .np-table-wrap{background:var(--np-surface)}
+.np-reader .np-btn,.np-reader .wp-block-button__link{color:#fff!important;background:var(--np-blue)!important}
+.np-overview td,.np-overview th{color:var(--np-text)}
+.np-overview td{word-break:break-word}
