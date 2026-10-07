@@ -22,9 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="np-wrap np-header__row">
 		<div class="np-brand">
 			<?php $tag = is_front_page() ? 'h1' : 'p'; ?>
-			<<?php echo $tag; ?> class="np-brand__name"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php echo np_brand_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></a></<?php echo $tag; ?>>
-			<?php if ( np_opt( 'tagline' ) ) : ?>
-				<p class="np-brand__tag"><?php echo esc_html( np_opt( 'tagline' ) ); ?></p>
+			<<?php echo $tag; ?> class="np-brand__name"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php echo nppro_brand_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></a></<?php echo $tag; ?>>
+			<?php if ( nppro_opt( 'tagline' ) ) : ?>
+				<p class="np-brand__tag"><?php echo esc_html( nppro_opt( 'tagline' ) ); ?></p>
 			<?php endif; ?>
 		</div>
 		<div class="np-header__actions">
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<a class="np-iconbtn" href="<?php echo esc_url( home_url( '/?s=' ) ); ?>" aria-label="<?php esc_attr_e( 'Search', 'naukripatra' ); ?>">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
 			</a>
-			<?php if ( np_can_post() ) : ?>
+			<?php if ( nppro_can_post() ) : ?>
 				<a class="np-btn np-btn--accent" href="<?php echo esc_url( home_url( '/post-job/' ) ); ?>"><?php esc_html_e( 'Post Job', 'naukripatra' ); ?></a>
 			<?php endif; ?>
 		</div>
@@ -60,6 +60,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 	</div>
 </nav>
-<?php np_ad( 'header', 'np-wrap' ); ?>
+<?php nppro_ad( 'header', 'np-wrap' ); ?>
 
 <main id="main" class="np-main">

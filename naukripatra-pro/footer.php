@@ -7,15 +7,15 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$social = (array) np_opt( 'social' );
+$social = (array) nppro_opt( 'social' );
 $labels = array( 'telegram' => 'Telegram', 'whatsapp' => 'WhatsApp', 'youtube' => 'YouTube', 'playstore' => 'Play Store' );
 ?>
-<?php np_ad( 'end', 'np-wrap' ); ?>
+<?php nppro_ad( 'end', 'np-wrap' ); ?>
 </main>
 
 <footer class="np-footer">
 	<div class="np-wrap">
-		<p class="np-footer__brand"><?php echo np_brand_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
+		<p class="np-footer__brand"><?php echo nppro_brand_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
 		<?php
 		wp_nav_menu(
 			array(
@@ -27,9 +27,9 @@ $labels = array( 'telegram' => 'Telegram', 'whatsapp' => 'WhatsApp', 'youtube' =
 			)
 		);
 		?>
-		<?php if ( np_opt( 'footer_states' ) ) : ?>
+		<?php if ( nppro_opt( 'footer_states' ) ) : ?>
 		<nav class="np-footer__states" aria-label="<?php esc_attr_e( 'Jobs by state', 'naukripatra' ); ?>"><strong><?php esc_html_e( 'Jobs by State:', 'naukripatra' ); ?></strong>
-			<?php foreach ( np_locations() as $loc ) : ?><a href="<?php echo esc_url( $loc[2] ); ?>"><?php echo esc_html( $loc[1] ); ?></a> <?php endforeach; ?>
+			<?php foreach ( nppro_locations() as $loc ) : ?><a href="<?php echo esc_url( $loc[2] ); ?>"><?php echo esc_html( $loc[1] ); ?></a> <?php endforeach; ?>
 		</nav>
 		<?php endif; ?>
 		<ul class="np-social">
@@ -39,8 +39,8 @@ $labels = array( 'telegram' => 'Telegram', 'whatsapp' => 'WhatsApp', 'youtube' =
 				<?php endif; ?>
 			<?php endforeach; ?>
 		</ul>
-		<p class="np-footer__note"><?php echo esc_html( np_opt( 'disclaimer' ) ); ?></p>
-		<p class="np-footer__copy"><?php echo esc_html( str_replace( '{year}', gmdate( 'Y' ), np_opt( 'copyright' ) ) ); ?></p>
+		<p class="np-footer__note"><?php echo esc_html( nppro_opt( 'disclaimer' ) ); ?></p>
+		<p class="np-footer__copy"><?php echo esc_html( str_replace( '{year}', gmdate( 'Y' ), nppro_opt( 'copyright' ) ) ); ?></p>
 	</div>
 </footer>
 <?php wp_footer(); ?>

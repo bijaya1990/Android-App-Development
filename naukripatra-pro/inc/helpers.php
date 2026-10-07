@@ -9,20 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-function np_year() {
+function nppro_year() {
 	return wp_date( 'Y' );
 }
 
 /** Section category slugs. */
-function np_section_slugs() {
+function nppro_section_slugs() {
 	return array( 'latest-jobs', 'admit-card', 'result', 'answer-key', 'syllabus', 'admission', 'scholarship-schemes' );
 }
 
 /** Slugs of the 28 states + 8 UTs in display order. */
-function np_location_slugs() {
+function nppro_location_slugs() {
 	$out = array();
-	foreach ( array_keys( np_default_categories() ) as $slug ) {
-		if ( ! in_array( $slug, np_section_slugs(), true ) && 'all-india' !== $slug ) {
+	foreach ( array_keys( nppro_default_categories() ) as $slug ) {
+		if ( ! in_array( $slug, nppro_section_slugs(), true ) && 'all-india' !== $slug ) {
 			$out[] = $slug;
 		}
 	}
@@ -30,13 +30,13 @@ function np_location_slugs() {
 }
 
 /** Short names for long location labels. */
-function np_short_name( $slug, $name ) {
+function nppro_short_name( $slug, $name ) {
 	$short = array( 'dadra-nagar-haveli-daman-diu' => 'D. Nagar Haveli & Daman Diu', 'andaman-nicobar' => 'Andaman & Nicobar', 'arunachal-pradesh' => 'Arunachal Pradesh' );
 	return isset( $short[ $slug ] ) ? $short[ $slug ] : $name;
 }
 
 /** Inline SVG icons for the tools row. */
-function np_icon( $name ) {
+function nppro_icon( $name ) {
 	$p = array(
 		'resume'    => '<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7M9 8h3"/>',
 		'photo'     => '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5-8 7"/>',
@@ -51,12 +51,12 @@ function np_icon( $name ) {
 }
 
 /** Plugin metabox keys (the 17 API fields). */
-function np_api_fields() {
+function nppro_api_fields() {
 	return array( 'age_limit', 'application_fee', 'application_mode', 'apply_link', 'department', 'job_location', 'job_type', 'last_date', 'notification_link', 'official_website', 'organization', 'post_name', 'qualification', 'salary', 'selection_process', 'vacancy' );
 }
 
 /** Overview-table label synonyms (normalised, lower case). */
-function np_synonyms() {
+function nppro_synonyms() {
 	return array(
 		'organization'      => array( 'organization', 'organisation', 'recruitment board', 'conducting body', 'board name', 'company name' ),
 		'post_name'         => array( 'post name', 'name of post', 'name of the post', 'post' ),
@@ -75,7 +75,7 @@ function np_synonyms() {
 	);
 }
 
-function np_norm_label( $s ) {
+function nppro_norm_label( $s ) {
 	$s = strtolower( html_entity_decode( wp_strip_all_tags( $s ), ENT_QUOTES, 'UTF-8' ) );
 	return trim( preg_replace( '/\s+/', ' ', preg_replace( '/[^a-z0-9 ]+/', ' ', $s ) ) );
 }
@@ -86,20 +86,20 @@ function np_norm_label( $s ) {
  * @param int $post_id Post ID.
  * @return array
  */
-function np_overview_map( $post_id ) {
+function nppro_overview_map( $post_id ) {
 	static $cache = array();
 	if ( isset( $cache[ $post_id ] ) ) {
 		return $cache[ $post_id ];
 	}
 	$out     = array();
 	$content = (string) get_post_field( 'post_content', $post_id );
-	$syn     = np_synonyms();
+	$syn     = nppro_synonyms();
 	if ( $content && preg_match_all( '#<tr[^>]*>(.*?)</tr>#is', $content, $rows ) ) {
 		foreach ( $rows[1] as $row ) {
 			if ( ! preg_match_all( '#<t[dh][^>]*>(.*?)</t[dh]>#is', $row, $cells ) || count( $cells[1] ) < 2 ) {
 				continue;
 			}
-			$label = np_norm_label( $cells[1][0] );
+			$label = nppro_norm_label( $cells[1][0] );
 			$value = trim( preg_replace( '/\s+/', ' ', html_entity_decode( wp_strip_all_tags( $cells[1][1] ), ENT_QUOTES, 'UTF-8' ) ) );
 			if ( '' === $label || '' === $value ) {
 				continue;
@@ -122,16 +122,16 @@ function np_overview_map( $post_id ) {
 }
 
 /** Key aliases from the old theme's field names. */
-function np_aliases( $key ) {
+function nppro_aliases( $key ) {
 	$a = array( 'vacancy' => array( 'posts_count' ), 'job_type' => array( 'employment_type' ), 'job_location' => array( 'locality' ), 'apply_link' => array( 'apply_url', 'official_link' ), 'notification_link' => array( 'notification_pdf' ) );
 	return isset( $a[ $key ] ) ? $a[ $key ] : array();
 }
 
 /** Meta key names tried for a field, in order. */
-function np_key_variants( $key ) {
+function nppro_key_variants( $key ) {
 	$names  = array();
-	$prefix = trim( (string) np_opt( 'meta_prefix' ) );
-	foreach ( array_merge( array( $key ), np_aliases( $key ) ) as $k ) {
+	$prefix = trim( (string) nppro_opt( 'meta_prefix' ) );
+	foreach ( array_merge( array( $key ), nppro_aliases( $key ) ) as $k ) {
 		if ( $prefix ) {
 			$names[] = $prefix . $k;
 		}
@@ -148,26 +148,26 @@ function np_key_variants( $key ) {
  * @param bool   $fallback Use overview table when meta is empty.
  * @return string
  */
-function np_meta( $post_id, $key, $fallback = true ) {
-	foreach ( np_key_variants( $key ) as $name ) {
+function nppro_meta( $post_id, $key, $fallback = true ) {
+	foreach ( nppro_key_variants( $key ) as $name ) {
 		$v = get_post_meta( $post_id, $name, true );
 		if ( is_scalar( $v ) && '' !== trim( (string) $v ) ) {
 			return trim( (string) $v );
 		}
 	}
 	if ( $fallback ) {
-		$o = np_overview_map( $post_id );
+		$o = nppro_overview_map( $post_id );
 		if ( isset( $o[ $key ] ) ) {
 			return $o[ $key ];
 		}
 		if ( 'advt_no' === $key ) {
-			return np_advt_from_title( get_the_title( $post_id ) );
+			return nppro_advt_from_title( get_the_title( $post_id ) );
 		}
 	}
 	return '';
 }
 
-function np_advt_from_title( $title ) {
+function nppro_advt_from_title( $title ) {
 	if ( preg_match( '/(?:advt|advertisement|notification|notice)\.?\s*(?:no\.?|number)?\s*[:\-]?\s*([A-Za-z0-9][A-Za-z0-9\/\-\.]{2,})/i', $title, $m ) ) {
 		return rtrim( $m[1], '.' );
 	}
@@ -180,7 +180,7 @@ function np_advt_from_title( $title ) {
  * @param string $raw Raw text, e.g. "04/11/2026 at 5:00 PM" or "04 Nov 2026".
  * @return array|null
  */
-function np_parse_date( $raw ) {
+function nppro_parse_date( $raw ) {
 	$s = trim( html_entity_decode( (string) $raw, ENT_QUOTES, 'UTF-8' ) );
 	if ( '' === $s ) {
 		return null;
@@ -219,8 +219,8 @@ function np_parse_date( $raw ) {
  * @param string $raw Raw last_date value.
  * @return array class (ok|soon|expired|''), label, text
  */
-function np_date_status( $raw ) {
-	$p = np_parse_date( $raw );
+function nppro_date_status( $raw ) {
+	$p = nppro_parse_date( $raw );
 	if ( ! $p ) {
 		return array( 'class' => '', 'label' => '', 'text' => '' !== $raw ? $raw : '—' );
 	}
@@ -229,28 +229,28 @@ function np_date_status( $raw ) {
 	if ( $left < 0 ) {
 		return array( 'class' => 'expired', 'label' => __( 'Expired', 'naukripatra' ), 'text' => $text );
 	}
-	if ( ceil( $left / DAY_IN_SECONDS ) <= (int) np_opt( 'soon_days' ) ) {
+	if ( ceil( $left / DAY_IN_SECONDS ) <= (int) nppro_opt( 'soon_days' ) ) {
 		return array( 'class' => 'soon', 'label' => '', 'text' => $text );
 	}
 	return array( 'class' => 'ok', 'label' => '', 'text' => $text );
 }
 
-function np_posts_count( $post_id ) {
-	$v = np_meta( $post_id, 'vacancy' );
+function nppro_posts_count( $post_id ) {
+	$v = nppro_meta( $post_id, 'vacancy' );
 	if ( '' === $v ) {
 		return '—';
 	}
 	return preg_match( '/\d[\d,]*/', $v, $m ) ? $m[0] : $v;
 }
 
-function np_is_new( $post_id ) {
-	return ( time() - get_post_time( 'U', true, $post_id ) ) < (int) np_opt( 'new_badge_days' ) * DAY_IN_SECONDS;
+function nppro_is_new( $post_id ) {
+	return ( time() - get_post_time( 'U', true, $post_id ) ) < (int) nppro_opt( 'new_badge_days' ) * DAY_IN_SECONDS;
 }
 
 /** State / UT / All India terms of a post. */
-function np_states_of( $post_id ) {
+function nppro_states_of( $post_id ) {
 	$out = array();
-	$ok  = array_merge( np_location_slugs(), array( 'all-india' ) );
+	$ok  = array_merge( nppro_location_slugs(), array( 'all-india' ) );
 	foreach ( (array) get_the_category( $post_id ) as $t ) {
 		if ( in_array( $t->slug, $ok, true ) ) {
 			$out[] = $t;
@@ -259,16 +259,16 @@ function np_states_of( $post_id ) {
 	return $out;
 }
 
-function np_section_of( $post_id ) {
+function nppro_section_of( $post_id ) {
 	foreach ( (array) get_the_category( $post_id ) as $t ) {
-		if ( in_array( $t->slug, np_section_slugs(), true ) ) {
+		if ( in_array( $t->slug, nppro_section_slugs(), true ) ) {
 			return $t;
 		}
 	}
 	return null;
 }
 
-function np_reading_time( $post_id ) {
+function nppro_reading_time( $post_id ) {
 	return max( 1, (int) ceil( str_word_count( wp_strip_all_tags( get_post_field( 'post_content', $post_id ) ) ) / 200 ) );
 }
 
@@ -278,7 +278,7 @@ function np_reading_time( $post_id ) {
  * @param int $post_id Post ID.
  * @return array label => value
  */
-function np_overview_rows( $post_id ) {
+function nppro_overview_rows( $post_id ) {
 	$map = array(
 		'organization' => __( 'Organization', 'naukripatra' ), 'post_name' => __( 'Post Name', 'naukripatra' ),
 		'vacancy' => __( 'Vacancy', 'naukripatra' ), 'qualification' => __( 'Qualification', 'naukripatra' ),
@@ -290,7 +290,7 @@ function np_overview_rows( $post_id ) {
 	);
 	$rows = array();
 	foreach ( $map as $k => $label ) {
-		$v = np_meta( $post_id, $k );
+		$v = nppro_meta( $post_id, $k );
 		if ( '' !== $v ) {
 			$rows[ $label ] = $v;
 		}
@@ -301,7 +301,7 @@ function np_overview_rows( $post_id ) {
 /**
  * Map free text employment type to Google enum.
  */
-function np_employment_type( $text ) {
+function nppro_employment_type( $text ) {
 	$t = strtolower( $text );
 	$map = array( 'apprentice' => 'OTHER', 'intern' => 'INTERN', 'contract' => 'CONTRACTOR', 'part' => 'PART_TIME', 'temporary' => 'TEMPORARY', 'full' => 'FULL_TIME', 'permanent' => 'FULL_TIME', 'regular' => 'FULL_TIME' );
 	foreach ( $map as $needle => $enum ) {

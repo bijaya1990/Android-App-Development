@@ -1,7 +1,7 @@
 <?php
 /**
- * Settings storage: one option array "np_settings". Edited in NaukriPatra Control (inc/admin.php).
- * Every value used by templates goes through np_opt(), so no copy is hard-coded.
+ * Settings storage: one option array "nppro_settings". Edited in NaukriPatra Control (inc/admin.php).
+ * Every value used by templates goes through nppro_opt(), so no copy is hard-coded.
  *
  * @package naukripatra
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @return array
  */
-function np_ad_slots() {
+function nppro_ad_slots() {
 	return array(
 		'header'       => array( 'Header leaderboard', array( 728, 90 ), array( 320, 50 ) ),
 		'below_states' => array( 'Below states', array( 728, 90 ), array( 320, 100 ) ),
@@ -36,9 +36,9 @@ function np_ad_slots() {
  *
  * @return array
  */
-function np_default_settings() {
+function nppro_default_settings() {
 	$ads = array();
-	foreach ( np_ad_slots() as $key => $def ) {
+	foreach ( nppro_ad_slots() as $key => $def ) {
 		$ads[ $key ] = array( 'on' => 1, 'code' => '', 'device' => ( 'sticky' === $key ? 'mobile' : ( 'sidebar1' === $key || 'sidebar2' === $key ? 'desktop' : ( 'end' === $key ? 'mobile' : 'all' ) ) ) );
 	}
 	return array(
@@ -123,21 +123,21 @@ function np_default_settings() {
  * @param mixed  $default Fallback when key is unknown.
  * @return mixed
  */
-function np_opt( $key, $default = null ) {
-	global $np_settings_cache;
-	if ( null === $np_settings_cache ) {
-		$saved = get_option( 'np_settings', array() );
+function nppro_opt( $key, $default = null ) {
+	global $nppro_settings_cache;
+	if ( null === $nppro_settings_cache ) {
+		$saved = get_option( 'nppro_settings', array() );
 		$saved = is_array( $saved ) ? $saved : array();
-		$np_settings_cache = array_replace_recursive( np_default_settings(), $saved );
+		$nppro_settings_cache = array_replace_recursive( nppro_default_settings(), $saved );
 		if ( isset( $saved['tools'] ) && is_array( $saved['tools'] ) ) {
-			$np_settings_cache['tools'] = $saved['tools']; // Repeater: saved list wins entirely.
+			$nppro_settings_cache['tools'] = $saved['tools']; // Repeater: saved list wins entirely.
 		}
 	}
-	return array_key_exists( $key, $np_settings_cache ) ? $np_settings_cache[ $key ] : $default;
+	return array_key_exists( $key, $nppro_settings_cache ) ? $nppro_settings_cache[ $key ] : $default;
 }
 
 /** Reset the in-request cache after saving. */
-function np_opt_flush() {
-	global $np_settings_cache;
-	$np_settings_cache = null;
+function nppro_opt_flush() {
+	global $nppro_settings_cache;
+	$nppro_settings_cache = null;
 }

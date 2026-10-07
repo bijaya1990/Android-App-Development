@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'rest_api_init', 'np_rest_guarded_fields', 99 );
-function np_rest_guarded_fields() {
+add_action( 'rest_api_init', 'nppro_rest_guarded_fields', 99 );
+function nppro_rest_guarded_fields() {
 	global $wp_rest_additional_fields;
 	$old = array( 'qualification', 'last_date', 'posts_count', 'organization', 'salary', 'employment_type', 'locality', 'street', 'postal_code', 'job_details', 'advt_no' );
 	foreach ( $old as $field ) {

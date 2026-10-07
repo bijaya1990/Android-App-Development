@@ -7,4 +7,4 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-np_sidebar( is_singular() ? 'single' : 'home' );
+nppro_sidebar( is_singular() ? 'single' : 'home' );

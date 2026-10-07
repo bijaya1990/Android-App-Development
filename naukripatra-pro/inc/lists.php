@@ -15,13 +15,13 @@ add_filter( 'query_vars', function ( $v ) {
 	return $v;
 } );
 
-add_action( 'pre_get_posts', 'np_list_query' );
-function np_list_query( $q ) {
+add_action( 'pre_get_posts', 'nppro_list_query' );
+function nppro_list_query( $q ) {
 	if ( is_admin() || ! $q->is_main_query() ) {
 		return;
 	}
 	if ( $q->is_category() || $q->is_search() || $q->is_tag() || $q->is_home() ) {
-		$q->set( 'posts_per_page', max( 5, (int) np_opt( 'rows_per_page' ) ) );
+		$q->set( 'posts_per_page', max( 5, (int) nppro_opt( 'rows_per_page' ) ) );
 	}
 	if ( $q->is_search() ) {
 		$q->set( 'post_type', 'post' );
@@ -33,16 +33,16 @@ function np_list_query( $q ) {
 			$tax = (array) $q->get( 'tax_query' );
 			$tax[] = array( 'taxonomy' => 'category', 'field' => 'slug', 'terms' => $extra );
 			$q->set( 'tax_query', $tax );
-			$GLOBALS['np_base_cat'] = sanitize_title( (string) $q->get( 'category_name' ) );
+			$GLOBALS['nppro_base_cat'] = sanitize_title( (string) $q->get( 'category_name' ) );
 		}
 	}
 }
 
 // The extra tax clause would change the queried object; keep the page's own category as queried object.
 add_action( 'wp', function () {
-	global $wp_query, $np_base_cat;
-	if ( ! empty( $np_base_cat ) && $wp_query->is_category() ) {
-		$term = get_term_by( 'slug', basename( $np_base_cat ), 'category' );
+	global $wp_query, $nppro_base_cat;
+	if ( ! empty( $nppro_base_cat ) && $wp_query->is_category() ) {
+		$term = get_term_by( 'slug', basename( $nppro_base_cat ), 'category' );
 		if ( $term ) {
 			$wp_query->queried_object    = $term;
 			$wp_query->queried_object_id = (int) $term->term_id;
@@ -51,13 +51,13 @@ add_action( 'wp', function () {
 } );
 
 /** Current filter slug on a list page ('' if none). */
-function np_active_filter() {
+function nppro_active_filter() {
 	$s = sanitize_title( (string) get_query_var( 'np_section' ) );
 	return $s ? $s : sanitize_title( (string) get_query_var( 'np_state' ) );
 }
 
 /** H1 for a list page, e.g. "Jharkhand Government Jobs 2026". */
-function np_list_heading() {
+function nppro_list_heading() {
 	$t = single_cat_title( '', false );
 	if ( is_search() ) {
 		/* translators: %s: search term */
@@ -68,14 +68,14 @@ function np_list_heading() {
 	if ( $custom ) {
 		return $custom;
 	}
-	if ( $term instanceof WP_Term && in_array( $term->slug, np_section_slugs(), true ) ) {
-		return $t . ' ' . np_year();
+	if ( $term instanceof WP_Term && in_array( $term->slug, nppro_section_slugs(), true ) ) {
+		return $t . ' ' . nppro_year();
 	}
-	return $t . ' ' . __( 'Government Jobs', 'naukripatra' ) . ' ' . np_year();
+	return $t . ' ' . __( 'Government Jobs', 'naukripatra' ) . ' ' . nppro_year();
 }
 
 // Canonical for filtered/paginated lists when no SEO plugin; Yoast canonical filtered too.
-function np_canonical_url() {
+function nppro_canonical_url() {
 	if ( is_category() ) {
 		$u = get_category_link( get_queried_object_id() );
 		return is_paged() ? trailingslashit( $u ) . 'page/' . (int) get_query_var( 'paged' ) . '/' : $u;
@@ -83,15 +83,15 @@ function np_canonical_url() {
 	return '';
 }
 add_filter( 'wpseo_canonical', function ( $c ) {
-	return ( is_category() && np_active_filter() ) ? np_canonical_url() : $c;
+	return ( is_category() && nppro_active_filter() ) ? nppro_canonical_url() : $c;
 } );
 add_action( 'wp_head', function () {
-	if ( np_seo_plugin_active() ) {
+	if ( nppro_seo_plugin_active() ) {
 		return;
 	}
 	$u = '';
 	if ( is_category() ) {
-		$u = np_canonical_url();
+		$u = nppro_canonical_url();
 	} elseif ( is_singular() ) {
 		$u = get_permalink();
 	} elseif ( is_front_page() ) {
@@ -119,7 +119,7 @@ add_action( 'wp_head', function () {
 
 // noindex rules.
 add_filter( 'wp_robots', function ( $r ) {
-	if ( ( is_search() && np_opt( 'noindex_search' ) ) || ( is_tag() && np_opt( 'noindex_tags' ) ) || ( is_category() && np_active_filter() ) ) {
+	if ( ( is_search() && nppro_opt( 'noindex_search' ) ) || ( is_tag() && nppro_opt( 'noindex_tags' ) ) || ( is_category() && nppro_active_filter() ) ) {
 		$r['noindex'] = true;
 		$r['follow']  = true;
 		unset( $r['index'] );
@@ -154,10 +154,10 @@ add_action( 'edited_category', function ( $term_id ) {
 	}
 } );
 
-function np_term_meta( $key ) {
+function nppro_term_meta( $key ) {
 	$t = get_queried_object();
 	if ( ! ( $t instanceof WP_Term ) ) {
 		return '';
 	}
-	return str_replace( '{year}', np_year(), (string) get_term_meta( $t->term_id, $key, true ) );
+	return str_replace( '{year}', nppro_year(), (string) get_term_meta( $t->term_id, $key, true ) );
 }

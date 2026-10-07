@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-function np_ads_enabled() {
+function nppro_ads_enabled() {
 	return ! is_user_logged_in() || ! current_user_can( 'manage_options' );
 }
 
@@ -22,18 +22,18 @@ function np_ads_enabled() {
  * @param string $extra Extra CSS class.
  * @return string
  */
-function np_ad_html( $slot, $extra = '' ) {
+function nppro_ad_html( $slot, $extra = '' ) {
 	static $count = 0;
-	$slots = np_ad_slots();
-	$cfg   = np_opt( 'ads' );
-	if ( ! np_ads_enabled() || ! isset( $slots[ $slot ], $cfg[ $slot ] ) ) {
+	$slots = nppro_ad_slots();
+	$cfg   = nppro_opt( 'ads' );
+	if ( ! nppro_ads_enabled() || ! isset( $slots[ $slot ], $cfg[ $slot ] ) ) {
 		return '';
 	}
 	$c = $cfg[ $slot ];
 	if ( empty( $c['on'] ) || '' === trim( (string) $c['code'] ) ) {
 		return '';
 	}
-	if ( 'sticky' !== $slot && $count >= (int) np_opt( 'ad_max' ) ) {
+	if ( 'sticky' !== $slot && $count >= (int) nppro_opt( 'ad_max' ) ) {
 		return '';
 	}
 	++$count;
@@ -52,30 +52,30 @@ function np_ad_html( $slot, $extra = '' ) {
 	return $out;
 }
 
-function np_ad( $slot, $extra = '' ) {
-	echo np_ad_html( $slot, $extra ); // phpcs:ignore WordPress.Security.EscapeOutput
+function nppro_ad( $slot, $extra = '' ) {
+	echo nppro_ad_html( $slot, $extra ); // phpcs:ignore WordPress.Security.EscapeOutput
 }
 
-function np_ads_present() {
-	if ( ! np_ads_enabled() ) {
+function nppro_ads_present() {
+	if ( ! nppro_ads_enabled() ) {
 		return false;
 	}
-	foreach ( (array) np_opt( 'ads' ) as $c ) {
+	foreach ( (array) nppro_opt( 'ads' ) as $c ) {
 		if ( ! empty( $c['on'] ) && '' !== trim( (string) $c['code'] ) ) {
 			return true;
 		}
 	}
-	return '' !== trim( (string) np_opt( 'ad_social_bar' ) ) || '' !== trim( (string) np_opt( 'ad_popunder' ) );
+	return '' !== trim( (string) nppro_opt( 'ad_social_bar' ) ) || '' !== trim( (string) nppro_opt( 'ad_popunder' ) );
 }
 
 // Sticky mobile ad, footer banner, and optional Social Bar / Popunder (global, lazy).
 add_action( 'wp_footer', function () {
-	np_ad( 'footer' );
-	np_ad( 'sticky' );
-	if ( np_ads_enabled() ) {
+	nppro_ad( 'footer' );
+	nppro_ad( 'sticky' );
+	if ( nppro_ads_enabled() ) {
 		foreach ( array( 'ad_social_bar', 'ad_popunder' ) as $k ) {
-			if ( '' !== trim( (string) np_opt( $k ) ) ) {
-				echo '<template data-np-global>' . np_opt( $k ) . '</template>'; // phpcs:ignore WordPress.Security.EscapeOutput
+			if ( '' !== trim( (string) nppro_opt( $k ) ) ) {
+				echo '<template data-np-global>' . nppro_opt( $k ) . '</template>'; // phpcs:ignore WordPress.Security.EscapeOutput
 			}
 		}
 	}

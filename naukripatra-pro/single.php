@@ -13,7 +13,7 @@ while ( have_posts() ) :
 	the_post();
 	$id     = get_the_ID();
 	$g      = function ( $k ) use ( $id ) {
-		return np_meta( $id, $k );
+		return nppro_meta( $id, $k );
 	};
 	$apply  = $g( 'apply_link' );
 	$notif  = $g( 'notification_link' );
@@ -21,21 +21,21 @@ while ( have_posts() ) :
 	$first  = function ( $v ) {
 		return preg_match( '#https?://[^\s,]+#i', $v, $m ) ? $m[0] : '';
 	};
-	$rows   = np_overview_rows( $id );
-	$states = np_states_of( $id );
-	$sec    = np_section_of( $id );
+	$rows   = nppro_overview_rows( $id );
+	$states = nppro_states_of( $id );
+	$sec    = nppro_section_of( $id );
 	$title  = get_the_title();
 	$url    = get_permalink();
 	?>
 <div class="np-wrap np-layout np-layout--single">
 	<article class="np-col np-article" data-np-view>
-		<?php np_breadcrumb_html(); ?>
+		<?php nppro_breadcrumb_html(); ?>
 		<header class="np-card">
 			<h1><?php the_title(); ?></h1>
 			<p class="np-meta">
 				<span><?php esc_html_e( 'Published', 'naukripatra' ); ?>: <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time></span>
 				<span><?php esc_html_e( 'Updated', 'naukripatra' ); ?>: <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( get_the_modified_date() ); ?></time></span>
-				<span><?php /* translators: %d minutes */ printf( esc_html__( '%d min read', 'naukripatra' ), (int) np_reading_time( $id ) ); ?></span>
+				<span><?php /* translators: %d minutes */ printf( esc_html__( '%d min read', 'naukripatra' ), (int) nppro_reading_time( $id ) ); ?></span>
 			</p>
 			<?php if ( $states || $sec ) : ?>
 				<p class="np-chips">
@@ -55,7 +55,7 @@ while ( have_posts() ) :
 				<button type="button" class="np-btn np-btn--ghost np-btn--sm" data-np-font="1" aria-label="<?php esc_attr_e( 'Larger text', 'naukripatra' ); ?>">A+</button>
 				<button type="button" class="np-btn np-btn--ghost np-btn--sm" data-np-print><?php esc_html_e( 'Print', 'naukripatra' ); ?></button>
 				<button type="button" class="np-btn np-btn--ghost np-btn--sm" data-np-copy="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Copy link', 'naukripatra' ); ?></button>
-				<?php foreach ( np_share_links( $url, $title ) as $name => $link ) : ?>
+				<?php foreach ( nppro_share_links( $url, $title ) as $name => $link ) : ?>
 					<a class="np-btn np-btn--ghost np-btn--sm" href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $name ); ?></a>
 				<?php endforeach; ?>
 			</div>
@@ -68,10 +68,10 @@ while ( have_posts() ) :
 				</tbody></table></div>
 			</section>
 		<?php endif; ?>
-		<?php np_ad( 'infeed' ); ?>
+		<?php nppro_ad( 'infeed' ); ?>
 
 		<div class="np-card np-prose np-reader"><?php the_content(); ?></div>
-		<?php np_ad( 'after' ); ?>
+		<?php nppro_ad( 'after' ); ?>
 
 		<?php
 		// Related: same state AND same section; fall back to same section.
@@ -85,10 +85,10 @@ while ( have_posts() ) :
 		} elseif ( $sec ) {
 			$args['cat'] = $sec->term_id;
 		}
-		$rq = np_query( '', 6, $args );
+		$rq = nppro_query( '', 6, $args );
 		if ( $rq->have_posts() ) :
 			?>
-			<section class="np-card"><h2><?php esc_html_e( 'Related Jobs', 'naukripatra' ); ?></h2><?php np_list_table( $rq, 0, false ); wp_reset_postdata(); ?></section>
+			<section class="np-card"><h2><?php esc_html_e( 'Related Jobs', 'naukripatra' ); ?></h2><?php nppro_list_table( $rq, 0, false ); wp_reset_postdata(); ?></section>
 		<?php endif; ?>
 		<?php if ( $states ) : ?>
 			<section class="np-card"><h2><?php esc_html_e( 'More from this state', 'naukripatra' ); ?></h2><p class="np-chips">

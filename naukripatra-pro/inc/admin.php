@@ -10,15 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'admin_menu', function () {
-	add_menu_page( 'NaukriPatra Control', 'NaukriPatra', 'manage_options', 'naukripatra-control', 'np_render_control', 'dashicons-megaphone', 3 );
+	add_menu_page( 'NaukriPatra Control', 'NaukriPatra', 'manage_options', 'naukripatra-control', 'nppro_render_control', 'dashicons-megaphone', 3 );
 } );
 
-function np_tabs() {
+function nppro_tabs() {
 	return array( 'general' => 'General', 'home' => 'Homepage', 'tools' => 'Tools', 'locations' => 'Locations', 'lists' => 'Lists', 'ads' => 'Ads', 'seo' => 'SEO', 'footer' => 'Footer / Social', 'data' => 'Data' );
 }
 
 /** Field specs per tab: path, type, label, optional help/options. */
-function np_fields( $tab ) {
+function nppro_fields( $tab ) {
 	$f = array();
 	switch ( $tab ) {
 		case 'general':
@@ -52,7 +52,7 @@ function np_fields( $tab ) {
 				array( 'trending_count', 'number', 'Trending jobs in sidebar' ), array( 'states_title', 'text', 'State grid title' ),
 				array( 'seo_text', 'html', 'SEO text block (about site, FAQ)' )
 			);
-			foreach ( np_opt( 'cats' ) as $slug => $c ) {
+			foreach ( nppro_opt( 'cats' ) as $slug => $c ) {
 				$f[] = array( 'cats.' . $slug . '.label', 'text', 'Button label: ' . $slug );
 				$f[] = array( 'cats.' . $slug . '.color', 'color', 'Button colour: ' . $slug );
 			}
@@ -74,7 +74,7 @@ function np_fields( $tab ) {
 			break;
 		case 'ads':
 			$f[] = array( null, 'note', 'Paste Adsterra code per slot. Code loads lazily after first interaction. Admins never see ads.' );
-			foreach ( np_ad_slots() as $k => $s ) {
+			foreach ( nppro_ad_slots() as $k => $s ) {
 				$f[] = array( 'ads.' . $k . '.on', 'check', $s[0] . ' - on' );
 				$f[] = array( 'ads.' . $k . '.device', 'select', $s[0] . ' - device', array( 'all' => 'All devices', 'desktop' => 'Desktop only', 'mobile' => 'Mobile only' ) );
 				$f[] = array( 'ads.' . $k . '.code', 'code', $s[0] . ' - code (' . $s[1][0] . 'x' . $s[1][1] . ' desktop / ' . $s[2][0] . 'x' . $s[2][1] . ' mobile)' );
@@ -98,7 +98,7 @@ function np_fields( $tab ) {
 	return $f;
 }
 
-function np_path_get( $arr, $path ) {
+function nppro_path_get( $arr, $path ) {
 	foreach ( explode( '.', $path ) as $p ) {
 		if ( ! is_array( $arr ) || ! isset( $arr[ $p ] ) ) {
 			return null;
@@ -107,7 +107,7 @@ function np_path_get( $arr, $path ) {
 	}
 	return $arr;
 }
-function np_path_set( &$arr, $path, $val ) {
+function nppro_path_set( &$arr, $path, $val ) {
 	$ref =& $arr;
 	foreach ( explode( '.', $path ) as $p ) {
 		if ( ! isset( $ref[ $p ] ) || ! is_array( $ref[ $p ] ) ) {
@@ -117,18 +117,18 @@ function np_path_set( &$arr, $path, $val ) {
 	}
 	$ref = $val;
 }
-function np_field_name( $path ) {
+function nppro_field_name( $path ) {
 	return 'np[' . implode( '][', explode( '.', $path ) ) . ']';
 }
 
-function np_render_field( $f ) {
+function nppro_render_field( $f ) {
 	list( $path, $type, $label ) = $f;
 	if ( 'note' === $type ) {
 		echo '<p class="description">' . esc_html( $label ) . '</p>';
 		return;
 	}
-	$val  = np_path_get( np_opt_all(), $path );
-	$name = np_field_name( $path );
+	$val  = nppro_path_get( nppro_opt_all(), $path );
+	$name = nppro_field_name( $path );
 	echo '<tr><th scope="row">' . esc_html( $label ) . '</th><td>';
 	switch ( $type ) {
 		case 'check':
@@ -161,15 +161,15 @@ function np_render_field( $f ) {
 	echo '</td></tr>';
 }
 
-function np_opt_all() {
+function nppro_opt_all() {
 	$all = array();
-	foreach ( array_keys( np_default_settings() ) as $k ) {
-		$all[ $k ] = np_opt( $k );
+	foreach ( array_keys( nppro_default_settings() ) as $k ) {
+		$all[ $k ] = nppro_opt( $k );
 	}
 	return $all;
 }
 
-function np_sanitize_value( $type, $v ) {
+function nppro_sanitize_value( $type, $v ) {
 	$v = is_scalar( $v ) ? (string) $v : '';
 	switch ( $type ) {
 		case 'check':
@@ -197,18 +197,18 @@ add_action( 'admin_post_np_save', function () {
 		wp_die( esc_html__( 'Not allowed.', 'naukripatra' ), '', array( 'response' => 403 ) );
 	}
 	$tab   = isset( $_POST['np_tab'] ) ? sanitize_key( $_POST['np_tab'] ) : 'general';
-	$saved = get_option( 'np_settings', array() );
+	$saved = get_option( 'nppro_settings', array() );
 	$saved = is_array( $saved ) ? $saved : array();
 	$posted = isset( $_POST['np'] ) ? wp_unslash( $_POST['np'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-	foreach ( np_fields( $tab ) as $f ) {
+	foreach ( nppro_fields( $tab ) as $f ) {
 		if ( null === $f[0] ) {
 			continue;
 		}
-		$v = np_path_get( $posted, $f[0] );
+		$v = nppro_path_get( $posted, $f[0] );
 		if ( 'select' === $f[1] && ! isset( $f[3][ $v ] ) ) {
 			continue;
 		}
-		np_path_set( $saved, $f[0], np_sanitize_value( $f[1], is_array( $v ) ? '' : $v ) );
+		nppro_path_set( $saved, $f[0], nppro_sanitize_value( $f[1], is_array( $v ) ? '' : $v ) );
 	}
 	if ( 'tools' === $tab ) {
 		$tools = array();
@@ -225,8 +225,8 @@ add_action( 'admin_post_np_save', function () {
 		}
 		$saved['tools'] = $tools;
 	}
-	update_option( 'np_settings', $saved );
-	np_opt_flush();
+	update_option( 'nppro_settings', $saved );
+	nppro_opt_flush();
 	wp_safe_redirect( admin_url( 'admin.php?page=naukripatra-control&tab=' . $tab . '&saved=1' ) );
 	exit;
 } );
@@ -237,7 +237,7 @@ add_action( 'admin_post_np_export', function () {
 	}
 	header( 'Content-Type: application/json' );
 	header( 'Content-Disposition: attachment; filename=naukripatra-settings.json' );
-	echo wp_json_encode( get_option( 'np_settings', array() ), JSON_PRETTY_PRINT ); // phpcs:ignore WordPress.Security.EscapeOutput
+	echo wp_json_encode( get_option( 'nppro_settings', array() ), JSON_PRETTY_PRINT ); // phpcs:ignore WordPress.Security.EscapeOutput
 	exit;
 } );
 
@@ -247,19 +247,19 @@ add_action( 'admin_post_np_import', function () {
 	}
 	$data = json_decode( wp_unslash( isset( $_POST['np_json'] ) ? $_POST['np_json'] : '' ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 	if ( is_array( $data ) ) {
-		$allowed = np_default_settings();
-		update_option( 'np_settings', array_intersect_key( $data, $allowed ) );
-		np_opt_flush();
+		$allowed = nppro_default_settings();
+		update_option( 'nppro_settings', array_intersect_key( $data, $allowed ) );
+		nppro_opt_flush();
 	}
 	wp_safe_redirect( admin_url( 'admin.php?page=naukripatra-control&tab=data&saved=1' ) );
 	exit;
 } );
 
-function np_render_control() {
+function nppro_render_control() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$tabs = np_tabs();
+	$tabs = nppro_tabs();
 	$tab  = isset( $_GET['tab'] ) && isset( $tabs[ $_GET['tab'] ] ) ? sanitize_key( $_GET['tab'] ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification
 	echo '<div class="wrap"><h1>NaukriPatra Control</h1>';
 	if ( isset( $_GET['saved'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -271,17 +271,17 @@ function np_render_control() {
 	}
 	echo '</nav>';
 	if ( 'data' === $tab ) {
-		np_render_data_tab();
+		nppro_render_data_tab();
 	} else {
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="np_save"><input type="hidden" name="np_tab" value="' . esc_attr( $tab ) . '">';
 		wp_nonce_field( 'np_save' );
 		echo '<table class="form-table" role="presentation">';
-		foreach ( np_fields( $tab ) as $f ) {
-			np_render_field( $f );
+		foreach ( nppro_fields( $tab ) as $f ) {
+			nppro_render_field( $f );
 		}
 		echo '</table>';
 		if ( 'tools' === $tab ) {
-			np_render_tools_repeater();
+			nppro_render_tools_repeater();
 		}
 		submit_button();
 		echo '</form>';
@@ -289,8 +289,8 @@ function np_render_control() {
 	echo '</div>';
 }
 
-function np_render_tools_repeater() {
-	$tools = (array) np_opt( 'tools' );
+function nppro_render_tools_repeater() {
+	$tools = (array) nppro_opt( 'tools' );
 	$tools[] = array( 'label' => '', 'link' => '', 'icon' => 'link', 'color' => '#1D4ED8', 'show' => 1 );
 	$tools[] = array( 'label' => '', 'link' => '', 'icon' => 'link', 'color' => '#1D4ED8', 'show' => 1 );
 	echo '<p class="description">Tools: name, link (relative or full URL), icon, colour. Leave name empty to remove a row. Two empty rows are provided for new tools.</p><table class="widefat striped"><thead><tr><th>Name</th><th>Link</th><th>Icon</th><th>Colour</th><th>Show</th></tr></thead><tbody>';
@@ -307,7 +307,7 @@ function np_render_tools_repeater() {
 	echo '</tbody></table>';
 }
 
-function np_render_data_tab() {
+function nppro_render_data_tab() {
 	// Meta Key Scanner.
 	echo '<h2>Meta Key Scanner</h2>';
 	$p = get_posts( array( 'numberposts' => 1, 'post_status' => 'publish' ) );
@@ -318,11 +318,11 @@ function np_render_data_tab() {
 			echo '<tr><td><code>' . esc_html( $k ) . '</code></td><td>' . esc_html( mb_substr( is_scalar( $v[0] ) ? (string) $v[0] : '(array)', 0, 80 ) ) . '</td></tr>';
 		}
 		echo '</tbody></table><h3>How the theme resolves each field</h3><table class="widefat striped"><thead><tr><th>Field</th><th>Value used</th><th>Source</th></tr></thead><tbody>';
-		foreach ( array_merge( np_api_fields(), array( 'advt_no' ) ) as $f ) {
-			$v   = np_meta( $id, $f );
+		foreach ( array_merge( nppro_api_fields(), array( 'advt_no' ) ) as $f ) {
+			$v   = nppro_meta( $id, $f );
 			$src = '';
 			if ( '' !== $v ) {
-				$src = ( '' !== np_meta( $id, $f, false ) ) ? 'meta' : 'overview table / title';
+				$src = ( '' !== nppro_meta( $id, $f, false ) ) ? 'meta' : 'overview table / title';
 			}
 			echo '<tr><td><code>' . esc_html( $f ) . '</code></td><td>' . esc_html( mb_substr( $v, 0, 80 ) ) . '</td><td>' . esc_html( $src ? $src : 'not found' ) . '</td></tr>';
 		}

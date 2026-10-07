@@ -10,19 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'admin_post_np_submit_job', 'np_handle_job_form' );
+add_action( 'admin_post_np_submit_job', 'nppro_handle_job_form' );
 add_action( 'admin_post_nopriv_np_submit_job', function () {
 	wp_safe_redirect( wp_login_url( home_url( '/post-job/' ) ) );
 	exit;
 } );
 
-function np_form_redirect( $status ) {
+function nppro_form_redirect( $status ) {
 	wp_safe_redirect( add_query_arg( 'np_status', $status, home_url( '/post-job/' ) ) );
 	exit;
 }
 
 /** Validate and upload one file input; returns attachment ID, 0 (none) or WP_Error. */
-function np_form_upload( $field, $post_id, $types, $max_kb ) {
+function nppro_form_upload( $field, $post_id, $types, $max_kb ) {
 	if ( empty( $_FILES[ $field ]['name'] ) ) {
 		return 0;
 	}
@@ -41,28 +41,28 @@ function np_form_upload( $field, $post_id, $types, $max_kb ) {
 	return $id;
 }
 
-function np_handle_job_form() {
-	if ( ! np_user_may_post() ) {
+function nppro_handle_job_form() {
+	if ( ! nppro_user_may_post() ) {
 		wp_die( esc_html__( 'You are not allowed to post.', 'naukripatra' ), '', array( 'response' => 403 ) );
 	}
 	if ( ! isset( $_POST['np_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['np_nonce'] ) ), 'np_submit_job' ) ) {
 		wp_die( esc_html__( 'Security check failed. Please go back and try again.', 'naukripatra' ), '', array( 'response' => 403 ) );
 	}
 	if ( ! empty( $_POST['np_website'] ) ) { // Honeypot.
-		np_form_redirect( 'ok' );
+		nppro_form_redirect( 'ok' );
 	}
 	$uid  = get_current_user_id();
 	$key  = 'np_rate_' . $uid;
 	$used = (int) get_transient( $key );
-	if ( $used >= max( 1, (int) np_opt( 'form_rate' ) ) ) {
-		np_form_redirect( 'rate' );
+	if ( $used >= max( 1, (int) nppro_opt( 'form_rate' ) ) ) {
+		nppro_form_redirect( 'rate' );
 	}
 	$t = function ( $k ) {
 		return isset( $_POST[ $k ] ) ? sanitize_text_field( wp_unslash( $_POST[ $k ] ) ) : '';
 	};
 	$title = $t( 'np_title' );
 	if ( '' === $title ) {
-		np_form_redirect( 'title' );
+		nppro_form_redirect( 'title' );
 	}
 	$content = wp_kses_post( wp_unslash( isset( $_POST['np_article'] ) ? $_POST['np_article'] : '' ) );
 	$cats    = isset( $_POST['np_cats'] ) ? array_filter( array_map( 'absint', (array) $_POST['np_cats'] ) ) : array();
@@ -76,13 +76,13 @@ function np_handle_job_form() {
 		true
 	);
 	if ( is_wp_error( $post_id ) ) {
-		np_form_redirect( 'error' );
+		nppro_form_redirect( 'error' );
 	}
 	update_post_meta( $post_id, '_np_front_submission', 1 );
 
 	// 16 plugin API fields (saved under the plugin's real key, honouring the prefix setting).
-	$prefix = trim( (string) np_opt( 'meta_prefix' ) );
-	foreach ( np_api_fields() as $f ) {
+	$prefix = trim( (string) nppro_opt( 'meta_prefix' ) );
+	foreach ( nppro_api_fields() as $f ) {
 		$v = in_array( $f, array( 'apply_link', 'notification_link', 'official_website' ), true ) ? esc_url_raw( wp_unslash( isset( $_POST[ 'f_' . $f ] ) ? $_POST[ 'f_' . $f ] : '' ) ) : $t( 'f_' . $f );
 		if ( 'apply_link' === $f && '' === $v ) {
 			$v = $t( 'f_apply_link' ); // Allows "url / url" multi-link text.
@@ -102,7 +102,7 @@ function np_handle_job_form() {
 		update_post_meta( $post_id, 'advt_no', $t( 'o_advt' ) );
 	}
 	// Yoast block.
-	foreach ( np_yoast_keys() as $field => $ykey ) {
+	foreach ( nppro_yoast_keys() as $field => $ykey ) {
 		$v = ( 'canonical' === $field ) ? esc_url_raw( wp_unslash( isset( $_POST['y_canonical'] ) ? $_POST['y_canonical'] : '' ) ) : $t( 'y_' . $field );
 		if ( '' !== $v ) {
 			update_post_meta( $post_id, $ykey, $v );
@@ -110,13 +110,13 @@ function np_handle_job_form() {
 	}
 	// Files.
 	$errors = array();
-	$img    = np_form_upload( 'np_image', $post_id, array( 'image/jpeg', 'image/png', 'image/webp' ), 2048 );
+	$img    = nppro_form_upload( 'np_image', $post_id, array( 'image/jpeg', 'image/png', 'image/webp' ), 2048 );
 	if ( is_wp_error( $img ) ) {
 		$errors[] = 'image';
 	} elseif ( $img ) {
 		set_post_thumbnail( $post_id, $img ); // Triggers the Yoast image sync.
 	}
-	$pdf = np_form_upload( 'np_pdf', $post_id, array( 'application/pdf' ), 5120 );
+	$pdf = nppro_form_upload( 'np_pdf', $post_id, array( 'application/pdf' ), 5120 );
 	if ( is_wp_error( $pdf ) ) {
 		$errors[] = 'pdf';
 	} elseif ( $pdf && '' === (string) get_post_meta( $post_id, $prefix . 'notification_link', true ) ) {
@@ -124,13 +124,13 @@ function np_handle_job_form() {
 	}
 
 	set_transient( $key, $used + 1, HOUR_IN_SECONDS );
-	$to = np_opt( 'notify_email' ) ? np_opt( 'notify_email' ) : get_option( 'admin_email' );
-	wp_mail( $to, '[' . np_opt( 'brand_text' ) . '] New job submitted: ' . $title, "A new job was submitted for approval.\n\nReview: " . admin_url( 'admin.php?page=naukripatra-control&tab=data' ) );
-	np_form_redirect( $errors ? 'ok-files' : 'ok' );
+	$to = nppro_opt( 'notify_email' ) ? nppro_opt( 'notify_email' ) : get_option( 'admin_email' );
+	wp_mail( $to, '[' . nppro_opt( 'brand_text' ) . '] New job submitted: ' . $title, "A new job was submitted for approval.\n\nReview: " . admin_url( 'admin.php?page=naukripatra-control&tab=data' ) );
+	nppro_form_redirect( $errors ? 'ok-files' : 'ok' );
 }
 
 /** Render a category checklist group. */
-function np_cat_checklist( $title, $slugs ) {
+function nppro_cat_checklist( $title, $slugs ) {
 	echo '<fieldset class="np-fs"><legend>' . esc_html( $title ) . '</legend><div class="np-checks">';
 	foreach ( $slugs as $slug ) {
 		$t = get_term_by( 'slug', $slug, 'category' );

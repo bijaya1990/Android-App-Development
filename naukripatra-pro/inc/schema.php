@@ -11,23 +11,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'wp_head', 'np_output_schema', 30 );
-function np_output_schema() {
+add_action( 'wp_head', 'nppro_output_schema', 30 );
+function nppro_output_schema() {
 	$nodes = array();
-	$seo   = np_seo_plugin_active();
+	$seo   = nppro_seo_plugin_active();
 	if ( ! $seo ) {
-		$nodes[] = array( '@type' => 'Organization', '@id' => home_url( '/#org' ), 'name' => np_opt( 'brand_text' ), 'url' => home_url( '/' ) );
+		$nodes[] = array( '@type' => 'Organization', '@id' => home_url( '/#org' ), 'name' => nppro_opt( 'brand_text' ), 'url' => home_url( '/' ) );
 		$nodes[] = array(
-			'@type' => 'WebSite', '@id' => home_url( '/#site' ), 'name' => np_opt( 'brand_text' ), 'url' => home_url( '/' ),
+			'@type' => 'WebSite', '@id' => home_url( '/#site' ), 'name' => nppro_opt( 'brand_text' ), 'url' => home_url( '/' ),
 			'potentialAction' => array( '@type' => 'SearchAction', 'target' => home_url( '/?s={search_term_string}' ), 'query-input' => 'required name=search_term_string' ),
 		);
 	}
 	if ( is_singular( 'post' ) ) {
 		$id = get_queried_object_id();
-		if ( np_is_job_post( $id ) ) {
-			$nodes[] = np_job_posting( $id );
+		if ( nppro_is_job_post( $id ) ) {
+			$nodes[] = nppro_job_posting( $id );
 		}
-		$faq = np_faq_pairs( get_post_field( 'post_content', $id ) );
+		$faq = nppro_faq_pairs( get_post_field( 'post_content', $id ) );
 		if ( $faq ) {
 			$q = array();
 			foreach ( $faq as $p ) {
@@ -37,7 +37,7 @@ function np_output_schema() {
 		}
 	}
 	if ( ! $seo ) {
-		$crumbs = np_breadcrumbs();
+		$crumbs = nppro_breadcrumbs();
 		if ( count( $crumbs ) > 1 ) {
 			$items = array();
 			foreach ( $crumbs as $i => $c ) {
@@ -64,18 +64,18 @@ function np_output_schema() {
 }
 
 /** Job posts = Latest Jobs section (or a post with vacancy data and no other section). */
-function np_is_job_post( $id ) {
-	$sec = np_section_of( $id );
+function nppro_is_job_post( $id ) {
+	$sec = nppro_section_of( $id );
 	if ( $sec ) {
 		return 'latest-jobs' === $sec->slug;
 	}
-	return '' !== np_meta( $id, 'vacancy', false );
+	return '' !== nppro_meta( $id, 'vacancy', false );
 }
 
-function np_breadcrumbs() {
+function nppro_breadcrumbs() {
 	$c = array( array( __( 'Home', 'naukripatra' ), home_url( '/' ) ) );
 	if ( is_singular( 'post' ) ) {
-		$cat = np_section_of( get_queried_object_id() );
+		$cat = nppro_section_of( get_queried_object_id() );
 		if ( ! $cat ) {
 			$cats = get_the_category();
 			$cat  = $cats ? $cats[0] : null;
@@ -92,9 +92,9 @@ function np_breadcrumbs() {
 	return $c;
 }
 
-function np_job_posting( $id ) {
+function nppro_job_posting( $id ) {
 	$g = function ( $k ) use ( $id ) {
-		return np_meta( $id, $k );
+		return nppro_meta( $id, $k );
 	};
 	$post = get_post( $id );
 	$desc = wp_kses_post( wpautop( wp_trim_words( wp_strip_all_tags( $post->post_content ), 120 ) ) );
@@ -103,19 +103,19 @@ function np_job_posting( $id ) {
 		'@type' => 'JobPosting', 'title' => $g( 'post_name' ) ? $g( 'post_name' ) : get_the_title( $id ),
 		'description' => $desc ? $desc : esc_html( get_the_title( $id ) ), 'datePosted' => get_post_time( 'c', false, $id ),
 		'url' => get_permalink( $id ), 'directApply' => false,
-		'hiringOrganization' => array( '@type' => 'Organization', 'name' => $org ? $org : np_opt( 'brand_text' ) ),
+		'hiringOrganization' => array( '@type' => 'Organization', 'name' => $org ? $org : nppro_opt( 'brand_text' ) ),
 	);
 	$site = $g( 'official_website' );
 	if ( $site && preg_match( '#^https?://#i', $site ) ) {
 		$job['hiringOrganization']['sameAs'] = esc_url_raw( strtok( $site, ' ' ) );
 	}
-	$d = np_parse_date( $g( 'last_date' ) );
+	$d = nppro_parse_date( $g( 'last_date' ) );
 	if ( $d ) {
 		$job['validThrough'] = $d['iso'];
 	}
 	// Locations: one per state/UT category; India fallback so jobLocation is never missing.
 	$places = array();
-	foreach ( np_states_of( $id ) as $t ) {
+	foreach ( nppro_states_of( $id ) as $t ) {
 		if ( 'all-india' === $t->slug ) {
 			continue;
 		}
@@ -125,18 +125,18 @@ function np_job_posting( $id ) {
 		$places[] = array( '@type' => 'Place', 'address' => array( '@type' => 'PostalAddress', 'addressCountry' => 'IN' ) );
 	}
 	$job['jobLocation'] = count( $places ) > 1 ? $places : $places[0];
-	$job['employmentType'] = np_employment_type( $g( 'job_type' ) );
+	$job['employmentType'] = nppro_employment_type( $g( 'job_type' ) );
 	if ( preg_match( '/\d[\d,]*/', $g( 'vacancy' ), $m ) ) {
 		$job['totalJobOpenings'] = (int) str_replace( ',', '', $m[0] );
 	}
 	if ( $g( 'qualification' ) ) {
 		$job['qualifications'] = $g( 'qualification' );
-		$edu = np_education_enum( $g( 'qualification' ) );
+		$edu = nppro_education_enum( $g( 'qualification' ) );
 		if ( $edu ) {
 			$job['educationRequirements'] = array( '@type' => 'EducationalOccupationalCredential', 'credentialCategory' => $edu );
 		}
 	}
-	$sal = np_base_salary( $g( 'salary' ) );
+	$sal = nppro_base_salary( $g( 'salary' ) );
 	if ( $sal ) {
 		$job['baseSalary'] = $sal;
 	}
@@ -145,13 +145,13 @@ function np_job_posting( $id ) {
 		$job['applicationContact'] = array( '@type' => 'ContactPoint', 'url' => esc_url_raw( $m[0] ) );
 	}
 	if ( $g( 'advt_no' ) ) {
-		$job['identifier'] = array( '@type' => 'PropertyValue', 'name' => $org ? $org : np_opt( 'brand_text' ), 'value' => $g( 'advt_no' ) );
+		$job['identifier'] = array( '@type' => 'PropertyValue', 'name' => $org ? $org : nppro_opt( 'brand_text' ), 'value' => $g( 'advt_no' ) );
 	}
 	return $job;
 }
 
 /** Valid Google educationRequirements enum or ''. */
-function np_education_enum( $text ) {
+function nppro_education_enum( $text ) {
 	$t = strtolower( $text );
 	if ( preg_match( '/\b(ph\.?d|doctorate)\b/', $t ) ) { return 'doctorate'; }
 	if ( preg_match( '/\b(master|m\.?sc|m\.?com|m\.?a|mba|m\.?tech|post ?graduate|pg)\b/', $t ) ) { return 'postgraduate degree'; }
@@ -162,7 +162,7 @@ function np_education_enum( $text ) {
 }
 
 /** baseSalary only when a real rupee figure and a clear unit exist. */
-function np_base_salary( $text ) {
+function nppro_base_salary( $text ) {
 	if ( ! preg_match( '/(?:₹|rs\.?|inr)\s*([\d,]+)(?:\s*(?:-|to)\s*(?:₹|rs\.?|inr)?\s*([\d,]+))?/i', $text, $m ) ) {
 		return null;
 	}
@@ -182,7 +182,7 @@ function np_base_salary( $text ) {
 }
 
 /** Question/answer pairs from a FAQ section in the article. */
-function np_faq_pairs( $html ) {
+function nppro_faq_pairs( $html ) {
 	$pairs = array();
 	if ( ! preg_match( '#<h[23][^>]*>[^<]*(?:FAQ|Frequently Asked)[^<]*</h[23]>(.*?)(?=<h2|$)#is', $html, $sec ) ) {
 		return $pairs;

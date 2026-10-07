@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'after_switch_theme', 'np_create_defaults' );
+add_action( 'after_switch_theme', 'nppro_create_defaults' );
 
 /**
  * Slug => name list. Slugs follow the old site's convention.
  *
  * @return array
  */
-function np_default_categories() {
+function nppro_default_categories() {
 	return array(
 		'latest-jobs' => 'Latest Jobs', 'admit-card' => 'Admit Card', 'result' => 'Result',
 		'answer-key' => 'Answer Key', 'syllabus' => 'Syllabus', 'admission' => 'Admission',
@@ -44,12 +44,12 @@ function np_default_categories() {
  *
  * @return string[]
  */
-function np_ut_slugs() {
+function nppro_ut_slugs() {
 	return array( 'andaman-nicobar', 'chandigarh', 'dadra-nagar-haveli-daman-diu', 'delhi', 'jammu-kashmir', 'ladakh', 'lakshadweep', 'puducherry' );
 }
 
-function np_create_defaults() {
-	foreach ( np_default_categories() as $slug => $name ) {
+function nppro_create_defaults() {
+	foreach ( nppro_default_categories() as $slug => $name ) {
 		if ( term_exists( $slug, 'category' ) || term_exists( $name, 'category' ) ) {
 			continue;
 		}

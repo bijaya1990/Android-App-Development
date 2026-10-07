@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_filter( 'the_content', 'np_clean_content', 20 );
-function np_clean_content( $html ) {
+add_filter( 'the_content', 'nppro_clean_content', 20 );
+function nppro_clean_content( $html ) {
 	if ( is_admin() || ! in_the_loop() || ! is_main_query() || ( ! is_singular( 'post' ) && ! is_page() ) ) {
 		return $html;
 	}
@@ -42,12 +42,12 @@ function np_clean_content( $html ) {
 	if ( ! is_singular( 'post' ) ) {
 		return $html;
 	}
-	$html = np_add_toc( $html );
-	return np_inject_ads( $html );
+	$html = nppro_add_toc( $html );
+	return nppro_inject_ads( $html );
 }
 
 /** Table of contents for long posts (4+ h2/h3 and 600+ words). */
-function np_add_toc( $html ) {
+function nppro_add_toc( $html ) {
 	if ( str_word_count( wp_strip_all_tags( $html ) ) < 600 ) {
 		return $html;
 	}
@@ -73,8 +73,8 @@ function np_add_toc( $html ) {
 }
 
 /** Ads after paragraph 2, then every 7 paragraphs (max 3), only outside tables and lists. */
-function np_inject_ads( $html ) {
-	$ad = np_ad_html( 'article', 'np-ad--inline' );
+function nppro_inject_ads( $html ) {
+	$ad = nppro_ad_html( 'article', 'np-ad--inline' );
 	if ( ! $ad ) {
 		return $html;
 	}
@@ -92,7 +92,7 @@ function np_inject_ads( $html ) {
 			$out .= $parts[ $i + 1 ];
 			++$paras;
 			if ( $paras >= $next && $depth <= 0 && $ads < 3 ) {
-				$out .= ( 0 === $ads ? $ad : np_ad_html( 'article', 'np-ad--inline' ) );
+				$out .= ( 0 === $ads ? $ad : nppro_ad_html( 'article', 'np-ad--inline' ) );
 				++$ads;
 				$next = $paras + 7;
 			}

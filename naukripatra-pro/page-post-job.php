@@ -21,7 +21,7 @@ $f = function ( $name, $label, $type = 'text', $help = '' ) {
 	<article class="np-card np-prose">
 		<h1><?php the_title(); ?></h1>
 		<?php if ( $status && isset( $msgs[ $status ] ) ) : ?><p class="np-notice <?php echo 0 === strpos( $status, 'ok' ) ? 'is-ok' : 'is-err'; ?>" role="status"><?php echo esc_html( $msgs[ $status ] ); ?></p><?php endif; ?>
-		<?php if ( ! np_user_may_post() ) : ?>
+		<?php if ( ! nppro_user_may_post() ) : ?>
 			<p><?php esc_html_e( 'Please log in to post a job.', 'naukripatra' ); ?> <a class="np-btn" href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>"><?php esc_html_e( 'Log in', 'naukripatra' ); ?></a></p>
 		<?php else : ?>
 		<form class="np-form" method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" data-np-postform>
@@ -37,9 +37,9 @@ $f = function ( $name, $label, $type = 'text', $help = '' ) {
 			</fieldset>
 
 			<?php
-			np_cat_checklist( 'Sections', array( 'latest-jobs', 'admit-card', 'result', 'answer-key', 'syllabus', 'admission', 'scholarship-schemes' ) );
-			np_cat_checklist( 'All India / States', array_merge( array( 'all-india' ), array_diff( np_location_slugs(), np_ut_slugs() ) ) );
-			np_cat_checklist( 'Union Territories', np_ut_slugs() );
+			nppro_cat_checklist( 'Sections', array( 'latest-jobs', 'admit-card', 'result', 'answer-key', 'syllabus', 'admission', 'scholarship-schemes' ) );
+			nppro_cat_checklist( 'All India / States', array_merge( array( 'all-india' ), array_diff( nppro_location_slugs(), nppro_ut_slugs() ) ) );
+			nppro_cat_checklist( 'Union Territories', nppro_ut_slugs() );
 			?>
 
 			<fieldset class="np-fs"><legend><?php esc_html_e( 'Schema / Overview (fill only to override auto-detected values)', 'naukripatra' ); ?></legend>
@@ -56,7 +56,7 @@ $f = function ( $name, $label, $type = 'text', $help = '' ) {
 			</fieldset>
 
 			<fieldset class="np-fs"><legend><?php esc_html_e( 'API Data (flows straight to the app)', 'naukripatra' ); ?></legend>
-				<?php foreach ( np_api_fields() as $k ) { $f( 'f_' . $k, ucwords( str_replace( '_', ' ', $k ) ) ); } ?>
+				<?php foreach ( nppro_api_fields() as $k ) { $f( 'f_' . $k, ucwords( str_replace( '_', ' ', $k ) ) ); } ?>
 			</fieldset>
 
 			<fieldset class="np-fs"><legend>Yoast SEO</legend>
