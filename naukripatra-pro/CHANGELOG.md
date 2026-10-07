@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.3
+- Article page redesign: quick-facts tiles, full-width justified text, centred tables, styled headings, Quick Links box moved to end (setting), empty ad slots collapse, app view ?np_app=1&theme=dark|light.
+
 ## 1.0.2
 - Header/footer menu items named Result, Admit Card, Latest Jobs etc. now always open their category archive (switch in Control > General).
 

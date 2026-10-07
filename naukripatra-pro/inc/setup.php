@@ -32,7 +32,7 @@ add_action( 'wp_head', 'nppro_theme_init_script', 1 );
 function nppro_theme_init_script() {
 	$default = in_array( nppro_opt( 'dark_default' ), array( 'light', 'dark' ), true ) ? nppro_opt( 'dark_default' ) : 'system';
 	?>
-<script>(function(){try{var t=localStorage.getItem('np-theme');if(!t){t=<?php echo wp_json_encode( $default ); ?>;if(t==='system'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var q=new URLSearchParams(location.search);if(q.get('np_app')){document.documentElement.classList.add('np-app');}var f=q.get('theme');if(f==='dark'||f==='light'){document.documentElement.setAttribute('data-theme',f);return;}var t=localStorage.getItem('np-theme');if(!t){t=<?php echo wp_json_encode( $default ); ?>;if(t==='system'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 	<?php
 }
 
@@ -188,3 +188,14 @@ function nppro_menu_section_links( $items, $args ) {
 	}
 	return $items;
 }
+
+// App/WebView mode: ?np_app=1 (&theme=dark|light) shows a bare article with no header, footer, sidebar or ads.
+add_filter( 'body_class', function ( $c ) {
+	if ( isset( $_GET['np_app'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		$c[] = 'np-app';
+	}
+	return $c;
+} );
+add_filter( 'nppro_ads_enabled', function ( $on ) {
+	return isset( $_GET['np_app'] ) ? false : $on; // phpcs:ignore WordPress.Security.NonceVerification
+} );

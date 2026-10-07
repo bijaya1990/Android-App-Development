@@ -32,6 +32,7 @@ function nppro_fields( $tab ) {
 				array( 'form_rate', 'number', 'Max submissions per user per hour' ),
 				array( 'dark_default', 'select', 'Default colour mode', array( 'system' => 'Follow visitor system', 'light' => 'Light', 'dark' => 'Dark' ) ),
 				array( 'gp_base_css', 'check', 'Keep GeneratePress base CSS (off = faster)' ),
+				array( 'toc_mode', 'select', 'Article "Quick Links" box', array( 'end' => 'At the end of the article (recommended)', 'top' => 'At the top', 'off' => 'Hide' ) ),
 				array( 'menu_force_cats', 'check', 'Menu items named Result / Admit Card / Latest Jobs etc. always open the category page' ),
 				array( 'inline_css', 'check', 'Inline the theme CSS in <head> (faster first paint)' ),
 				array( 'meta_prefix', 'text', 'Meta key prefix for plugin fields (optional, see Data > Meta Key Scanner)' ),

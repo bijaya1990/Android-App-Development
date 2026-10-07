@@ -34,6 +34,12 @@
 		var job = queue.shift();
 		var called = false;
 		inject(job.tpl, job.box, function () { if (!called) { called = true; busy = false; next(); } });
+		// If nothing visible appears (no fill), collapse the empty slot so no blank gap stays.
+		setTimeout(function () {
+			var filled = Array.prototype.some.call(job.box.querySelectorAll('iframe,img,ins,video,div,a'), function (e) { return e.offsetHeight > 20; });
+			var slot = job.box.closest('[data-np-ad]');
+			if (!filled && slot) { slot.classList.add('np-ad--empty'); }
+		}, 7000);
 	}
 
 	function enqueue(tpl, box) { queue.push({ tpl: tpl, box: box }); next(); }

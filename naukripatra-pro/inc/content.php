@@ -68,11 +68,15 @@ function nppro_add_toc( $html ) {
 	if ( count( $items ) < 4 ) {
 		return $html;
 	}
-	$toc = '<nav class="np-toc" aria-label="' . esc_attr__( 'Table of contents', 'naukripatra' ) . '"><strong>' . esc_html__( 'In this article', 'naukripatra' ) . '</strong><ol>';
+	$toc = '<nav class="np-toc" aria-label="' . esc_attr__( 'Table of contents', 'naukripatra' ) . '"><strong>' . esc_html__( 'Quick Links', 'naukripatra' ) . '</strong><ol>';
 	foreach ( $items as $it ) {
 		$toc .= '<li class="np-toc__l' . (int) $it[2] . '"><a href="#' . esc_attr( $it[0] ) . '">' . esc_html( $it[1] ) . '</a></li>';
 	}
-	return $toc . '</ol></nav>' . $html;
+	$toc .= '</ol></nav>';
+	if ( 'top' === nppro_opt( 'toc_mode' ) ) {
+		return $toc . $html;
+	}
+	return 'off' === nppro_opt( 'toc_mode' ) ? $html : $html . $toc; // Default: Quick Links at the END of the article (anchors stay in the headings).
 }
 
 /** Ads after paragraph 2, then every 7 paragraphs (max 3), only outside tables and lists. */
