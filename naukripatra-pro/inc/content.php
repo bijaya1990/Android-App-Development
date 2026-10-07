@@ -35,9 +35,6 @@ function nppro_clean_content( $html ) {
 		return $html;
 	}
 	$html = nppro_strip_presentation( $html );
-	if ( is_singular( 'post' ) ) {
-		$html = nppro_strip_overview_table( $html, get_the_ID() );
-	}
 	$html = preg_replace( '#</?(?:font|center)\b[^>]*>#i', '', $html );
 	$html = preg_replace( '#<(p|div|span)[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>#i', '', $html );
 
@@ -224,15 +221,18 @@ function nppro_tables_to_cards( $html, $inline = false ) {
 		};
 		$out = '';
 		$has_head = $rows[0][1] || ( $cols >= 3 && count( $rows ) >= 3 );
-		if ( 2 === $cols && ! ( $rows[0][1] && count( $rows ) < 2 ) ) { // Key / value card.
-			if ( $rows[0][1] ) {
-				array_shift( $rows ); // Drop a "Event | Date" style header row.
+		if ( 2 === $cols && ! ( $rows[0][1] && count( $rows ) < 2 ) ) { // Key / value card: label | value side by side.
+			$head = '';
+			if ( $rows[0][1] ) { // "Event | Date" style header row.
+				$h    = array_shift( $rows );
+				$head = '<div' . $cl( 'np-kv__row np-kv__head' ) . ( $inline ? ' style="display:flex;gap:12px;padding:9px 14px;font-weight:700;background:rgba(128,128,128,.16)"' : '' ) . '><div' . $cl( 'np-kv__k' ) . ( $inline ? ' style="flex:0 0 38%"' : '' ) . '>' . $val( $h[0][0] ) . '</div><div' . $cl( 'np-kv__v' ) . ( $inline ? ' style="flex:1"' : '' ) . '>' . $val( isset( $h[0][1] ) ? $h[0][1] : '' ) . '</div></div>';
 			}
-			$out = '<div' . $cl( 'np-kv' ) . $st( 'box' ) . '>' . ( $title ? '<div' . $cl( 'np-kv__title' ) . $st( 'title' ) . '>' . esc_html( $title ) . '</div>' : '' );
+			$out = '<div' . $cl( 'np-kv' ) . $st( 'box' ) . '>' . ( $title ? '<div' . $cl( 'np-kv__title' ) . $st( 'title' ) . '>' . esc_html( $title ) . '</div>' : '' ) . $head;
 			foreach ( $rows as $i => $row ) {
 				$k    = isset( $row[0][0] ) ? $row[0][0] : '';
 				$v    = isset( $row[0][1] ) ? $row[0][1] : '';
-				$out .= '<div' . $cl( 'np-kv__row' ) . ( $inline && ( $i || $title ) ? $st( 'row' ) : ( $inline ? ' style="padding:9px 14px"' : '' ) ) . '><div' . $cl( 'np-kv__k' ) . $st( 'k' ) . '>' . $val( $k ) . '</div><div' . $cl( 'np-kv__v' ) . $st( 'v' ) . '>' . $val( $v ) . '</div></div>';
+				$top  = ( $i || $title || $head ) ? 'border-top:1px solid rgba(128,128,128,.28);' : '';
+				$out .= '<div' . $cl( 'np-kv__row' ) . ( $inline ? ' style="display:flex;gap:12px;padding:9px 14px;' . $top . '"' : '' ) . '><div' . $cl( 'np-kv__k' ) . ( $inline ? ' style="flex:0 0 38%;font-weight:700;opacity:.8"' : '' ) . '>' . $val( $k ) . '</div><div' . $cl( 'np-kv__v' ) . ( $inline ? ' style="flex:1"' : '' ) . '>' . $val( $v ) . '</div></div>';
 			}
 			return $out . '</div>';
 		}
@@ -252,4 +252,36 @@ function nppro_tables_to_cards( $html, $inline = false ) {
 		}
 		return $out . '</div>';
 	}, $html );
+}
+
+
+/** True when the article already contains its own overview-style table (3+ known label rows). */
+function nppro_article_has_overview( $post_id ) {
+	$content = (string) get_post_field( 'post_content', $post_id );
+	if ( ! preg_match_all( '#<table\b.*?</table>#is', $content, $tables ) ) {
+		return false;
+	}
+	$syn = nppro_synonyms();
+	foreach ( $tables[0] as $tbl ) {
+		$hits = 0;
+		if ( preg_match_all( '#<tr[^>]*>(.*?)</tr>#is', $tbl, $rows ) ) {
+			foreach ( $rows[1] as $row ) {
+				if ( preg_match_all( '#<t[dh][^>]*>(.*?)</t[dh]>#is', $row, $c ) && count( $c[1] ) >= 2 ) {
+					$label = nppro_norm_label( $c[1][0] );
+					foreach ( $syn as $labels ) {
+						foreach ( $labels as $l ) {
+							if ( $label === $l ) {
+								++$hits;
+								break 2;
+							}
+						}
+					}
+				}
+			}
+		}
+		if ( $hits >= 3 ) {
+			return true;
+		}
+	}
+	return false;
 }

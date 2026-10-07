@@ -85,7 +85,7 @@ while ( have_posts() ) :
 			</div>
 		</header>
 
-		<?php if ( $rows ) : ?>
+		<?php if ( $rows && ! nppro_article_has_overview( $id ) ) : // Show the generated overview only when the article has no overview table of its own. ?>
 			<section class="np-card" aria-labelledby="np-ov"><h2 id="np-ov" class="np-h2"><?php esc_html_e( 'Job Overview', 'naukripatra' ); ?></h2>
 				<div class="np-kv">
 					<?php foreach ( $rows as $label => $val ) : ?><div class="np-kv__row"><div class="np-kv__k"><?php echo esc_html( $label ); ?></div><div class="np-kv__v"><?php echo esc_html( $val ); ?></div></div><?php endforeach; ?>

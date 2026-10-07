@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.8
+- One Job Overview only: when the article has its own overview table it is kept (as a label | value card) and the theme-generated overview is hidden. Key/value tables keep label and value side by side on mobile, header row supported.
+
 ## 1.0.7
 - Overview, two-column tables (Important Dates) and vacancy tables are now cards on the website and in the app/REST output (neutral inline styles for the app, works in light and dark). Big tables (13+ rows, 7+ columns) stay plain tables.
 

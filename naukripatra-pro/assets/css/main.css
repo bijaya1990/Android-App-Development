@@ -361,3 +361,10 @@ h2{font-size:20px;font-weight:700}
 .np-vcard__k{font-size:.85em;font-weight:700;opacity:.75;text-align:left;flex:none}
 .np-vcard__v{text-align:right;overflow-wrap:anywhere}
 .np-reader .np-kv__k,.np-reader .np-kv__v,.np-reader .np-vcard__k,.np-reader .np-vcard__v{color:inherit!important}
+
+/* Key/value cards: label | value stay side by side on every screen (like a table) */
+.np-kv__row{grid-template-columns:minmax(96px,36%) 1fr!important;gap:0 14px}
+.np-kv__k{font-size:1em!important;text-transform:none!important;letter-spacing:0!important;opacity:.85}
+.np-kv__head{background:var(--np-zebra)!important;border-bottom:1px solid var(--np-border)}
+.np-kv__head .np-kv__k,.np-kv__head .np-kv__v{font-weight:800;opacity:1}
+@media (max-width:560px){.np-kv__row{padding:9px 12px;font-size:15px}}
