@@ -325,3 +325,19 @@ h2{font-size:20px;font-weight:700}
 .np-overview tr:nth-child(even) td,.np-overview tr:nth-child(even) th{background:transparent!important}
 @media (max-width:520px){.np-overview th{width:40%}.np-overview th,.np-overview td{padding:8px 9px;font-size:14.5px}}
 .np-overview tr,.np-overview tr:nth-child(even),.np-overview tr:nth-child(odd),.np-overview tbody{background:transparent!important}
+
+/* ===== All article tables: same plain style as Overview (no colours, no zebra) ===== */
+.np-prose .np-table-wrap,.np-reader .np-table-wrap{border:0;border-radius:0;background:transparent;margin:1.2em 0;overflow-x:auto}
+.np-prose table,.np-reader table{width:100%;border-collapse:collapse;border-spacing:0;font-size:15px;table-layout:auto;margin:0}
+.np-prose th,.np-prose td,.np-reader th,.np-reader td{padding:9px 12px;border:1px solid var(--np-border);text-align:left;vertical-align:top;font-weight:400;background:transparent!important;color:var(--np-text)!important;overflow-wrap:anywhere}
+.np-prose th,.np-reader th{font-weight:700}
+.np-reader td:first-child{font-weight:400}
+.np-prose tr,.np-reader tr,.np-prose tr:nth-child(even),.np-reader tr:nth-child(even),.np-reader tr:nth-child(even)>td,.np-prose tr:nth-child(even)>td,.np-prose tbody,.np-prose thead{background:transparent!important}
+.np-reader th{background:transparent!important;color:var(--np-text)!important}
+.np-reader th,.np-reader td{min-width:0}
+@media (max-width:520px){.np-prose th,.np-prose td,.np-reader th,.np-reader td{padding:8px 9px;font-size:14.5px}}
+.np-prose th,.np-prose td,.np-reader th,.np-reader td{overflow-wrap:break-word;word-break:normal;hyphens:manual}
+.np-reader th,.np-reader td{min-width:88px}
+.np-reader table{min-width:100%;width:max-content;max-width:none}
+.np-reader .np-table-wrap table{width:100%;min-width:100%}
+@media (max-width:600px){.np-reader .np-table-wrap table{width:max-content;min-width:100%}}

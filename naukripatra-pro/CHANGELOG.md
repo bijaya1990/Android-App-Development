@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.6
+- All article tables now use the same plain style as Overview; narrow screens scroll sideways instead of breaking words.
+
 ## 1.0.5
 - Overview is now always a plain two-column bordered table (no colours or zebra).
 
