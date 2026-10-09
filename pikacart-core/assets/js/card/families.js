@@ -1142,10 +1142,61 @@ export function layoutFor( template, orientation, ar, kind ) {
 	if ( data.recipe ) {
 		return expand( data.recipe, orientation, ar, kind );
 	}
+	if ( data.artwork && ! data.portrait && ! data.landscape ) {
+		return artworkLayout( data.artwork, ar, kind );
+	}
 	const key = orientation === 'landscape' ? 'landscape' : 'portrait';
 	if ( data[ key ] ) {
 		return data[ key ];
 	}
 	// Single-orientation custom design (e.g. uploaded artwork): use what exists.
 	return data.portrait || data.landscape || { front: { bg: '@w', els: [] }, back: { bg: '@w', els: [] } };
+}
+
+/* ---------- Own artwork ---------- */
+
+/*
+ * Own artwork as a card: the uploaded front and back images become the
+ * background and sensible placeholders are placed on top, ready to be
+ * dragged to the right spots in the editor. Used by "Use my own design" and by
+ * the Super Admin when building a Design on Demand request.
+ */
+const nid = () => 'n' + Math.random().toString( 36 ).slice( 2, 9 );
+
+/**
+ * @param {object} art   { front: url, back: url }
+ * @param {number} ar    width / height of the card
+ * @param {string} kind  student|staff|employee|…
+ * @return {{front: object, back: object}}
+ */
+export function artworkLayout( art, ar, kind ) {
+	const land = ar > 1;
+	const sq = ( w ) => w * ar; // height in % that makes a square of width w
+	const front = { bg: art.front ? { img: art.front, fit: 'cover' } : '@w', els: [] };
+	const back = { bg: art.back ? { img: art.back, fit: 'cover' } : '@w', els: [] };
+
+	if ( land ) {
+		front.els.push(
+			{ id: nid(), t: 'img', x: 6, y: 26, w: 24, h: ( 24 * ar ) / 0.8, src: '{{photo}}', shape: 'round', r: 3, field: 'photo', bc: '@p', bw: 0.6 },
+			{ id: nid(), t: 'text', x: 35, y: 28, w: 60, h: 9, text: '{{name}}', size: 6, wt: 700, al: 'left', c: '@t', font: 'Poppins' },
+			{ id: nid(), t: 'stack', x: 35, y: 40, w: 60, h: 40, rows: rows( kind, true ), mode: 'table', size: 3.6, font: 'Inter' },
+			{ id: nid(), t: 'img', x: 68, y: 82, w: 26, h: 10, src: '{{sign}}', fit: 'contain' }
+		);
+		back.els.push(
+			{ id: nid(), t: 'qr', x: 72, y: 50, w: 20, h: sq( 20 ), v: '{{verify_url}}' },
+			{ id: nid(), t: 'bar', x: 8, y: 82, w: 50, h: 10, v: '{{id_no}}' }
+		);
+	} else {
+		front.els.push(
+			{ id: nid(), t: 'img', x: 30, y: 24, w: 40, h: ( 40 * ar ) / 0.8, src: '{{photo}}', shape: 'round', r: 3, field: 'photo', bc: '@p', bw: 0.6 },
+			{ id: nid(), t: 'text', x: 6, y: 58, w: 88, h: 6, text: '{{name}}', size: 6, wt: 700, al: 'center', c: '@t', font: 'Poppins' },
+			{ id: nid(), t: 'stack', x: 8, y: 66, w: 84, h: 22, rows: rows( kind, true ), mode: 'table', size: 3.4, font: 'Inter' },
+			{ id: nid(), t: 'img', x: 58, y: 89, w: 34, h: 6, src: '{{sign}}', fit: 'contain' }
+		);
+		back.els.push(
+			{ id: nid(), t: 'qr', x: 36, y: 56, w: 28, h: sq( 28 ), v: '{{verify_url}}' },
+			{ id: nid(), t: 'bar', x: 15, y: 84, w: 70, h: 7, v: '{{id_no}}' }
+		);
+	}
+	return { front, back };
 }

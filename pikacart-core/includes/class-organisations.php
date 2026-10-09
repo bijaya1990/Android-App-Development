@@ -44,7 +44,29 @@ class PKC_Organisations {
 	}
 
 	public static function current() {
-		return self::get_by_user( get_current_user_id() );
+		$view = self::viewing_as();
+		return $view ? self::get( $view ) : self::get_by_user( get_current_user_id() );
+	}
+
+	/**
+	 * Super Admin "view as user": the organisation being viewed, or 0.
+	 * Stored per admin as "org_id|started" and valid for two hours.
+	 */
+	public static function viewing_as() {
+		$uid = get_current_user_id();
+		if ( ! $uid || ! current_user_can( PKC_Roles::ADMIN_CAP ) ) {
+			return 0;
+		}
+		$raw = (string) get_user_meta( $uid, 'pkc_view_as', true );
+		if ( '' === $raw ) {
+			return 0;
+		}
+		list( $org_id, $started ) = array_map( 'intval', array_pad( explode( '|', $raw ), 2, 0 ) );
+		if ( ! $org_id || $started < time() - 2 * HOUR_IN_SECONDS || ! self::get( $org_id ) ) {
+			delete_user_meta( $uid, 'pkc_view_as' );
+			return 0;
+		}
+		return $org_id;
 	}
 
 	public static function mobile_exists( $mobile, $exclude_id = 0 ) {

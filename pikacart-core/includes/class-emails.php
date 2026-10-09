@@ -68,6 +68,21 @@ class PKC_Emails {
 				'subject' => 'New reply from {site} support: {subject}',
 				'body'    => "Hello {name},\n\nOur support team replied to your conversation \"{subject}\":\n\n{message}\n\n[button]Open the chat[/button]",
 			),
+			'design_request'  => array(
+				'label'   => __( 'New Design on Demand request (to you)', 'pikacart' ),
+				'subject' => 'New Design on Demand request from {org}',
+				'body'    => "A new Design on Demand request arrived.\n\nOrganisation: {org}\nCard type: {subtype}\nNotes: {notes}\n\nPlease make it live before {date}.\n\n[button]Open the request[/button]",
+			),
+			'design_live'     => array(
+				'label'   => __( 'Design is live', 'pikacart' ),
+				'subject' => 'Your card design is ready on {site}',
+				'body'    => "Hello {name},\n\nGood news: the card design you sent us is now live in your {site} account under My Designs. You can start making cards with it right away.\n\n[button]Open My Designs[/button]",
+			),
+			'design_rejected' => array(
+				'label'   => __( 'Design request rejected', 'pikacart' ),
+				'subject' => 'About your Design on Demand request on {site}',
+				'body'    => "Hello {name},\n\nWe could not make your design request live.\n\nReason: {reason}\n\nYou can send a new request from My Designs, or reply to this email if you have questions.\n\n[button]Open My Designs[/button]",
+			),
 			'reset_password'  => array(
 				'label'   => __( 'Reset password', 'pikacart' ),
 				'subject' => 'Reset your {site} password',

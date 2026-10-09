@@ -65,6 +65,10 @@ class PKC_Webhooks {
 			case 'order.paid':
 				self::payment_captured( $payment );
 				break;
+			case 'refund.processed':
+			case 'payment.refunded':
+				self::refunded( $payment, $payload['refund']['entity'] ?? null );
+				break;
 		}
 
 		return new WP_REST_Response( array( 'ok' => true ), 200 );
@@ -144,5 +148,23 @@ class PKC_Webhooks {
 			return;
 		}
 		PKC_Billing::record_payment( (int) $row->org_id, PKC_Billing::plan( $row->plan_id ), $payment, 'one_time', '', $payment['order_id'], $row->mode );
+	}
+
+	/**
+	 * A refund made in the Razorpay dashboard: mark the payment refunded so the
+	 * monthly statement shows it. The plan end date is not changed automatically.
+	 */
+	private static function refunded( $payment, $refund ) {
+		global $wpdb;
+		$payment_id = is_array( $refund ) && ! empty( $refund['payment_id'] ) ? $refund['payment_id'] : ( is_array( $payment ) ? ( $payment['id'] ?? '' ) : '' );
+		if ( ! $payment_id ) {
+			return;
+		}
+		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . pkc_table( 'payments' ) . ' WHERE rzp_payment_id = %s', sanitize_text_field( $payment_id ) ) );
+		if ( ! $row || 'refunded' === $row->status ) {
+			return;
+		}
+		$wpdb->update( pkc_table( 'payments' ), array( 'status' => 'refunded' ), array( 'id' => $row->id ) );
+		PKC_Activity_Log::add( 'payment.refunded', (int) $row->org_id, pkc_money( (int) $row->amount_paise ) . ' · ' . $payment_id );
 	}
 }

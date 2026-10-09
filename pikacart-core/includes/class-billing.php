@@ -192,7 +192,7 @@ class PKC_Billing {
 	/**
 	 * One-time payment for one period (fallback for banks without autopay).
 	 */
-	public static function create_order( $org, $plan_id ) {
+	public static function create_order( $org, $plan_id, $coupon_code = '' ) {
 		global $wpdb;
 		if ( ! pkc_setting( 'rzp_onetime', 1 ) ) {
 			return new WP_Error( 'pkc_plan', __( 'One-time payment is not available.', 'pikacart' ), array( 'status' => 400 ) );
@@ -201,13 +201,25 @@ class PKC_Billing {
 		if ( ! $plan || ! $plan->is_active ) {
 			return new WP_Error( 'pkc_plan', __( 'This plan is not available.', 'pikacart' ), array( 'status' => 400 ) );
 		}
+		$amount   = (int) $plan->price_paise;
+		$discount = 0;
+		$coupon   = null;
+		if ( '' !== trim( (string) $coupon_code ) ) {
+			$check = PKC_Coupons::check( $coupon_code, $amount );
+			if ( is_wp_error( $check ) ) {
+				return $check;
+			}
+			$coupon   = $check['coupon'];
+			$discount = $check['discount'];
+			$amount   = $check['amount'];
+		}
 		$mode    = PKC_Razorpay::mode();
 		$receipt = 'pkc_' . $org->id . '_' . time();
 		$order   = PKC_Razorpay::request(
 			'POST',
 			'orders',
 			array(
-				'amount'          => (int) $plan->price_paise,
+				'amount'          => $amount,
 				'currency'        => 'INR',
 				'receipt'         => $receipt,
 				'payment_capture' => 1,
@@ -227,9 +239,11 @@ class PKC_Billing {
 				'org_id'       => $org->id,
 				'plan_id'      => $plan->id,
 				'kind'         => 'one_time',
-				'rzp_order_id' => sanitize_text_field( $order['id'] ),
-				'amount_paise' => (int) $plan->price_paise,
-				'currency'     => 'INR',
+				'rzp_order_id'   => sanitize_text_field( $order['id'] ),
+				'amount_paise'   => $amount,
+				'discount_paise' => $discount,
+				'coupon_id'      => $coupon ? (int) $coupon->id : 0,
+				'currency'       => 'INR',
 				'status'       => 'created',
 				'mode'         => $mode,
 				'created_at'   => pkc_now(),
@@ -238,7 +252,7 @@ class PKC_Billing {
 
 		$options             = self::checkout_base( $org, $plan );
 		$options['order_id'] = $order['id'];
-		$options['amount']   = (int) $plan->price_paise;
+		$options['amount']   = $amount;
 		$options['currency'] = 'INR';
 		return array( 'checkout' => $options );
 	}
@@ -372,6 +386,10 @@ class PKC_Billing {
 
 		$invoice = self::next_invoice_no();
 		$wpdb->update( $table, array( 'invoice_no' => $invoice ), array( 'id' => $row_id ) );
+		$coupon_id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT coupon_id FROM $table WHERE id = %d", $row_id ) );
+		if ( $coupon_id ) {
+			PKC_Coupons::redeem( $coupon_id );
+		}
 
 		PKC_Organisations::update(
 			$org_id,
@@ -576,6 +594,8 @@ class PKC_Billing {
 				'tax_rate' => $rate,
 				'total'    => pkc_money( $amount ),
 				'show_tax' => '' !== $gstin,
+				'discount' => (int) $p->discount_paise ? pkc_money( (int) $p->discount_paise ) : '',
+				'list'     => (int) $p->discount_paise ? pkc_money( $amount + (int) $p->discount_paise ) : '',
 			),
 		);
 	}

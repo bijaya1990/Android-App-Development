@@ -63,6 +63,9 @@ class PKC_REST_Account {
 				'verified' => $user ? PKC_Accounts::is_verified( $user->ID ) : false,
 			),
 			'org'      => PKC_Organisations::to_app( $org ),
+			'view_as'  => PKC_Organisations::viewing_as() ? array(
+				'exit' => wp_nonce_url( admin_url( 'admin-post.php?action=pkc_view_as_exit' ), 'pkc_view_as_exit' ),
+			) : null,
 			'state'    => array(
 				'status'     => $org->status,
 				'label'      => PKC_Access::label( $org->status ),

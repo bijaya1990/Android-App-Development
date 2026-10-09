@@ -15,6 +15,7 @@ class PKC_REST_Billing {
 			array( 'billing/subscribe', 'POST', 'subscribe' ),
 			array( 'billing/verify-subscription', 'POST', 'verify_subscription' ),
 			array( 'billing/order', 'POST', 'order' ),
+			array( 'billing/coupon', 'POST', 'coupon' ),
 			array( 'billing/verify-order', 'POST', 'verify_order' ),
 			array( 'billing/cancel', 'POST', 'cancel' ),
 			array( 'billing/invoice/(?P<id>\d+)', 'GET', 'invoice' ),
@@ -88,8 +89,34 @@ class PKC_REST_Billing {
 		if ( ! self::work_rate_limit( $org ) ) {
 			return PKC_Rate_Limit::error();
 		}
-		$result = PKC_Billing::create_order( $org, absint( $r->get_param( 'plan_id' ) ) );
+		$result = PKC_Billing::create_order( $org, absint( $r->get_param( 'plan_id' ) ), (string) $r->get_param( 'coupon' ) );
 		return is_wp_error( $result ) ? $result : PKC_REST::ok( $result );
+	}
+
+	/** Check a coupon code before paying once. */
+	public static function coupon( WP_REST_Request $r ) {
+		$org = PKC_REST::org();
+		if ( ! PKC_Rate_Limit::hit( 'coupon', (string) $org->id, 30, HOUR_IN_SECONDS ) ) {
+			return PKC_Rate_Limit::error();
+		}
+		$plan = PKC_Billing::plan( absint( $r->get_param( 'plan_id' ) ) );
+		if ( ! $plan || ! $plan->is_active ) {
+			return new WP_Error( 'pkc_plan', __( 'This plan is not available.', 'pikacart' ), array( 'status' => 400 ) );
+		}
+		$check = PKC_Coupons::check( (string) $r->get_param( 'coupon' ), (int) $plan->price_paise );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+		return PKC_REST::ok(
+			array(
+				'code'     => $check['coupon']->code,
+				'label'    => PKC_Coupons::label( $check['coupon'] ),
+				'discount' => pkc_money( $check['discount'] ),
+				'amount'   => pkc_money( $check['amount'] ),
+				/* translators: 1: coupon label, 2: amount to pay */
+				'message'  => sprintf( __( 'Coupon applied: %1$s. You pay %2$s.', 'pikacart' ), PKC_Coupons::label( $check['coupon'] ), pkc_money( $check['amount'] ) ),
+			)
+		);
 	}
 
 	public static function verify_order( WP_REST_Request $r ) {

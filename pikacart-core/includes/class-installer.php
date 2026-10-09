@@ -332,6 +332,7 @@ class PKC_Installer {
 		$sql[] = "CREATE TABLE {$t('design_requests')} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   org_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  subtype_id bigint(20) unsigned NOT NULL DEFAULT 0,
   front varchar(255) NOT NULL DEFAULT '',
   back varchar(255) NOT NULL DEFAULT '',
   size_id bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -339,6 +340,7 @@ class PKC_Installer {
   notes text NULL,
   status varchar(20) NOT NULL DEFAULT 'new',
   reject_reason text NULL,
+  public_ok tinyint(1) NOT NULL DEFAULT 0,
   template_id bigint(20) unsigned NOT NULL DEFAULT 0,
   due_at datetime NULL DEFAULT NULL,
   created_at datetime NULL DEFAULT NULL,

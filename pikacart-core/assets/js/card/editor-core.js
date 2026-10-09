@@ -151,7 +151,7 @@ export function createEditor( root, cfg ) {
 	function layoutCanvas() {
 		const size = cfg.size();
 		const availW = Math.max( 200, wrap.clientWidth - 32 );
-		const availH = Math.max( 260, Math.min( window.innerHeight * 0.68, 760 ) );
+		const availH = Math.max( 300, Math.min( window.innerHeight - 300, 760 ) );
 		fit = Math.min( availW / size.w, availH / size.h );
 		const scale = fit * zoom;
 		dpr = Math.min( 2, window.devicePixelRatio || 1 );

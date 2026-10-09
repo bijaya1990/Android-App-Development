@@ -59,7 +59,7 @@ class PKC_REST_Cards {
 				'tree'     => PKC_Catalog::tree(),
 				'sizes'    => PKC_Catalog::sizes(),
 				'palettes' => PKC_Catalog::palettes(),
-				'levels'   => PKC_Catalog::level_labels(),
+				'levels'   => array_merge( PKC_Catalog::level_labels(), array( 'own' => __( 'Your design', 'pikacart' ) ) ),
 			)
 		);
 	}
@@ -238,6 +238,9 @@ class PKC_REST_Cards {
 	/** Count downloads for the Super Admin dashboard. */
 	public static function count_download( WP_REST_Request $r ) {
 		$n = max( 1, min( 5000, absint( $r->get_param( 'n' ) ) ) );
+		if ( PKC_Organisations::viewing_as() ) {
+			return PKC_REST::ok( array( 'watermark' => PKC_Access::needs_watermark( PKC_REST::org() ) ) );
+		}
 		update_option( 'pkc_download_count', (int) get_option( 'pkc_download_count', 0 ) + $n, false );
 		$org = PKC_Organisations::current();
 		PKC_Organisations::set_meta( $org->id, 'downloads', (int) PKC_Organisations::meta( $org, 'downloads', 0 ) + $n );

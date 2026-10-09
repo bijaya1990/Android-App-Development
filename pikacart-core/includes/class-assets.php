@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 class PKC_Assets {
 
-	const MODULES = array( 'pkc-app' );
+	const MODULES = array( 'pkc-app', 'pkc-admin-templates', 'pkc-builder', 'pkc-admin-finance', 'pkc-showcase' );
 
 	/** @var bool */
 	private static $done = false;
@@ -52,6 +52,12 @@ class PKC_Assets {
 		wp_register_script( 'pkc-chart', $u . 'vendor/chart.umd.min.js', array(), '4.4.4', true );
 		wp_register_script( 'pkc-admin', $u . 'js/admin/admin.js', array( 'wp-i18n' ), $v, true );
 		wp_set_script_translations( 'pkc-admin', 'pikacart', PKC_DIR . 'languages' );
+		wp_register_script( 'pkc-admin-templates', $u . 'js/admin/templates.js', array( 'wp-i18n', 'pkc-qrcode', 'pkc-barcode' ), $v, true );
+		wp_set_script_translations( 'pkc-admin-templates', 'pikacart', PKC_DIR . 'languages' );
+		wp_register_script( 'pkc-builder', $u . 'js/admin/builder.js', array( 'wp-i18n' ), $v, true );
+		wp_set_script_translations( 'pkc-builder', 'pikacart', PKC_DIR . 'languages' );
+		wp_register_script( 'pkc-admin-finance', $u . 'js/admin/finance.js', array( 'wp-i18n', 'pkc-jspdf', 'pkc-xlsx' ), $v, true );
+		wp_set_script_translations( 'pkc-admin-finance', 'pikacart', PKC_DIR . 'languages' );
 	}
 
 	/**

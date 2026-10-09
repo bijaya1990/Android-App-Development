@@ -20,19 +20,29 @@ class PKC_REST {
 		PKC_REST_Support::routes();
 		PKC_REST_Cards::routes();
 		PKC_REST_Members::routes();
+		PKC_REST_Designs::routes();
 	}
 
 	/**
 	 * Permission: a logged-in organisation that is not suspended.
 	 * Data is always looked up from the logged-in user, never from an ID in the request.
 	 */
-	public static function can_org() {
+	public static function can_org( $request = null ) {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error( 'pkc_auth', __( 'Please log in again.', 'pikacart' ), array( 'status' => 401 ) );
 		}
 		$org = PKC_Organisations::current();
 		if ( ! $org ) {
 			return new WP_Error( 'pkc_auth', __( 'No organisation is linked to this login.', 'pikacart' ), array( 'status' => 403 ) );
+		}
+		if ( PKC_Organisations::viewing_as() ) {
+			// Support view is read-only, except for making preview files.
+			$route = $request instanceof WP_REST_Request ? $request->get_route() : '';
+			$safe  = (bool) preg_match( '#/(downloads/count|projects/\d+/members/fetch)$#', $route );
+			if ( $request instanceof WP_REST_Request && 'GET' !== $request->get_method() && ! $safe ) {
+				return new WP_Error( 'pkc_view_only', __( 'You are viewing this account as support. Changes are switched off.', 'pikacart' ), array( 'status' => 403 ) );
+			}
+			return true;
 		}
 		if ( 'suspended' === $org->status ) {
 			return new WP_Error(

@@ -71,6 +71,13 @@ class PKC_Projects {
 		$name   = $name ? mb_substr( sanitize_text_field( $name ), 0, 120 ) : $subtype->name . ' · ' . wp_date( 'j M Y' );
 		$layout = pkc_json( $tpl->layout );
 		$orient = ( ! isset( $layout['recipe'] ) && empty( $layout['portrait'] ) && ! empty( $layout['landscape'] ) ) ? 'landscape' : 'portrait';
+		if ( ! empty( $layout['meta']['orientation'] ) ) {
+			// Own artwork is made for one orientation and size.
+			$orient = 'landscape' === $layout['meta']['orientation'] ? 'landscape' : 'portrait';
+		}
+		if ( ! empty( $layout['meta']['size_id'] ) && $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'sizes' ) . ' WHERE id = %d', $layout['meta']['size_id'] ) ) ) {
+			$size = (int) $layout['meta']['size_id'];
+		}
 		$now    = pkc_now();
 		$wpdb->insert(
 			pkc_table( 'projects' ),

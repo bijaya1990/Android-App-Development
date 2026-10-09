@@ -215,7 +215,7 @@ class PKC_Catalog {
 			return false;
 		}
 		if ( (int) $tpl->owner_org_id ) {
-			return (int) $tpl->owner_org_id === (int) $org_id;
+			return (int) $tpl->owner_org_id === (int) $org_id && 'published' === $tpl->status;
 		}
 		return 'published' === $tpl->status;
 	}
@@ -243,7 +243,7 @@ class PKC_Catalog {
 		global $wpdb;
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . pkc_table( 'templates' ) . " WHERE ( subtype_id = %d AND owner_org_id = 0 AND status = 'published' ) OR ( owner_org_id = %d AND owner_org_id > 0 ) ORDER BY owner_org_id DESC, is_featured DESC, sort_order ASC, id ASC",
+				'SELECT * FROM ' . pkc_table( 'templates' ) . " WHERE ( subtype_id = %d AND owner_org_id = 0 AND status = 'published' ) OR ( owner_org_id = %d AND owner_org_id > 0 AND status = 'published' ) ORDER BY owner_org_id DESC, is_featured DESC, sort_order ASC, id ASC",
 				$subtype_id,
 				$org_id ? $org_id : -1
 			)
@@ -253,7 +253,7 @@ class PKC_Catalog {
 
 	public static function org_templates( $org_id ) {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . pkc_table( 'templates' ) . ' WHERE owner_org_id = %d ORDER BY id DESC', $org_id ) );
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . pkc_table( 'templates' ) . " WHERE owner_org_id = %d AND status = 'published' ORDER BY id DESC", $org_id ) );
 		return array_map( array( __CLASS__, 'template_to_app' ), $rows );
 	}
 

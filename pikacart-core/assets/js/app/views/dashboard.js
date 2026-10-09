@@ -68,7 +68,7 @@ export default function dashboard( el, ctx ) {
 		[ 'create', 'plus', __( 'New ID card', 'pikacart' ), __( 'Pick a design', 'pikacart' ) ],
 		[ 'members', 'upload', __( 'Import from Excel', 'pikacart' ), __( 'Add many people', 'pikacart' ) ],
 		[ 'print', 'printer', __( 'Print sheet', 'pikacart' ), __( 'Cards with cut marks', 'pikacart' ) ],
-		[ 'designs', 'sparkles', __( 'Design on Demand', 'pikacart' ), __( 'We set up your design', 'pikacart' ) ],
+		[ 'designs/request', 'sparkles', __( 'Design on Demand', 'pikacart' ), __( 'We set up your design', 'pikacart' ) ],
 	];
 
 	const org = me.org;

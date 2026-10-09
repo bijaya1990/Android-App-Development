@@ -18,7 +18,7 @@
 defined( 'ABSPATH' ) || exit;
 
 define( 'PKC_VERSION', '1.5.0' );
-define( 'PKC_DB_VERSION', 3 );
+define( 'PKC_DB_VERSION', 4 );
 define( 'PKC_FILE', __FILE__ );
 define( 'PKC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PKC_URL', plugin_dir_url( __FILE__ ) );

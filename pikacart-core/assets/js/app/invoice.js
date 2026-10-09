@@ -103,6 +103,10 @@ export function downloadInvoice( inv ) {
 
 	// Totals.
 	const totals = [];
+	if ( inv.amounts.discount ) {
+		totals.push( [ __( 'Plan price', 'pikacart' ), rs( inv.amounts.list ) ] );
+		totals.push( [ __( 'Coupon discount', 'pikacart' ), '- ' + rs( inv.amounts.discount ) ] );
+	}
 	if ( inv.amounts.show_tax ) {
 		totals.push( [ __( 'Taxable value', 'pikacart' ), rs( inv.amounts.taxable ) ] );
 		totals.push( [ `GST @ ${ inv.amounts.tax_rate }%`, rs( inv.amounts.tax ) ] );

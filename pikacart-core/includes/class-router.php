@@ -169,7 +169,7 @@ class PKC_Router {
 			wp_safe_redirect( add_query_arg( 'redirect_to', rawurlencode( $target ), pkc_url( 'login' ) ) );
 			exit;
 		}
-		$org = PKC_Organisations::get_by_user( $user->ID );
+		$org = PKC_Organisations::current();
 		if ( ! $org ) {
 			self::render(
 				'message',
@@ -184,7 +184,7 @@ class PKC_Router {
 			);
 		}
 		$org = PKC_Access::refresh( $org );
-		if ( 'suspended' === $org->status ) {
+		if ( 'suspended' === $org->status && ! PKC_Organisations::viewing_as() ) {
 			self::render(
 				'message',
 				array(

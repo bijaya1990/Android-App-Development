@@ -59,6 +59,7 @@ const STATUS_TEXT = () => ( {
 
 export default function subscription( el, ctx ) {
 	let alive = true;
+	let coupon = '';
 	el.innerHTML = '<div class="skeleton-grid"><div class="skeleton sk-card"></div><div class="skeleton sk-card"></div><div class="skeleton sk-wide"></div></div>';
 
 	async function load() {
@@ -76,7 +77,7 @@ export default function subscription( el, ctx ) {
 	async function pay( kind, planId, btn ) {
 		await withLoading( btn, async () => {
 			try {
-				const start = await api( kind === 'autopay' ? 'billing/subscribe' : 'billing/order', { method: 'POST', body: { plan_id: planId } } );
+				const start = await api( kind === 'autopay' ? 'billing/subscribe' : 'billing/order', { method: 'POST', body: kind === 'autopay' ? { plan_id: planId } : { plan_id: planId, coupon } } );
 				await loadCheckout();
 				const result = await openCheckout( start.checkout );
 				const res = await api( kind === 'autopay' ? 'billing/verify-subscription' : 'billing/verify-order', { method: 'POST', body: result } );
@@ -101,7 +102,11 @@ export default function subscription( el, ctx ) {
 				<p class="muted">${ esc( p.description ) }</p>
 				<div class="price-actions">
 					${ canAutopay ? `<button type="button" class="btn btn-primary btn-block" data-pay="autopay" data-plan="${ p.id }">${ icon( 'refresh' ) }${ esc( __( 'Subscribe with autopay', 'pikacart' ) ) }</button><small class="muted">${ esc( __( 'UPI autopay or card. Renews automatically, cancel anytime.', 'pikacart' ) ) }</small>` : '' }
-					${ d.onetime ? `<button type="button" class="btn ${ canAutopay ? '' : 'btn-primary' } btn-block" data-pay="once" data-plan="${ p.id }">${ icon( 'card' ) }${ esc( sprintf( __( 'Pay once for %d days', 'pikacart' ), p.period_days ) ) }</button><small class="muted">${ esc( __( 'For banks that do not support autopay. No renewal.', 'pikacart' ) ) }</small>` : '' }
+					${ d.onetime ? `<button type="button" class="btn ${ canAutopay ? '' : 'btn-primary' } btn-block" data-pay="once" data-plan="${ p.id }">${ icon( 'card' ) }${ esc( sprintf( __( 'Pay once for %d days', 'pikacart' ), p.period_days ) ) }</button><small class="muted">${ esc( __( 'For banks that do not support autopay. No renewal.', 'pikacart' ) ) }</small>
+					<details class="coupon-box"><summary>${ esc( __( 'Have a coupon code?', 'pikacart' ) ) }</summary>
+						<div class="coupon-row"><input type="text" data-coupon-input maxlength="40" autocomplete="off" aria-label="${ esc( __( 'Coupon code', 'pikacart' ) ) }" placeholder="${ esc( __( 'Coupon code', 'pikacart' ) ) }"><button type="button" class="btn btn-sm" data-coupon-apply data-plan="${ p.id }">${ esc( __( 'Apply', 'pikacart' ) ) }</button></div>
+						<small class="muted" data-coupon-msg>${ esc( __( 'Coupons work with "Pay once".', 'pikacart' ) ) }</small>
+					</details>` : '' }
 				</div>
 			</div>`;
 		} ).join( '' );
@@ -163,6 +168,21 @@ export default function subscription( el, ctx ) {
 			x.textContent = '…';
 		} );
 
+		el.querySelectorAll( '[data-coupon-apply]' ).forEach( ( b ) => b.addEventListener( 'click', () => withLoading( b, async () => {
+			const box = b.closest( '.coupon-box' );
+			const msg = box.querySelector( '[data-coupon-msg]' );
+			const code = box.querySelector( '[data-coupon-input]' ).value.trim();
+			try {
+				const res = await api( 'billing/coupon', { method: 'POST', body: { plan_id: b.dataset.plan, coupon: code } } );
+				coupon = res.code;
+				msg.textContent = res.message;
+				msg.className = 'coupon-ok';
+			} catch ( err ) {
+				coupon = '';
+				msg.textContent = err.message;
+				msg.className = 'coupon-bad';
+			}
+		} ) ) );
 		el.querySelectorAll( '[data-pay]' ).forEach( ( b ) => {
 			b.addEventListener( 'click', () => pay( b.dataset.pay, Number( b.dataset.plan ), b ) );
 		} );

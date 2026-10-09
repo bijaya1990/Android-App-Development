@@ -84,6 +84,8 @@ class PKC_Settings {
 			// Limits.
 			'upload_max_mb'      => array( 'limits', 'number', __( 'Maximum image upload size (MB)', 'pikacart' ), 5, '' ),
 			'members_per_project' => array( 'limits', 'number', __( 'Maximum people per card project', 'pikacart' ), 5000, '' ),
+			'dod_hours'          => array( 'limits', 'number', __( 'Design on Demand: promised delivery time (hours)', 'pikacart' ), 6, __( 'Shown to customers as "Your design will be live in your account within X hours".', 'pikacart' ) ),
+			'dod_notify_email'   => array( 'limits', 'email', __( 'Send new Design on Demand requests to', 'pikacart' ), '', __( 'Leave empty to use the support email.', 'pikacart' ) ),
 			'login_attempts'     => array( 'limits', 'number', __( 'Login attempts allowed per 15 minutes', 'pikacart' ), 5, '' ),
 
 			// Maintenance.

@@ -10,9 +10,9 @@ import organisation from './views/organisation.js';
 import subscription from './views/subscription.js';
 import account from './views/account.js';
 import support from './views/support.js';
-import upcoming from './views/upcoming.js';
 import create from './views/create.js';
 import projects from './views/projects.js';
+import designs from './views/designs.js';
 import { initLive, closeBell } from './live.js';
 
 const { __, sprintf } = window.wp.i18n;
@@ -32,7 +32,7 @@ const routes = {
 	projects: { title: __( 'My Projects', 'pikacart' ), view: projects( 'projects' ) },
 	members: { title: __( 'Members', 'pikacart' ), view: projects( 'members' ) },
 	print: { title: __( 'Print Sheets', 'pikacart' ), view: projects( 'print' ) },
-	designs: { title: __( 'My Designs', 'pikacart' ), view: upcoming( 'designs' ) },
+	designs: { title: __( 'My Designs', 'pikacart' ), view: designs },
 	organisation: { title: __( 'Organisation', 'pikacart' ), view: organisation },
 	subscription: { title: __( 'Subscription', 'pikacart' ), view: subscription },
 	support: { title: __( 'Support', 'pikacart' ), view: support },
@@ -178,6 +178,9 @@ function renderBanners() {
 	const root = document.getElementById( 'banners' );
 	const out = [];
 
+	if ( me.view_as ) {
+		out.push( `<div class="banner banner-view">${ icon( 'shield' ) }<div><strong>${ esc( sprintf( __( 'Support view: %s', 'pikacart' ), me.org.name ) ) }</strong><span>${ esc( __( 'You are seeing this account as the customer sees it. Changes are switched off.', 'pikacart' ) ) }</span></div><a class="btn btn-sm" href="${ esc( me.view_as.exit ) }">${ esc( __( 'Exit support view', 'pikacart' ) ) }</a></div>` );
+	}
 	if ( me.state.status === 'expired' ) {
 		const price = me.plan ? me.plan.price_text : '₹59';
 		out.push( `<div class="banner banner-lock">${ icon( 'lock' ) }<div><strong>${ esc( __( 'Your free trial has ended', 'pikacart' ) ) }</strong><span>${ esc( sprintf( __( 'Your designs and data are saved. Subscribe for %s per month to keep creating, downloading and printing cards.', 'pikacart' ), price ) ) }</span></div><a class="btn btn-accent btn-sm" href="${ esc( ctx.url( 'subscription' ) ) }" data-link>${ esc( sprintf( __( 'Subscribe for %s per month', 'pikacart' ), price ) ) }</a></div>` );

@@ -717,3 +717,57 @@ body.pkc-app-page { overflow-x: hidden; }
 .sheet-page canvas { width: 100%; height: auto; background: #fff; box-shadow: var(--pkc-sh-md); border-radius: 2px; }
 .sheet-page figcaption { font-size: var(--pkc-fs-xs); color: var(--pkc-muted); margin-top: 6px; }
 @media (min-width: 1024px) { .sheet-split { grid-template-columns: 320px minmax(0, 1fr); } .sheet-controls { position: sticky; top: 84px; order: -1; } }
+
+/* ---------- Coupon ---------- */
+.coupon-box { margin-top: 6px; font-size: var(--pkc-fs-sm); }
+.coupon-box summary { cursor: pointer; color: var(--pkc-brand); font-weight: 600; }
+.coupon-row { display: flex; gap: 8px; margin: 8px 0 4px; }
+.coupon-row input { flex: 1; min-width: 0; text-transform: uppercase; }
+.coupon-ok { color: var(--pkc-success, #059669); font-weight: 600; }
+.coupon-bad { color: var(--pkc-danger, #DC2626); }
+.banner-view { background: #1f2433; color: #fff; border-color: #1f2433; }
+.banner-view .pkc-i { color: #fbbf24; }
+.banner-view span { color: rgba(255,255,255,.8); }
+
+/* ---------- My Designs ---------- */
+.design-ctas { display: grid; gap: 16px; margin-bottom: 16px; }
+.design-cta { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.design-cta > .btn { grid-column: 1 / -1; justify-self: start; }
+.design-cta h3 { margin: 0 0 4px; }
+.design-cta p { margin: 0; }
+.design-cta-icon { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: var(--pkc-brand-50); color: var(--pkc-brand); }
+.design-cta-dod .design-cta-icon { background: color-mix(in srgb, var(--pkc-accent) 14%, #fff); color: var(--pkc-accent); }
+.my-designs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.my-design { display: flex; flex-direction: column; border: 1px solid var(--pkc-line); border-radius: var(--pkc-r-md); overflow: hidden; background: var(--pkc-surface); }
+.my-design-thumb { display: grid; place-items: center; padding: 16px; min-height: 200px; background: repeating-conic-gradient(#f3f4f8 0 25%, #fafbfd 0 50%) 0 0 / 16px 16px; }
+.my-design-thumb canvas { max-width: 100%; max-height: 230px; border-radius: 6px; box-shadow: var(--pkc-sh-md); }
+.my-design-body { display: grid; gap: 4px; padding: 12px 14px 4px; justify-items: start; }
+.my-design-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px 14px; margin-top: auto; }
+.btn.is-danger { color: var(--pkc-danger); }
+.req-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.req-item { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--pkc-line); border-radius: var(--pkc-r-sm); }
+.req-thumbs { display: flex; gap: 4px; }
+.req-thumbs img { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--pkc-line); }
+.req-info { display: grid; gap: 2px; min-width: 0; }
+.req-when { color: var(--pkc-brand); font-weight: 600; }
+.req-reason { color: var(--pkc-danger); }
+.badge.req-new, .badge.req-progress { background: #FEF3C7; color: #92400E; }
+.badge.req-live { background: #D1FAE5; color: #065F46; }
+.badge.req-rejected { background: #FEE2E2; color: #991B1B; }
+.art-grid { gap: 12px; }
+.art-box { display: grid; gap: 6px; }
+.art-label { font-weight: 600; font-size: var(--pkc-fs-sm); }
+.art-drop { display: grid; place-items: center; min-height: 150px; border: 2px dashed var(--pkc-line-strong); border-radius: var(--pkc-r-md); background: var(--pkc-bg); cursor: pointer; overflow: hidden; }
+.art-drop:hover { border-color: var(--pkc-brand); }
+.art-empty { display: grid; justify-items: center; gap: 4px; color: var(--pkc-muted); text-align: center; padding: 12px; }
+.art-drop img { max-width: 100%; max-height: 220px; object-fit: contain; }
+.done-icon .pkc-i { width: 56px; height: 56px; color: var(--pkc-success); }
+.designer-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.designer-head h2 { margin: 0; font-size: var(--pkc-fs-lg); flex: 1; min-width: 160px; }
+@media (min-width: 900px) {
+	.design-ctas { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+	.req-item { grid-template-columns: 1fr auto; }
+	.req-thumbs { display: none; }
+}

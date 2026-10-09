@@ -19,27 +19,49 @@ class PKC_Admin {
 		PKC_Admin_Payments::init();
 		PKC_Admin_Support::init();
 		PKC_Admin_Settings::init();
+		PKC_Admin_Templates::init();
+		PKC_Admin_Requests::init();
+		PKC_Admin_Catalog::init();
+		PKC_Admin_Finance::init();
+		PKC_Admin_Notices::init();
+		PKC_Admin_Reports::init();
+		PKC_Admin_Activity::init();
 	}
 
 	public static function pages() {
 		return array(
 			'pikacart'          => array( __( 'Dashboard', 'pikacart' ), array( 'PKC_Admin_Dashboard', 'render' ) ),
 			'pikacart-accounts' => array( __( 'Accounts', 'pikacart' ), array( 'PKC_Admin_Accounts', 'render' ) ),
-			'pikacart-payments' => array( __( 'Payments', 'pikacart' ), array( 'PKC_Admin_Payments', 'render' ) ),
-			'pikacart-support'  => array( __( 'Support', 'pikacart' ), array( 'PKC_Admin_Support', 'render' ) ),
-			'pikacart-settings' => array( __( 'Settings', 'pikacart' ), array( 'PKC_Admin_Settings', 'render' ) ),
+			'pikacart-payments'  => array( __( 'Payments', 'pikacart' ), array( 'PKC_Admin_Payments', 'render' ) ),
+			'pikacart-finance'   => array( __( 'Finance', 'pikacart' ), array( 'PKC_Admin_Finance', 'render' ) ),
+			'pikacart-templates' => array( __( 'Templates', 'pikacart' ), array( 'PKC_Admin_Templates', 'render' ) ),
+			'pikacart-requests'  => array( __( 'Design requests', 'pikacart' ), array( 'PKC_Admin_Requests', 'render' ) ),
+			'pikacart-catalog'   => array( __( 'Categories & sizes', 'pikacart' ), array( 'PKC_Admin_Catalog', 'render' ) ),
+			'pikacart-support'   => array( __( 'Support', 'pikacart' ), array( 'PKC_Admin_Support', 'render' ) ),
+			'pikacart-notices'   => array( __( 'Notices', 'pikacart' ), array( 'PKC_Admin_Notices', 'render' ) ),
+			'pikacart-reports'   => array( __( 'Reports', 'pikacart' ), array( 'PKC_Admin_Reports', 'render' ) ),
+			'pikacart-activity'  => array( __( 'Activity log', 'pikacart' ), array( 'PKC_Admin_Activity', 'render' ) ),
+			'pikacart-settings'  => array( __( 'Settings', 'pikacart' ), array( 'PKC_Admin_Settings', 'render' ) ),
 		);
 	}
 
 	public static function menu() {
 		$icon = 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="black" d="M5 1h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zm3 2v1h4V3zm2 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM6 14v1.5h8V14a4 4 0 0 0-8 0z"/></svg>' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-		$count = PKC_Support::admin_unread_count();
+		$count = PKC_Support::admin_unread_count() + PKC_Designs::pending_count() + PKC_Admin_Reports::open_count();
 		add_menu_page( __( 'Pikacart', 'pikacart' ), __( 'Pikacart', 'pikacart' ) . ( $count ? ' <span class="awaiting-mod">' . (int) $count . '</span>' : '' ), PKC_Roles::ADMIN_CAP, 'pikacart', array( 'PKC_Admin_Dashboard', 'render' ), $icon, 3 );
 		$unread = PKC_Support::admin_unread_count();
 		foreach ( self::pages() as $slug => $page ) {
 			$label = $page[0];
-			if ( 'pikacart-support' === $slug && $unread ) {
-				$label .= ' <span class="awaiting-mod">' . (int) $unread . '</span>';
+			$badge = 0;
+			if ( 'pikacart-support' === $slug ) {
+				$badge = $unread;
+			} elseif ( 'pikacart-requests' === $slug ) {
+				$badge = PKC_Designs::pending_count();
+			} elseif ( 'pikacart-reports' === $slug ) {
+				$badge = PKC_Admin_Reports::open_count();
+			}
+			if ( $badge ) {
+				$label .= ' <span class="awaiting-mod">' . (int) $badge . '</span>';
 			}
 			add_submenu_page( 'pikacart', $page[0] . ' · Pikacart', $label, PKC_Roles::ADMIN_CAP, $slug, $page[1] );
 		}
@@ -64,6 +86,9 @@ class PKC_Admin {
 		wp_enqueue_script( 'pkc-admin' );
 		if ( 'pikacart' === $page ) {
 			wp_enqueue_script( 'pkc-chart' );
+		}
+		if ( 'pikacart-templates' === $page ) {
+			wp_enqueue_style( 'pkc-card-fonts' );
 		}
 		if ( 'pikacart-settings' === $page ) {
 			wp_enqueue_media();

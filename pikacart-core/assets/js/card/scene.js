@@ -84,5 +84,8 @@ export function supportsOrientation( template, orientation ) {
 	if ( l.recipe ) {
 		return true;
 	}
+	if ( l.artwork && ! l.portrait && ! l.landscape ) {
+		return ( l.artwork.orientation || 'portrait' ) === orientation;
+	}
 	return !! l[ orientation ] || ( ! l.portrait && ! l.landscape );
 }

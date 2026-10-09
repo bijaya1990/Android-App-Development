@@ -14,6 +14,8 @@ class PKC_Admin_Accounts {
 	public static function init() {
 		add_action( 'admin_post_pkc_account_action', array( __CLASS__, 'action' ) );
 		add_action( 'admin_post_pkc_export_accounts', array( __CLASS__, 'export' ) );
+		add_action( 'admin_post_pkc_view_as', array( __CLASS__, 'view_as' ) );
+		add_action( 'admin_post_pkc_view_as_exit', array( __CLASS__, 'view_as_exit' ) );
 	}
 
 	/**
@@ -281,6 +283,10 @@ class PKC_Admin_Accounts {
 			<aside class="pkc-detail-side">
 				<div class="pkc-panel">
 					<h3><?php esc_html_e( 'Actions', 'pikacart' ); ?></h3>
+					<p><a class="pkc-btn pkc-btn-primary pkc-btn-block" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=pkc_view_as&org=' . $org_id ), 'pkc_view_as_' . $org_id ) ); ?>"><?php esc_html_e( 'View as this customer', 'pikacart' ); ?></a></p>
+					<p><a class="pkc-btn pkc-btn-block" href="<?php echo esc_url( admin_url( 'admin.php?page=pikacart-notices&org=' . $org_id ) ); ?>"><?php esc_html_e( 'Send a notice', 'pikacart' ); ?></a></p>
+					<p><a class="pkc-btn pkc-btn-block" href="<?php echo esc_url( admin_url( 'admin.php?page=pikacart-activity&org=' . $org_id ) ); ?>"><?php esc_html_e( 'Full activity log', 'pikacart' ); ?></a></p>
+					<hr>
 
 					<?php if ( 'suspended' === $org->status ) : ?>
 						<?php self::action_form( $org_id, 'reactivate', __( 'Reactivate account', 'pikacart' ), '', 'pkc-btn pkc-btn-primary pkc-btn-block' ); ?>
@@ -454,5 +460,35 @@ class PKC_Admin_Accounts {
 			array( 'ID', 'Organisation', 'Contact', 'Email', 'Mobile', 'Category', 'Status', 'Joined', 'Plan ends', 'Total paid (INR)', 'Cards' ),
 			$out
 		);
+	}
+
+	/**
+	 * Open the customer's dashboard read-only, for support.
+	 */
+	public static function view_as() {
+		$org_id = isset( $_GET['org'] ) ? absint( $_GET['org'] ) : 0;
+		if ( ! current_user_can( PKC_Roles::ADMIN_CAP ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'pikacart' ), 403 );
+		}
+		check_admin_referer( 'pkc_view_as_' . $org_id );
+		if ( ! PKC_Organisations::get( $org_id ) ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=pikacart-accounts' ) );
+			exit;
+		}
+		update_user_meta( get_current_user_id(), 'pkc_view_as', $org_id . '|' . time() );
+		PKC_Activity_Log::add( 'view_as', $org_id );
+		wp_safe_redirect( pkc_url( 'app' ) );
+		exit;
+	}
+
+	public static function view_as_exit() {
+		if ( ! current_user_can( PKC_Roles::ADMIN_CAP ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'pikacart' ), 403 );
+		}
+		check_admin_referer( 'pkc_view_as_exit' );
+		$org_id = PKC_Organisations::viewing_as();
+		delete_user_meta( get_current_user_id(), 'pkc_view_as' );
+		wp_safe_redirect( admin_url( 'admin.php?page=pikacart-accounts' . ( $org_id ? '&org=' . $org_id : '' ) ) );
+		exit;
 	}
 }
