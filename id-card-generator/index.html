@@ -1,182 +1,1989 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ID Card Generator</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SU Election ID Card Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500&display=block">
+<style>
+:root {
+  --bg: #f3f3f1; --panel: #fff; --ink: #222; --muted: #6a6a6a; --line: #e1e1dd;
+  --accent: #F57B30; --accent-soft: #fff1e6; --dark: #2B2B2B; --danger: #c62828; --ok: #1e7b34; --radius: 10px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; overflow-x: hidden; }
+h1, h2, h3 { margin: 0; line-height: 1.25; }
+h1 { font-size: 19px; }
+h2 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+h3 { font-size: 15px; margin-bottom: 10px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+.muted { color: var(--muted); }
+small, .small { font-size: 12px; }
+
+.topbar { background: var(--dark); color: #fff; border-bottom: 4px solid var(--accent); }
+.topbar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-top: 12px; padding-bottom: 12px; }
+.topbar h1 { margin-right: auto; }
+.selector { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.selector select { min-width: 220px; max-width: 100%; color: var(--ink); background: #fff; }
+.topbar .btn { background: #3a3a3a; color: #fff; border-color: #555; }
+.topbar .btn:hover { background: #474747; }
+.topbar .btn.primary { background: var(--accent); border-color: var(--accent); }
+
+.banner { background: #fff7e0; border: 1px solid #f0d58a; border-radius: var(--radius); padding: 10px 14px; margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: space-between; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin: 16px 0; }
+.panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.step { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 14px; flex: none; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #cfcfca; background: #fff; color: var(--ink); border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn:hover { background: #f6f6f4; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(.95); }
+.btn.small { padding: 5px 10px; font-size: 13px; }
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--danger); border-color: #e7b5b5; }
+.btn.confirming { background: var(--danger) !important; color: #fff !important; border-color: var(--danger) !important; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+input[type=text], input[type=tel], input[type=date], input[type=number], input[type=search], select, textarea {
+  font: inherit; color: inherit; background: #fff; border: 1px solid #cfcfca; border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0;
+}
+textarea { resize: vertical; }
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.label { font-size: 13px; font-weight: 600; color: #444; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.span-2 { grid-column: 1 / -1; }
+
+.two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 430px); gap: 18px; align-items: start; }
+.preview { position: sticky; top: 12px; background: #e9e8e4; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.preview-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px; margin-bottom: 10px; }
+.preview-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.preview-cards canvas { width: 100%; display: block; background: #fff; box-shadow: 0 6px 16px rgba(0,0,0,.18); }
+.side-label { text-align: center; font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+.uploads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.upload { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.thumb { width: 64px; height: 64px; flex: none; border: 1px dashed #c8c8c3; border-radius: 8px; background: #f3f3f0; display: grid; place-items: center; overflow: hidden; color: var(--muted); font-size: 11px; text-align: center; }
+.thumb.dark { background: var(--dark); }
+.thumb img { max-width: 100%; max-height: 100%; display: block; }
+.upload .stack { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.size-info { background: #f7f7f4; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
+.size-info b { color: var(--ink); }
+details.box { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+details.box summary { cursor: pointer; font-weight: 600; }
+details.box[open] summary { margin-bottom: 10px; }
+
+.subpanel { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; background: #fcfcfb; margin-bottom: 14px; }
+.member-grid { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; }
+.photo-pick { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.photo-circle { width: 100px; height: 100px; border-radius: 50%; border: 5px solid #F1991E; box-shadow: inset 0 0 0 5px #F57B30; background: #e8e8e8; overflow: hidden; display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.photo-circle img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
+.form-msg { margin: 10px 0 0; font-weight: 600; }
+.form-msg.err { color: var(--danger); }
+.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+.steps li > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.report { margin-top: 10px; font-size: 14px; }
+.report .ok { color: var(--ok); font-weight: 600; }
+.report .bad { color: var(--danger); }
+
+.pill { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
+.pill.ok { background: #e2f3e5; color: var(--ok); }
+.pill.bad { background: #fde6e6; color: var(--danger); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { background: #f6f6f3; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: #555; white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.sel td { background: var(--accent-soft); }
+tr.bad td { background: #fff5f5; }
+td.err { color: var(--danger); }
+.avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; object-position: center 30%; background: #e5e5e5; display: block; }
+.mono { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dl { display: inline-flex; border: 1px solid var(--accent); border-radius: 8px; overflow: hidden; }
+.dl select { border: 0; border-radius: 0; width: auto; padding: 5px 6px; font-size: 13px; background: var(--accent-soft); }
+.dl .btn { border: 0; border-radius: 0; }
+.list-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 10px; }
+.list-head input { max-width: 360px; }
+.empty { text-align: center; color: var(--muted); padding: 18px; margin: 0; }
+
+.pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
+.page { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.page-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.page canvas { width: 100%; display: block; background: #fff; border: 1px solid #d8d8d8; box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+
+.busy { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: grid; place-items: center; z-index: 50; }
+.busy-box { background: #fff; border-radius: 12px; padding: 16px 22px; display: flex; gap: 12px; align-items: center; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.spinner { width: 22px; height: 22px; border: 3px solid #f6d4bf; border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toasts { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 60; width: min(520px, calc(100% - 32px)); }
+.toast { background: var(--ok); color: #fff; padding: 10px 14px; border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.toast.error { background: var(--danger); }
+.toast.info { background: var(--dark); }
+
+@media (max-width: 960px) {
+  .two-col { grid-template-columns: 1fr; }
+  .preview { position: static; }
+}
+@media (max-width: 680px) {
+  .panel { padding: 14px; }
+  .grid, .uploads, .member-grid { grid-template-columns: 1fr; }
+  .photo-pick { flex-direction: row; }
+  .selector select { min-width: 0; width: 100%; }
+  .selector { width: 100%; }
+  .pages { grid-template-columns: 1fr; }
+  table.members thead { display: none; }
+  table.members, table.members tbody, table.members tr, table.members td { display: block; width: 100%; }
+  table.members tr { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 10px; padding: 10px; border-bottom: 1px solid var(--line); }
+  table.members td { border: 0; padding: 2px 0; }
+  table.members td.c-num { display: none; }
+  table.members td.c-photo { grid-row: span 6; }
+  table.members td[data-l]::before { content: attr(data-l) ": "; color: var(--muted); font-size: 12px; }
+  table.members td.c-name { font-weight: 700; }
+  table.members td.c-act { grid-column: 1 / -1; padding-top: 8px; }
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="wrap topbar-inner">
-      <h1>ID Card Generator</h1>
-      <span class="topbar-note">All data is saved in this browser only</span>
+
+<header class="topbar">
+  <div class="wrap">
+    <h1>Students' Union Election ID Card Generator</h1>
+    <div class="selector">
+      <label for="college-select" class="small">College</label>
+      <select id="college-select" aria-label="Select college"></select>
+      <button type="button" class="btn small primary" id="btn-new-college">+ New college</button>
+      <button type="button" class="btn small" id="btn-export">Export backup</button>
+      <label class="btn small">Import backup<input type="file" id="backup-file" accept=".json,application/json" hidden></label>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="wrap">
-    <!-- 1. College profiles -->
-    <section class="panel" id="sec-colleges">
-      <div class="panel-head">
-        <h2><span class="step">1</span> College profile</h2>
-        <div class="row-gap">
-          <button type="button" class="btn" id="btn-demo">Add demo college</button>
-          <button type="button" class="btn primary" id="btn-new-college">+ New college</button>
+<main class="wrap">
+  <div class="banner" id="example-banner" hidden>
+    <span><b>Example data.</b> This is a sample college with 5 sample members so you can see how the app works.</span>
+    <button type="button" class="btn small danger" id="btn-clear-example">Clear example data</button>
+  </div>
+
+  <p class="empty panel" id="no-college" hidden>No college yet. Click <b>+ New college</b> to start.</p>
+
+  <!-- 1. College profile -->
+  <section class="panel" id="sec-profile" hidden>
+    <div class="panel-head">
+      <h2><span class="step">1</span> College profile</h2>
+      <span class="muted small" id="profile-saved">Changes save automatically</span>
+    </div>
+    <div class="two-col">
+      <form id="profile-form" autocomplete="off" onsubmit="return false">
+        <div class="uploads">
+          <div class="field"><span class="label">College logo</span>
+            <div class="upload"><div class="thumb dark" data-thumb="logo"></div>
+              <div class="stack"><label class="btn small">Upload<input type="file" accept="image/*" data-upload="logo" hidden></label>
+                <button type="button" class="btn small ghost" data-remove="logo">Remove</button></div></div></div>
+          <div class="field"><span class="label">Principal signature</span>
+            <div class="upload"><div class="thumb" data-thumb="signature"></div>
+              <div class="stack"><label class="btn small">Upload<input type="file" accept="image/*" data-upload="signature" hidden></label>
+                <button type="button" class="btn small ghost" data-remove="signature">Remove</button></div></div></div>
+          <div class="field"><span class="label">Seal / stamp</span>
+            <div class="upload"><div class="thumb" data-thumb="seal"></div>
+              <div class="stack"><label class="btn small">Upload<input type="file" accept="image/*" data-upload="seal" hidden></label>
+                <button type="button" class="btn small ghost" data-remove="seal">Remove</button></div></div></div>
         </div>
-      </div>
-      <div id="college-list" class="college-list"></div>
-      <p id="college-empty" class="empty" hidden>No college yet. Create one with <b>+ New college</b>, or try <b>Add demo college</b>.</p>
-
-      <form id="college-form" class="form" autocomplete="off" hidden>
-        <div class="form-grid">
-          <div class="field image-field">
-            <span class="label">College logo</span>
-            <div class="image-pick" data-img="logo">
-              <div class="thumb"><img alt=""></div>
-              <div class="image-actions">
-                <label class="btn small">Upload<input type="file" accept="image/*" data-file="logo" hidden></label>
-                <button type="button" class="btn small ghost" data-clear="logo">Remove</button>
-              </div>
-            </div>
-          </div>
-          <div class="field image-field">
-            <span class="label">Principal signature</span>
-            <div class="image-pick" data-img="signature">
-              <div class="thumb"><img alt=""></div>
-              <div class="image-actions">
-                <label class="btn small">Upload<input type="file" accept="image/*" data-file="signature" hidden></label>
-                <button type="button" class="btn small ghost" data-clear="signature">Remove</button>
-              </div>
-            </div>
-          </div>
-          <div class="field image-field">
-            <span class="label">Seal / stamp</span>
-            <div class="image-pick" data-img="seal">
-              <div class="thumb"><img alt=""></div>
-              <div class="image-actions">
-                <label class="btn small">Upload<input type="file" accept="image/*" data-file="seal" hidden></label>
-                <button type="button" class="btn small ghost" data-clear="seal">Remove</button>
-              </div>
-            </div>
-          </div>
-
-          <label class="field span-2"><span class="label">College name</span>
-            <input type="text" name="name" placeholder="e.g. Government Autonomous College"></label>
-          <label class="field"><span class="label">ID prefix</span>
-            <input type="text" name="idPrefix" placeholder="SUE2026">
-            <small class="hint">New IDs look like <b id="id-example">SUE2026-001</b></small></label>
-          <label class="field span-2"><span class="label">Event heading</span>
-            <input type="text" name="event"></label>
-          <div class="field two-dates">
-            <label><span class="label">Issue date</span><input type="date" name="issueDate"></label>
-            <label><span class="label">Expiry date</span><input type="date" name="expiryDate"></label>
-          </div>
-          <label class="field span-3"><span class="label">Terms and conditions <small>(one point per line)</small></span>
-            <textarea name="terms" rows="4"></textarea></label>
+        <div class="grid" style="margin-top:14px">
+          <label class="field span-2"><span class="label">College name</span><input type="text" name="name" placeholder="e.g. Government Autonomous College"></label>
+          <label class="field span-2"><span class="label">Event heading</span><input type="text" name="event"></label>
+          <label class="field"><span class="label">Issue date</span><input type="date" name="issueDate"></label>
+          <label class="field"><span class="label">Expiry date</span><input type="date" name="expiryDate"></label>
+          <label class="field"><span class="label">ID number prefix</span><input type="text" name="idPrefix" placeholder="SUE26-">
+            <small class="muted">New IDs look like <b id="id-example">SUE26-001</b></small></label>
+          <label class="field"><span class="label">Card size</span><select name="cardSize" id="size-select"></select></label>
+          <label class="field" id="custom-size-field" hidden><span class="label">Custom card height (mm)</span>
+            <input type="number" name="customH" min="50" max="140" step="0.5"><small class="muted">Width follows the design shape.</small></label>
+          <div class="size-info span-2" id="size-info"></div>
+          <label class="field span-2"><span class="label">Terms and conditions <small class="muted">(one term per line)</small></span><textarea name="terms" rows="4"></textarea></label>
         </div>
-
-        <details class="labels-box">
+        <details class="box" style="margin-top:12px">
           <summary>Card labels (optional)</summary>
-          <div class="form-grid labels-grid" id="labels-grid"></div>
+          <div class="grid" id="labels-grid"></div>
         </details>
-
-        <div class="form-foot">
-          <span class="saved" id="college-saved">Changes are saved automatically</span>
-          <button type="button" class="btn danger ghost" id="btn-delete-college">Delete this college</button>
+        <div class="form-actions">
+          <button type="button" class="btn danger" id="btn-delete-college">Delete this college</button>
         </div>
       </form>
-    </section>
-
-    <!-- 2. Members -->
-    <section class="panel" id="sec-members" hidden>
-      <div class="panel-head">
-        <h2><span class="step">2</span> Members <span class="count" id="member-count"></span></h2>
-      </div>
-
-      <div class="members-top">
-        <div class="members-forms">
-          <form id="member-form" class="form card-form" autocomplete="off" novalidate>
-            <h3 id="member-form-title">Add member</h3>
-            <div class="member-grid">
-              <div class="photo-pick">
-                <div class="photo-circle"><img alt="" id="mf-photo-img"><span id="mf-photo-empty">No photo</span></div>
-                <label class="btn small">Photo<input type="file" accept="image/*" id="mf-photo" hidden></label>
-                <button type="button" class="btn small ghost" id="mf-photo-clear">Remove</button>
-              </div>
-              <div class="member-fields">
-                <label class="field"><span class="label">Name *</span><input type="text" name="name" required></label>
-                <label class="field"><span class="label">Designation</span><input type="text" name="designation"></label>
-                <label class="field"><span class="label">Role</span><input type="text" name="role"></label>
-                <label class="field"><span class="label">Mobile number *</span><input type="tel" name="mobile" inputmode="tel"></label>
-                <label class="field"><span class="label">ID number</span><input type="text" name="idNo"></label>
-              </div>
-            </div>
-            <p class="form-error" id="member-error" hidden></p>
-            <div class="form-foot">
-              <button type="button" class="btn ghost" id="mf-cancel" hidden>Cancel</button>
-              <button type="submit" class="btn primary" id="mf-submit">Add member</button>
-            </div>
-          </form>
-
-          <details class="form card-form import-box" id="import-box">
-            <summary><h3>Import from Excel (.xlsx / .csv)</h3></summary>
-            <ol class="import-steps">
-              <li>Columns: <b>Name, Designation, Role, Mobile, Photo File Name</b>.
-                <button type="button" class="btn small" id="btn-sample">Download sample Excel</button></li>
-              <li><label class="btn small">Choose Excel / CSV<input type="file" id="import-file" accept=".xlsx,.xls,.csv" hidden></label>
-                <span id="import-file-name" class="muted"></span></li>
-              <li><label class="btn small">Upload photos (bulk)<input type="file" id="import-photos" accept="image/*" multiple hidden></label>
-                <span id="import-photo-count" class="muted">Photos are matched by file name</span></li>
-            </ol>
-            <div id="import-preview"></div>
-          </details>
+      <aside class="preview">
+        <div class="preview-head"><b>Card preview</b><span class="muted small" id="profile-preview-who"></span></div>
+        <div class="preview-cards">
+          <div><canvas id="pp-front"></canvas><div class="side-label">Front</div></div>
+          <div><canvas id="pp-back"></canvas><div class="side-label">Back</div></div>
         </div>
+      </aside>
+    </div>
+  </section>
 
-        <aside class="preview-panel">
-          <div class="preview-head">
-            <h3>Live card preview</h3>
-            <span class="muted" id="preview-who"></span>
+  <!-- 2. Members -->
+  <section class="panel" id="sec-members" hidden>
+    <div class="panel-head"><h2><span class="step">2</span> Members / staff</h2></div>
+    <div class="two-col">
+      <div>
+        <form class="subpanel" id="member-form" autocomplete="off" novalidate>
+          <h3 id="mf-title">Add member</h3>
+          <div class="member-grid">
+            <div class="photo-pick">
+              <div class="photo-circle" id="mf-photo">No photo</div>
+              <label class="btn small">Photo<input type="file" accept="image/*" id="mf-photo-input" hidden></label>
+              <button type="button" class="btn small ghost" id="mf-photo-remove">Remove</button>
+            </div>
+            <div class="grid">
+              <label class="field"><span class="label">Name *</span><input type="text" name="name"></label>
+              <label class="field"><span class="label">Designation</span><input type="text" name="designation"></label>
+              <label class="field"><span class="label">Role</span><input type="text" name="role"></label>
+              <label class="field"><span class="label">Mobile number * (10 digits)</span><input type="tel" name="mobile" inputmode="numeric"></label>
+              <label class="field"><span class="label">ID number</span><input type="text" name="idNo"></label>
+            </div>
           </div>
-          <div class="preview-cards" id="preview-cards"></div>
-        </aside>
-      </div>
+          <p class="form-msg" id="mf-msg" hidden></p>
+          <div class="form-actions">
+            <button type="button" class="btn ghost" id="mf-cancel" hidden>Cancel</button>
+            <button type="submit" class="btn primary" id="mf-submit">Add member</button>
+          </div>
+        </form>
 
-      <div class="list-head">
-        <input type="search" id="member-search" placeholder="Search name, role, mobile, ID…">
-      </div>
-      <div class="table-wrap">
-        <table class="members" id="member-table">
-          <thead><tr><th>#</th><th>Photo</th><th>Name</th><th>Designation</th><th>Role</th><th>Mobile</th><th>ID number</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <p class="empty" id="member-empty" hidden>No members yet. Add one above or import from Excel.</p>
-      </div>
-    </section>
+        <details class="subpanel" id="import-box">
+          <summary><b>Import from Excel (.xlsx, .xls, .csv)</b></summary>
+          <ol class="steps" style="margin-top:12px">
+            <li><div>Columns: <b>Name, Designation, Role, Mobile, Photo File Name, ID No</b> (ID No optional).
+              <button type="button" class="btn small" id="btn-sample">Download sample Excel</button></div></li>
+            <li><div><label class="btn small primary">Choose Excel / CSV file<input type="file" id="import-file" accept=".xlsx,.xls,.csv" hidden></label>
+              <span class="muted small" id="import-name"></span></div></li>
+          </ol>
+          <div id="import-preview"></div>
+        </details>
 
-    <!-- 3. A4 sheets -->
-    <section class="panel" id="sec-a4" hidden>
-      <div class="panel-head">
-        <h2><span class="step">3</span> A4 print sheets</h2>
-        <button type="button" class="btn primary" id="btn-all-pages">Download all pages (PDF)</button>
+        <div class="subpanel">
+          <h3>Upload photos in bulk</h3>
+          <p class="muted small" style="margin:0 0 8px">Select many photos at once. Each file is matched to a member by Photo File Name, then ID number, then Name (case and file extension ignored).</p>
+          <label class="btn small primary">Choose photos<input type="file" id="bulk-photos" accept="image/*" multiple hidden></label>
+          <div class="report" id="bulk-report"></div>
+        </div>
       </div>
-      <p class="muted" id="a4-info"></p>
-      <div class="pages" id="pages"></div>
-    </section>
-  </main>
+      <aside class="preview">
+        <div class="preview-head"><b>Live card preview</b><span class="muted small" id="member-preview-who"></span></div>
+        <div class="preview-cards">
+          <div><canvas id="mp-front"></canvas><div class="side-label">Front</div></div>
+          <div><canvas id="mp-back"></canvas><div class="side-label">Back</div></div>
+        </div>
+      </aside>
+    </div>
 
-  <div class="busy" id="busy" hidden><div class="busy-box"><div class="spinner"></div><span id="busy-text">Working…</span></div></div>
-  <div class="toast" id="toast" hidden></div>
+    <div class="list-head">
+      <b id="member-count">0 members</b>
+      <input type="search" id="search" placeholder="Search name, role, mobile, ID…" aria-label="Search members">
+    </div>
+    <div class="table-wrap">
+      <table class="members">
+        <thead><tr><th>#</th><th>Photo</th><th>Name</th><th>Designation</th><th>Role</th><th>Mobile</th><th>ID number</th><th>Actions</th></tr></thead>
+        <tbody id="member-rows"></tbody>
+      </table>
+      <p class="empty" id="member-empty" hidden></p>
+    </div>
+  </section>
 
-  <script src="lib/xlsx.full.min.js"></script>
-  <script src="lib/qrcode-generator.js"></script>
-  <script src="lib/JsBarcode.all.min.js"></script>
-  <script src="lib/html-to-image.js"></script>
-  <script src="lib/jspdf.umd.min.js"></script>
-  <script src="js/fonts.js"></script>
-  <script src="js/card-shapes.js"></script>
-  <script src="js/card.js"></script>
-  <script src="js/db.js"></script>
-  <script src="js/export.js"></script>
-  <script src="js/app.js"></script>
+  <!-- 3. A4 sheets -->
+  <section class="panel" id="sec-sheets" hidden>
+    <div class="panel-head">
+      <h2><span class="step">3</span> A4 print sheets</h2>
+      <div class="row">
+        <button type="button" class="btn" id="btn-print-all">Print all pages</button>
+        <button type="button" class="btn primary" id="btn-pdf-all">Download all pages (PDF)</button>
+      </div>
+    </div>
+    <p class="muted" id="sheet-info"></p>
+    <div class="pages" id="pages"></div>
+  </section>
+</main>
+
+<div class="busy" id="busy" hidden><div class="busy-box"><div class="spinner"></div><span id="busy-text">Working…</span></div></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- Libraries from CDN, with a local copy in lib/ as an offline fallback -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>window.XLSX || document.write('<script src="lib/xlsx.full.min.js"><\/script>');</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>window.qrcode || document.write('<script src="lib/qrcode-generator.js"><\/script>');</script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script>window.JsBarcode || document.write('<script src="lib/JsBarcode.all.min.js"><\/script>');</script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>window.jspdf || document.write('<script src="lib/jspdf.umd.min.js"><\/script>');</script>
+
+<script>
+(function () {
+'use strict';
+
+/* =====================================================================
+   Constants
+   ===================================================================== */
+
+// Card design canvas (portrait, CR80 ratio).
+const CW = 693, CH = 1100;
+const C = { dark: '#2B2B2B', orange: '#F57B30', amber: '#F1991E', white: '#FFFFFF', text: '#3A3A3A', soft: '#555555', qrBorder: '#D2D2D2' };
+const MONT = 'Montserrat, Arial, sans-serif';
+const OPEN = '"Open Sans", Arial, sans-serif';
+
+// Header waves traced from the reference image, in 554 x 880 units, for the
+// BACK (charcoal swells down on the left). The front is the mirror image.
+// 1 = charcoal edge, 2 = orange band edge, 3 = amber band edge.
+const WAVES = {
+  "back1": "M0 268.5C2 269.1 8 270.9 12 271.8C16 272.7 20 273.4 24 274.2C28 275 32 275.8 36 276.4C40 277 44 277.3 48 277.6C52 277.9 56 277.9 60 278C64 278.1 68 278 72 278C76 278 80 278 84 277.8C88 277.6 92 277.3 96 276.8C100 276.3 104 275.7 108 275C112 274.3 116 273.5 120 272.6C124 271.7 128 270.8 132 269.8C136 268.8 140 267.7 144 266.4C148 265.1 152 263.7 156 262.2C160 260.7 164 259.1 168 257.4C172 255.7 176 253.8 180 251.8C184 249.8 188 247.6 192 245.2C196 242.8 200 240.3 204 237.6C208 234.9 212 232.3 216 229.2C220 226.1 224 222.7 228 219C232 215.3 236 211.3 240 207C244 202.7 248 198.4 252 193.2C256 188 260 182 264 176C268 170 272 163.5 276 157.4C280 151.3 284 145 288 139.4C292 133.8 296 128.7 300 124C304 119.3 308 114.9 312 111C316 107.1 320 103.7 324 100.4C328 97.1 332 94.1 336 91.4C340 88.7 344 86.2 348 84C352 81.8 356 79.9 360 78C364 76.1 368 74.3 372 72.8C376 71.3 380 70.1 384 68.8C388 67.5 392 66.2 396 65.2C400 64.2 404 63.6 408 62.8C412 62 416 61 420 60.4C424 59.8 428 59.4 432 59C436 58.6 440 58.3 444 58C448 57.7 452 57.2 456 57C460 56.8 464 56.9 468 57C472 57.1 476 57.3 480 57.6C484 57.9 488 58.2 492 58.6C496 59 500 59.4 504 59.8C508 60.2 512 60.6 516 61.2C520 61.8 524 62.7 528 63.4C532 64.1 536 64.6 540 65.4C544 66.2 550 67.7 552 68.2L554 0L0 0Z",
+  "back2": "M0 288.2C2 288.7 8 290.1 12 291C16 291.9 20 292.9 24 293.6C28 294.3 32 294.9 36 295.4C40 295.9 44 296.1 48 296.4C52 296.7 56 296.9 60 297C64 297.1 68 297 72 297C76 297 80 297 84 296.8C88 296.6 92 296 96 295.6C100 295.2 104 294.8 108 294.2C112 293.6 116 292.8 120 292C124 291.2 128 290.4 132 289.4C136 288.4 140 287.4 144 286.2C148 285 152 283.8 156 282.4C160 281 164 279.4 168 277.8C172 276.2 176 274.6 180 272.8C184 271 188 269.1 192 267C196 264.9 200 262.4 204 260C208 257.6 212 255.1 216 252.4C220 249.7 224 246.7 228 243.6C232 240.5 236 237.2 240 233.6C244 230 248 226.2 252 222C256 217.8 260 213.4 264 208.4C268 203.4 272 197.9 276 192.2C280 186.5 284 180.1 288 174C292 167.9 296 161.3 300 155.4C304 149.5 308 143.7 312 138.8C316 133.9 320 129.8 324 125.8C328 121.8 332 117.9 336 114.6C340 111.3 344 108.6 348 106C352 103.4 356 101.1 360 99C364 96.9 368 95.1 372 93.4C376 91.7 380 90 384 88.6C388 87.2 392 85.9 396 84.8C400 83.7 404 82.7 408 81.8C412 80.9 416 80.1 420 79.4C424 78.7 428 78.2 432 77.8C436 77.4 440 77.1 444 76.8C448 76.5 452 76.1 456 76C460 75.9 464 75.9 468 76C472 76.1 476 76.6 480 76.8C484 77 488 77.1 492 77.4C496 77.7 500 78.1 504 78.6C508 79.1 512 79.8 516 80.4C520 81 524 81.6 528 82.4C532 83.2 536 84.2 540 85C544 85.8 550 86.8 552 87.2L554 0L0 0Z",
+  "back3": "M0 306.7C2 307.1 8 308.6 12 309.4C16 310.2 20 311 24 311.6C28 312.2 32 312.7 36 313.2C40 313.7 44 314.1 48 314.4C52 314.7 56 314.9 60 315C64 315.1 68 315 72 315C76 315 80 315 84 314.8C88 314.6 92 314 96 313.6C100 313.2 104 313 108 312.4C112 311.8 116 311 120 310.2C124 309.4 128 308.7 132 307.8C136 306.9 140 305.9 144 304.8C148 303.7 152 302.5 156 301.2C160 299.9 164 298.3 168 296.8C172 295.3 176 293.8 180 292.2C184 290.6 188 288.9 192 287C196 285.1 200 283 204 280.8C208 278.6 212 276.3 216 273.8C220 271.3 224 268.8 228 266C232 263.2 236 260.2 240 257C244 253.8 248 250.5 252 246.8C256 243.1 260 239.2 264 235C268 230.8 272 226.6 276 221.8C280 217 284 211.8 288 206.2C292 200.6 296 194.4 300 188.2C304 182 308 174.9 312 169C316 163.1 320 157.8 324 152.8C328 147.8 332 143.1 336 139C340 134.9 344 131.3 348 128C352 124.7 356 121.9 360 119.4C364 116.9 368 114.9 372 113C376 111.1 380 109.4 384 107.8C388 106.2 392 104.7 396 103.4C400 102.1 404 101.2 408 100.2C412 99.2 416 98.3 420 97.6C424 96.9 428 96.5 432 96C436 95.5 440 95.1 444 94.8C448 94.5 452 94.1 456 94C460 93.9 464 93.9 468 94C472 94.1 476 94.2 480 94.4C484 94.6 488 95 492 95.4C496 95.8 500 96.3 504 96.8C508 97.3 512 98 516 98.6C520 99.2 524 99.8 528 100.6C532 101.4 536 102.3 540 103.2C544 104.1 550 105.4 552 105.8L554 0L0 0Z"
+};
+const WAVE_SX = CW / 554, WAVE_SY = CH / 880;
+const WAVE_PATHS = {};
+
+const DEFAULT_LABELS = {
+  idNo: 'ID NO', role: 'ROLE', mobile: 'MOBILE', terms: 'Terms & Conditions:',
+  issue: 'Issue Date', expiry: 'Expire Date', principal: 'Principal',
+};
+const LABEL_NAMES = {
+  idNo: 'ID number label', role: 'Role label', mobile: 'Mobile label', terms: 'Terms heading',
+  issue: 'Issue date label', expiry: 'Expiry date label', principal: 'Signature label',
+};
+const DEFAULT_EVENT = "Students' Union Election 2026";
+const DEFAULT_PREFIX = 'SUE26-';
+const DEFAULT_TERMS = [
+  "This card is valid only for the Students' Union Election 2026.",
+  'Wear this card at all times inside the campus.',
+  'This card is not transferable. Misuse will lead to cancellation.',
+  'If found, please return it to the college office.',
+].join('\n');
+
+// A4 sheet rules (mm).
+const A4 = { w: 210, h: 297 };
+const SHEET = { margin: 5, gapRow: 6, gapFB: 8, gapPair: 10, markOff: 0.8, markLen: 1.8, cutOut: 3 };
+const RATIO = CW / CH; // card width / height
+
+// Card sizes. Each card keeps the design shape and is the largest that fits
+// the nominal size; "cover" is what to buy for it.
+const SIZES = [
+  { id: 'cr80', name: 'CR80 / PVC card size', w: 54, h: 85.6, exact: true,
+    cover: 'standard CR80 (ATM-card size) ID card holder, or a 65 × 95 mm ID lamination pouch' },
+  { id: 'in225', name: '2.25 × 3.5 inch (school / college ID)', w: 57.15, h: 88.9,
+    cover: '2.25 × 3.5 inch ID card holder, or a 65 × 95 mm ID lamination pouch' },
+  { id: 'max3', name: 'Large: biggest card with 3 per A4', fitRows: 3,
+    cover: 'holder or pouch about 65 × 100 mm (a 65 × 95 mm pouch is too tight)' },
+  { id: 'in25x4', name: '2.5 × 4 inch (event / election duty badge)', w: 63.5, h: 101.6,
+    cover: '2.5 × 4 inch badge holder, or a 75 × 105 mm lamination pouch' },
+  { id: 'custom', name: 'Custom height', cover: 'holder or pouch at least the size shown' },
+];
+const DEFAULT_SIZE = 'in225';
+
+/* =====================================================================
+   Small helpers
+   ===================================================================== */
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+const round1 = (v) => Math.round(v * 10) / 10;
+
+function fmtDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : (iso || '');
+}
+
+// Returns the 10-digit mobile number, or '' when it is not valid.
+// Accepts spaces, dashes and a +91 / 91 / 0 prefix.
+function normMobile(v) {
+  let d = String(v == null ? '' : v).replace(/[\s\-().]/g, '');
+  if (/^\+?91\d{10}$/.test(d)) d = d.replace(/^\+?91/, '');
+  else if (/^0\d{10}$/.test(d)) d = d.slice(1);
+  return /^\d{10}$/.test(d) ? d : '';
+}
+
+const normKey = (s) => String(s == null ? '' : s).toLowerCase().replace(/\.[a-z0-9]{2,5}$/, '').replace(/[^a-z0-9]/g, '');
+
+function toast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.textContent = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(() => t.remove(), type === 'error' ? 7000 : 3500);
+}
+
+async function withBusy(text, fn) {
+  $('#busy-text').textContent = text;
+  $('#busy').hidden = false;
+  await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 30)));
+  try {
+    return await fn();
+  } catch (e) {
+    console.error(e);
+    toast('Error: ' + (e && e.message ? e.message : e), 'error');
+  } finally {
+    $('#busy').hidden = true;
+  }
+}
+const busyText = (t) => { $('#busy-text').textContent = t; };
+
+// Two-click delete built into the button (no browser popups).
+function confirmClick(btn, action) {
+  if (btn.dataset.armed === '1') {
+    clearTimeout(btn._t);
+    btn.dataset.armed = '';
+    btn.classList.remove('confirming');
+    btn.textContent = btn.dataset.orig;
+    action();
+    return;
+  }
+  btn.dataset.armed = '1';
+  btn.dataset.orig = btn.textContent;
+  btn.textContent = 'Click again to confirm';
+  btn.classList.add('confirming');
+  btn._t = setTimeout(() => {
+    btn.dataset.armed = '';
+    btn.classList.remove('confirming');
+    btn.textContent = btn.dataset.orig;
+  }, 4000);
+}
+
+/* =====================================================================
+   IndexedDB
+   ===================================================================== */
+
+const DB = (() => {
+  let dbp;
+  const open = () => dbp || (dbp = new Promise((res, rej) => {
+    const r = indexedDB.open('su-election-id-cards', 1);
+    r.onupgradeneeded = () => {
+      const db = r.result;
+      db.createObjectStore('profiles', { keyPath: 'id' });
+      db.createObjectStore('members', { keyPath: 'id' }).createIndex('profileId', 'profileId');
+      db.createObjectStore('meta', { keyPath: 'key' });
+    };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  }));
+  const req = (r) => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const tx = async (stores, mode, fn) => {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const t = db.transaction(stores, mode);
+      const out = fn(t);
+      t.oncomplete = () => res(out);
+      t.onerror = () => rej(t.error);
+      t.onabort = () => rej(t.error || new Error('Storage aborted (browser storage may be full)'));
+    });
+  };
+  return {
+    all: async (s) => req((await open()).transaction(s).objectStore(s).getAll()),
+    put: (s, v) => tx([s], 'readwrite', (t) => { t.objectStore(s).put(v); }),
+    putMany: (s, vs) => tx([s], 'readwrite', (t) => { vs.forEach((v) => t.objectStore(s).put(v)); }),
+    del: (s, k) => tx([s], 'readwrite', (t) => { t.objectStore(s).delete(k); }),
+    delProfile: (id, memberIds) => tx(['profiles', 'members'], 'readwrite', (t) => {
+      t.objectStore('profiles').delete(id);
+      memberIds.forEach((m) => t.objectStore('members').delete(m));
+    }),
+    getMeta: async (k) => { const r = await req((await open()).transaction('meta').objectStore('meta').get(k)); return r ? r.value : undefined; },
+    setMeta: (k, v) => tx(['meta'], 'readwrite', (t) => { t.objectStore('meta').put({ key: k, value: v }); }),
+  };
+})();
+
+/* =====================================================================
+   Images
+   ===================================================================== */
+
+const imgCache = new Map();
+function loadImg(src) {
+  if (!src) return Promise.resolve(null);
+  if (imgCache.has(src)) return imgCache.get(src).p;
+  const im = new Image();
+  const entry = { im, ok: false };
+  entry.p = new Promise((res) => {
+    im.onload = () => { entry.ok = true; res(im); };
+    im.onerror = () => res(null);
+  });
+  im.src = src;
+  imgCache.set(src, entry);
+  return entry.p;
+}
+const readyImg = (src) => { const e = src && imgCache.get(src); return e && e.ok ? e.im : null; };
+function ensureImages(profile, members) {
+  const list = [profile.logo, profile.signature, profile.seal];
+  (members || []).forEach((m) => list.push(m.photo));
+  return Promise.all(list.filter(Boolean).map(loadImg));
+}
+
+// Reads an image file and downsizes it; photos become JPEG, art stays PNG.
+function fileToDataURL(file, maxDim, mime) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error('Could not read ' + file.name));
+    fr.onload = () => {
+      const im = new Image();
+      im.onerror = () => reject(new Error(file.name + ' is not a valid image'));
+      im.onload = () => {
+        const iw = im.naturalWidth || maxDim, ih = im.naturalHeight || maxDim;
+        const k = Math.min(1, maxDim / Math.max(iw, ih));
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(iw * k));
+        c.height = Math.max(1, Math.round(ih * k));
+        const x = c.getContext('2d');
+        if (mime === 'image/jpeg') { x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); }
+        x.imageSmoothingQuality = 'high';
+        x.drawImage(im, 0, 0, c.width, c.height);
+        resolve(c.toDataURL(mime, 0.9));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+const photoFromFile = (f) => fileToDataURL(f, 600, 'image/jpeg');
+const artFromFile = (f) => fileToDataURL(f, 800, 'image/png');
+
+/* =====================================================================
+   Fonts
+   ===================================================================== */
+
+const hasFace = (family) => Array.from(document.fonts).some((f) => f.family.replace(/["']/g, '') === family && f.status === 'loaded');
+async function loadFonts() {
+  const want = ['400 20px Montserrat', '500 20px Montserrat', '600 20px Montserrat', '700 20px Montserrat', '400 20px "Open Sans"', '500 20px "Open Sans"'];
+  const tryLoad = () => Promise.all(want.map((f) => document.fonts.load(f, 'AaBb').catch(() => [])));
+  await tryLoad();
+  if (!hasFace('Montserrat') || !hasFace('Open Sans')) {
+    // Offline: use the embedded copy next to this file if it exists.
+    await new Promise((res) => {
+      const s = document.createElement('script');
+      s.src = 'js/fonts.js';
+      s.onload = () => {
+        const st = document.createElement('style');
+        st.textContent = window.IDCARD_FONT_CSS || '';
+        document.head.appendChild(st);
+        res();
+      };
+      s.onerror = res;
+      document.head.appendChild(s);
+    });
+    await tryLoad();
+  }
+  await document.fonts.ready;
+  if (!hasFace('Montserrat')) toast('Card fonts could not be loaded (offline?). Cards use a fallback font until you reload online.', 'error');
+}
+
+/* =====================================================================
+   Text fitting (canvas)
+   ===================================================================== */
+
+function font(ctx, weight, size, family) { ctx.font = `${weight} ${size}px ${family}`; }
+
+function breakWord(ctx, word, maxW) {
+  const parts = [];
+  let cur = '';
+  for (const ch of word) {
+    if (cur && ctx.measureText(cur + ch).width > maxW) { parts.push(cur); cur = ch; } else cur += ch;
+  }
+  if (cur) parts.push(cur);
+  return parts;
+}
+
+function wrap(ctx, text, maxW) {
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    const pieces = ctx.measureText(w).width > maxW ? breakWord(ctx, w, maxW) : [w];
+    for (const p of pieces) {
+      const t = cur ? cur + ' ' + p : p;
+      if (!cur || ctx.measureText(t).width <= maxW) cur = t;
+      else { lines.push(cur); cur = p; }
+    }
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function ellipsize(ctx, line, maxW) {
+  if (ctx.measureText(line).width <= maxW) return line;
+  let s = line;
+  while (s.length > 1 && ctx.measureText(s + '…').width > maxW) s = s.slice(0, -1);
+  return s + '…';
+}
+
+// Finds the largest size where text fits maxW in up to maxLines lines.
+// One line is preferred down to wrapAt * max; never overflows (ellipsis at min).
+function fitText(ctx, text, o) {
+  const t = o.upper ? String(text || '').toUpperCase() : String(text || '');
+  const wrapAt = o.wrapAt == null ? 0.8 : o.wrapAt;
+  for (let s = o.max; s >= o.min - 1e-6; s -= 0.5) {
+    font(ctx, o.weight, s, o.family);
+    if (ctx.measureText(t).width <= o.maxW) return { size: s, lines: t ? [t] : [] };
+    if (o.maxLines > 1 && s <= o.max * wrapAt + 1e-6) {
+      const lines = wrap(ctx, t, o.maxW);
+      if (lines.length <= o.maxLines) return { size: s, lines };
+    }
+  }
+  font(ctx, o.weight, o.min, o.family);
+  let lines = o.maxLines > 1 ? wrap(ctx, t, o.maxW) : [t];
+  if (lines.length > o.maxLines) {
+    lines = lines.slice(0, o.maxLines);
+    lines[o.maxLines - 1] += '…';
+  }
+  lines = lines.map((l) => ellipsize(ctx, l, o.maxW));
+  return { size: o.min, lines };
+}
+
+/* =====================================================================
+   QR code and barcode (drawn as sharp device-pixel squares and bars)
+   ===================================================================== */
+
+if (window.qrcode && qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) {
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+}
+
+function qrText(p, m) {
+  const valid = [fmtDate(p.issueDate), fmtDate(p.expiryDate)].filter(Boolean).join('-');
+  return [
+    ['Name', m.name], ['Designation', m.designation], ['Role', m.role], ['Mobile', m.mobile],
+    ['ID No', m.idNo], ['College', p.name], ['Event', p.event], ['Valid', valid],
+  ].filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n');
+}
+
+const qrMemo = new Map();
+function qrMatrix(text) {
+  if (qrMemo.has(text)) return qrMemo.get(text);
+  const q = qrcode(0, 'M');
+  q.addData(text, 'Byte');
+  q.make();
+  const n = q.getModuleCount();
+  const rows = [];
+  for (let r = 0; r < n; r++) {
+    const row = [];
+    for (let c = 0; c < n; c++) row.push(q.isDark(r, c));
+    rows.push(row);
+  }
+  if (qrMemo.size > 400) qrMemo.delete(qrMemo.keys().next().value);
+  qrMemo.set(text, rows);
+  return rows;
+}
+
+const barMemo = new Map();
+function barcodeBits(text) {
+  if (barMemo.has(text)) return barMemo.get(text);
+  let bits = '';
+  try {
+    const obj = {};
+    JsBarcode(obj, text, { format: 'CODE128' });
+    bits = (obj.encodings || []).map((e) => e.data).join('');
+  } catch (e) {
+    bits = '';
+  }
+  barMemo.set(text, bits);
+  return bits;
+}
+
+/* =====================================================================
+   drawCard: the ONE function that draws a card face.
+   Used for previews, single downloads and A4 sheets.
+   ctx must have an identity-free base transform; x, y, w, h are in
+   device pixels.
+   ===================================================================== */
+
+function wavePath(k) {
+  if (!WAVE_PATHS[k]) WAVE_PATHS[k] = new Path2D(WAVES[k]);
+  return WAVE_PATHS[k];
+}
+
+function drawImageContain(ctx, im, x, y, w, h, alignBottom) {
+  const k = Math.min(w / im.naturalWidth, h / im.naturalHeight);
+  const dw = im.naturalWidth * k, dh = im.naturalHeight * k;
+  ctx.drawImage(im, x + (w - dw) / 2, alignBottom ? y + h - dh : y + (h - dh) / 2, dw, dh);
+}
+
+function initials(name) {
+  return String(name || '').split(/\s+/).filter((w) => /^[A-Za-z]/.test(w)).slice(0, 3).map((w) => w[0].toUpperCase()).join('') || 'LOGO';
+}
+
+function drawCard(ctx, card) {
+  const { profile: p, member: m, side, x, y, w, h } = card;
+  const L = Object.assign({}, DEFAULT_LABELS, p.labels || {});
+  const sx = w / CW, sy = h / CH;
+  const base = ctx.getTransform();
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(sx, sy);
+  ctx.beginPath();
+  ctx.rect(0, 0, CW, CH);
+  ctx.clip();
+  ctx.fillStyle = C.white;
+  ctx.fillRect(0, 0, CW, CH);
+  ctx.textBaseline = 'alphabetic';
+
+  // Header waves (back as traced, front mirrored).
+  ctx.save();
+  if (side === 'front') { ctx.translate(CW, 0); ctx.scale(-WAVE_SX, WAVE_SY); } else ctx.scale(WAVE_SX, WAVE_SY);
+  ctx.fillStyle = C.amber; ctx.fill(wavePath('back3'));
+  ctx.fillStyle = C.orange; ctx.fill(wavePath('back2'));
+  ctx.fillStyle = C.dark; ctx.fill(wavePath('back1'));
+  ctx.restore();
+
+  // Footer strip.
+  ctx.fillStyle = C.dark; ctx.fillRect(0, 1035, 346, 65);
+  ctx.fillStyle = C.amber; ctx.fillRect(346, 1035, 174, 65);
+  ctx.fillStyle = C.orange; ctx.fillRect(520, 1035, 173, 65);
+
+  // Device-space helpers for sharp QR / barcode.
+  const dev = (ux, uy) => [x + ux * sx, y + uy * sy];
+  const drawQR = (text, ux, uy, usize, quiet) => {
+    let mat;
+    try { mat = qrMatrix(text); } catch (e) { mat = null; }
+    ctx.save();
+    ctx.setTransform(base);
+    const [dx, dy] = dev(ux, uy);
+    const size = usize * Math.min(sx, sy);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(dx, dy, size, size);
+    if (mat) {
+      const n = mat.length, total = n + quiet * 2;
+      let mod = size / total;
+      if (mod >= 3) mod = Math.floor(mod);
+      const off = (size - mod * total) / 2;
+      const ox = dx + off + quiet * mod, oy = dy + off + quiet * mod;
+      ctx.fillStyle = '#000';
+      for (let r = 0; r < n; r++) {
+        const y0 = Math.round(oy + r * mod), y1 = Math.round(oy + (r + 1) * mod);
+        for (let c = 0; c < n; c++) {
+          if (!mat[r][c]) continue;
+          const x0 = Math.round(ox + c * mod), x1 = Math.round(ox + (c + 1) * mod);
+          ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+        }
+      }
+    }
+    ctx.restore();
+  };
+  const drawBarcode = (text, ux, uy, uw, uh) => {
+    const bits = barcodeBits(text);
+    if (!bits) return;
+    ctx.save();
+    ctx.setTransform(base);
+    const [dx, dy] = dev(ux, uy);
+    const bw = uw * sx, bh = uh * sy;
+    const total = bits.length + 20; // 10-module quiet zone each side
+    let mod = bw / total;
+    if (mod >= 1.5) mod = Math.floor(mod);
+    const ox = dx + (bw - mod * bits.length) / 2;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(dx, dy, bw, bh);
+    ctx.fillStyle = '#000';
+    const top = Math.round(dy), bottom = Math.round(dy + bh);
+    for (let i = 0; i < bits.length;) {
+      if (bits[i] !== '1') { i++; continue; }
+      let j = i;
+      while (j < bits.length && bits[j] === '1') j++;
+      const x0 = Math.round(ox + i * mod), x1 = Math.round(ox + j * mod);
+      ctx.fillRect(x0, top, x1 - x0, bottom - top);
+      i = j;
+    }
+    ctx.restore();
+  };
+
+  // Logo + college name + event heading inside the charcoal area.
+  const header = (cx) => {
+    const logo = readyImg(p.logo);
+    if (logo) drawImageContain(ctx, logo, cx - 85, 90, 170, 68);
+    else {
+      ctx.strokeStyle = 'rgba(255,255,255,.85)';
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(cx, 124, 31, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#fff';
+      font(ctx, 500, 20, OPEN);
+      ctx.textAlign = 'center';
+      ctx.fillText(ellipsize(ctx, initials(p.name), 54), cx, 131);
+    }
+    const maxW = 250, top = 171, bottom = 262, minTop = 164;
+    let best = null;
+    for (let s = 1; s >= 0.3; s -= 0.02) {
+      const n = fitText(ctx, p.name, { weight: 500, family: OPEN, max: 31.9 * s, min: 31.9 * s, maxW, maxLines: 4, upper: true, wrapAt: 1 });
+      const e = fitText(ctx, p.event, { weight: 400, family: OPEN, max: 21 * s, min: 21 * s, maxW, maxLines: 2, wrapAt: 1 });
+      const okN = n.lines.every((l) => !l.endsWith('…')), okE = e.lines.every((l) => !l.endsWith('…'));
+      const hgt = n.lines.length * n.size * 1.2 + e.lines.length * e.size * 1.2;
+      best = { n, e, hgt };
+      if (okN && okE && hgt <= bottom - minTop) break;
+    }
+    const { n, e } = best;
+    let capTop = top;
+    if (capTop + best.hgt > bottom) capTop = Math.max(minTop, bottom - best.hgt);
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    font(ctx, 500, n.size, OPEN);
+    let yb = capTop + n.size * 0.714;
+    n.lines.forEach((l, i) => { ctx.fillText(l, cx, yb + i * n.size * 1.2); });
+    yb += (n.lines.length ? (n.lines.length - 1) * n.size * 1.2 : -n.size * 0.714) + n.size * 0.2 + e.size * 1.13;
+    font(ctx, 400, e.size, OPEN);
+    e.lines.forEach((l, i) => { ctx.fillText(l, cx, yb + i * e.size * 1.2); });
+  };
+
+  // Signature, seal and label above / below a line.
+  const signature = (o) => {
+    const sig = readyImg(p.signature);
+    if (sig) drawImageContain(ctx, sig, o.sigX, o.sigY, o.sigW, o.sigH, true);
+    const seal = readyImg(p.seal);
+    if (seal) {
+      ctx.save();
+      ctx.globalAlpha = 0.78;
+      drawImageContain(ctx, seal, o.sealX, o.sealY, o.sealS, o.sealS);
+      ctx.restore();
+    }
+    ctx.fillStyle = C.orange;
+    ctx.fillRect(o.lineX1, o.lineY - 1.25, o.lineX2 - o.lineX1, 2.5);
+    const f = fitText(ctx, L.principal, { weight: 400, family: OPEN, max: 27.5, min: 12, maxW: o.lineX2 - o.lineX1, maxLines: 1 });
+    font(ctx, 400, f.size, OPEN);
+    ctx.fillStyle = C.text;
+    ctx.textAlign = 'center';
+    ctx.fillText(f.lines[0] || '', (o.lineX1 + o.lineX2) / 2, o.labelY);
+  };
+
+  if (side === 'front') {
+    // Photo with amber + orange rings.
+    ctx.fillStyle = C.amber; ctx.beginPath(); ctx.arc(184, 275, 119, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = C.orange; ctx.beginPath(); ctx.arc(184, 275, 107, 0, Math.PI * 2); ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(184, 275, 97, 0, Math.PI * 2); ctx.clip();
+    const ph = readyImg(m.photo);
+    if (ph) {
+      const k = Math.max(194 / ph.naturalWidth, 194 / ph.naturalHeight);
+      const dw = ph.naturalWidth * k, dh = ph.naturalHeight * k;
+      ctx.drawImage(ph, 184 - dw / 2, 178 + (194 - dh) * 0.3, dw, dh);
+    } else {
+      ctx.fillStyle = '#E4E4E4'; ctx.fillRect(87, 178, 194, 194);
+      ctx.fillStyle = '#BDBDBD';
+      ctx.beginPath(); ctx.arc(184, 248, 38, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(184, 365, 74, 70, 0, Math.PI, 0); ctx.fill();
+    }
+    ctx.restore();
+
+    header(509);
+
+    // Name + designation block (anchored like the reference, shrinks / wraps).
+    let nb = null;
+    for (let s = 1; s >= 0.4; s -= 0.02) {
+      const nm = fitText(ctx, m.name, { weight: 700, family: MONT, max: 58 * s, min: 58 * s, maxW: 593, maxLines: 2, upper: true, wrapAt: s > 0.62 ? 0 : 1 });
+      const ds = fitText(ctx, m.designation, { weight: 500, family: MONT, max: Math.max(14, 27.5 * Math.min(1, s * 1.1)), min: Math.max(14, 27.5 * Math.min(1, s * 1.1)), maxW: 593, maxLines: 2, upper: true, wrapAt: 1 });
+      const nLines = Math.max(1, nm.lines.length);
+      const firstBase = 489 - (nLines - 1) * nm.size * 1.08;
+      const lastNameBase = 489;
+      const dsBase = lastNameBase + 10 + ds.size * 0.99;
+      const dsLast = dsBase + (ds.lines.length - 1) * ds.size * 1.2;
+      const capTop = firstBase - nm.size * 0.7;
+      nb = { nm, ds, firstBase, dsBase };
+      const clean = nm.lines.every((l) => !l.endsWith('…')) && ds.lines.every((l) => !l.endsWith('…'));
+      if (clean && capTop >= 404 && dsLast <= 548) break;
+    }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = C.amber;
+    font(ctx, 700, nb.nm.size, MONT);
+    nb.nm.lines.forEach((l, i) => ctx.fillText(l, 50, nb.firstBase + i * nb.nm.size * 1.08));
+    ctx.fillStyle = C.text;
+    font(ctx, 500, nb.ds.size, MONT);
+    nb.ds.lines.forEach((l, i) => ctx.fillText(l, 50, nb.dsBase + i * nb.ds.size * 1.2));
+    ctx.fillStyle = C.amber;
+    ctx.fillRect(50, 558, 285, 2.5);
+
+    // Detail rows.
+    [[L.idNo, m.idNo], [L.role, m.role], [L.mobile, m.mobile]].forEach(([label, value], i) => {
+      const base = 636 + i * 61;
+      const lf = fitText(ctx, label, { weight: 600, family: MONT, max: 36, min: 16, maxW: 183, maxLines: 1, upper: true });
+      ctx.fillStyle = C.text;
+      ctx.textAlign = 'left';
+      font(ctx, 600, lf.size, MONT);
+      ctx.fillText(lf.lines[0] || '', 50, base);
+      font(ctx, 600, 34, MONT);
+      ctx.fillText(':', 238, base);
+      const vf = fitText(ctx, value, { weight: 400, family: MONT, max: 35.6, min: 15, maxW: 378, maxLines: 2, wrapAt: 0.62 });
+      font(ctx, 400, vf.size, MONT);
+      const lh = vf.size * 1.12;
+      const first = base - (vf.lines.length - 1) * lh / 2 - (vf.lines.length > 1 ? vf.size * 0.12 : 0);
+      vf.lines.forEach((l, k) => ctx.fillText(l, 265, first + k * lh));
+    });
+
+    // QR left, signature + seal right, barcode under the signature.
+    drawQR(qrText(p, m), 50, 784, 206, 2);
+    signature({ sigX: 300, sigY: 806, sigW: 300, sigH: 92, sealX: 532, sealY: 776, sealS: 112,
+      lineX1: 300, lineX2: 643, lineY: 904, labelY: 934 });
+    drawBarcode(m.idNo, 282, 950, 370, 74);
+  } else {
+    header(182);
+
+    // QR box (light grey border) top right.
+    ctx.fillStyle = C.qrBorder;
+    ctx.fillRect(446, 190, 182, 182);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(451, 195, 172, 172);
+    drawQR(qrText(p, m), 451, 195, 172, 2);
+
+    // Terms heading.
+    ctx.textAlign = 'right';
+    ctx.fillStyle = C.text;
+    const tf = fitText(ctx, L.terms, { weight: 600, family: MONT, max: 36, min: 14, maxW: 573, maxLines: 1 });
+    font(ctx, 600, tf.size, MONT);
+    ctx.fillText(tf.lines[0] || '', 623, 441);
+
+    // Terms list, right aligned at x=578, ring bullets at x=607.
+    const terms = String(p.terms || '').split(/\r?\n/).map((t) => t.trim()).filter(Boolean);
+    let layout = null;
+    for (let s = 1; s >= 0.25; s -= 0.02) {
+      const size = 25 * s, lh = size * 1.23, gap = 35 * s;
+      font(ctx, 400, size, MONT);
+      const items = terms.map((t) => wrap(ctx, t, 528));
+      const hgt = items.reduce((a, it) => a + it.length * lh, 0) + Math.max(0, items.length - 1) * gap;
+      layout = { size, lh, gap, items };
+      if (hgt <= 300) break;
+    }
+    if (layout) {
+      font(ctx, 400, layout.size, MONT);
+      let yTop = 484 - layout.size * 0.06;
+      layout.items.forEach((lines) => {
+        if (yTop > 784) return;
+        ctx.fillStyle = C.soft;
+        ctx.textAlign = 'right';
+        lines.forEach((l, k) => {
+          const b = yTop + layout.size * 0.76 + k * layout.lh;
+          if (b <= 790) ctx.fillText(l, 578, b);
+        });
+        const mid = yTop + (lines.length * layout.lh) / 2 - layout.lh * 0.12;
+        const r = layout.size * 0.69;
+        ctx.strokeStyle = C.amber;
+        ctx.lineWidth = layout.size * 0.185;
+        ctx.beginPath(); ctx.arc(607, mid, r - ctx.lineWidth / 2, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = C.amber;
+        ctx.beginPath(); ctx.arc(607, mid, layout.size * 0.29, 0, Math.PI * 2); ctx.fill();
+        yTop += lines.length * layout.lh + layout.gap;
+      });
+    }
+
+    // Dates (centred block).
+    const dateLine = (label, value, baseY, sep) => {
+      for (let s = 33.5; s >= 12; s -= 0.5) {
+        font(ctx, 600, s, MONT);
+        const a = label + sep;
+        const wa = ctx.measureText(a).width;
+        font(ctx, 400, s, MONT);
+        const wb = ctx.measureText(value).width;
+        if (wa + wb <= 600 || s <= 12) {
+          const x0 = 346.5 - (wa + wb) / 2;
+          ctx.textAlign = 'left';
+          ctx.fillStyle = C.text;
+          font(ctx, 600, s, MONT);
+          ctx.fillText(a, x0, baseY);
+          font(ctx, 400, s, MONT);
+          ctx.fillText(ellipsize(ctx, value, 600), x0 + wa, baseY);
+          return;
+        }
+      }
+    };
+    dateLine(L.issue, fmtDate(p.issueDate), 826, '  :  ');
+    dateLine(L.expiry, fmtDate(p.expiryDate), 882, ' : ');
+
+    signature({ sigX: 330, sigY: 892, sigW: 280, sigH: 74, sealX: 547, sealY: 888, sealS: 90,
+      lineX1: 310, lineX2: 627, lineY: 970, labelY: 1003 });
+  }
+  ctx.restore();
+}
+
+/* =====================================================================
+   Card sizes and sheet layouts (mm)
+   ===================================================================== */
+
+function sizeDef(p) { return SIZES.find((s) => s.id === (p.cardSize || DEFAULT_SIZE)) || SIZES[0]; }
+
+function cardMM(p) {
+  const d = sizeDef(p);
+  let w, h;
+  if (d.exact) { w = d.w; h = d.h; }
+  else if (d.fitRows) {
+    h = (A4.h - 2 * SHEET.margin - (d.fitRows - 1) * SHEET.gapRow) / d.fitRows;
+    w = h * RATIO;
+  } else if (d.id === 'custom') {
+    h = Math.min(140, Math.max(50, +p.customH || 90));
+    w = h * RATIO;
+  } else if (d.w / d.h > RATIO) { h = d.h; w = h * RATIO; } else { w = d.w; h = w / RATIO; }
+  return { w: Math.floor(w * 100) / 100, h: Math.floor(h * 100) / 100 };
+}
+
+function sheetGrid(p) {
+  const { w, h } = cardMM(p);
+  const rows = Math.max(1, Math.floor((A4.h - 2 * SHEET.margin + SHEET.gapRow) / (h + SHEET.gapRow) + 1e-6));
+  const pairW = 2 * w + SHEET.gapFB;
+  const pairs = Math.max(1, Math.floor((A4.w - 2 * SHEET.margin + SHEET.gapPair) / (pairW + SHEET.gapPair) + 1e-6));
+  return { w, h, rows, pairs, per: rows * pairs, pairW };
+}
+
+// Adds crop marks for a card at (x, y) sized w x h, all outside the card.
+function cropMarks(marks, x, y, w, h) {
+  const o = SHEET.markOff, l = SHEET.markLen;
+  [[x, y, -1, -1], [x + w, y, 1, -1], [x, y + h, -1, 1], [x + w, y + h, 1, 1]].forEach(([cx, cy, dx, dy]) => {
+    marks.push([cx + dx * o, cy, cx + dx * (o + l), cy]);
+    marks.push([cx, cy + dy * o, cx, cy + dy * (o + l)]);
+  });
+}
+
+// One A4 page holding `members` (already sliced to this page).
+function a4Layout(p, members) {
+  const g = sheetGrid(p);
+  const blockW = g.pairs * g.pairW + (g.pairs - 1) * SHEET.gapPair;
+  const blockH = g.rows * g.h + (g.rows - 1) * SHEET.gapRow;
+  const mx = (A4.w - blockW) / 2, my = (A4.h - blockH) / 2;
+  const slots = [], marks = [], dashes = [], scissors = [];
+  members.forEach((m, i) => {
+    const r = Math.floor(i / g.pairs), c = i % g.pairs;
+    const fx = mx + c * (g.pairW + SHEET.gapPair), yy = my + r * (g.h + SHEET.gapRow);
+    slots.push({ member: m, side: 'front', x: fx, y: yy });
+    slots.push({ member: m, side: 'back', x: fx + g.w + SHEET.gapFB, y: yy });
+    cropMarks(marks, fx, yy, g.w, g.h);
+    cropMarks(marks, fx + g.w + SHEET.gapFB, yy, g.w, g.h);
+  });
+  if (members.length) {
+    const usedRows = Math.ceil(members.length / g.pairs);
+    const usedPairs = Math.min(g.pairs, members.length);
+    const usedW = usedPairs * g.pairW + (usedPairs - 1) * SHEET.gapPair;
+    const bottom = my + usedRows * g.h + (usedRows - 1) * SHEET.gapRow;
+    const x0 = Math.max(9, mx - 9), x1 = Math.min(A4.w - 2, mx + usedW + 6);
+    const y0 = Math.max(9, my - 9), y1 = Math.min(A4.h - 2, bottom + 6);
+    const hy = [my - SHEET.cutOut];
+    for (let r = 1; r < usedRows; r++) hy.push(my + r * (g.h + SHEET.gapRow) - SHEET.gapRow / 2);
+    hy.push(bottom + SHEET.cutOut);
+    hy.forEach((yv) => { dashes.push([x0, yv, x1, yv]); scissors.push({ x: x0 - 7, y: yv, vertical: false }); });
+    const vx = [mx - SHEET.cutOut];
+    for (let c = 0; c < usedPairs; c++) {
+      const fx = mx + c * (g.pairW + SHEET.gapPair);
+      vx.push(fx + g.w + SHEET.gapFB / 2);
+      vx.push(c < usedPairs - 1 ? fx + g.pairW + SHEET.gapPair / 2 : fx + g.pairW + SHEET.cutOut);
+    }
+    vx.forEach((xv) => { dashes.push([xv, y0, xv, y1]); scissors.push({ x: xv, y: y0 - 7, vertical: true }); });
+  }
+  return { pageW: A4.w, pageH: A4.h, cardW: g.w, cardH: g.h, slots, marks, dashes, scissors };
+}
+
+// Single card file: front and back side by side at real size.
+function pairLayout(p, m) {
+  const { w, h } = cardMM(p);
+  const pad = 5, gap = 8;
+  const marks = [];
+  cropMarks(marks, pad, pad, w, h);
+  cropMarks(marks, pad + w + gap, pad, w, h);
+  return {
+    pageW: pad * 2 + gap + w * 2, pageH: pad * 2 + h, cardW: w, cardH: h, marks, dashes: [], scissors: [],
+    slots: [{ member: m, side: 'front', x: pad, y: pad }, { member: m, side: 'back', x: pad + w + gap, y: pad }],
+  };
+}
+
+// Draws any layout at pxPerMm. Cards use drawCard; marks are outside the cards.
+function drawLayout(ctx, L, p, pxPerMm) {
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, Math.round(L.pageW * pxPerMm), Math.round(L.pageH * pxPerMm));
+  L.slots.forEach((s) => {
+    const x = Math.round(s.x * pxPerMm), y = Math.round(s.y * pxPerMm);
+    const x2 = Math.round((s.x + L.cardW) * pxPerMm), y2 = Math.round((s.y + L.cardH) * pxPerMm);
+    drawCard(ctx, { profile: p, member: s.member, side: s.side, x, y, w: x2 - x, h: y2 - y });
+  });
+  const px = (v) => v * pxPerMm;
+  ctx.save();
+  ctx.lineCap = 'butt';
+  ctx.strokeStyle = '#8a8a8a';
+  ctx.lineWidth = Math.max(1, px(0.25));
+  ctx.setLineDash([px(2), px(1.5)]);
+  L.dashes.forEach(([a, b, c, d]) => { ctx.beginPath(); ctx.moveTo(px(a), px(b)); ctx.lineTo(px(c), px(d)); ctx.stroke(); });
+  ctx.setLineDash([]);
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = Math.max(1, px(0.3));
+  ctx.lineCap = 'round';
+  L.scissors.forEach((s) => {
+    // Scissors 6 mm long, pointing along the cut line.
+    const t = (u, v) => (s.vertical ? [px(s.x - v), px(s.y + u)] : [px(s.x + u), px(s.y + v)]);
+    [[0.9, -0.95], [0.9, 0.95]].forEach(([u, v]) => { const [cx, cy] = t(u, v); ctx.beginPath(); ctx.arc(cx, cy, px(0.75), 0, Math.PI * 2); ctx.stroke(); });
+    [[1.55, -0.55, 6, 0.95], [1.55, 0.55, 6, -0.95]].forEach(([u1, v1, u2, v2]) => {
+      const [a, b] = t(u1, v1), [c, d] = t(u2, v2);
+      ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(c, d); ctx.stroke();
+    });
+  });
+  ctx.lineCap = 'butt';
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = Math.max(1, px(0.2));
+  L.marks.forEach(([a, b, c, d]) => { ctx.beginPath(); ctx.moveTo(px(a), px(b)); ctx.lineTo(px(c), px(d)); ctx.stroke(); });
+  ctx.restore();
+}
+
+function layoutCanvas(L, p, dpi) {
+  const pxPerMm = dpi / 25.4;
+  const c = document.createElement('canvas');
+  c.width = Math.round(L.pageW * pxPerMm);
+  c.height = Math.round(L.pageH * pxPerMm);
+  drawLayout(c.getContext('2d'), L, p, pxPerMm);
+  return c;
+}
+
+/* =====================================================================
+   Files: JPG (with real DPI), PDF, print
+   ===================================================================== */
+
+function saveBlob(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+async function canvasJpeg(canvas, dpi) {
+  const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.95));
+  const b = new Uint8Array(await blob.arrayBuffer());
+  // JFIF density, so the image prints at its real size.
+  if (b[2] === 0xff && b[3] === 0xe0 && String.fromCharCode(b[6], b[7], b[8], b[9]) === 'JFIF') {
+    b[13] = 1; b[14] = dpi >> 8; b[15] = dpi & 255; b[16] = dpi >> 8; b[17] = dpi & 255;
+  }
+  return new Blob([b], { type: 'image/jpeg' });
+}
+
+const fileSafe = (s) => String(s || '').trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_') || 'card';
+
+async function downloadCard(p, m, fmt) {
+  await ensureImages(p, [m]);
+  const L = pairLayout(p, m);
+  const dpi = 600;
+  const c = layoutCanvas(L, p, dpi);
+  const name = `${fileSafe(m.name)}_${fileSafe(m.idNo)}`;
+  if (fmt === 'pdf') {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: L.pageW > L.pageH ? 'l' : 'p', unit: 'mm', format: [L.pageW, L.pageH], compress: true });
+    doc.addImage(c.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, L.pageW, L.pageH, undefined, 'NONE');
+    doc.setProperties({ title: name });
+    doc.save(name + '.pdf');
+  } else {
+    saveBlob(await canvasJpeg(c, dpi), name + '.jpg');
+  }
+  toast(`Downloaded ${name}.${fmt}`);
+}
+
+function pageMembers(p, members, pageIndex) {
+  const per = sheetGrid(p).per;
+  return members.slice(pageIndex * per, pageIndex * per + per);
+}
+
+async function pageCanvas(p, members, i) {
+  const ms = pageMembers(p, members, i);
+  await ensureImages(p, ms);
+  return layoutCanvas(a4Layout(p, ms), p, 300);
+}
+
+async function downloadPages(p, members, pages, fmt) {
+  const base = `IDCards_${fileSafe(p.name)}`;
+  if (fmt === 'jpg') {
+    const c = await pageCanvas(p, members, pages[0]);
+    saveBlob(await canvasJpeg(c, 300), `${base}_Page${pages[0] + 1}.jpg`);
+    toast(`Downloaded page ${pages[0] + 1} (JPG, 300 DPI)`);
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+  for (let k = 0; k < pages.length; k++) {
+    busyText(`Rendering page ${k + 1} of ${pages.length}…`);
+    const c = await pageCanvas(p, members, pages[k]);
+    if (k > 0) doc.addPage('a4', 'p');
+    doc.addImage(c.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, A4.w, A4.h, undefined, 'NONE');
+  }
+  const name = pages.length === 1 ? `${base}_Page${pages[0] + 1}` : `${base}_AllPages`;
+  doc.setProperties({ title: name });
+  doc.save(name + '.pdf');
+  toast(`Downloaded ${name}.pdf`);
+}
+
+// Prints images at exact physical size through a hidden frame.
+function printImages(urls, wMM, hMM) {
+  const old = document.getElementById('print-frame');
+  if (old) old.remove();
+  const f = document.createElement('iframe');
+  f.id = 'print-frame';
+  f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  const d = f.contentDocument;
+  d.open();
+  d.write(`<!doctype html><html><head><title>Print</title><style>@page{size:${wMM}mm ${hMM}mm;margin:0}html,body{margin:0;padding:0}` +
+    `img{display:block;width:${wMM}mm;height:${hMM}mm;page-break-after:always;break-after:page}img:last-child{page-break-after:auto;break-after:auto}</style></head><body>` +
+    urls.map((u) => `<img src="${u}">`).join('') + '</body></html>');
+  d.close();
+  const imgs = Array.from(d.images);
+  Promise.all(imgs.map((im) => (im.complete ? 1 : new Promise((r) => { im.onload = im.onerror = r; })))).then(() => {
+    f.contentWindow.focus();
+    f.contentWindow.print();
+  });
+}
+
+async function printPages(p, members, pages) {
+  const urls = [];
+  for (let k = 0; k < pages.length; k++) {
+    busyText(`Preparing page ${k + 1} of ${pages.length}…`);
+    urls.push((await pageCanvas(p, members, pages[k])).toDataURL('image/jpeg', 0.95));
+  }
+  printImages(urls, A4.w, A4.h);
+  toast('Print dialog opened. Choose A4, scale 100% / "Actual size", margins "None".', 'info');
+}
+
+/* =====================================================================
+   State
+   ===================================================================== */
+
+const S = { profiles: [], members: [], pid: null, editingId: null, selectedId: null, formPhoto: '', search: '', importRows: [] };
+const prof = () => S.profiles.find((p) => p.id === S.pid) || null;
+const sortMembers = () => S.members.sort((a, b) => (a.order - b.order) || (a.createdAt - b.createdAt));
+
+function newProfile(extra) {
+  return Object.assign({
+    id: uid(), name: '', event: DEFAULT_EVENT, terms: DEFAULT_TERMS,
+    issueDate: new Date().toISOString().slice(0, 10), expiryDate: '',
+    logo: '', signature: '', seal: '', idPrefix: DEFAULT_PREFIX, cardSize: DEFAULT_SIZE, customH: 90,
+    labels: Object.assign({}, DEFAULT_LABELS), createdAt: Date.now(),
+  }, extra || {});
+}
+
+function nextIds(count, extraTaken) {
+  const p = prof();
+  const prefix = (p && p.idPrefix) || '';
+  const taken = new Set(S.members.map((m) => String(m.idNo).toLowerCase()).concat((extraTaken || []).map((x) => String(x).toLowerCase())));
+  const re = new RegExp('^' + prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\d+)$', 'i');
+  // continue after the highest existing member ID; skip any ID already taken
+  let n = 0;
+  S.members.forEach((m) => { const mm = re.exec(String(m.idNo)); if (mm) n = Math.max(n, parseInt(mm[1], 10)); });
+  const out = [];
+  while (out.length < count) {
+    n += 1;
+    const id = prefix + String(n).padStart(3, '0');
+    if (!taken.has(id.toLowerCase())) out.push(id);
+  }
+  return out;
+}
+const nextId = () => nextIds(1)[0];
+
+/* =====================================================================
+   Rendering: previews and sheets
+   ===================================================================== */
+
+function sampleMember() {
+  const p = prof();
+  return { id: 'sample', name: 'Name Here', designation: 'Designation', role: 'Role', mobile: '9876543210', idNo: ((p && p.idPrefix) || '') + '001', photo: '' };
+}
+
+function paintCard(canvas, p, m, side) {
+  const { w, h } = cardMM(p);
+  const cssW = canvas.clientWidth || canvas.parentElement.clientWidth || 200;
+  const dpr = Math.min(3, window.devicePixelRatio || 1);
+  const W = Math.round(cssW * dpr), H = Math.round(W * h / w);
+  if (canvas.width !== W) canvas.width = W;
+  if (canvas.height !== H) canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  drawCard(ctx, { profile: p, member: m, side, x: 0, y: 0, w: W, h: H });
+}
+
+function formMember() {
+  const f = $('#member-form').elements;
+  return {
+    id: S.editingId || 'draft', name: f.name.value.trim(), designation: f.designation.value.trim(),
+    role: f.role.value.trim(), mobile: f.mobile.value.trim(), idNo: f.idNo.value.trim(), photo: S.formPhoto,
+  };
+}
+const formHasContent = () => { const m = formMember(); return !!(m.name || m.designation || m.role || m.mobile || m.photo); };
+
+async function renderPreviews() {
+  const p = prof();
+  if (!p) return;
+  const listed = S.members.find((m) => m.id === S.selectedId) || S.members[0];
+  const pm = listed || sampleMember();
+  const mm = (S.editingId || formHasContent()) ? formMember() : (listed || formMember());
+  await ensureImages(p, [pm, mm]);
+  paintCard($('#pp-front'), p, pm, 'front');
+  paintCard($('#pp-back'), p, pm, 'back');
+  $('#profile-preview-who').textContent = listed ? `${pm.name} · ${pm.idNo}` : 'Sample content';
+  paintCard($('#mp-front'), p, mm, 'front');
+  paintCard($('#mp-back'), p, mm, 'back');
+  $('#member-preview-who').textContent = (S.editingId ? 'Editing: ' : (formHasContent() || !listed ? 'From the form' : '')) + (mm.name && !formHasContent() && !S.editingId ? `${mm.name} · ${mm.idNo}` : '');
+}
+
+let previewQueued = false;
+function queuePreviews() {
+  if (previewQueued) return;
+  previewQueued = true;
+  requestAnimationFrame(() => { previewQueued = false; renderPreviews(); });
+}
+
+async function renderSheets() {
+  const p = prof();
+  const box = $('#pages');
+  if (!p) { box.innerHTML = ''; return; }
+  const g = sheetGrid(p);
+  const n = S.members.length;
+  const pages = n ? Math.ceil(n / g.per) : 0;
+  $('#sheet-info').innerHTML = n
+    ? `${n} member(s) → <b>${pages} page(s)</b>. Card size <b>${round1(g.w)} × ${round1(g.h)} mm</b> (real size, never scaled), ` +
+      `<b>${g.per} member(s) per A4</b> (${g.rows} row(s) × ${g.pairs} front+back pair(s)). Print at 100% / "Actual size".`
+    : 'Add members to see the A4 sheets here.';
+  $('#btn-pdf-all').disabled = !n;
+  $('#btn-print-all').disabled = !n;
+  // keep existing page elements when the count matches, to avoid flicker
+  while (box.children.length > pages) box.lastElementChild.remove();
+  while (box.children.length < pages) {
+    const i = box.children.length;
+    const el = document.createElement('div');
+    el.className = 'page';
+    el.innerHTML = `<div class="page-bar"><b>Page ${i + 1}</b><div class="row">` +
+      `<button type="button" class="btn small" data-print="${i}">Print</button>` +
+      `<span class="dl"><select aria-label="File type"><option value="pdf">PDF</option><option value="jpg">JPG</option></select>` +
+      `<button type="button" class="btn small primary" data-page="${i}">Download in A4</button></span></div></div><canvas></canvas>`;
+    box.appendChild(el);
+  }
+  await ensureImages(p, S.members);
+  Array.from(box.children).forEach((el, i) => {
+    const canvas = el.querySelector('canvas');
+    const cssW = canvas.clientWidth || 320;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = Math.round(cssW * dpr), H = Math.round(W * A4.h / A4.w);
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    drawLayout(ctx, a4Layout(p, pageMembers(p, S.members, i)), p, W / A4.w);
+  });
+}
+const renderSheetsSoon = debounce(renderSheets, 250);
+
+function refreshAll() {
+  queuePreviews();
+  renderSheetsSoon();
+}
+
+/* =====================================================================
+   College selector + profile form
+   ===================================================================== */
+
+function renderSelector() {
+  const sel = $('#college-select');
+  sel.innerHTML = S.profiles.map((p) => `<option value="${p.id}"${p.id === S.pid ? ' selected' : ''}>${esc(p.name || 'Untitled college')}${p.isExample ? ' (example)' : ''}</option>`).join('');
+  sel.disabled = !S.profiles.length;
+  const has = !!prof();
+  $('#no-college').hidden = has;
+  $('#sec-profile').hidden = !has;
+  $('#sec-members').hidden = !has;
+  $('#sec-sheets').hidden = !has;
+  $('#example-banner').hidden = !S.profiles.some((p) => p.isExample);
+}
+
+function setThumb(key, src) {
+  const t = $(`[data-thumb="${key}"]`);
+  t.innerHTML = src ? `<img src="${src}" alt="">` : 'None';
+}
+
+function sizeInfo(p) {
+  const d = sizeDef(p), { w, h } = cardMM(p), g = sheetGrid(p);
+  $('#custom-size-field').hidden = d.id !== 'custom';
+  $('#size-info').innerHTML =
+    `Card: <b>${round1(w)} × ${round1(h)} mm</b> · <b>${g.per} member(s) per A4 page</b> (front + back, real size).<br>` +
+    `Cover / pouch to buy: inner size at least <b>${Math.ceil(w + 3)} × ${Math.ceil(h + 3)} mm</b>, e.g. ${esc(d.cover)}.`;
+}
+
+function fillProfileForm() {
+  const p = prof();
+  if (!p) return;
+  const f = $('#profile-form').elements;
+  ['name', 'event', 'issueDate', 'expiryDate', 'idPrefix', 'terms', 'customH'].forEach((k) => { f[k].value = p[k] == null ? '' : p[k]; });
+  f.cardSize.value = p.cardSize || DEFAULT_SIZE;
+  ['logo', 'signature', 'seal'].forEach((k) => setThumb(k, p[k]));
+  const L = Object.assign({}, DEFAULT_LABELS, p.labels || {});
+  $('#labels-grid').innerHTML = Object.keys(LABEL_NAMES).map((k) =>
+    `<label class="field"><span class="label">${LABEL_NAMES[k]}</span><input type="text" data-label="${k}" value="${esc(L[k])}"></label>`).join('');
+  $('#id-example').textContent = (p.idPrefix || '') + '001';
+  sizeInfo(p);
+}
+
+const saveProfile = debounce(async (p) => {
+  await DB.put('profiles', p);
+  $('#profile-saved').textContent = 'Saved ✓';
+  setTimeout(() => { $('#profile-saved').textContent = 'Changes save automatically'; }, 1400);
+}, 350);
+
+function profileChanged(p) {
+  p.updatedAt = Date.now();
+  saveProfile(p);
+  refreshAll();
+}
+
+async function selectProfile(id) {
+  S.pid = id;
+  S.selectedId = null;
+  S.importRows = [];
+  if (id) await DB.setMeta('current', id);
+  const all = await DB.all('members');
+  S.members = all.filter((m) => m.profileId === id);
+  sortMembers();
+  renderSelector();
+  fillProfileForm();
+  resetMemberForm();
+  renderImport();
+  $('#bulk-report').innerHTML = '';
+  renderMembers();
+  refreshAll();
+}
+
+function bindProfile() {
+  $('#size-select').innerHTML = SIZES.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  $('#college-select').addEventListener('change', (e) => selectProfile(e.target.value));
+  $('#btn-new-college').addEventListener('click', async () => {
+    const p = newProfile();
+    await DB.put('profiles', p);
+    S.profiles.push(p);
+    await selectProfile(p.id);
+    $('#profile-form').elements.name.focus();
+    toast('New college created. Fill in its details.');
+  });
+
+  const f = $('#profile-form');
+  f.addEventListener('input', (e) => {
+    const p = prof();
+    if (!p) return;
+    const t = e.target;
+    if (t.dataset.label) {
+      p.labels = Object.assign({}, DEFAULT_LABELS, p.labels || {}, { [t.dataset.label]: t.value });
+    } else if (t.name && t.type !== 'file') {
+      p[t.name] = t.name === 'customH' ? (+t.value || 90) : t.value;
+      if (t.name === 'idPrefix') {
+        $('#id-example').textContent = t.value + '001';
+        if (!S.editingId) $('#member-form').elements.idNo.value = nextId();
+      }
+      if (t.name === 'name') renderSelector();
+      if (t.name === 'cardSize' || t.name === 'customH') sizeInfo(p);
+    } else return;
+    profileChanged(p);
+  });
+  f.addEventListener('change', async (e) => {
+    const t = e.target;
+    const p = prof();
+    if (t.name === 'cardSize') { p.cardSize = t.value; sizeInfo(p); profileChanged(p); return; }
+    if (!t.dataset.upload || !t.files[0]) return;
+    const key = t.dataset.upload;
+    try {
+      p[key] = await artFromFile(t.files[0]);
+      setThumb(key, p[key]);
+      profileChanged(p);
+      toast('Image updated');
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+    t.value = '';
+  });
+  f.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-remove]');
+    if (!b) return;
+    const p = prof();
+    p[b.dataset.remove] = '';
+    setThumb(b.dataset.remove, '');
+    profileChanged(p);
+  });
+  $('#btn-delete-college').addEventListener('click', (e) => confirmClick(e.currentTarget, async () => {
+    const p = prof();
+    await DB.delProfile(p.id, S.members.map((m) => m.id));
+    S.profiles = S.profiles.filter((x) => x.id !== p.id);
+    await selectProfile(S.profiles[0] ? S.profiles[0].id : null);
+    toast('College deleted');
+  }));
+  $('#btn-clear-example').addEventListener('click', (e) => confirmClick(e.currentTarget, async () => {
+    const all = await DB.all('members');
+    for (const p of S.profiles.filter((x) => x.isExample)) {
+      await DB.delProfile(p.id, all.filter((m) => m.profileId === p.id).map((m) => m.id));
+    }
+    S.profiles = S.profiles.filter((x) => !x.isExample);
+    const keep = S.profiles.find((x) => x.id === S.pid);
+    await selectProfile(keep ? keep.id : (S.profiles[0] ? S.profiles[0].id : null));
+    toast('Example data cleared');
+  }));
+}
+
+/* =====================================================================
+   Members: form, list
+   ===================================================================== */
+
+function setFormPhoto(src) {
+  S.formPhoto = src || '';
+  $('#mf-photo').innerHTML = src ? `<img src="${src}" alt="">` : 'No photo';
+}
+
+function showMsg(text, isErr) {
+  const el = $('#mf-msg');
+  el.textContent = text;
+  el.className = 'form-msg' + (isErr ? ' err' : '');
+  el.hidden = !text;
+}
+
+function resetMemberForm() {
+  const f = $('#member-form');
+  f.reset();
+  S.editingId = null;
+  setFormPhoto('');
+  $('#mf-title').textContent = 'Add member';
+  $('#mf-submit').textContent = 'Add member';
+  $('#mf-cancel').hidden = true;
+  showMsg('');
+  if (prof()) f.elements.idNo.value = nextId();
+}
+
+function editMember(id) {
+  const m = S.members.find((x) => x.id === id);
+  if (!m) return;
+  const f = $('#member-form').elements;
+  S.editingId = id;
+  S.selectedId = id;
+  ['name', 'designation', 'role', 'mobile', 'idNo'].forEach((k) => { f[k].value = m[k] || ''; });
+  setFormPhoto(m.photo);
+  $('#mf-title').textContent = 'Edit member';
+  $('#mf-submit').textContent = 'Save changes';
+  $('#mf-cancel').hidden = false;
+  showMsg('');
+  renderMembers();
+  queuePreviews();
+  $('#member-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function submitMember(e) {
+  e.preventDefault();
+  const v = formMember();
+  const errs = [];
+  if (!v.name) errs.push('Name is required');
+  const mob = normMobile(v.mobile);
+  if (!mob) errs.push('Mobile number must be 10 digits');
+  if (!v.idNo) v.idNo = nextId();
+  if (S.members.some((m) => m.id !== S.editingId && m.idNo.toLowerCase() === v.idNo.toLowerCase())) errs.push(`ID ${v.idNo} is already used`);
+  if (errs.length) { showMsg(errs.join(' · '), true); return; }
+  let m;
+  if (S.editingId) {
+    m = S.members.find((x) => x.id === S.editingId);
+    Object.assign(m, { name: v.name, designation: v.designation, role: v.role, mobile: mob, idNo: v.idNo, photo: S.formPhoto, updatedAt: Date.now() });
+  } else {
+    const order = S.members.reduce((a, x) => Math.max(a, x.order || 0), 0) + 1;
+    m = { id: uid(), profileId: S.pid, order, createdAt: Date.now(), name: v.name, designation: v.designation, role: v.role, mobile: mob, idNo: v.idNo, photo: S.formPhoto, photoName: '' };
+    S.members.push(m);
+  }
+  await DB.put('members', m);
+  const edited = !!S.editingId;
+  S.selectedId = m.id;
+  resetMemberForm();
+  renderMembers();
+  refreshAll();
+  toast(edited ? `Saved ${m.name}` : `Added ${m.name} (${m.idNo})`);
+}
+
+function renderMembers() {
+  const q = S.search.trim().toLowerCase();
+  const rows = S.members.map((m, i) => ({ m, n: i + 1 }))
+    .filter(({ m }) => !q || [m.name, m.designation, m.role, m.mobile, m.idNo].some((v) => String(v || '').toLowerCase().includes(q)));
+  $('#member-rows').innerHTML = rows.map(({ m, n }) =>
+    `<tr data-id="${m.id}"${m.id === S.selectedId ? ' class="sel"' : ''}>` +
+    `<td class="c-num mono">${n}</td>` +
+    `<td class="c-photo">${m.photo ? `<img class="avatar" src="${m.photo}" alt="">` : '<span class="avatar"></span>'}</td>` +
+    `<td class="c-name">${esc(m.name)}</td><td data-l="Designation">${esc(m.designation)}</td><td data-l="Role">${esc(m.role)}</td>` +
+    `<td data-l="Mobile" class="mono">${esc(m.mobile)}</td><td data-l="ID" class="mono">${esc(m.idNo)}</td>` +
+    '<td class="c-act"><div class="actions">' +
+    '<button type="button" class="btn small" data-act="preview">Preview</button>' +
+    '<button type="button" class="btn small" data-act="edit">Edit</button>' +
+    '<button type="button" class="btn small danger" data-act="delete">Delete</button>' +
+    '<span class="dl"><select aria-label="File type"><option value="jpg">JPG</option><option value="pdf">PDF</option></select>' +
+    '<button type="button" class="btn small primary" data-act="download">Download ID Card</button></span>' +
+    '</div></td></tr>').join('');
+  const n = S.members.length;
+  $('#member-count').textContent = `${n} member${n === 1 ? '' : 's'}` + (q ? ` · ${rows.length} shown` : '');
+  const empty = $('#member-empty');
+  empty.hidden = rows.length > 0;
+  empty.textContent = n ? 'No member matches your search.' : 'No members yet. Add one above or import from Excel.';
+}
+
+function bindMembers() {
+  const f = $('#member-form');
+  f.addEventListener('submit', submitMember);
+  f.addEventListener('input', queuePreviews);
+  $('#mf-cancel').addEventListener('click', () => { resetMemberForm(); queuePreviews(); });
+  $('#mf-photo-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try { setFormPhoto(await photoFromFile(file)); } catch (err) { toast(err.message, 'error'); }
+    queuePreviews();
+  });
+  $('#mf-photo-remove').addEventListener('click', () => { setFormPhoto(''); queuePreviews(); });
+  $('#search').addEventListener('input', (e) => { S.search = e.target.value; renderMembers(); });
+  $('#member-rows').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const id = b.closest('tr').dataset.id;
+    const m = S.members.find((x) => x.id === id);
+    const act = b.dataset.act;
+    if (act === 'edit') editMember(id);
+    else if (act === 'preview') {
+      S.selectedId = id;
+      renderMembers();
+      queuePreviews();
+      if (window.innerWidth <= 960) $('#mp-front').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (act === 'delete') {
+      confirmClick(b, async () => {
+        await DB.del('members', id);
+        S.members = S.members.filter((x) => x.id !== id);
+        if (S.editingId === id) resetMemberForm();
+        if (S.selectedId === id) S.selectedId = null;
+        renderMembers();
+        refreshAll();
+        toast(`Deleted ${m.name}`);
+      });
+    } else if (act === 'download') {
+      const fmt = b.parentElement.querySelector('select').value;
+      withBusy(`Preparing ${fmt.toUpperCase()} for ${m.name}…`, () => downloadCard(prof(), m, fmt));
+    }
+  });
+}
+
+/* =====================================================================
+   Excel import
+   ===================================================================== */
+
+const COLS = {
+  name: ['name', 'fullname', 'membername', 'studentname'],
+  designation: ['designation', 'post', 'position'],
+  role: ['role'],
+  mobile: ['mobile', 'mobileno', 'mobilenumber', 'phone', 'phoneno', 'phonenumber', 'contact', 'contactno'],
+  photoName: ['photofilename', 'photofile', 'photoname', 'photo', 'image', 'filename', 'imagefilename'],
+  idNo: ['idno', 'id', 'idnumber', 'cardno', 'idcardno'],
+};
+const headKey = (s) => String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]/g, '');
+
+function downloadSample() {
+  const rows = [
+    ['Name', 'Designation', 'Role', 'Mobile', 'Photo File Name', 'ID No'],
+    ['Rahul Kumar Sahoo', 'President', 'Candidate', '9876543210', 'rahul.jpg', ''],
+    ['Priya Das', 'Vice President', 'Candidate', '9437012345', 'priya.jpg', ''],
+    ['Amit Mohanty', 'Polling Agent', 'Volunteer', '7008012345', 'amit.png', 'SUE26-050'],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 24 }, { wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 18 }, { wch: 12 }];
+  for (let r = 1; r < rows.length; r++) ws[XLSX.utils.encode_cell({ r, c: 3 })].t = 's';
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Members');
+  XLSX.writeFile(wb, 'sample_members.xlsx');
+  toast('Sample Excel downloaded');
+}
+
+const cell = (v) => (v == null ? '' : typeof v === 'number' ? String(v) : String(v).trim());
+
+async function readSheet(file) {
+  const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: true, blankrows: false });
+  if (!raw.length) throw new Error('The file is empty');
+  const head = raw[0].map(headKey);
+  const idx = {};
+  Object.entries(COLS).forEach(([k, names]) => { idx[k] = head.findIndex((h) => names.includes(h)); });
+  if (idx.name < 0) throw new Error('No "Name" column found. Use "Download sample Excel" for the right columns.');
+  return raw.slice(1).map((r, i) => {
+    const o = { rowNo: i + 2 };
+    Object.keys(COLS).forEach((k) => { o[k] = idx[k] >= 0 ? cell(r[idx[k]]) : ''; });
+    return o;
+  }).filter((o) => o.name || o.designation || o.role || o.mobile || o.photoName || o.idNo);
+}
+
+function validateImport() {
+  const rows = S.importRows;
+  const existing = new Set(S.members.map((m) => m.idNo.toLowerCase()));
+  const seen = new Map();
+  rows.forEach((r) => { if (r.idNo) seen.set(r.idNo.toLowerCase(), (seen.get(r.idNo.toLowerCase()) || 0) + 1); });
+  rows.forEach((r) => {
+    r.errors = [];
+    if (!r.name) r.errors.push('Missing name');
+    r.mobileOk = normMobile(r.mobile);
+    if (!r.mobileOk) r.errors.push(r.mobile ? `Mobile "${r.mobile}" is not 10 digits` : 'Missing mobile');
+    if (r.idNo) {
+      const k = r.idNo.toLowerCase();
+      if (existing.has(k)) r.errors.push(`Duplicate ID ${r.idNo} (already in the list)`);
+      else if (seen.get(k) > 1) r.errors.push(`Duplicate ID ${r.idNo} (repeated in the file)`);
+    }
+  });
+  const fileIds = rows.filter((r) => r.idNo).map((r) => r.idNo);
+  const autos = nextIds(rows.filter((r) => !r.errors.length && !r.idNo).length, fileIds);
+  let k = 0;
+  rows.forEach((r) => { r.finalId = r.errors.length ? '' : (r.idNo || autos[k++]); });
+}
+
+function renderImport() {
+  const box = $('#import-preview');
+  const rows = S.importRows;
+  if (!rows.length) { box.innerHTML = ''; return; }
+  validateImport();
+  const ok = rows.filter((r) => !r.errors.length);
+  const bad = rows.length - ok.length;
+  box.innerHTML =
+    `<div class="row" style="margin:14px 0 8px"><span class="pill ok">${ok.length} ready</span>` +
+    (bad ? `<span class="pill bad">${bad} with problems (will be skipped)</span>` : '') +
+    `<button type="button" class="btn primary small" id="btn-do-import"${ok.length ? '' : ' disabled'}>Import ${ok.length} member(s)</button>` +
+    '<button type="button" class="btn ghost small" id="btn-cancel-import">Cancel</button></div>' +
+    '<div class="table-wrap"><table><thead><tr><th>Row</th><th>Name</th><th>Designation</th><th>Role</th><th>Mobile</th><th>Photo file</th><th>ID No</th><th>Status</th></tr></thead><tbody>' +
+    rows.map((r) => `<tr class="${r.errors.length ? 'bad' : ''}"><td>${r.rowNo}</td><td>${esc(r.name)}</td><td>${esc(r.designation)}</td><td>${esc(r.role)}</td>` +
+      `<td class="mono">${esc(r.mobile)}</td><td>${esc(r.photoName)}</td><td class="mono">${esc(r.finalId || r.idNo)}${!r.idNo && r.finalId ? ' <small class="muted">(auto)</small>' : ''}</td>` +
+      (r.errors.length ? `<td class="err">${r.errors.map(esc).join('<br>')}</td>` : '<td>OK</td>') + '</tr>').join('') +
+    '</tbody></table></div>';
+}
+
+async function doImport() {
+  validateImport();
+  const ok = S.importRows.filter((r) => !r.errors.length);
+  const skipped = S.importRows.length - ok.length;
+  let order = S.members.reduce((a, x) => Math.max(a, x.order || 0), 0);
+  const created = ok.map((r, i) => ({
+    id: uid(), profileId: S.pid, order: ++order, createdAt: Date.now() + i,
+    name: r.name, designation: r.designation, role: r.role, mobile: r.mobileOk, idNo: r.finalId, photo: '', photoName: r.photoName,
+  }));
+  await DB.putMany('members', created);
+  S.members.push(...created);
+  S.importRows = [];
+  $('#import-name').textContent = '';
+  renderImport();
+  resetMemberForm();
+  renderMembers();
+  refreshAll();
+  toast(`Imported ${created.length} member(s)` + (skipped ? `, skipped ${skipped} row(s) with problems` : '') + '. Now upload their photos in bulk.');
+}
+
+async function bulkPhotos(files) {
+  const byPhoto = new Map(), byId = new Map(), byName = new Map();
+  S.members.forEach((m) => {
+    if (m.photoName) byPhoto.set(normKey(m.photoName), m);
+    if (m.idNo) byId.set(normKey(m.idNo), m);
+    if (m.name) byName.set(normKey(m.name), m);
+  });
+  const matched = [], unmatched = [];
+  const changed = new Set();
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    busyText(`Matching photos ${i + 1} / ${files.length}…`);
+    const k = normKey(f.name);
+    const m = byPhoto.get(k) || byId.get(k) || byName.get(k);
+    if (!m) { unmatched.push(f.name); continue; }
+    try {
+      m.photo = await photoFromFile(f);
+      m.updatedAt = Date.now();
+      changed.add(m);
+      matched.push(`${f.name} → ${m.name}`);
+    } catch (e) {
+      unmatched.push(`${f.name} (not a valid image)`);
+    }
+  }
+  await DB.putMany('members', Array.from(changed));
+  const missing = S.members.filter((m) => !m.photo).length;
+  $('#bulk-report').innerHTML =
+    `<div class="ok">Matched ${matched.length} of ${files.length} photo(s).</div>` +
+    (unmatched.length ? `<div class="bad">Not matched: ${unmatched.map(esc).join(', ')}</div>` : '') +
+    `<div class="muted">${missing ? `${missing} member(s) still have no photo.` : 'Every member now has a photo.'}</div>`;
+  renderMembers();
+  refreshAll();
+  toast(`Matched ${matched.length} of ${files.length} photo(s)`, unmatched.length ? 'info' : '');
+}
+
+function bindImport() {
+  $('#btn-sample').addEventListener('click', downloadSample);
+  $('#import-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      S.importRows = await readSheet(file);
+      $('#import-name').textContent = `${file.name} · ${S.importRows.length} row(s)`;
+      if (!S.importRows.length) toast('No data rows found in this file', 'error');
+    } catch (err) {
+      S.importRows = [];
+      $('#import-name').textContent = '';
+      toast('Could not read the file: ' + err.message, 'error');
+    }
+    renderImport();
+  });
+  $('#import-preview').addEventListener('click', (e) => {
+    if (e.target.id === 'btn-do-import') withBusy('Importing…', doImport);
+    if (e.target.id === 'btn-cancel-import') { S.importRows = []; $('#import-name').textContent = ''; renderImport(); }
+  });
+  $('#bulk-photos').addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    e.target.value = '';
+    if (files.length) withBusy('Matching photos…', () => bulkPhotos(files));
+  });
+}
+
+/* =====================================================================
+   Sheets: buttons
+   ===================================================================== */
+
+function bindSheets() {
+  $('#pages').addEventListener('click', (e) => {
+    const d = e.target.closest('[data-page]');
+    if (d) {
+      const fmt = d.parentElement.querySelector('select').value;
+      withBusy('Preparing A4 page…', () => downloadPages(prof(), S.members, [+d.dataset.page], fmt));
+    }
+    const pr = e.target.closest('[data-print]');
+    if (pr) withBusy('Preparing print…', () => printPages(prof(), S.members, [+pr.dataset.print]));
+  });
+  const all = () => Array.from({ length: Math.ceil(S.members.length / sheetGrid(prof()).per) }, (_, i) => i);
+  $('#btn-pdf-all').addEventListener('click', () => withBusy('Preparing PDF…', () => downloadPages(prof(), S.members, all(), 'pdf')));
+  $('#btn-print-all').addEventListener('click', () => withBusy('Preparing print…', () => printPages(prof(), S.members, all())));
+}
+
+/* =====================================================================
+   Backup
+   ===================================================================== */
+
+function bindBackup() {
+  $('#btn-export').addEventListener('click', () => withBusy('Preparing backup…', async () => {
+    const data = { app: 'su-election-id-card-generator', version: 1, exportedAt: new Date().toISOString(), profiles: await DB.all('profiles'), members: await DB.all('members') };
+    saveBlob(new Blob([JSON.stringify(data)], { type: 'application/json' }), `idcard-backup-${new Date().toISOString().slice(0, 10)}.json`);
+    toast(`Backup saved: ${data.profiles.length} college(s), ${data.members.length} member(s)`);
+  }));
+  $('#backup-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    withBusy('Restoring backup…', async () => {
+      let data;
+      try { data = JSON.parse(await file.text()); } catch (err) { throw new Error('This is not a valid backup file'); }
+      if (!data || !Array.isArray(data.profiles) || !Array.isArray(data.members)) throw new Error('This is not a backup made by this app');
+      const profiles = data.profiles.filter((p) => p && p.id);
+      const members = data.members.filter((m) => m && m.id && m.profileId);
+      await DB.putMany('profiles', profiles);
+      await DB.putMany('members', members);
+      await DB.setMeta('seeded', true);
+      S.profiles = (await DB.all('profiles')).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      await selectProfile(profiles[0] ? profiles[0].id : (S.profiles[0] && S.profiles[0].id));
+      toast(`Backup restored: ${profiles.length} college(s), ${members.length} member(s)`);
+    });
+  });
+}
+
+/* =====================================================================
+   Example data (drawn on canvas so it is plain PNG)
+   ===================================================================== */
+
+function art(w, h, fn) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  fn(c.getContext('2d'));
+  return c.toDataURL('image/png');
+}
+
+function exampleArt() {
+  const logo = art(240, 120, (x) => {
+    x.strokeStyle = '#fff'; x.lineWidth = 12; x.lineJoin = 'round';
+    const hex = (cx) => { x.beginPath(); [[-46, 0], [-23, -40], [23, -40], [46, 0], [23, 40], [-23, 40]].forEach(([a, b], i) => (i ? x.lineTo(cx + a, 60 + b) : x.moveTo(cx + a, 60 + b))); x.closePath(); x.stroke(); };
+    hex(92); hex(148);
+  });
+  const signature = art(360, 120, (x) => {
+    x.strokeStyle = '#1b2a6b'; x.lineWidth = 4; x.lineCap = 'round'; x.lineJoin = 'round';
+    x.beginPath(); x.moveTo(14, 84);
+    x.bezierCurveTo(40, 30, 70, 10, 76, 30); x.bezierCurveTo(82, 52, 50, 96, 66, 98); x.bezierCurveTo(84, 100, 98, 50, 112, 54);
+    x.bezierCurveTo(126, 58, 104, 92, 120, 94); x.bezierCurveTo(138, 96, 150, 60, 166, 62); x.bezierCurveTo(180, 64, 168, 90, 184, 90);
+    x.bezierCurveTo(204, 90, 214, 60, 232, 62); x.bezierCurveTo(248, 64, 236, 86, 252, 86); x.bezierCurveTo(280, 86, 310, 70, 344, 66);
+    x.stroke();
+  });
+  const seal = art(300, 300, (x) => {
+    x.strokeStyle = '#2f47b5'; x.fillStyle = '#2f47b5';
+    x.lineWidth = 9; x.beginPath(); x.arc(150, 150, 138, 0, Math.PI * 2); x.stroke();
+    x.lineWidth = 4; x.beginPath(); x.arc(150, 150, 92, 0, Math.PI * 2); x.stroke();
+    x.font = 'bold 26px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    const t = 'EXAMPLE COLLEGE • PRINCIPAL • ';
+    for (let i = 0; i < t.length; i++) {
+      const a = (i / t.length) * Math.PI * 2 - Math.PI / 2;
+      x.save(); x.translate(150 + Math.cos(a) * 115, 150 + Math.sin(a) * 115); x.rotate(a + Math.PI / 2); x.fillText(t[i], 0, 0); x.restore();
+    }
+    x.font = 'bold 34px Arial'; x.fillText('SEAL', 150, 152);
+  });
+  const avatar = (i) => art(400, 400, (x) => {
+    const bg = ['#cfe3f7', '#f7e1cf', '#d9f0d6', '#efd6f0', '#f3efc8'][i % 5];
+    const skin = ['#e0ac7e', '#c68b5f', '#f1c29b', '#a8724a', '#d99d70'][i % 5];
+    const hair = ['#2b1d14', '#3a2a1e', '#111', '#4b3020', '#1c1c1c'][i % 5];
+    const shirt = ['#2b2b2b', '#24447a', '#7a2433', '#2e6b4f', '#5b4a8a'][i % 5];
+    x.fillStyle = bg; x.fillRect(0, 0, 400, 400);
+    x.fillStyle = shirt; x.beginPath(); x.ellipse(200, 420, 150, 130, 0, Math.PI, 0); x.fill();
+    x.fillStyle = skin; x.fillRect(170, 220, 60, 70);
+    x.beginPath(); x.ellipse(200, 165, 74, 86, 0, 0, Math.PI * 2); x.fill();
+    x.fillStyle = hair; x.beginPath(); x.ellipse(200, 120, 80, 52, 0, Math.PI, 0); x.fill();
+    x.fillRect(120, 110, 22, 60); x.fillRect(258, 110, 22, 60);
+  });
+  return { logo, signature, seal, avatar };
+}
+
+async function seedExample() {
+  const a = exampleArt();
+  const y = new Date().getFullYear();
+  const p = newProfile({
+    name: 'Example College', isExample: true, logo: a.logo, signature: a.signature, seal: a.seal,
+    issueDate: `${y}-10-01`, expiryDate: `${y + 1}-03-31`,
+  });
+  const people = [
+    ['Rahul Kumar Sahoo', 'President', 'Candidate', '9876543210'],
+    ['Priya Das', 'Vice President', 'Candidate', '9437012345'],
+    ['Amit Mohanty', 'General Secretary', 'Candidate', '7008012345'],
+    ['Sneha Pattnaik', 'Polling Agent', 'Volunteer', '9861122334'],
+    ['Bikash Ranjan Behera', 'Presiding Officer', 'Election Staff', '7978123456'],
+  ];
+  const members = people.map(([name, designation, role, mobile], i) => ({
+    id: uid(), profileId: p.id, order: i + 1, createdAt: Date.now() + i, name, designation, role, mobile,
+    idNo: `${p.idPrefix}${String(i + 1).padStart(3, '0')}`, photo: a.avatar(i), photoName: '',
+  }));
+  await DB.put('profiles', p);
+  await DB.putMany('members', members);
+  await DB.setMeta('seeded', true);
+  return p;
+}
+
+/* =====================================================================
+   Init
+   ===================================================================== */
+
+async function init() {
+  const missing = ['XLSX', 'qrcode', 'JsBarcode', 'jspdf'].filter((k) => !window[k]);
+  if (missing.length) toast('Some libraries did not load (' + missing.join(', ') + '). Connect to the internet once and reload.', 'error');
+  await loadFonts();
+  bindProfile();
+  bindMembers();
+  bindImport();
+  bindSheets();
+  bindBackup();
+  if (!(await DB.getMeta('seeded')) && !(await DB.all('profiles')).length) await seedExample();
+  S.profiles = (await DB.all('profiles')).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  const cur = await DB.getMeta('current');
+  const start = S.profiles.find((p) => p.id === cur) || S.profiles[0];
+  await selectProfile(start ? start.id : null);
+  let lastW = window.innerWidth;
+  window.addEventListener('resize', debounce(() => {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    refreshAll();
+  }, 200));
+}
+
+// Exposed for testing and debugging.
+window.IDCardApp = { drawCard, cardMM, sheetGrid, a4Layout, pairLayout, layoutCanvas, qrText, ensureImages, state: S };
+
+init().catch((e) => { console.error(e); toast('Could not start: ' + (e && e.message ? e.message : e), 'error'); });
+})();
+</script>
 </body>
 </html>
