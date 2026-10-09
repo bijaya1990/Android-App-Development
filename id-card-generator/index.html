@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ID Card Generator</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <h1>ID Card Generator</h1>
+      <span class="topbar-note">All data is saved in this browser only</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 1. College profiles -->
+    <section class="panel" id="sec-colleges">
+      <div class="panel-head">
+        <h2><span class="step">1</span> College profile</h2>
+        <div class="row-gap">
+          <button type="button" class="btn" id="btn-demo">Add demo college</button>
+          <button type="button" class="btn primary" id="btn-new-college">+ New college</button>
+        </div>
+      </div>
+      <div id="college-list" class="college-list"></div>
+      <p id="college-empty" class="empty" hidden>No college yet. Create one with <b>+ New college</b>, or try <b>Add demo college</b>.</p>
+
+      <form id="college-form" class="form" autocomplete="off" hidden>
+        <div class="form-grid">
+          <div class="field image-field">
+            <span class="label">College logo</span>
+            <div class="image-pick" data-img="logo">
+              <div class="thumb"><img alt=""></div>
+              <div class="image-actions">
+                <label class="btn small">Upload<input type="file" accept="image/*" data-file="logo" hidden></label>
+                <button type="button" class="btn small ghost" data-clear="logo">Remove</button>
+              </div>
+            </div>
+          </div>
+          <div class="field image-field">
+            <span class="label">Principal signature</span>
+            <div class="image-pick" data-img="signature">
+              <div class="thumb"><img alt=""></div>
+              <div class="image-actions">
+                <label class="btn small">Upload<input type="file" accept="image/*" data-file="signature" hidden></label>
+                <button type="button" class="btn small ghost" data-clear="signature">Remove</button>
+              </div>
+            </div>
+          </div>
+          <div class="field image-field">
+            <span class="label">Seal / stamp</span>
+            <div class="image-pick" data-img="seal">
+              <div class="thumb"><img alt=""></div>
+              <div class="image-actions">
+                <label class="btn small">Upload<input type="file" accept="image/*" data-file="seal" hidden></label>
+                <button type="button" class="btn small ghost" data-clear="seal">Remove</button>
+              </div>
+            </div>
+          </div>
+
+          <label class="field span-2"><span class="label">College name</span>
+            <input type="text" name="name" placeholder="e.g. Government Autonomous College"></label>
+          <label class="field"><span class="label">ID prefix</span>
+            <input type="text" name="idPrefix" placeholder="SUE2026">
+            <small class="hint">New IDs look like <b id="id-example">SUE2026-001</b></small></label>
+          <label class="field span-2"><span class="label">Event heading</span>
+            <input type="text" name="event"></label>
+          <div class="field two-dates">
+            <label><span class="label">Issue date</span><input type="date" name="issueDate"></label>
+            <label><span class="label">Expiry date</span><input type="date" name="expiryDate"></label>
+          </div>
+          <label class="field span-3"><span class="label">Terms and conditions <small>(one point per line)</small></span>
+            <textarea name="terms" rows="4"></textarea></label>
+        </div>
+
+        <details class="labels-box">
+          <summary>Card labels (optional)</summary>
+          <div class="form-grid labels-grid" id="labels-grid"></div>
+        </details>
+
+        <div class="form-foot">
+          <span class="saved" id="college-saved">Changes are saved automatically</span>
+          <button type="button" class="btn danger ghost" id="btn-delete-college">Delete this college</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 2. Members -->
+    <section class="panel" id="sec-members" hidden>
+      <div class="panel-head">
+        <h2><span class="step">2</span> Members <span class="count" id="member-count"></span></h2>
+      </div>
+
+      <div class="members-top">
+        <div class="members-forms">
+          <form id="member-form" class="form card-form" autocomplete="off" novalidate>
+            <h3 id="member-form-title">Add member</h3>
+            <div class="member-grid">
+              <div class="photo-pick">
+                <div class="photo-circle"><img alt="" id="mf-photo-img"><span id="mf-photo-empty">No photo</span></div>
+                <label class="btn small">Photo<input type="file" accept="image/*" id="mf-photo" hidden></label>
+                <button type="button" class="btn small ghost" id="mf-photo-clear">Remove</button>
+              </div>
+              <div class="member-fields">
+                <label class="field"><span class="label">Name *</span><input type="text" name="name" required></label>
+                <label class="field"><span class="label">Designation</span><input type="text" name="designation"></label>
+                <label class="field"><span class="label">Role</span><input type="text" name="role"></label>
+                <label class="field"><span class="label">Mobile number *</span><input type="tel" name="mobile" inputmode="tel"></label>
+                <label class="field"><span class="label">ID number</span><input type="text" name="idNo"></label>
+              </div>
+            </div>
+            <p class="form-error" id="member-error" hidden></p>
+            <div class="form-foot">
+              <button type="button" class="btn ghost" id="mf-cancel" hidden>Cancel</button>
+              <button type="submit" class="btn primary" id="mf-submit">Add member</button>
+            </div>
+          </form>
+
+          <details class="form card-form import-box" id="import-box">
+            <summary><h3>Import from Excel (.xlsx / .csv)</h3></summary>
+            <ol class="import-steps">
+              <li>Columns: <b>Name, Designation, Role, Mobile, Photo File Name</b>.
+                <button type="button" class="btn small" id="btn-sample">Download sample Excel</button></li>
+              <li><label class="btn small">Choose Excel / CSV<input type="file" id="import-file" accept=".xlsx,.xls,.csv" hidden></label>
+                <span id="import-file-name" class="muted"></span></li>
+              <li><label class="btn small">Upload photos (bulk)<input type="file" id="import-photos" accept="image/*" multiple hidden></label>
+                <span id="import-photo-count" class="muted">Photos are matched by file name</span></li>
+            </ol>
+            <div id="import-preview"></div>
+          </details>
+        </div>
+
+        <aside class="preview-panel">
+          <div class="preview-head">
+            <h3>Live card preview</h3>
+            <span class="muted" id="preview-who"></span>
+          </div>
+          <div class="preview-cards" id="preview-cards"></div>
+        </aside>
+      </div>
+
+      <div class="list-head">
+        <input type="search" id="member-search" placeholder="Search name, role, mobile, ID…">
+      </div>
+      <div class="table-wrap">
+        <table class="members" id="member-table">
+          <thead><tr><th>#</th><th>Photo</th><th>Name</th><th>Designation</th><th>Role</th><th>Mobile</th><th>ID number</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <p class="empty" id="member-empty" hidden>No members yet. Add one above or import from Excel.</p>
+      </div>
+    </section>
+
+    <!-- 3. A4 sheets -->
+    <section class="panel" id="sec-a4" hidden>
+      <div class="panel-head">
+        <h2><span class="step">3</span> A4 print sheets</h2>
+        <button type="button" class="btn primary" id="btn-all-pages">Download all pages (PDF)</button>
+      </div>
+      <p class="muted" id="a4-info"></p>
+      <div class="pages" id="pages"></div>
+    </section>
+  </main>
+
+  <div class="busy" id="busy" hidden><div class="busy-box"><div class="spinner"></div><span id="busy-text">Working…</span></div></div>
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="lib/qrcode-generator.js"></script>
+  <script src="lib/JsBarcode.all.min.js"></script>
+  <script src="lib/html-to-image.js"></script>
+  <script src="lib/jspdf.umd.min.js"></script>
+  <script src="js/fonts.js"></script>
+  <script src="js/card-shapes.js"></script>
+  <script src="js/card.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
