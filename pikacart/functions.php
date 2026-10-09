@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PKC_THEME_VERSION', '1.1.0' );
+define( 'PKC_THEME_VERSION', '2.0.0' );
 
 require get_template_directory() . '/inc/plugin-check.php';
 require get_template_directory() . '/inc/template-tags.php';
@@ -41,7 +41,7 @@ function pkc_theme_assets() {
 	}
 	wp_enqueue_style( 'pkc-theme', get_template_directory_uri() . '/assets/css/theme.css', $deps, PKC_THEME_VERSION );
 	wp_enqueue_script( 'pkc-theme', get_template_directory_uri() . '/assets/js/theme.js', array(), PKC_THEME_VERSION, true );
-	if ( is_front_page() && wp_style_is( 'pkc-public', 'registered' ) ) {
+	if ( ( is_front_page() || get_query_var( 'pkc_idcard' ) ) && wp_style_is( 'pkc-public', 'registered' ) ) {
 		wp_enqueue_style( 'pkc-public' );
 	}
 }
@@ -64,7 +64,7 @@ function pkc_theme_preload() {
 /* Description meta when no SEO plugin is active (full SEO arrives with the plugin). */
 add_action( 'wp_head', 'pkc_theme_meta_description', 3 );
 function pkc_theme_meta_description() {
-	if ( defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) ) {
+	if ( defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || class_exists( 'PKC_SEO' ) ) {
 		return;
 	}
 	$desc = is_front_page() ? pkc_theme_setting( 'home_hero_text', get_bloginfo( 'description' ) ) : ( is_singular() ? get_the_excerpt() : get_bloginfo( 'description' ) );

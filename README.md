@@ -7,7 +7,7 @@ It comes as **two ZIP files** you upload to WordPress:
 | File | What it is |
 |---|---|
 | `dist/pikacart-core.zip` | **Plugin**: accounts, free trial, Razorpay payments, the organisation dashboard at `/app/`, and the Super Admin control room. Install this **first**. |
-| `dist/pikacart-theme.zip` | **Theme**: the public website (homepage, header, footer, pages). |
+| `dist/pikacart-theme.zip` | **Theme**: the public website (homepage with the sliding design showcase, header, footer, pages). |
 
 Your data lives in the plugin, so changing the theme later never loses anything.
 
@@ -34,88 +34,70 @@ To update later, upload the new ZIP the same way. WordPress asks "Replace curren
 
 ---
 
-## New in version 1.1
+## What's inside (version 2.0, all 5 phases)
 
-- **Free plan forever.** Every account can use Pikacart free for life, with every feature. Downloaded cards carry a professional **"Made with www.pikacart.in"** watermark: a fine diagonal pattern across the whole card (so a free card can't pass as an official card) plus a neat branded ribbon at the bottom. It is drawn into the image itself, not a removable overlay. **₹59/month removes it.** You can switch back to a time-limited trial in *Pikacart → Settings → Free plan and Plans*, and change the watermark text there.
-- **Live chat support.** Each customer can open chat conversations from *Support* in their dashboard. You answer from **Pikacart → Support** in wp-admin. Messages appear automatically within a few seconds on both sides, with "typing…", "Seen" ticks, online status, *Mark as solved* and reopen. Works on phones.
-- **Notifications.** A bell in the customer dashboard (support replies, payments, plan ending, account changes), a count in the browser tab, and pop-up messages. You see unread chats as a red badge in the wp-admin menu and top bar, and can turn on desktop alerts.
-- **Emails stay smart.** Customers get an email for a support reply only when they are not online; you get an email for a new chat and for new messages when no admin is online.
+**For your customers (the organisation dashboard at `/app/`)**
+- Free forever with a "Made with www.pikacart.in" watermark (or a timed trial, your choice). ₹59/month removes the watermark.
+- 1,500+ ready designs: 10 categories × 3 card types × 50 styles, simple to premium, portrait and landscape, 11 card sizes, colour palettes.
+- Canva-style editor: move, resize, rotate, text, photos, logo, signature, seal, QR, barcode, undo/redo.
+- People: add one by one, import Excel/CSV (with error report by row), bulk photos matched by ID number, self-fill link with approval, recycle bin, new session with class promotion.
+- Downloads at 300 DPI: PDF, JPG, PNG (ZIP for many cards), print one per page, **print sheet maker** on A4, A3, A5, A6, 12×18, 13×19 inch or a custom paper, with cut marks.
+- Real QR verification page `/verify/...` showing Valid, Expired or Cancelled, and a "Report this card" button.
+- **My Designs**: upload your own front/back artwork and place the fields yourself, or send it to **Design on Demand** (live within 6 hours).
+- Razorpay autopay or pay once (with **coupon codes**), GST invoices as PDF.
+- Live support chat, notification bell, notices from you. Works on phone, tablet and computer.
 
-Existing installs upgrade automatically when you upload the new ZIPs (your data is kept; accounts on an ended trial move to the Free plan).
+**For you (WordPress → Pikacart, the "control room")**
+- Dashboard with money, accounts, conversions and charts.
+- Accounts: suspend/reactivate, extend trial, free days, plan end date, reset link, **View as this customer** (read only), delete.
+- Payments, **Finance** (monthly statement with PDF and Excel, expenses, coupons).
+- **Templates**: thumbnails, filters, visual builder, duplicate, import/export JSON, publish/unpublish, feature.
+- **Design requests** queue with countdown, builder on the customer's artwork, publish to the customer (and optionally to everyone), reject with reason.
+- **Categories & sizes**: add/edit/hide/reorder categories and card types (new types get 50 designs automatically), default fields, SEO; card sizes; colour palettes.
+- Support inbox, **Notices** (everyone or one account), **Reports** queue (cancel card or suspend account), **Activity log** with export.
+- Settings: General, Free plan and Plans, Razorpay, Emails, Homepage (showcase, featured categories, FAQ, testimonials), SEO, Legal pages, Limits, Maintenance.
 
-### Test the new features (5 minutes)
-1. Register a test account in a private window. The top bar shows **Free plan · Upgrade**; the Subscription page shows the **Free vs Pro** card preview with the watermark.
-2. In the customer dashboard open **Support → New chat**, pick a topic and send a message.
-3. In wp-admin open **Pikacart → Support**. The chat appears with an unread dot. Open it and start typing: the customer sees "Support is typing…". Send a reply.
-4. In the customer window the reply appears by itself in a few seconds; the bell shows a red count. Reply back; in wp-admin you see the message and **Seen** under your reply.
-5. Click **Mark as solved**. The customer sees "solved"; sending a new message reopens it.
-6. Repeat steps 2–5 on a phone.
+**Public website**
+- Homepage with a hero of real designs and a **design showcase that slides category by category** (premium designs highlighted), category cards, features, pricing, FAQ, testimonials.
+- Gallery pages for every category and card type, e.g. `/id-card/school/student/`: filters (orientation, style, colour), live colour preview, "Use this design" (goes to registration and straight into the chosen design).
+- SEO built in: titles, meta descriptions, Open Graph, schema (Organization, SoftwareApplication with price, FAQ, Breadcrumbs), XML sitemap (`/wp-sitemap.xml`), robots rules, and an SEO box on every page. If Yoast or Rank Math is active, Pikacart leaves the meta tags to them.
 
-## What Phase 1 contains
+## After installing: 5 things to set
 
-- Register (organisation, contact person, email, mobile, password, "I am authorised" box), login, email verification, forgot/reset/change password.
-- Anti-spam: hidden honeypot field plus a time check; limits on login, registration and password reset attempts.
-- **Free plan forever** with watermark (default), or a time-limited trial with a live countdown if you prefer (one trial per email and per mobile number).
-- Account states: Trial, Active, Expired, Suspended, Cancelled, all checked on the server.
-- **Razorpay**: ₹59/month autopay (UPI/card) plus a one-time 30-day payment, test/live switch, signature checks, webhook handling where a repeated event never extends twice, auto-numbered invoices (PDF download), cancel autopay.
-- **10 emails**, all editable: verify, welcome, trial ending, trial ended, payment success, payment failed, expiring soon, suspended, reactivated, reset password.
-- **Organisation dashboard** at `/app/`: Dashboard, onboarding (category → details → logo, signature, seal), Organisation profile with verification privacy, Subscription, Account, Support. Works on phones.
-- **Super Admin control room** (Pikacart menu): money/accounts/health stats with charts; Accounts (search, filter, CSV export, suspend/reactivate, extend trial, free days, change plan end, reset link, delete); Payments (filters, date range, CSV export); Settings with 9 tabs.
-- Legal pages created automatically (About, Contact with a working form, Pricing, Privacy, Terms, Refund, Acceptable Use). Razorpay needs these.
-- All 22 database tables, starting data (10 categories × 3 sub-types, 11 card sizes, 12 colour palettes, Monthly plan).
+1. **Pikacart → Settings → General**: business name, phone, address, GSTIN, logo.
+2. **Razorpay**: keys in Test mode first, then the webhook (secret and events are listed on that page). Try one payment, then switch to Live.
+3. **Homepage**: hero text, which categories to show, your FAQ, and real customer testimonials (the section stays hidden until you add some).
+4. **SEO**: homepage title and description, share image, Search Console code, Analytics ID.
+5. **Limits**: upload size, and the Design on Demand promise (6 hours) and the email that receives new requests.
 
-**Coming next:** Phase 2 (card designer and templates), Phase 3 (members, Excel import, downloads, print sheets), Phase 4 (Design on Demand, finance, coupons, support inbox), Phase 5 (full homepage, galleries, SEO). The menu items for those screens already exist and show a clear "coming" message.
+## Full test checklist (click by click)
 
----
+1. Open the homepage: designs slide in the showcase and switch category by themselves; click a category chip.
+2. Click **Designs** in the menu → a category → change Portrait/Landscape, Premium, and a colour → open a design → **Use this design**.
+3. Register a new organisation → finish the quick setup → the chosen design opens. Change size and colour.
+4. **People** → add one person with a photo → **Import Excel/CSV** with 50 rows → **Bulk photos** named by ID number.
+5. **Download & print** → PDF, then JPG, then PNG: free cards carry the watermark.
+6. **Open print sheet maker** → A4 → download the PDF and mark the cards as Printed.
+7. Scan a card's QR with your phone → the green "Valid card" page opens.
+8. **Subscription** → pay ₹59 in Razorpay **test mode** (or "Pay once" with a coupon) → download again: no watermark. Download the invoice.
+9. **My Designs** → **Send my design** (Design on Demand). In WordPress → **Design requests** → **Open in builder** → **Publish to this organisation**. The customer sees it live and gets an email.
+10. **Accounts** → open the account → **Suspend** (the verification page now shows Cancelled) → **Reactivate**.
+11. **Finance** → this month's statement shows the payment → download PDF and Excel.
 
-## Phase 1 test checklist (click by click)
+All of these steps were run automatically in a test browser before delivery and passed.
 
-**A. Install**
-1. Install and activate the plugin, then the theme (steps above). Set Permalinks to *Post name*.
-2. Visit your homepage. You should see the Pikacart header, hero with 3 sample cards, categories, pricing and footer.
-3. In wp-admin, click **Pikacart**. The control room dashboard opens.
+## Good to know
 
-**B. Razorpay (test mode)**
-1. In the Razorpay Dashboard switch to **Test Mode**. Create API keys, a Plan (monthly, ₹59) and a Webhook as shown in **Pikacart → Settings → Razorpay**.
-2. Paste the keys, webhook secret and Plan ID. Keep the mode on **Test**. Save.
-
-**C. Register and trial**
-1. Open your site in a private/incognito window. Click **Start Free Trial**.
-2. Fill the form, tick the authorised box, click **Create account**. You land on the Welcome setup.
-3. Pick a category → fill details → upload a logo (PNG) → **Finish setup**.
-4. Check the top bar shows **Trial ends in 1:59:xx**, counting down.
-5. Check your email for the *Verify* and *Welcome* emails. Click the verify link. The blue "verify" banner disappears after a refresh.
-6. Try registering again with the same mobile number: you should see "already exists".
-
-**D. Pay (test mode)**
-1. Go to **Subscription** → **Subscribe with autopay** → pay with a Razorpay test card or test UPI (`success@razorpay`).
-2. You should see "Payment successful", status **Active**, and a row in Payment history. Click the invoice button: a PDF downloads.
-3. Try the **Pay once for 30 days** button too (the date moves forward 30 more days).
-4. Click **Cancel autopay** → confirm. Status shows **Cancelled** with the end date; access continues.
-
-**E. Trial expiry**
-1. In wp-admin set **Pikacart → Settings → Trial and Plans → Free trial length** to `3` minutes. Register a second test account in a private window.
-2. When the timer reaches zero, the dashboard shows "Your free trial has ended" with the Subscribe button. You get the *trial ended* email.
-3. Set the trial length back to `120`.
-
-**F. Super Admin**
-1. **Pikacart → Dashboard**: money and account numbers match what you did; charts show data.
-2. **Accounts** → search for your test account → open it → **Extend trial**, **Grant free days**, **Suspend** (with a reason).
-3. In the incognito window try to log in: you see "This account is suspended. Please contact contact@pikacart.in."
-4. Back in wp-admin click **Reactivate**. The customer can log in again (and gets an email).
-5. **Payments**: filter by date; click **Export to Excel (CSV)**.
-6. **Settings**: change the brand colour, save, refresh the site. Buttons change colour.
-
-**G. Phone**
-1. Open `/app/` on your mobile. Open the menu (☰), visit every screen. Nothing should need sideways scrolling.
-
-When everything works, reply **"next"** for Phase 2.
+- Everything (cards, PDFs, ZIPs) is made in the customer's browser, so shared hosting stays fast. Very large batches are split into parts of 100 cards.
+- Razorpay is the only outside service: its Checkout script loads from `checkout.razorpay.com` on the Subscription screen (Razorpay requires this). Google Analytics loads only if you add an ID.
+- Pikacart must never be used for government IDs (Aadhaar, PAN, voter ID, licences, police/army cards). Reject such Design on Demand requests and use **Reports** to cancel abusive cards.
 
 ---
 
 ## For developers
 
-- `pikacart-core/` plugin source, `pikacart/` theme source.
-- `build.sh` creates the two ZIPs in `dist/`.
-- REST namespace `pkc/v1`; tables prefixed `wp_pkc_`; schema version in option `pkc_db_version`.
-- Libraries bundled locally: Chart.js 4.4.4, jsPDF 2.5.2, Inter and Plus Jakarta Sans fonts (OFL). Razorpay Checkout must load from `checkout.razorpay.com` (Razorpay requires this). It loads only on the Subscription screen.
+- `pikacart-core/` plugin source, `pikacart/` theme source. `build.sh` creates the two ZIPs in `dist/`.
+- REST namespace `pkc/v1`; tables prefixed `wp_pkc_`; schema version in option `pkc_db_version` (now 5), upgrades run automatically.
+- Card engine: ES modules in `pikacart-core/assets/js/card/` (no build step). Built-in designs are recipes expanded in the browser; custom designs store full layouts.
+- Libraries bundled locally: Chart.js 4.4.4, jsPDF 2.5.2, qrcode.js 1.4.4, JsBarcode 3.11.6, JSZip 3.10.1, SheetJS 0.18.5 (mini), Cropper.js 1.6.2, and OFL fonts.
+- Theme override: copy `pikacart-core/templates/id-card.php` to the theme as `pikacart-id-card.php`.

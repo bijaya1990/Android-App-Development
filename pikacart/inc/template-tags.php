@@ -59,7 +59,20 @@ function pkc_theme_categories() {
 	if ( ! class_exists( 'PKC_REST_Account' ) ) {
 		return array();
 	}
-	return PKC_REST_Account::catalog();
+	$cats = PKC_REST_Account::catalog();
+	$pick = array_filter( array_map( 'trim', explode( ',', (string) pkc_theme_setting( 'home_featured_cats', '' ) ) ) );
+	if ( ! $pick ) {
+		return $cats;
+	}
+	$out = array();
+	foreach ( $pick as $slug ) {
+		foreach ( $cats as $c ) {
+			if ( isset( $c['slug'] ) && $c['slug'] === $slug ) {
+				$out[] = $c;
+			}
+		}
+	}
+	return $out ? $out : $cats;
 }
 
 /**

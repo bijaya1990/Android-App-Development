@@ -103,6 +103,11 @@ function render() {
 		history.replaceState( {}, '', ctx.url( 'welcome' ) );
 	}
 
+	// A design picked on the public website before logging in or registering.
+	if ( key !== 'welcome' && pendingDesign() ) {
+		return;
+	}
+
 	const route = routes[ key ];
 	document.getElementById( 'page-title' ).textContent = route.title;
 	document.title = `${ route.title } · ${ cfg.site }`;
@@ -129,6 +134,37 @@ function render() {
 
 	closeMenu();
 	window.scrollTo( 0, 0 );
+}
+
+function pendingDesign() {
+	let use = null;
+	try {
+		use = JSON.parse( window.localStorage.getItem( 'pkc_use' ) || 'null' );
+		window.localStorage.removeItem( 'pkc_use' );
+	} catch ( e ) {
+		return false;
+	}
+	if ( ! use || ! use.tpl || ! use.sub || Date.now() - ( use.at || 0 ) > 86400000 ) {
+		return false;
+	}
+	const view = document.getElementById( 'view' );
+	view.innerHTML = `<div class="card center"><p>${ esc( __( 'Setting up the design you chose…', 'pikacart' ) ) }</p></div>`;
+	( async () => {
+		try {
+			const res = await api( 'projects', { method: 'POST', body: { subtype_id: use.sub, template_id: use.tpl } } );
+			const body = { orientation: use.o === 'landscape' ? 'landscape' : 'portrait' };
+			if ( use.pal ) {
+				body.palette = { id: use.pal };
+			}
+			await api( `projects/${ res.project.id }`, { method: 'POST', body } );
+			toast( __( 'Your chosen design is ready. Now choose the size and colours.', 'pikacart' ) );
+			navigate( `projects/${ res.project.id }/setup` );
+		} catch ( err ) {
+			toast( err.message, 'error' );
+			navigate( 'create' );
+		}
+	} )();
+	return true;
 }
 
 /* ---------- Shell: profile, status pill, banners ---------- */

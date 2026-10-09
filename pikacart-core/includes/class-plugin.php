@@ -35,6 +35,8 @@ final class PKC_Plugin {
 
 		PKC_Cron::init();
 		PKC_Emails::init();
+		PKC_Public::init();
+		PKC_SEO::init();
 
 		if ( is_admin() ) {
 			PKC_Admin::init();
@@ -71,6 +73,8 @@ final class PKC_Plugin {
 			'class-router.php',
 			'class-shortcodes.php',
 			'class-stats.php',
+			'class-public.php',
+			'class-seo.php',
 			'rest/class-rest.php',
 			'rest/class-rest-auth.php',
 			'rest/class-rest-account.php',

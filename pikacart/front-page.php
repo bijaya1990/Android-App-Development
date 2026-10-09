@@ -45,7 +45,7 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 			</p>
 		</div>
 		<div class="hero-art">
-			<div class="fan">
+			<div class="fan" data-pkc-hero>
 				<?php
 				echo pkc_theme_sample_card( 'a', 'Green Valley School', 'Aarav Mehta', 'Class VIII · B', '#065F46' ); // phpcs:ignore
 				echo pkc_theme_sample_card( 'b', 'Northstar College', 'Priya Nair', 'B.Sc. Computer Science', 'var(--pkc-brand)' ); // phpcs:ignore
@@ -65,6 +65,19 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 	</div>
 </section>
 
+<?php if ( $pkc_cats && pkc_theme_setting( 'home_showcase', 1 ) ) : ?>
+<section class="section showcase-section" id="designs">
+	<div class="wrap">
+		<div class="section-head">
+			<span class="eyebrow"><?php esc_html_e( 'Design showcase', 'pikacart' ); ?></span>
+			<h2><?php echo esc_html( pkc_theme_setting( 'home_showcase_title', __( 'Real designs for every category', 'pikacart' ) ) ); ?></h2>
+			<p><?php esc_html_e( 'From simple to premium, portrait and landscape. Every design below is ready to use with your logo and your people.', 'pikacart' ); ?></p>
+		</div>
+		<div class="sw" data-pkc-showcase></div>
+	</div>
+</section>
+<?php endif; ?>
+
 <?php if ( $pkc_cats ) : ?>
 <section class="section" id="categories">
 	<div class="wrap">
@@ -75,9 +88,12 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 		</div>
 		<div class="cat-cards">
 			<?php foreach ( $pkc_cats as $pkc_i => $pkc_cat ) : ?>
-				<a class="cat-card" href="<?php echo esc_url( pkc_theme_url( 'register' ) ); ?>">
+				<a class="cat-card" href="<?php echo esc_url( class_exists( 'PKC_Public' ) && ! empty( $pkc_cat['slug'] ) ? PKC_Public::url( $pkc_cat['slug'] ) : pkc_theme_url( 'register' ) ); ?>">
 					<div class="cat-card-art">
 						<?php echo pkc_theme_sample_card( 'mini', $pkc_cat['name'], __( 'Your Name', 'pikacart' ), $pkc_cat['subtypes'][0]['name'] ?? '', $pkc_colors[ $pkc_i % count( $pkc_colors ) ] ); // phpcs:ignore ?>
+						<?php if ( ! empty( $pkc_cat['slug'] ) ) : ?>
+							<canvas class="cat-canvas" data-cat-card="<?php echo esc_attr( $pkc_cat['slug'] ); ?>" aria-hidden="true"></canvas>
+						<?php endif; ?>
 					</div>
 					<h3><?php echo esc_html( $pkc_cat['name'] ); ?></h3>
 					<p><?php echo esc_html( implode( ' · ', wp_list_pluck( $pkc_cat['subtypes'], 'name' ) ) ); ?></p>
@@ -160,15 +176,8 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 		</div>
 		<div class="faq">
 			<?php
-			$pkc_faq = array(
+			$pkc_faq = class_exists( 'PKC_SEO' ) ? PKC_SEO::faq() : array(
 				array( __( 'Do I need to install any software?', 'pikacart' ), __( 'No. Pikacart works in your web browser on computer, tablet and phone.', 'pikacart' ) ),
-				$pkc_forever
-					? array( __( 'Is it really free?', 'pikacart' ), __( 'Yes, free forever with every feature. Free cards carry a small "Made with www.pikacart.in" watermark. Pro removes it.', 'pikacart' ) )
-					/* translators: %s: trial length */
-					: array( __( 'How does the free trial work?', 'pikacart' ), sprintf( __( 'Register and use every feature free for %s. Downloads during the trial carry a watermark.', 'pikacart' ), $pkc_trial ) ),
-				array( __( 'Can I pay without autopay?', 'pikacart' ), __( 'Yes. You can pay once for one month by UPI, card or net banking if your bank does not support autopay.', 'pikacart' ) ),
-				array( __( 'Which printers and holders are supported?', 'pikacart' ), __( 'Files are exact millimetre size at 300 DPI, so they work with PVC card printers, inkjet and laser printers and all common holder sizes.', 'pikacart' ) ),
-				array( __( 'Is my students\' data safe?', 'pikacart' ), __( 'Each organisation\'s data is kept separate and private. You choose what the QR verification page shows, and you can delete your data any time.', 'pikacart' ) ),
 			);
 			foreach ( $pkc_faq as $pkc_q ) :
 				?>
@@ -178,12 +187,34 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 	</div>
 </section>
 
+<?php $pkc_quotes = class_exists( 'PKC_SEO' ) ? PKC_SEO::testimonials() : array(); ?>
+<?php if ( $pkc_quotes ) : ?>
+<section class="section section-alt" id="testimonials">
+	<div class="wrap">
+		<div class="section-head">
+			<span class="eyebrow"><?php esc_html_e( 'Customers', 'pikacart' ); ?></span>
+			<h2><?php esc_html_e( 'What our customers say', 'pikacart' ); ?></h2>
+		</div>
+		<div class="quotes">
+			<?php foreach ( $pkc_quotes as $pkc_q ) : ?>
+				<figure class="quote"><blockquote><?php echo esc_html( $pkc_q[2] ); ?></blockquote><figcaption><strong><?php echo esc_html( $pkc_q[0] ); ?></strong><span><?php echo esc_html( $pkc_q[1] ); ?></span></figcaption></figure>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+<?php endif; ?>
+
 <section class="cta-band">
 	<div class="wrap cta-inner">
 		<h2><?php esc_html_e( 'Make your first ID card today', 'pikacart' ); ?></h2>
 		<a class="t-btn t-btn-white t-btn-lg" href="<?php echo esc_url( pkc_theme_url( 'register' ) ); ?>"><?php esc_html_e( 'Start Free', 'pikacart' ); ?></a>
 	</div>
 </section>
+
+<?php $pkc_seo_text = pkc_theme_setting( 'home_seo_text', '' ); ?>
+<?php if ( $pkc_seo_text ) : ?>
+<section class="section seo-band"><div class="wrap seo-text"><?php echo wp_kses_post( wpautop( $pkc_seo_text ) ); ?></div></section>
+<?php endif; ?>
 
 <?php
 get_footer();

@@ -47,6 +47,8 @@ class PKC_Assets {
 		wp_register_style( 'pkc-public', $u . 'css/public.css', array( 'pkc-tokens' ), $v );
 		wp_register_script( 'pkc-public', $u . 'js/public.js', array( 'wp-i18n' ), $v, true );
 		wp_set_script_translations( 'pkc-public', 'pikacart', PKC_DIR . 'languages' );
+		wp_register_script( 'pkc-showcase', $u . 'js/public/showcase.js', array( 'wp-i18n', 'pkc-qrcode', 'pkc-barcode' ), $v, true );
+		wp_set_script_translations( 'pkc-showcase', 'pikacart', PKC_DIR . 'languages' );
 
 		wp_register_style( 'pkc-admin', $u . 'css/admin.css', array( 'pkc-tokens' ), $v );
 		wp_register_script( 'pkc-chart', $u . 'vendor/chart.umd.min.js', array(), '4.4.4', true );

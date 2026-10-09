@@ -180,3 +180,17 @@ body.pkc-site { margin: 0; font-family: var(--pkc-font); font-size: 16px; line-h
 	.sc-head { height: 66px; }
 	.sc-photo { width: 70px; height: 82px; }
 }
+
+/* Real designs drawn by the Pikacart plugin replace the CSS sample cards. */
+.fan .hero-card-canvas { position: absolute; bottom: 0; left: 50%; width: 190px; height: auto; border-radius: 12px; box-shadow: var(--pkc-sh-lg); transform-origin: 50% 130%; }
+.cat-card-art .cat-canvas { position: absolute; left: 50%; top: 12px; width: 92px; height: auto; border-radius: 7px; box-shadow: 0 8px 20px rgba(15,18,32,.18); transform: translateX(-50%); }
+.cat-card-art .cat-canvas:not(.is-drawn) { width: 2px; height: 2px; opacity: 0; }
+.showcase-section { overflow: hidden; }
+.quotes { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.quote { margin: 0; padding: 22px; border-radius: 18px; background: #fff; border: 1px solid var(--pkc-line); box-shadow: var(--pkc-sh-sm); }
+.quote blockquote { margin: 0 0 14px; font-size: 1rem; line-height: 1.6; color: var(--pkc-text); }
+.quote figcaption { display: grid; gap: 2px; font-size: .9rem; }
+.quote figcaption span { color: var(--pkc-muted); }
+.seo-band { padding-top: 0; }
+.seo-band .seo-text { font-size: .95rem; }
+@media (max-width: 640px) { .fan .hero-card-canvas { width: 160px; } }

@@ -79,7 +79,7 @@ class PKC_Stats {
 			'renewals_7d'     => (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $orgs WHERE status IN ('active','cancelled') AND period_end > %s AND period_end <= %s", pkc_now(), pkc_now( 7 * DAY_IN_SECONDS ) ) ),
 			'cards'           => (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . pkc_table( 'members' ) . ' WHERE deleted_at IS NULL' ),
 			'downloads'       => (int) get_option( 'pkc_download_count', 0 ),
-			'design_requests' => (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . pkc_table( 'design_requests' ) . " WHERE status IN ('new','in_progress')" ),
+			'design_requests' => (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . pkc_table( 'design_requests' ) . " WHERE status IN ('new','progress')" ),
 			'unread_tickets'  => (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . pkc_table( 'tickets' ) . ' WHERE is_read_admin = 0' ),
 		);
 	}

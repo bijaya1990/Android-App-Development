@@ -530,6 +530,21 @@ export function drawSide( ctx, sideLayout, opts ) {
 		ctx.save();
 		ctx.translate( bleed, bleed );
 		drawWatermark( ctx, W, H, opts.watermark );
+		// Keep the QR code scannable on free cards so verification can be tried.
+		for ( const el of sideLayout.els || [] ) {
+			if ( el.t !== 'qr' || ! isVisible( el, opts ) ) {
+				continue;
+			}
+			const b = boxPx( el, W, H );
+			ctx.save();
+			rotate( ctx, el, b );
+			try {
+				drawElement( ctx, el, b, u, map, vars, opts, edgeX, edgeY );
+			} catch ( e ) {
+				// Ignore.
+			}
+			ctx.restore();
+		}
 		ctx.restore();
 	}
 }

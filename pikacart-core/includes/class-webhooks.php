@@ -33,14 +33,21 @@ class PKC_Webhooks {
 			$event_id = 'h_' . hash( 'sha256', $raw );
 		}
 		global $wpdb;
+		$event_id = substr( sanitize_text_field( $event_id ), 0, 80 );
+		if ( $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'webhook_events' ) . ' WHERE event_id = %s', $event_id ) ) ) {
+			return new WP_REST_Response( array( 'ok' => true, 'duplicate' => true ), 200 );
+		}
+		// The unique key still protects against two deliveries at the same moment.
+		$quiet = $wpdb->suppress_errors( true );
 		$fresh = $wpdb->insert(
 			pkc_table( 'webhook_events' ),
 			array(
-				'event_id'   => substr( sanitize_text_field( $event_id ), 0, 80 ),
+				'event_id'   => $event_id,
 				'event'      => substr( sanitize_text_field( $event ), 0, 64 ),
 				'created_at' => pkc_now(),
 			)
 		);
+		$wpdb->suppress_errors( $quiet );
 		if ( ! $fresh ) {
 			return new WP_REST_Response( array( 'ok' => true, 'duplicate' => true ), 200 );
 		}

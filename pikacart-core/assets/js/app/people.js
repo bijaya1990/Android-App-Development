@@ -616,8 +616,17 @@ export default function peopleStep( body, P ) {
 			}
 			try {
 				const buf = await file.arrayBuffer();
-				const wb = window.XLSX.read( buf, { type: 'array', cellDates: false, raw: false } );
+				// CSV: keep every value exactly as typed (no US date guessing).
+				const isCsv = /\.(csv|txt)$/i.test( file.name );
+				const wb = window.XLSX.read( buf, { type: 'array', cellDates: false, cellNF: true, raw: isCsv } );
 				const sheet = wb.Sheets[ wb.SheetNames[ 0 ] ];
+				// Excel: show real date cells as DD-MM-YYYY (Indian format).
+				Object.keys( sheet ).forEach( ( k ) => {
+					const c = sheet[ k ];
+					if ( k[ 0 ] !== '!' && c && c.t === 'n' && c.z && /[dy]/i.test( String( c.z ) ) && ! /[#0?]/.test( String( c.z ).replace( /\[[^\]]*\]/g, '' ) ) ) {
+						c.w = window.XLSX.SSF.format( 'dd-mm-yyyy', c.v );
+					}
+				} );
 				const rows = window.XLSX.utils.sheet_to_json( sheet, { header: 1, defval: '', raw: false, blankrows: false } );
 				if ( rows.length < 2 ) {
 					toast( __( 'This file has no rows to import.', 'pikacart' ), 'error' );
