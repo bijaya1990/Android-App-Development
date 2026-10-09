@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 $pkc_org    = $pkc['org'];
 $pkc_title  = __( 'Dashboard', 'pikacart' );
-$pkc_styles = array( 'pkc-app' );
+$pkc_styles = array( 'pkc-app', 'pkc-card-fonts', 'pkc-cropper' );
 $pkc_nav    = array(
 	array( '', 'home', __( 'Dashboard', 'pikacart' ) ),
 	array( 'create', 'plus', __( 'Create ID card', 'pikacart' ) ),
@@ -109,6 +109,6 @@ require PKC_DIR . 'templates/partials/head.php';
 <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
 <div id="modal-root"></div>
 <noscript><p class="noscript"><?php esc_html_e( 'Please turn on JavaScript to use the Pikacart dashboard.', 'pikacart' ); ?></p></noscript>
-<?php wp_print_scripts( array( 'pkc-jspdf', 'pkc-app' ) ); ?>
+<?php wp_print_scripts( array( 'pkc-jspdf', 'pkc-qrcode', 'pkc-barcode', 'pkc-jszip', 'pkc-xlsx', 'pkc-cropper', 'pkc-app' ) ); ?>
 </body>
 </html>

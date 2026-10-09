@@ -7,7 +7,7 @@
 import { api } from '../api.js';
 import { esc, icon, toast, confirmDialog, withLoading } from '../ui.js';
 import { downloadInvoice } from '../invoice.js';
-import { drawSampleCard } from '../watermark.js';
+import { drawSampleCard } from '../../card/watermark.js';
 
 const { __, sprintf } = window.wp.i18n;
 

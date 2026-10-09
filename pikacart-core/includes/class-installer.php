@@ -44,6 +44,7 @@ class PKC_Installer {
 	public static function install() {
 		self::create_tables();
 		self::seed();
+		PKC_Catalog::seed_templates();
 		self::set_timezone();
 		PKC_Uploads::protect_base_dir();
 		self::create_pages();

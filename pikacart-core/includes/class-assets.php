@@ -35,6 +35,15 @@ class PKC_Assets {
 		wp_register_script( 'pkc-app', $u . 'js/app/main.js', array( 'wp-i18n' ), $v, true );
 		wp_set_script_translations( 'pkc-app', 'pikacart', PKC_DIR . 'languages' );
 
+		// Card designer libraries (all bundled locally).
+		wp_register_style( 'pkc-card-fonts', $u . 'css/card-fonts.css', array(), $v );
+		wp_register_style( 'pkc-cropper', $u . 'vendor/cropper.min.css', array(), '1.6.2' );
+		wp_register_script( 'pkc-qrcode', $u . 'vendor/qrcode.js', array(), '1.4.4', true );
+		wp_register_script( 'pkc-barcode', $u . 'vendor/JsBarcode.code128.min.js', array(), '3.11.6', true );
+		wp_register_script( 'pkc-jszip', $u . 'vendor/jszip.min.js', array(), '3.10.1', true );
+		wp_register_script( 'pkc-xlsx', $u . 'vendor/xlsx.mini.min.js', array(), '0.18.5', true );
+		wp_register_script( 'pkc-cropper', $u . 'vendor/cropper.min.js', array(), '1.6.2', true );
+
 		wp_register_style( 'pkc-public', $u . 'css/public.css', array( 'pkc-tokens' ), $v );
 		wp_register_script( 'pkc-public', $u . 'js/public.js', array( 'wp-i18n' ), $v, true );
 		wp_set_script_translations( 'pkc-public', 'pikacart', PKC_DIR . 'languages' );

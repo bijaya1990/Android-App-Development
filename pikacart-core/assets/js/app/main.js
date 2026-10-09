@@ -11,6 +11,8 @@ import subscription from './views/subscription.js';
 import account from './views/account.js';
 import support from './views/support.js';
 import upcoming from './views/upcoming.js';
+import create from './views/create.js';
+import projects from './views/projects.js';
 import { initLive, closeBell } from './live.js';
 
 const { __, sprintf } = window.wp.i18n;
@@ -26,10 +28,10 @@ const store = {
 const routes = {
 	'': { title: __( 'Dashboard', 'pikacart' ), view: dashboard },
 	welcome: { title: __( 'Welcome', 'pikacart' ), view: onboarding },
-	create: { title: __( 'Create ID card', 'pikacart' ), view: upcoming( 'create' ) },
-	projects: { title: __( 'My Projects', 'pikacart' ), view: upcoming( 'projects' ) },
-	members: { title: __( 'Members', 'pikacart' ), view: upcoming( 'members' ) },
-	print: { title: __( 'Print Sheets', 'pikacart' ), view: upcoming( 'print' ) },
+	create: { title: __( 'Create ID card', 'pikacart' ), view: create },
+	projects: { title: __( 'My Projects', 'pikacart' ), view: projects( 'projects' ) },
+	members: { title: __( 'Members', 'pikacart' ), view: projects( 'members' ) },
+	print: { title: __( 'Print Sheets', 'pikacart' ), view: projects( 'print' ) },
 	designs: { title: __( 'My Designs', 'pikacart' ), view: upcoming( 'designs' ) },
 	organisation: { title: __( 'Organisation', 'pikacart' ), view: organisation },
 	subscription: { title: __( 'Subscription', 'pikacart' ), view: subscription },

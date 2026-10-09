@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 class PKC_Router {
 
-	const ROUTES = array( 'app', 'login', 'register', 'forgot-password', 'reset-password', 'verify-email' );
+	const ROUTES = array( 'app', 'login', 'register', 'forgot-password', 'reset-password', 'verify-email', 'verify', 'fill' );
 
 	/** @var string */
 	private static $route = '';
@@ -35,6 +35,8 @@ class PKC_Router {
 	public static function add_rewrite_rules() {
 		add_rewrite_rule( '^app/?$', 'index.php?pkc_route=app', 'top' );
 		add_rewrite_rule( '^app/(.+?)/?$', 'index.php?pkc_route=app&pkc_path=$matches[1]', 'top' );
+		add_rewrite_rule( '^verify/([A-Za-z0-9]+)/?$', 'index.php?pkc_route=verify&pkc_path=$matches[1]', 'top' );
+		add_rewrite_rule( '^fill/([A-Za-z0-9]+)/?$', 'index.php?pkc_route=fill&pkc_path=$matches[1]', 'top' );
 		foreach ( array( 'login', 'register', 'forgot-password', 'reset-password', 'verify-email' ) as $route ) {
 			add_rewrite_rule( '^' . $route . '/?$', 'index.php?pkc_route=' . $route, 'top' );
 		}
@@ -132,6 +134,32 @@ class PKC_Router {
 			case 'app':
 				self::app( $user );
 				break;
+
+			case 'verify':
+				self::verify( (string) get_query_var( 'pkc_path' ) );
+				break;
+
+			case 'fill':
+				$res = PKC_REST_Members::open_link( (string) get_query_var( 'pkc_path' ) );
+				if ( is_wp_error( $res ) ) {
+					status_header( 410 );
+					self::render(
+						'message',
+						array(
+							'title'   => __( 'Form closed', 'pikacart' ),
+							'message' => $res->get_error_message(),
+							'icon'    => 'lock',
+						)
+					);
+				}
+				self::render(
+					'fill',
+					array(
+						'token' => (string) get_query_var( 'pkc_path' ),
+						'org'   => $res[1],
+					)
+				);
+				break;
 		}
 	}
 
@@ -172,6 +200,48 @@ class PKC_Router {
 			);
 		}
 		self::render( 'app', array( 'org' => $org ) );
+	}
+
+	/**
+	 * Public card verification page (opened by scanning the QR code).
+	 */
+	private static function verify( $token ) {
+		if ( ! PKC_Rate_Limit::hit( 'verify', pkc_ip(), 60, MINUTE_IN_SECONDS ) ) {
+			status_header( 429 );
+			self::render(
+				'message',
+				array(
+					'title'   => __( 'Please wait a moment', 'pikacart' ),
+					'message' => __( 'Too many checks from this device. Please try again in a minute.', 'pikacart' ),
+					'icon'    => 'clock',
+				)
+			);
+		}
+		if ( 'demo' === $token ) {
+			self::render( 'verify', array( 'demo' => true ) );
+		}
+		$m   = PKC_Members::by_token( $token );
+		$org = $m ? PKC_Access::refresh( PKC_Organisations::get( $m->org_id ) ) : null;
+		if ( ! $m || ! $org ) {
+			status_header( 404 );
+			self::render( 'verify', array( 'missing' => true ) );
+		}
+		$status = 'valid';
+		if ( $m->deleted_at || 'cancelled' === $m->status || 'suspended' === $org->status ) {
+			$status = 'cancelled';
+		} elseif ( 'pending' === $m->status ) {
+			$status = 'cancelled';
+		} elseif ( 'expired' === PKC_Members::display_status( $m ) ) {
+			$status = 'expired';
+		}
+		self::render(
+			'verify',
+			array(
+				'member' => $m,
+				'org'    => $org,
+				'status' => $status,
+			)
+		);
 	}
 
 	/**

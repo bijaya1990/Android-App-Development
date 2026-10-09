@@ -48,6 +48,10 @@ class PKC_Cron {
 		}
 		self::refresh_due();
 		self::expiry_warnings();
+		if ( ! get_transient( 'pkc_daily_jobs' ) ) {
+			set_transient( 'pkc_daily_jobs', 1, DAY_IN_SECONDS );
+			PKC_Members::purge_trash();
+		}
 	}
 
 	/** "Trial ends in 30 minutes" email, once per account. */

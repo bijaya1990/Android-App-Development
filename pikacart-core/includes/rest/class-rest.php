@@ -18,6 +18,8 @@ class PKC_REST {
 		PKC_REST_Billing::routes();
 		PKC_REST_Public::routes();
 		PKC_REST_Support::routes();
+		PKC_REST_Cards::routes();
+		PKC_REST_Members::routes();
 	}
 
 	/**
