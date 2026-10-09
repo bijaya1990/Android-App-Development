@@ -1,0 +1,76 @@
+/* Used only when the Pikacart Core plugin is not active. */
+:root {
+	/* Brand (overridden from Settings) */
+	--pkc-brand: #4F46E5;
+	--pkc-accent: #F97316;
+	--pkc-brand-600: color-mix(in srgb, var(--pkc-brand) 85%, #000);
+	--pkc-brand-50: color-mix(in srgb, var(--pkc-brand) 7%, #fff);
+	--pkc-brand-100: color-mix(in srgb, var(--pkc-brand) 14%, #fff);
+	--pkc-brand-200: color-mix(in srgb, var(--pkc-brand) 28%, #fff);
+	--pkc-accent-50: color-mix(in srgb, var(--pkc-accent) 10%, #fff);
+
+	/* Neutrals */
+	--pkc-ink: #141827;
+	--pkc-text: #2b3045;
+	--pkc-muted: #687089;
+	--pkc-faint: #9aa1b5;
+	--pkc-line: #e6e8f0;
+	--pkc-line-strong: #d3d7e3;
+	--pkc-bg: #f5f6fb;
+	--pkc-surface: #ffffff;
+	--pkc-surface-2: #fafbfe;
+
+	/* Status */
+	--pkc-success: #0f9f6e;
+	--pkc-success-50: #e7f7f0;
+	--pkc-warning: #c27803;
+	--pkc-warning-50: #fff6e0;
+	--pkc-danger: #dc2645;
+	--pkc-danger-50: #fdecef;
+	--pkc-info: #2563eb;
+	--pkc-info-50: #eaf1ff;
+
+	/* Type */
+	--pkc-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+	--pkc-font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+	--pkc-fs-xs: 0.75rem;
+	--pkc-fs-sm: 0.875rem;
+	--pkc-fs-md: 1rem;
+	--pkc-fs-lg: 1.125rem;
+	--pkc-fs-xl: 1.375rem;
+	--pkc-fs-2xl: 1.75rem;
+	--pkc-fs-3xl: 2.25rem;
+	--pkc-fs-4xl: clamp(2.2rem, 5vw, 3.5rem);
+
+	/* Spacing (4px grid) */
+	--pkc-s1: 4px;
+	--pkc-s2: 8px;
+	--pkc-s3: 12px;
+	--pkc-s4: 16px;
+	--pkc-s5: 20px;
+	--pkc-s6: 24px;
+	--pkc-s8: 32px;
+	--pkc-s10: 40px;
+	--pkc-s12: 48px;
+	--pkc-s16: 64px;
+
+	/* Radius */
+	--pkc-r-sm: 8px;
+	--pkc-r-md: 12px;
+	--pkc-r-lg: 16px;
+	--pkc-r-xl: 22px;
+	--pkc-r-full: 999px;
+
+	/* Shadows */
+	--pkc-sh-xs: 0 1px 2px rgba(20, 24, 39, 0.06);
+	--pkc-sh-sm: 0 1px 3px rgba(20, 24, 39, 0.06), 0 2px 8px rgba(20, 24, 39, 0.04);
+	--pkc-sh-md: 0 4px 16px rgba(20, 24, 39, 0.08), 0 1px 3px rgba(20, 24, 39, 0.05);
+	--pkc-sh-lg: 0 18px 48px rgba(20, 24, 39, 0.14), 0 4px 12px rgba(20, 24, 39, 0.06);
+	--pkc-ring: 0 0 0 3px color-mix(in srgb, var(--pkc-brand) 30%, transparent);
+
+	/* Motion */
+	--pkc-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--pkc-t-fast: 120ms;
+	--pkc-t: 200ms;
+	--pkc-t-slow: 320ms;
+}

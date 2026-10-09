@@ -1,0 +1,61 @@
+/* Login, register, password and message pages. Mobile first. */
+
+.auth { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: 1fr; }
+.auth-art { display: none; position: relative; overflow: hidden; color: #fff; background: radial-gradient(1200px 600px at -10% -10%, color-mix(in srgb, var(--pkc-accent) 40%, transparent), transparent 60%), linear-gradient(150deg, var(--pkc-brand) 0%, color-mix(in srgb, var(--pkc-brand) 55%, #0b0d1f) 100%); }
+.auth-art-inner { position: relative; z-index: 1; padding: 48px; display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.auth-art .pkc-logo { color: #fff; }
+.auth-art .pkc-logo-mark rect:first-child { fill: #fff; }
+.auth-art .pkc-logo-mark circle, .auth-art .pkc-logo-mark rect:nth-child(4) { fill: var(--pkc-brand); }
+.auth-tag { margin: 6px 0 0; opacity: .8; font-size: var(--pkc-fs-sm); }
+.auth-art h2 { color: #fff; font-size: var(--pkc-fs-3xl); max-width: 460px; margin: 48px 0 20px; }
+.auth-points { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.auth-points li { display: flex; gap: 10px; align-items: center; font-weight: 500; }
+.auth-points .pkc-i { width: 22px; height: 22px; padding: 3px; border-radius: 50%; background: rgba(255,255,255,.18); }
+
+/* Fan of demo cards drawn with CSS */
+.card-fan { position: relative; margin-top: auto; height: 300px; }
+.demo-card { position: absolute; bottom: 0; left: 50%; width: 170px; height: 262px; border-radius: 14px; background: #fff; box-shadow: var(--pkc-sh-lg); overflow: hidden; transform-origin: 50% 120%; animation: pkc-fan-in .9s var(--pkc-ease) both; }
+.demo-card-a { transform: translateX(-130%) rotate(-12deg); --c: #0f766e; animation-delay: .05s; }
+.demo-card-b { transform: translateX(-50%) rotate(0deg); --c: var(--pkc-accent); z-index: 2; animation-delay: .15s; }
+.demo-card-c { transform: translateX(30%) rotate(12deg); --c: #1e3a8a; animation-delay: .25s; }
+@keyframes pkc-fan-in { from { opacity: 0; translate: 0 30px; } to { opacity: 1; translate: 0 0; } }
+.dc-head { height: 64px; background: var(--c); display: flex; align-items: center; gap: 8px; padding: 14px 12px 22px; clip-path: polygon(0 0, 100% 0, 100% 72%, 0 100%); }
+.dc-logo { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.9); }
+.dc-org { height: 8px; width: 90px; border-radius: 4px; background: rgba(255,255,255,.75); }
+.dc-photo { width: 74px; height: 86px; margin: -6px auto 12px; border-radius: 10px; border: 3px solid #fff; box-shadow: 0 0 0 2px var(--c); background: linear-gradient(180deg, #e8ebf3 0 55%, #cfd5e3 55%); position: relative; }
+.dc-photo::before { content: ""; position: absolute; left: 50%; top: 18px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: #b9c0d1; }
+.dc-name { height: 10px; width: 110px; margin: 0 auto 10px; border-radius: 5px; background: #1f2433; }
+.dc-line { height: 7px; width: 120px; margin: 0 auto 7px; border-radius: 4px; background: #d8dce8; }
+.dc-line.short { width: 80px; }
+.dc-foot { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; justify-content: space-between; align-items: end; }
+.dc-qr { width: 34px; height: 34px; background: repeating-conic-gradient(#1f2433 0 25%, #fff 0 50%) 0 0 / 8px 8px; border: 2px solid #1f2433; border-radius: 3px; }
+.dc-bar { width: 80px; height: 22px; background: repeating-linear-gradient(90deg, #1f2433 0 2px, #fff 2px 4px, #1f2433 4px 5px, #fff 5px 8px); }
+
+.auth-main { display: flex; flex-direction: column; padding: 20px 16px 32px; background: var(--pkc-surface); }
+.auth-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 28px; }
+.auth-back { display: inline-flex; align-items: center; gap: 4px; font-size: var(--pkc-fs-sm); color: var(--pkc-muted) !important; }
+.auth-box { width: 100%; max-width: 440px; margin: 0 auto; }
+.auth-box h1 { font-size: var(--pkc-fs-2xl); margin-bottom: 6px; }
+.auth-sub { color: var(--pkc-muted); margin: 0 0 24px; }
+.auth-switch { text-align: center; margin-top: 20px; font-size: var(--pkc-fs-sm); color: var(--pkc-muted); }
+.auth-help { text-align: center; margin-top: auto; padding-top: 32px; font-size: var(--pkc-fs-xs); color: var(--pkc-faint); }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: -4px 0 18px; font-size: var(--pkc-fs-sm); flex-wrap: wrap; }
+
+@media (min-width: 960px) {
+	.auth { grid-template-columns: minmax(420px, 1fr) minmax(480px, 1fr); }
+	.auth-art { display: block; }
+	.auth-mobile-logo { visibility: hidden; }
+	.auth-main { padding: 32px 48px; }
+	.auth-box { margin-top: 6vh; }
+}
+
+/* Message page */
+.msg-wrap { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px; background: radial-gradient(800px 400px at 50% -10%, var(--pkc-brand-100), transparent 70%), var(--pkc-bg); }
+.msg-card { width: 100%; max-width: 480px; text-align: center; background: var(--pkc-surface); border-radius: var(--pkc-r-xl); box-shadow: var(--pkc-sh-md); padding: 36px 28px; }
+.msg-card .pkc-logo { margin-bottom: 24px; }
+.msg-icon { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; background: var(--pkc-brand-50); color: var(--pkc-brand); }
+.msg-icon .pkc-i { width: 30px; height: 30px; }
+.msg-icon-check { background: var(--pkc-success-50); color: var(--pkc-success); }
+.msg-icon-alert, .msg-icon-lock { background: var(--pkc-danger-50); color: var(--pkc-danger); }
+.msg-card p { color: var(--pkc-muted); margin: 0 0 24px; }
+.msg-card .msg-help { margin: 20px 0 0; font-size: var(--pkc-fs-sm); }

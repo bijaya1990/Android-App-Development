@@ -1,0 +1,169 @@
+/*
+ * Pikacart design system: fonts, colours, type scale, spacing, radius,
+ * shadows and motion. Every screen is built from these variables.
+ * Brand and accent colours are set from Settings (inline :root override).
+ */
+
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 500; font-display: swap; src: url("../fonts/inter-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 600; font-display: swap; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/inter-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-weight: 600; font-display: swap; src: url("../fonts/plus-jakarta-sans-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/plus-jakarta-sans-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-weight: 800; font-display: swap; src: url("../fonts/plus-jakarta-sans-latin-800-normal.woff2") format("woff2"); }
+
+:root {
+	/* Brand (overridden from Settings) */
+	--pkc-brand: #4F46E5;
+	--pkc-accent: #F97316;
+	--pkc-brand-600: color-mix(in srgb, var(--pkc-brand) 85%, #000);
+	--pkc-brand-50: color-mix(in srgb, var(--pkc-brand) 7%, #fff);
+	--pkc-brand-100: color-mix(in srgb, var(--pkc-brand) 14%, #fff);
+	--pkc-brand-200: color-mix(in srgb, var(--pkc-brand) 28%, #fff);
+	--pkc-accent-50: color-mix(in srgb, var(--pkc-accent) 10%, #fff);
+
+	/* Neutrals */
+	--pkc-ink: #141827;
+	--pkc-text: #2b3045;
+	--pkc-muted: #687089;
+	--pkc-faint: #9aa1b5;
+	--pkc-line: #e6e8f0;
+	--pkc-line-strong: #d3d7e3;
+	--pkc-bg: #f5f6fb;
+	--pkc-surface: #ffffff;
+	--pkc-surface-2: #fafbfe;
+
+	/* Status */
+	--pkc-success: #0f9f6e;
+	--pkc-success-50: #e7f7f0;
+	--pkc-warning: #c27803;
+	--pkc-warning-50: #fff6e0;
+	--pkc-danger: #dc2645;
+	--pkc-danger-50: #fdecef;
+	--pkc-info: #2563eb;
+	--pkc-info-50: #eaf1ff;
+
+	/* Type */
+	--pkc-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+	--pkc-font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+	--pkc-fs-xs: 0.75rem;
+	--pkc-fs-sm: 0.875rem;
+	--pkc-fs-md: 1rem;
+	--pkc-fs-lg: 1.125rem;
+	--pkc-fs-xl: 1.375rem;
+	--pkc-fs-2xl: 1.75rem;
+	--pkc-fs-3xl: 2.25rem;
+	--pkc-fs-4xl: clamp(2.2rem, 5vw, 3.5rem);
+
+	/* Spacing (4px grid) */
+	--pkc-s1: 4px;
+	--pkc-s2: 8px;
+	--pkc-s3: 12px;
+	--pkc-s4: 16px;
+	--pkc-s5: 20px;
+	--pkc-s6: 24px;
+	--pkc-s8: 32px;
+	--pkc-s10: 40px;
+	--pkc-s12: 48px;
+	--pkc-s16: 64px;
+
+	/* Radius */
+	--pkc-r-sm: 8px;
+	--pkc-r-md: 12px;
+	--pkc-r-lg: 16px;
+	--pkc-r-xl: 22px;
+	--pkc-r-full: 999px;
+
+	/* Shadows */
+	--pkc-sh-xs: 0 1px 2px rgba(20, 24, 39, 0.06);
+	--pkc-sh-sm: 0 1px 3px rgba(20, 24, 39, 0.06), 0 2px 8px rgba(20, 24, 39, 0.04);
+	--pkc-sh-md: 0 4px 16px rgba(20, 24, 39, 0.08), 0 1px 3px rgba(20, 24, 39, 0.05);
+	--pkc-sh-lg: 0 18px 48px rgba(20, 24, 39, 0.14), 0 4px 12px rgba(20, 24, 39, 0.06);
+	--pkc-ring: 0 0 0 3px color-mix(in srgb, var(--pkc-brand) 30%, transparent);
+
+	/* Motion */
+	--pkc-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--pkc-t-fast: 120ms;
+	--pkc-t: 200ms;
+	--pkc-t-slow: 320ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root { --pkc-t-fast: 0ms; --pkc-t: 0ms; --pkc-t-slow: 0ms; }
+	*, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+/* ---------- Base for Pikacart's own pages ---------- */
+.pkc, .pkc *, .pkc *::before, .pkc *::after { box-sizing: border-box; }
+body.pkc { margin: 0; font-family: var(--pkc-font); font-size: var(--pkc-fs-md); line-height: 1.55; color: var(--pkc-text); background: var(--pkc-bg); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.pkc h1, .pkc h2, .pkc h3, .pkc h4 { font-family: var(--pkc-font-display); color: var(--pkc-ink); line-height: 1.2; margin: 0 0 var(--pkc-s3); letter-spacing: -0.01em; }
+.pkc a { color: var(--pkc-brand); text-decoration: none; }
+.pkc a:hover { text-decoration: underline; }
+.pkc img { max-width: 100%; height: auto; }
+.pkc :focus-visible { outline: none; box-shadow: var(--pkc-ring); border-radius: 6px; }
+.pkc-i { width: 20px; height: 20px; flex: none; display: inline-block; vertical-align: middle; }
+
+/* Logo */
+.pkc-logo { display: inline-flex; align-items: center; gap: 8px; color: var(--pkc-ink); font-family: var(--pkc-font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; text-decoration: none !important; }
+.pkc-logo-mark { width: 32px; height: 32px; }
+.pkc-logo-img { max-height: 40px; width: auto; }
+
+/* Buttons */
+.pkc .btn { --b: var(--pkc-surface); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: var(--pkc-r-sm); border: 1px solid var(--pkc-line-strong); background: var(--b); color: var(--pkc-ink); font: 600 var(--pkc-fs-sm)/1 var(--pkc-font); cursor: pointer; text-decoration: none !important; transition: background var(--pkc-t) var(--pkc-ease), box-shadow var(--pkc-t) var(--pkc-ease), transform var(--pkc-t-fast) var(--pkc-ease), border-color var(--pkc-t); white-space: nowrap; }
+.pkc .btn:hover { background: var(--pkc-surface-2); border-color: var(--pkc-faint); }
+.pkc .btn:active { transform: translateY(1px); }
+.pkc .btn[disabled], .pkc .btn.is-loading { opacity: 0.7; cursor: not-allowed; }
+.pkc .btn-primary { background: var(--pkc-brand); border-color: var(--pkc-brand); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.12); }
+.pkc .btn-primary:hover { background: var(--pkc-brand-600); border-color: var(--pkc-brand-600); }
+.pkc .btn-accent { background: var(--pkc-accent); border-color: var(--pkc-accent); color: #fff; }
+.pkc .btn-accent:hover { background: color-mix(in srgb, var(--pkc-accent) 88%, #000); }
+.pkc .btn-danger { background: var(--pkc-surface); border-color: color-mix(in srgb, var(--pkc-danger) 40%, #fff); color: var(--pkc-danger); }
+.pkc .btn-danger:hover { background: var(--pkc-danger-50); border-color: var(--pkc-danger); }
+.pkc .btn-ghost { background: transparent; border-color: transparent; color: var(--pkc-muted); }
+.pkc .btn-ghost:hover { background: var(--pkc-brand-50); color: var(--pkc-brand); }
+.pkc .btn-sm { min-height: 36px; padding: 0 12px; font-size: var(--pkc-fs-xs); }
+.pkc .btn-block { width: 100%; }
+.pkc .btn.is-loading::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: pkc-spin .7s linear infinite; }
+@keyframes pkc-spin { to { transform: rotate(360deg); } }
+
+/* Forms */
+.pkc .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--pkc-s4); }
+.pkc .field label { font-size: var(--pkc-fs-sm); font-weight: 600; color: var(--pkc-ink); }
+.pkc input[type="text"], .pkc input[type="email"], .pkc input[type="tel"], .pkc input[type="password"], .pkc input[type="url"], .pkc input[type="number"], .pkc input[type="date"], .pkc input[type="search"], .pkc select, .pkc textarea {
+	width: 100%; min-height: 44px; padding: 10px 14px; border: 1px solid var(--pkc-line-strong); border-radius: var(--pkc-r-sm); background: var(--pkc-surface); color: var(--pkc-ink); font: 400 var(--pkc-fs-md)/1.4 var(--pkc-font); transition: border-color var(--pkc-t), box-shadow var(--pkc-t);
+}
+.pkc textarea { min-height: 96px; resize: vertical; }
+.pkc input:focus, .pkc select:focus, .pkc textarea:focus { outline: none; border-color: var(--pkc-brand); box-shadow: var(--pkc-ring); }
+.pkc .field.has-error input, .pkc .field.has-error select, .pkc .field.has-error textarea { border-color: var(--pkc-danger); }
+.pkc .field-error { color: var(--pkc-danger); font-size: var(--pkc-fs-xs); }
+.pkc .hint { color: var(--pkc-muted); font-size: var(--pkc-fs-xs); }
+.pkc .check { display: inline-flex; align-items: center; gap: 8px; font-size: var(--pkc-fs-sm); cursor: pointer; }
+.pkc .check input { width: 18px; height: 18px; accent-color: var(--pkc-brand); flex: none; }
+.pkc .check-block { display: flex; align-items: flex-start; margin: var(--pkc-s2) 0 var(--pkc-s4); line-height: 1.45; }
+.pkc .check-block input { margin-top: 2px; }
+.pkc .grid-2 { display: grid; grid-template-columns: 1fr; gap: 0 var(--pkc-s4); }
+@media (min-width: 560px) { .pkc .grid-2 { grid-template-columns: 1fr 1fr; } }
+.pkc .pw { position: relative; }
+.pkc .pw input { padding-right: 48px; }
+.pkc .pw-toggle { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: 0; background: none; color: var(--pkc-muted); cursor: pointer; border-radius: 8px; display: grid; place-items: center; }
+.pkc .pw-toggle:hover { color: var(--pkc-ink); }
+.pkc .hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+.pkc .form-msg:empty { display: none; }
+.pkc .form-msg { padding: 10px 14px; border-radius: var(--pkc-r-sm); font-size: var(--pkc-fs-sm); margin-bottom: var(--pkc-s4); }
+.pkc .form-msg.is-error { background: var(--pkc-danger-50); color: var(--pkc-danger); }
+.pkc .form-msg.is-success { background: var(--pkc-success-50); color: var(--pkc-success); }
+
+/* Badges */
+.pkc .badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--pkc-r-full); font-size: var(--pkc-fs-xs); font-weight: 600; background: var(--pkc-bg); color: var(--pkc-muted); white-space: nowrap; }
+.pkc .badge-trial { background: var(--pkc-warning-50); color: var(--pkc-warning); }
+.pkc .badge-active, .pkc .badge-captured { background: var(--pkc-success-50); color: var(--pkc-success); }
+.pkc .badge-expired { background: #eef0f5; color: var(--pkc-muted); }
+.pkc .badge-suspended, .pkc .badge-failed { background: var(--pkc-danger-50); color: var(--pkc-danger); }
+.pkc .badge-cancelled { background: var(--pkc-info-50); color: var(--pkc-info); }
+
+/* Skeleton loaders */
+.pkc .skeleton { background: linear-gradient(90deg, #eceef5 0%, #f6f7fb 50%, #eceef5 100%); background-size: 200% 100%; animation: pkc-shimmer 1.3s ease-in-out infinite; border-radius: var(--pkc-r-md); }
+@keyframes pkc-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.skip-link { position: absolute; left: -9999px; top: 8px; z-index: 1000; background: var(--pkc-ink); color: #fff; padding: 8px 14px; border-radius: 8px; }
+.skip-link:focus { left: 8px; }
