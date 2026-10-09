@@ -255,7 +255,11 @@ class PKC_Admin_Settings {
 		if ( ! array_key_exists( $tab, PKC_Settings::tabs() ) ) {
 			$tab = 'general';
 		}
+		$old_mode = pkc_setting( 'free_mode', 'forever' );
 		PKC_Settings::save_tab( $tab, $_POST ); // Each field is sanitised by type inside save_tab().
+		if ( 'trial' === $tab && $old_mode !== pkc_setting( 'free_mode', 'forever' ) ) {
+			PKC_Access::recompute_all();
+		}
 
 		if ( 'razorpay' === $tab && isset( $_POST['plans_rzp'] ) && is_array( $_POST['plans_rzp'] ) ) {
 			global $wpdb;

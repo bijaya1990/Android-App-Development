@@ -368,6 +368,7 @@ class PKC_Admin_Accounts {
 				$org = PKC_Access::refresh( PKC_Organisations::get( $org_id ) );
 				PKC_Activity_Log::add( 'account.reactivated', $org_id, PKC_Access::label( $org->status ) );
 				PKC_Emails::send_to_org( $org, 'reactivated' );
+				PKC_Notifications::add( $org_id, 'account', __( 'Your account is active again', 'pikacart' ), __( 'Welcome back! Everything is available again.', 'pikacart' ) );
 				PKC_Admin::set_flash( __( 'Account reactivated and the customer was emailed.', 'pikacart' ) );
 				break;
 
@@ -394,6 +395,8 @@ class PKC_Admin_Accounts {
 					)
 				);
 				PKC_Access::refresh( PKC_Organisations::get( $org_id ) );
+				/* translators: %d: days */
+				PKC_Notifications::add( $org_id, 'plan', __( 'Free days added to your plan', 'pikacart' ), sprintf( _n( 'Pikacart added %d free day to your plan. Enjoy watermark-free cards!', 'Pikacart added %d free days to your plan. Enjoy watermark-free cards!', $days, 'pikacart' ), $days ), 'subscription' );
 				/* translators: %d: days */
 				PKC_Activity_Log::add( 'free.days', $org_id, sprintf( _n( '%d day', '%d days', $days, 'pikacart' ), $days ) );
 				PKC_Admin::set_flash( __( 'Free days granted.', 'pikacart' ) );

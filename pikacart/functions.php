@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PKC_THEME_VERSION', '1.0.0' );
+define( 'PKC_THEME_VERSION', '1.1.0' );
 
 require get_template_directory() . '/inc/plugin-check.php';
 require get_template_directory() . '/inc/template-tags.php';

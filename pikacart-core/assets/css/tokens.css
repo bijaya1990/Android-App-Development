@@ -101,6 +101,7 @@ body.pkc { margin: 0; font-family: var(--pkc-font); font-size: var(--pkc-fs-md);
 .pkc a:hover { text-decoration: underline; }
 .pkc img { max-width: 100%; height: auto; }
 .pkc :focus-visible { outline: none; box-shadow: var(--pkc-ring); border-radius: 6px; }
+.pkc [hidden] { display: none !important; }
 .pkc-i { width: 20px; height: 20px; flex: none; display: inline-block; vertical-align: middle; }
 
 /* Logo */

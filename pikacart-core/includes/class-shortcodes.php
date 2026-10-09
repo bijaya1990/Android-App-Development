@@ -78,21 +78,34 @@ class PKC_Shortcodes {
 			__( 'PDF, JPG and PNG at 300 DPI', 'pikacart' ),
 			__( 'Print sheets with cut marks', 'pikacart' ),
 			__( 'Own design upload and Design on Demand', 'pikacart' ),
-			__( 'Email support', 'pikacart' ),
+			__( 'No watermark: clean, professional cards', 'pikacart' ),
+			__( 'Live chat support', 'pikacart' ),
 		);
 		ob_start();
 		?>
 		<div class="pkc-pricing">
 			<div class="pkc-price-card pkc-price-trial">
-				<h3><?php esc_html_e( 'Free trial', 'pikacart' ); ?></h3>
-				<p class="pkc-price"><?php esc_html_e( 'Free', 'pikacart' ); ?></p>
-				<p class="pkc-price-note">
-					<?php
-					/* translators: %s: trial length */
-					echo esc_html( sprintf( __( 'Every feature for %s. Exports carry a watermark.', 'pikacart' ), $trial ) );
-					?>
-				</p>
-				<a class="pkc-btn pkc-btn-ghost" href="<?php echo esc_url( pkc_url( 'register' ) ); ?>"><?php esc_html_e( 'Start free trial', 'pikacart' ); ?></a>
+				<?php if ( PKC_Access::free_forever() ) : ?>
+					<h3><?php esc_html_e( 'Free', 'pikacart' ); ?></h3>
+					<p class="pkc-price"><?php echo esc_html( pkc_money( 0 ) ); ?><span><?php esc_html_e( 'forever', 'pikacart' ); ?></span></p>
+					<p class="pkc-price-note">
+						<?php
+						/* translators: %s: watermark text */
+						echo esc_html( sprintf( __( 'Every feature, free forever. Cards carry a "%s" watermark.', 'pikacart' ), PKC_Access::watermark_text() ) );
+						?>
+					</p>
+					<a class="pkc-btn pkc-btn-ghost" href="<?php echo esc_url( pkc_url( 'register' ) ); ?>"><?php esc_html_e( 'Create free account', 'pikacart' ); ?></a>
+				<?php else : ?>
+					<h3><?php esc_html_e( 'Free trial', 'pikacart' ); ?></h3>
+					<p class="pkc-price"><?php esc_html_e( 'Free', 'pikacart' ); ?></p>
+					<p class="pkc-price-note">
+						<?php
+						/* translators: %s: trial length */
+						echo esc_html( sprintf( __( 'Every feature for %s. Exports carry a watermark.', 'pikacart' ), $trial ) );
+						?>
+					</p>
+					<a class="pkc-btn pkc-btn-ghost" href="<?php echo esc_url( pkc_url( 'register' ) ); ?>"><?php esc_html_e( 'Start free trial', 'pikacart' ); ?></a>
+				<?php endif; ?>
 			</div>
 			<?php foreach ( $plans as $plan ) : ?>
 			<div class="pkc-price-card pkc-price-main">

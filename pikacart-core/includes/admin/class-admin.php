@@ -17,6 +17,7 @@ class PKC_Admin {
 		add_action( 'admin_notices', array( __CLASS__, 'setup_notice' ) );
 		PKC_Admin_Accounts::init();
 		PKC_Admin_Payments::init();
+		PKC_Admin_Support::init();
 		PKC_Admin_Settings::init();
 	}
 
@@ -25,15 +26,22 @@ class PKC_Admin {
 			'pikacart'          => array( __( 'Dashboard', 'pikacart' ), array( 'PKC_Admin_Dashboard', 'render' ) ),
 			'pikacart-accounts' => array( __( 'Accounts', 'pikacart' ), array( 'PKC_Admin_Accounts', 'render' ) ),
 			'pikacart-payments' => array( __( 'Payments', 'pikacart' ), array( 'PKC_Admin_Payments', 'render' ) ),
+			'pikacart-support'  => array( __( 'Support', 'pikacart' ), array( 'PKC_Admin_Support', 'render' ) ),
 			'pikacart-settings' => array( __( 'Settings', 'pikacart' ), array( 'PKC_Admin_Settings', 'render' ) ),
 		);
 	}
 
 	public static function menu() {
 		$icon = 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="black" d="M5 1h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zm3 2v1h4V3zm2 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM6 14v1.5h8V14a4 4 0 0 0-8 0z"/></svg>' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-		add_menu_page( __( 'Pikacart', 'pikacart' ), __( 'Pikacart', 'pikacart' ), PKC_Roles::ADMIN_CAP, 'pikacart', array( 'PKC_Admin_Dashboard', 'render' ), $icon, 3 );
+		$count = PKC_Support::admin_unread_count();
+		add_menu_page( __( 'Pikacart', 'pikacart' ), __( 'Pikacart', 'pikacart' ) . ( $count ? ' <span class="awaiting-mod">' . (int) $count . '</span>' : '' ), PKC_Roles::ADMIN_CAP, 'pikacart', array( 'PKC_Admin_Dashboard', 'render' ), $icon, 3 );
+		$unread = PKC_Support::admin_unread_count();
 		foreach ( self::pages() as $slug => $page ) {
-			add_submenu_page( 'pikacart', $page[0] . ' · Pikacart', $page[0], PKC_Roles::ADMIN_CAP, $slug, $page[1] );
+			$label = $page[0];
+			if ( 'pikacart-support' === $slug && $unread ) {
+				$label .= ' <span class="awaiting-mod">' . (int) $unread . '</span>';
+			}
+			add_submenu_page( 'pikacart', $page[0] . ' · Pikacart', $label, PKC_Roles::ADMIN_CAP, $slug, $page[1] );
 		}
 	}
 

@@ -7,6 +7,7 @@
 import { api } from '../api.js';
 import { esc, icon, toast, confirmDialog, withLoading } from '../ui.js';
 import { downloadInvoice } from '../invoice.js';
+import { drawSampleCard } from '../watermark.js';
 
 const { __, sprintf } = window.wp.i18n;
 
@@ -49,6 +50,7 @@ function openCheckout( options ) {
 }
 
 const STATUS_TEXT = () => ( {
+	free: __( 'You are on the Free plan. Free forever; downloaded cards carry the Pikacart watermark.', 'pikacart' ),
 	trial: __( 'You are on the free trial.', 'pikacart' ),
 	active: __( 'Your plan is active.', 'pikacart' ),
 	cancelled: __( 'Autopay is cancelled. You keep access until the end date.', 'pikacart' ),
@@ -125,7 +127,7 @@ export default function subscription( el, ctx ) {
 					<div class="card-head"><h3>${ esc( __( 'Your plan', 'pikacart' ) ) }</h3><span class="badge badge-${ esc( d.status ) }">${ esc( d.label ) }</span></div>
 					<p>${ esc( statusText ) }</p>
 					<dl class="dl">
-						<dt>${ esc( __( 'Plan', 'pikacart' ) ) }</dt><dd>${ esc( d.current || ( d.status === 'trial' ? __( 'Free trial', 'pikacart' ) : '—' ) ) }</dd>
+						<dt>${ esc( __( 'Plan', 'pikacart' ) ) }</dt><dd>${ esc( d.status === 'free' ? __( 'Free (with watermark)', 'pikacart' ) : ( d.current || ( d.status === 'trial' ? __( 'Free trial', 'pikacart' ) : '—' ) ) ) }</dd>
 						${ d.status === 'trial' ? `<dt>${ esc( __( 'Trial ends in', 'pikacart' ) ) }</dt><dd><strong data-countdown></strong></dd>` : '' }
 						${ d.period_end ? `<dt>${ esc( __( 'Paid until', 'pikacart' ) ) }</dt><dd>${ esc( d.period_end ) }</dd>` : '' }
 						<dt>${ esc( __( 'Autopay', 'pikacart' ) ) }</dt><dd>${ esc( d.autopay ? __( 'On', 'pikacart' ) : __( 'Off', 'pikacart' ) ) }</dd>
@@ -135,12 +137,27 @@ export default function subscription( el, ctx ) {
 				</section>
 				<div class="plans">${ planRows }</div>
 			</div>
+			<section class="card compare">
+				<div class="card-head"><h3>${ icon( 'sparkles' ) } ${ esc( __( 'Free vs Pro: how your cards look', 'pikacart' ) ) }</h3></div>
+				<div class="compare-grid">
+					<figure class="compare-item"><canvas width="324" height="516" data-sample="free" aria-label="${ esc( __( 'Free plan card with watermark', 'pikacart' ) ) }"></canvas><figcaption><strong>${ esc( __( 'Free forever', 'pikacart' ) ) }</strong><span>${ esc( sprintf( __( 'All features. Cards carry "%s" across the card.', 'pikacart' ), me.watermark.text ) ) }</span></figcaption></figure>
+					<figure class="compare-item is-pro"><canvas width="324" height="516" data-sample="pro" aria-label="${ esc( __( 'Pro plan card without watermark', 'pikacart' ) ) }"></canvas><figcaption><strong>${ esc( sprintf( __( 'Pro · %s/month', 'pikacart' ), d.plans[ 0 ] ? d.plans[ 0 ].price_text : '₹59' ) ) }</strong><span>${ esc( __( 'Clean, professional cards ready for official use.', 'pikacart' ) ) }</span></figcaption></figure>
+				</div>
+			</section>
 			<section class="card">
 				<div class="card-head"><h3>${ icon( 'receipt' ) } ${ esc( __( 'Payment history', 'pikacart' ) ) }</h3></div>
 				${ history }
 			</section>
 			<p class="muted small center">${ icon( 'shield' ) } ${ esc( __( 'Secure payment by Razorpay. We never see your card or UPI PIN.', 'pikacart' ) ) }
 				${ me.links.refund ? ` · <a href="${ esc( me.links.refund ) }" target="_blank" rel="noopener">${ esc( __( 'Refund and cancellation policy', 'pikacart' ) ) }</a>` : '' }</p>`;
+
+		const brand = getComputedStyle( document.documentElement ).getPropertyValue( '--pkc-brand' ).trim();
+		const accent = getComputedStyle( document.documentElement ).getPropertyValue( '--pkc-accent' ).trim();
+		const drawSamples = () => el.querySelectorAll( '[data-sample]' ).forEach( ( c ) => drawSampleCard( c, { org: me.org.name, watermark: c.dataset.sample === 'free', text: me.watermark.text, brand, accent } ) );
+		drawSamples();
+		if ( document.fonts && document.fonts.ready ) {
+			document.fonts.ready.then( drawSamples );
+		}
 
 		el.querySelectorAll( '[data-countdown]' ).forEach( ( x ) => {
 			x.textContent = '…';

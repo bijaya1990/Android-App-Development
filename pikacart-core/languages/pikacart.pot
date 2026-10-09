@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Pikacart Core 1.0.0\n"
+"Project-Id-Version: Pikacart Core 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pikacart-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-09T16:49:59+00:00\n"
+"POT-Creation-Date: 2026-10-09T17:05:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pikacart\n"
@@ -32,13 +32,13 @@ msgstr ""
 
 #. Author of the plugin
 #: pikacart-core.php
-#: includes/admin/class-admin.php:34
+#: includes/admin/class-admin.php:37
 msgid "Pikacart"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:90
 #: includes/admin/class-admin-dashboard.php:58
-#: includes/admin/class-admin.php:26
+#: includes/admin/class-admin.php:27
 msgid "Accounts"
 msgstr ""
 
@@ -75,8 +75,8 @@ msgstr ""
 
 #: includes/admin/class-admin-accounts.php:119
 #: templates/app.php:21
-#: templates/app.php:77
-#: assets/js/app/main.js:33
+#: templates/app.php:93
+#: assets/js/app/main.js:34
 msgid "Organisation"
 msgstr ""
 
@@ -94,8 +94,8 @@ msgstr ""
 #: includes/admin/class-admin-accounts.php:122
 #: includes/admin/class-admin-accounts.php:235
 #: includes/admin/class-admin-payments.php:99
-#: assets/js/app/views/subscription.js:109
-#: assets/js/app/views/subscription.js:115
+#: assets/js/app/views/subscription.js:111
+#: assets/js/app/views/subscription.js:117
 msgid "Status"
 msgstr ""
 
@@ -151,7 +151,7 @@ msgid "Profile"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:212
-#: templates/auth.php:115
+#: templates/auth.php:119
 #: assets/js/app/views/account.js:16
 msgid "Contact person"
 msgstr ""
@@ -161,8 +161,8 @@ msgstr ""
 #: includes/class-shortcodes.php:54
 #: includes/rest/class-rest-public.php:69
 #: templates/auth.php:83
-#: templates/auth.php:120
-#: templates/auth.php:171
+#: templates/auth.php:124
+#: templates/auth.php:175
 #: assets/js/app/views/onboarding.js:54
 #: assets/js/app/views/organisation.js:22
 #: assets/js/app/views/organisation.js:44
@@ -187,14 +187,14 @@ msgid "Address"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:217
-#: includes/class-access.php:17
+#: includes/class-access.php:23
 msgid "Trial"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:219
 #: includes/admin/class-admin-payments.php:115
-#: includes/class-billing.php:513
-#: assets/js/app/views/subscription.js:131
+#: includes/class-billing.php:529
+#: assets/js/app/views/subscription.js:133
 msgid "Autopay"
 msgstr ""
 
@@ -219,37 +219,37 @@ msgstr ""
 
 #: includes/admin/class-admin-accounts.php:232
 #: includes/admin/class-admin-payments.php:69
-#: includes/admin/class-admin.php:27
+#: includes/admin/class-admin.php:28
 msgid "Payments"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:235
 #: includes/admin/class-admin-payments.php:94
-#: assets/js/app/views/subscription.js:109
 #: assets/js/app/views/subscription.js:111
+#: assets/js/app/views/subscription.js:113
 msgid "Date"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:235
 #: includes/admin/class-admin-payments.php:96
 #: assets/js/app/invoice.js:87
-#: assets/js/app/views/subscription.js:109
-#: assets/js/app/views/subscription.js:112
+#: assets/js/app/views/subscription.js:111
+#: assets/js/app/views/subscription.js:114
 msgid "Amount"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:235
 #: includes/admin/class-admin-payments.php:98
 #: assets/js/app/invoice.js:68
-#: assets/js/app/views/subscription.js:109
-#: assets/js/app/views/subscription.js:114
+#: assets/js/app/views/subscription.js:111
+#: assets/js/app/views/subscription.js:116
 msgid "Method"
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:235
 #: includes/admin/class-admin-payments.php:100
-#: assets/js/app/views/subscription.js:109
-#: assets/js/app/views/subscription.js:116
+#: assets/js/app/views/subscription.js:111
+#: assets/js/app/views/subscription.js:118
 msgid "Invoice"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr ""
 
 #: includes/admin/class-admin-accounts.php:250
 #: includes/admin/class-admin-dashboard.php:140
-#: assets/js/app/views/subscription.js:118
+#: assets/js/app/views/subscription.js:120
 msgid "No payments yet."
 msgstr ""
 
@@ -346,11 +346,19 @@ msgid "Account suspended and the customer was emailed."
 msgstr ""
 
 #: includes/admin/class-admin-accounts.php:371
+msgid "Your account is active again"
+msgstr ""
+
+#: includes/admin/class-admin-accounts.php:371
+msgid "Welcome back! Everything is available again."
+msgstr ""
+
+#: includes/admin/class-admin-accounts.php:372
 msgid "Account reactivated and the customer was emailed."
 msgstr ""
 
 #. translators: %d: hours
-#: includes/admin/class-admin-accounts.php:381
+#: includes/admin/class-admin-accounts.php:382
 #: includes/class-shortcodes.php:70
 #: templates/auth.php:25
 #, php-format
@@ -359,43 +367,56 @@ msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/class-admin-accounts.php:382
+#: includes/admin/class-admin-accounts.php:383
 msgid "Trial extended."
 msgstr ""
 
 #. translators: %d: days
-#: includes/admin/class-admin-accounts.php:398
+#: includes/admin/class-admin-accounts.php:399
+msgid "Free days added to your plan"
+msgstr ""
+
+#. translators: %d: days
+#: includes/admin/class-admin-accounts.php:399
+#, php-format
+msgid "Pikacart added %d free day to your plan. Enjoy watermark-free cards!"
+msgid_plural "Pikacart added %d free days to your plan. Enjoy watermark-free cards!"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: days
+#: includes/admin/class-admin-accounts.php:401
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/admin/class-admin-accounts.php:399
+#: includes/admin/class-admin-accounts.php:402
 msgid "Free days granted."
 msgstr ""
 
-#: includes/admin/class-admin-accounts.php:410
+#: includes/admin/class-admin-accounts.php:413
 msgid "Plan end date changed."
 msgstr ""
 
-#: includes/admin/class-admin-accounts.php:412
+#: includes/admin/class-admin-accounts.php:415
 msgid "Please choose a valid date."
 msgstr ""
 
-#: includes/admin/class-admin-accounts.php:420
+#: includes/admin/class-admin-accounts.php:423
 msgid "Password reset link sent."
 msgstr ""
 
-#: includes/admin/class-admin-accounts.php:422
+#: includes/admin/class-admin-accounts.php:425
 msgid "The email could not be sent. Check your site email setup."
 msgstr ""
 
-#: includes/admin/class-admin-accounts.php:428
+#: includes/admin/class-admin-accounts.php:431
 msgid "Please tick the confirmation box."
 msgstr ""
 
-#: includes/admin/class-admin-accounts.php:432
+#: includes/admin/class-admin-accounts.php:435
 msgid "Account deleted."
 msgstr ""
 
@@ -436,23 +457,25 @@ msgid "New this month"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:64
-msgid "On trial"
+#: assets/js/app/main.js:166
+#: assets/js/app/views/dashboard.js:29
+msgid "Free plan"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:65
 #: includes/admin/class-admin-settings.php:176
-#: includes/class-access.php:18
+#: includes/class-access.php:24
 msgid "Active"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:66
-#: includes/class-access.php:19
-#: assets/js/app/views/dashboard.js:57
+#: includes/class-access.php:25
+#: assets/js/app/views/dashboard.js:64
 msgid "Expired"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:67
-#: includes/class-access.php:20
+#: includes/class-access.php:26
 msgid "Suspended"
 msgstr ""
 
@@ -465,11 +488,11 @@ msgid "Business health"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:75
-msgid "Trial to paid"
+msgid "Free to paid"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:75
-msgid "Accounts that paid after their trial"
+msgid "Accounts that have paid at least once"
 msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:76
@@ -544,6 +567,7 @@ msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:131
 #: includes/admin/class-admin-payments.php:111
+#: assets/js/admin/support.js:87
 msgid "(deleted account)"
 msgstr ""
 
@@ -558,20 +582,20 @@ msgid "Account, payment ID or invoice"
 msgstr ""
 
 #: includes/admin/class-admin-payments.php:80
-#: includes/admin/class-admin.php:166
-#: assets/js/app/views/subscription.js:115
+#: includes/admin/class-admin.php:174
+#: assets/js/app/views/subscription.js:117
 msgid "Paid"
 msgstr ""
 
 #: includes/admin/class-admin-payments.php:81
-#: includes/admin/class-admin.php:167
-#: assets/js/app/views/subscription.js:115
+#: includes/admin/class-admin.php:175
+#: assets/js/app/views/subscription.js:117
 msgid "Failed"
 msgstr ""
 
 #: includes/admin/class-admin-payments.php:82
-#: includes/admin/class-admin.php:168
-#: assets/js/app/views/subscription.js:115
+#: includes/admin/class-admin.php:176
+#: assets/js/app/views/subscription.js:117
 msgid "Refunded"
 msgstr ""
 
@@ -586,19 +610,19 @@ msgstr ""
 
 #: includes/admin/class-admin-payments.php:95
 #: templates/app.php:24
-#: templates/app.php:76
-#: assets/js/app/main.js:36
+#: templates/app.php:92
+#: assets/js/app/main.js:37
 msgid "Account"
 msgstr ""
 
 #: includes/admin/class-admin-payments.php:97
-#: assets/js/app/views/subscription.js:109
-#: assets/js/app/views/subscription.js:113
+#: assets/js/app/views/subscription.js:111
+#: assets/js/app/views/subscription.js:115
 msgid "Type"
 msgstr ""
 
 #: includes/admin/class-admin-payments.php:115
-#: includes/class-billing.php:513
+#: includes/class-billing.php:529
 msgid "One-time"
 msgstr ""
 
@@ -611,8 +635,8 @@ msgid "No payments match these filters."
 msgstr ""
 
 #: includes/admin/class-admin-settings.php:24
-#: includes/admin/class-admin.php:28
-#: includes/admin/class-admin.php:66
+#: includes/admin/class-admin.php:30
+#: includes/admin/class-admin.php:74
 msgid "Settings"
 msgstr ""
 
@@ -806,50 +830,114 @@ msgstr ""
 msgid "Emails sent straight from shared hosting can land in spam. Install a free SMTP plugin (for example \"WP Mail SMTP\") and connect your domain email. Pikacart works with it automatically."
 msgstr ""
 
-#: includes/admin/class-admin-settings.php:275
+#: includes/admin/class-admin-settings.php:279
 msgid "Settings saved."
 msgstr ""
 
-#: includes/admin/class-admin-settings.php:305
+#: includes/admin/class-admin-settings.php:309
 msgid "Plans saved."
 msgstr ""
 
-#: includes/admin/class-admin.php:25
+#: includes/admin/class-admin-support.php:27
+#: includes/admin/class-admin.php:29
+#: templates/app.php:23
+#: assets/js/app/main.js:36
+msgid "Support"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:53
+msgid "Support inbox"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:53
+msgid "Chat live with your customers. New messages appear automatically."
+msgstr ""
+
+#: includes/admin/class-admin-support.php:58
+msgid "Search name, email, mobile or subject"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:60
+#: assets/js/app/views/support.js:84
+msgid "Open"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:61
+#: assets/js/admin/support.js:90
+msgid "Unread"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:62
+#: assets/js/admin/support.js:88
+#: assets/js/app/views/support.js:84
+msgid "Solved"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:63
+msgid "All"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:66
+#: assets/js/admin/support.js:102
+#: assets/js/app/live.js:68
+msgid "Loading…"
+msgstr ""
+
+#: includes/admin/class-admin-support.php:71
+msgid "Choose a conversation on the left to start chatting."
+msgstr ""
+
+#: includes/admin/class-admin.php:26
 #: templates/app.php:12
 #: templates/app.php:15
-#: templates/app.php:66
-#: assets/js/app/main.js:26
+#: templates/app.php:69
+#: assets/js/app/main.js:27
 msgid "Dashboard"
 msgstr ""
 
 #. translators: %s: settings link
-#: includes/admin/class-admin.php:84
+#: includes/admin/class-admin.php:92
 #, php-format
 msgid "<strong>Pikacart:</strong> add your Razorpay keys so customers can pay. <a href=\"%s\">Open Razorpay settings</a>"
 msgstr ""
 
-#: includes/admin/class-admin.php:102
+#: includes/admin/class-admin.php:110
 msgid "Control room"
 msgstr ""
 
-#: includes/admin/class-admin.php:107
+#: includes/admin/class-admin.php:115
 msgid "View site"
 msgstr ""
 
-#: includes/admin/class-admin.php:155
+#: includes/admin/class-admin.php:163
+#: includes/rest/class-rest-support.php:61
 msgid "You are not allowed to do this."
 msgstr ""
 
-#: includes/admin/class-admin.php:169
+#: includes/admin/class-admin.php:177
 msgid "Not completed"
 msgstr ""
 
-#: includes/class-access.php:21
+#: includes/class-access.php:22
+#: includes/class-shortcodes.php:89
+#: includes/class-shortcodes.php:100
+msgid "Free"
+msgstr ""
+
+#: includes/class-access.php:27
 msgid "Cancelled"
 msgstr ""
 
+#: includes/class-access.php:92
+msgid "Your paid plan has ended"
+msgstr ""
+
+#: includes/class-access.php:93
+msgid "You are back on the Free plan. Downloads now carry the Pikacart watermark. Renew anytime to remove it."
+msgstr ""
+
 #. translators: %s: price
-#: includes/class-access.php:103
+#: includes/class-access.php:149
 #, php-format
 msgid "Your free trial has ended. Subscribe for %s per month to continue creating, downloading and printing cards."
 msgstr ""
@@ -864,7 +952,7 @@ msgid "Please take a moment to fill the form, then try again."
 msgstr ""
 
 #: includes/class-accounts.php:75
-#: includes/rest/class-rest-account.php:277
+#: includes/rest/class-rest-account.php:286
 msgid "Please enter your organisation name."
 msgstr ""
 
@@ -879,12 +967,12 @@ msgid "Please enter a valid email address."
 msgstr ""
 
 #: includes/class-accounts.php:84
-#: includes/rest/class-rest-account.php:160
+#: includes/rest/class-rest-account.php:169
 msgid "Please enter a valid mobile number."
 msgstr ""
 
 #: includes/class-accounts.php:87
-#: includes/class-accounts.php:338
+#: includes/class-accounts.php:345
 #: assets/js/auth.js:68
 msgid "Password must be at least 8 characters."
 msgstr ""
@@ -905,50 +993,54 @@ msgstr ""
 msgid "Could not create the account. Please try again."
 msgstr ""
 
-#: includes/class-accounts.php:150
+#: includes/class-accounts.php:155
+msgid "Welcome! Your free account is ready."
+msgstr ""
+
+#: includes/class-accounts.php:158
 msgid "Welcome! Your free trial has started."
 msgstr ""
 
-#: includes/class-accounts.php:151
+#: includes/class-accounts.php:159
 msgid "Your account is ready. A free trial was already used with this email or mobile number, so please subscribe to continue."
 msgstr ""
 
-#: includes/class-accounts.php:207
+#: includes/class-accounts.php:214
 msgid "Please enter your email and password."
 msgstr ""
 
-#: includes/class-accounts.php:212
+#: includes/class-accounts.php:219
 msgid "The email or password is not correct."
 msgstr ""
 
 #. translators: %s: support email
-#: includes/class-accounts.php:221
+#: includes/class-accounts.php:228
 #, php-format
 msgid "This account is suspended. Please contact %s for help."
 msgstr ""
 
-#: includes/class-accounts.php:303
+#: includes/class-accounts.php:310
 msgid "If an account exists for this email, we have sent a link to reset the password."
 msgstr ""
 
-#: includes/class-accounts.php:334
+#: includes/class-accounts.php:341
 msgid "This reset link is invalid or has expired. Please ask for a new one."
 msgstr ""
 
-#: includes/class-accounts.php:346
+#: includes/class-accounts.php:353
 msgid "Your password has been changed. Please log in."
 msgstr ""
 
-#: includes/class-accounts.php:354
+#: includes/class-accounts.php:361
 msgid "Your current password is not correct."
 msgstr ""
 
-#: includes/class-accounts.php:357
+#: includes/class-accounts.php:364
 #: assets/js/app/views/account.js:63
 msgid "New password must be at least 8 characters."
 msgstr ""
 
-#: includes/class-accounts.php:374
+#: includes/class-accounts.php:381
 msgid "Password changed."
 msgstr ""
 
@@ -991,6 +1083,7 @@ msgid "Payment successful"
 msgstr ""
 
 #: includes/class-activity-log.php:55
+#: includes/class-billing.php:451
 #: includes/class-emails.php:47
 msgid "Payment failed"
 msgstr ""
@@ -1004,7 +1097,7 @@ msgid "Autopay status changed"
 msgstr ""
 
 #: includes/class-activity-log.php:58
-#: assets/js/app/views/dashboard.js:36
+#: assets/js/app/views/dashboard.js:43
 msgid "Autopay cancelled"
 msgstr ""
 
@@ -1112,42 +1205,68 @@ msgstr ""
 msgid "No plan is configured."
 msgstr ""
 
-#: includes/class-billing.php:456
+#. translators: %s: amount
+#: includes/class-billing.php:390
+#, php-format
+msgid "Payment received: %s"
+msgstr ""
+
+#. translators: 1: date, 2: invoice number
+#: includes/class-billing.php:392
+#, php-format
+msgid "Your plan is active until %1$s. Watermark removed. Invoice %2$s is ready."
+msgstr ""
+
+#: includes/class-billing.php:452
+msgid "Your payment did not go through. Please try again."
+msgstr ""
+
+#: includes/class-billing.php:472
 msgid "There is no active autopay to cancel."
 msgstr ""
 
-#: includes/class-billing.php:465
+#: includes/class-billing.php:481
 msgid "Autopay cancelled. You keep access until the end of the period you paid for."
 msgstr ""
 
-#: includes/class-billing.php:497
+#: includes/class-billing.php:513
 msgid "Card"
 msgstr ""
 
-#: includes/class-billing.php:498
+#: includes/class-billing.php:514
 msgid "Net banking"
 msgstr ""
 
-#: includes/class-billing.php:499
+#: includes/class-billing.php:515
 msgid "Wallet"
 msgstr ""
 
-#: includes/class-billing.php:500
+#: includes/class-billing.php:516
 msgid "eMandate"
 msgstr ""
 
-#: includes/class-billing.php:501
+#: includes/class-billing.php:517
 msgid "Manual"
 msgstr ""
 
 #. translators: %s: plan name
-#: includes/class-billing.php:554
+#: includes/class-billing.php:570
 #, php-format
 msgid "Pikacart %s subscription"
 msgstr ""
 
 #: includes/class-cron.php:26
 msgid "Every 5 minutes (Pikacart)"
+msgstr ""
+
+#: includes/class-cron.php:117
+msgid "Your plan ends soon"
+msgstr ""
+
+#. translators: %s: date
+#: includes/class-cron.php:119
+#, php-format
+msgid "Your paid plan ends on %s. Renew to keep downloading without the watermark."
 msgstr ""
 
 #: includes/class-default-pages.php:31
@@ -1159,7 +1278,7 @@ msgid "Verify email"
 msgstr ""
 
 #: includes/class-emails.php:27
-#: assets/js/app/main.js:27
+#: assets/js/app/main.js:28
 msgid "Welcome"
 msgstr ""
 
@@ -1168,7 +1287,7 @@ msgid "Trial ending soon"
 msgstr ""
 
 #: includes/class-emails.php:37
-#: assets/js/app/views/dashboard.js:43
+#: assets/js/app/views/dashboard.js:50
 msgid "Trial ended"
 msgstr ""
 
@@ -1177,12 +1296,28 @@ msgid "Subscription expiring"
 msgstr ""
 
 #: includes/class-emails.php:67
+msgid "Support reply"
+msgstr ""
+
+#: includes/class-emails.php:72
 msgid "Reset password"
 msgstr ""
 
+#. translators: %s: price
+#: includes/class-emails.php:115
+#, php-format
+msgid "You can use Pikacart free forever. Free cards carry a small \"Made with www.pikacart.in\" watermark. Upgrade for %s per month to remove it."
+msgstr ""
+
+#. translators: 1: minutes, 2: price
+#: includes/class-emails.php:117
+#, php-format
+msgid "Your free trial lasts %1$d minutes. Every feature is open. After the trial, continue for %2$s per month."
+msgstr ""
+
 #. translators: %s: support email
-#: includes/class-emails.php:160
-#: templates/auth.php:201
+#: includes/class-emails.php:170
+#: templates/auth.php:205
 #, php-format
 msgid "Need help? Write to %s"
 msgstr ""
@@ -1245,8 +1380,8 @@ msgstr ""
 
 #: includes/class-router.php:154
 #: includes/class-router.php:170
-#: templates/app.php:57
-#: templates/app.php:79
+#: templates/app.php:60
+#: templates/app.php:95
 msgid "Log out"
 msgstr ""
 
@@ -1261,7 +1396,7 @@ msgid "General"
 msgstr ""
 
 #: includes/class-settings.php:23
-msgid "Trial and Plans"
+msgid "Free plan and Plans"
 msgstr ""
 
 #: includes/class-settings.php:24
@@ -1373,178 +1508,202 @@ msgid "WhatsApp number"
 msgstr ""
 
 #: includes/class-settings.php:57
-msgid "Free trial length (minutes)"
+msgid "Free plan mode"
 msgstr ""
 
 #: includes/class-settings.php:57
-msgid "120 minutes = 2 hours."
+msgid "Lifetime free: every account can use Pikacart free forever, and downloads carry the watermark. Trial: free only for the trial length, then locked until they pay."
+msgstr ""
+
+#: includes/class-settings.php:57
+msgid "Lifetime free with watermark (recommended)"
+msgstr ""
+
+#: includes/class-settings.php:57
+msgid "Time-limited trial, then locked"
 msgstr ""
 
 #: includes/class-settings.php:58
-msgid "Send \"trial ending\" email this many minutes before the end"
+msgid "Watermark text on free cards"
+msgstr ""
+
+#: includes/class-settings.php:58
+msgid "Drawn across every free card and on a ribbon at the bottom. Paid plans have no watermark."
 msgstr ""
 
 #: includes/class-settings.php:59
-msgid "Send \"subscription expiring\" email this many days before the end"
+msgid "Trial length in minutes (trial mode only)"
+msgstr ""
+
+#: includes/class-settings.php:59
+msgid "120 minutes = 2 hours."
 msgstr ""
 
 #: includes/class-settings.php:60
-msgid "Autopay grace period (hours)"
-msgstr ""
-
-#: includes/class-settings.php:60
-msgid "Keeps an autopay account active while Razorpay retries a renewal."
+msgid "Send \"trial ending\" email this many minutes before the end"
 msgstr ""
 
 #: includes/class-settings.php:61
-msgid "Trial watermark text"
+msgid "Send \"subscription expiring\" email this many days before the end"
 msgstr ""
 
-#: includes/class-settings.php:64
+#: includes/class-settings.php:62
+msgid "Autopay grace period (hours)"
+msgstr ""
+
+#: includes/class-settings.php:62
+msgid "Keeps an autopay account active while Razorpay retries a renewal."
+msgstr ""
+
+#: includes/class-settings.php:65
 msgid "Mode"
 msgstr ""
 
-#: includes/class-settings.php:64
+#: includes/class-settings.php:65
 msgid "Test mode"
 msgstr ""
 
-#: includes/class-settings.php:64
+#: includes/class-settings.php:65
 msgid "Live mode"
 msgstr ""
 
-#: includes/class-settings.php:65
+#: includes/class-settings.php:66
 msgid "Test Key ID"
 msgstr ""
 
-#: includes/class-settings.php:65
+#: includes/class-settings.php:66
 msgid "Starts with rzp_test_"
 msgstr ""
 
-#: includes/class-settings.php:66
+#: includes/class-settings.php:67
 msgid "Test Key Secret"
 msgstr ""
 
-#: includes/class-settings.php:67
+#: includes/class-settings.php:68
 msgid "Live Key ID"
 msgstr ""
 
-#: includes/class-settings.php:67
+#: includes/class-settings.php:68
 msgid "Starts with rzp_live_"
 msgstr ""
 
-#: includes/class-settings.php:68
+#: includes/class-settings.php:69
 msgid "Live Key Secret"
 msgstr ""
 
-#: includes/class-settings.php:69
+#: includes/class-settings.php:70
 msgid "Webhook Secret"
 msgstr ""
 
-#: includes/class-settings.php:69
+#: includes/class-settings.php:70
 msgid "The secret you typed when creating the webhook in Razorpay."
 msgstr ""
 
-#: includes/class-settings.php:70
+#: includes/class-settings.php:71
 msgid "Offer one-time payment"
 msgstr ""
 
-#: includes/class-settings.php:70
+#: includes/class-settings.php:71
 msgid "Lets users whose bank does not support autopay pay once for one period."
 msgstr ""
 
-#: includes/class-settings.php:73
+#: includes/class-settings.php:74
 msgid "Hero headline"
 msgstr ""
 
-#: includes/class-settings.php:74
+#: includes/class-settings.php:75
 msgid "Hero text"
 msgstr ""
 
-#: includes/class-settings.php:75
+#: includes/class-settings.php:76
 msgid "Hero button text"
 msgstr ""
 
-#: includes/class-settings.php:78
+#: includes/class-settings.php:79
 msgid "Google Search Console verification code"
 msgstr ""
 
-#: includes/class-settings.php:78
+#: includes/class-settings.php:79
 msgid "Only the code inside content=\"...\"."
 msgstr ""
 
-#: includes/class-settings.php:79
+#: includes/class-settings.php:80
 msgid "Google Analytics ID"
 msgstr ""
 
-#: includes/class-settings.php:79
+#: includes/class-settings.php:80
 msgid "Example: G-XXXXXXX"
 msgstr ""
 
-#: includes/class-settings.php:80
+#: includes/class-settings.php:81
 msgid "Custom header scripts"
 msgstr ""
 
-#: includes/class-settings.php:80
+#: includes/class-settings.php:81
 msgid "Added to the public pages only, never to the app."
 msgstr ""
 
-#: includes/class-settings.php:81
+#: includes/class-settings.php:82
 msgid "Custom footer scripts"
 msgstr ""
 
-#: includes/class-settings.php:84
+#: includes/class-settings.php:85
 msgid "Maximum image upload size (MB)"
 msgstr ""
 
-#: includes/class-settings.php:85
+#: includes/class-settings.php:86
 msgid "Maximum people per card project"
 msgstr ""
 
-#: includes/class-settings.php:86
+#: includes/class-settings.php:87
 msgid "Login attempts allowed per 15 minutes"
 msgstr ""
 
-#: includes/class-settings.php:89
+#: includes/class-settings.php:90
 msgid "Maintenance mode"
 msgstr ""
 
-#: includes/class-settings.php:89
+#: includes/class-settings.php:90
 msgid "Visitors and users see a \"back soon\" page. Super Admins still see the site."
 msgstr ""
 
-#: includes/class-settings.php:90
+#: includes/class-settings.php:91
 msgid "Maintenance message"
 msgstr ""
 
-#: includes/class-settings.php:91
+#: includes/class-settings.php:92
 msgid "Remove all data when the plugin is deleted"
 msgstr ""
 
-#: includes/class-settings.php:91
+#: includes/class-settings.php:92
 msgid "Leave this off unless you really want to erase every account, card and payment record."
-msgstr ""
-
-#. translators: %s: email name
-#: includes/class-settings.php:95
-#, php-format
-msgid "%s: subject"
 msgstr ""
 
 #. translators: %s: email name
 #: includes/class-settings.php:96
 #, php-format
+msgid "%s: subject"
+msgstr ""
+
+#. translators: %s: email name
+#: includes/class-settings.php:97
+#, php-format
 msgid "%s: message"
 msgstr ""
 
-#: includes/class-settings.php:98
+#: includes/class-settings.php:99
+msgid "Email customers when support replies and they are not online"
+msgstr ""
+
+#: includes/class-settings.php:100
 msgid "Sender name"
 msgstr ""
 
-#: includes/class-settings.php:99
+#: includes/class-settings.php:101
 msgid "Sender email"
 msgstr ""
 
-#: includes/class-settings.php:99
+#: includes/class-settings.php:101
 msgid "Leave empty to use the support email. Use an address on your own domain."
 msgstr ""
 
@@ -1557,11 +1716,13 @@ msgid "Phone (optional)"
 msgstr ""
 
 #: includes/class-shortcodes.php:38
+#: assets/js/app/views/support.js:99
+#: assets/js/app/views/support.js:148
 msgid "Message"
 msgstr ""
 
 #: includes/class-shortcodes.php:39
-#: templates/auth.php:137
+#: templates/auth.php:141
 msgid "Leave this empty"
 msgstr ""
 
@@ -1615,51 +1776,127 @@ msgid "Own design upload and Design on Demand"
 msgstr ""
 
 #: includes/class-shortcodes.php:81
-msgid "Email support"
+msgid "No watermark: clean, professional cards"
 msgstr ""
 
-#: includes/class-shortcodes.php:87
-#: assets/js/app/views/dashboard.js:29
-#: assets/js/app/views/subscription.js:128
+#: includes/class-shortcodes.php:82
+msgid "Live chat support"
+msgstr ""
+
+#: includes/class-shortcodes.php:90
+msgid "forever"
+msgstr ""
+
+#. translators: %s: watermark text
+#: includes/class-shortcodes.php:94
+#, php-format
+msgid "Every feature, free forever. Cards carry a \"%s\" watermark."
+msgstr ""
+
+#: includes/class-shortcodes.php:97
+#: templates/auth.php:167
+msgid "Create free account"
+msgstr ""
+
+#: includes/class-shortcodes.php:99
+#: assets/js/app/views/dashboard.js:36
+#: assets/js/app/views/subscription.js:130
 msgid "Free trial"
 msgstr ""
 
-#: includes/class-shortcodes.php:88
-msgid "Free"
-msgstr ""
-
 #. translators: %s: trial length
-#: includes/class-shortcodes.php:92
+#: includes/class-shortcodes.php:104
 #, php-format
 msgid "Every feature for %s. Exports carry a watermark."
 msgstr ""
 
-#: includes/class-shortcodes.php:95
+#: includes/class-shortcodes.php:107
 msgid "Start free trial"
 msgstr ""
 
 #. translators: %d: number of days
-#: includes/class-shortcodes.php:103
-#: assets/js/app/views/dashboard.js:44
+#: includes/class-shortcodes.php:116
+#: assets/js/app/views/dashboard.js:51
 msgid "/ month"
 msgstr ""
 
 #. translators: %d: number of days
-#: includes/class-shortcodes.php:103
+#: includes/class-shortcodes.php:116
 #, php-format
 msgid "/ %d days"
 msgstr ""
 
-#: includes/class-shortcodes.php:114
+#: includes/class-shortcodes.php:127
 msgid "Get started"
 msgstr ""
 
-#: includes/class-shortcodes.php:115
+#: includes/class-shortcodes.php:128
 msgid "Secure payment by Razorpay. UPI autopay, cards and net banking. Cancel anytime."
 msgstr ""
 
 #: includes/class-stats.php:160
 msgid "Not chosen yet"
+msgstr ""
+
+#: includes/class-support.php:107
+msgid "Please write a short subject (what do you need help with?)."
+msgstr ""
+
+#: includes/class-support.php:110
+#: includes/class-support.php:153
+msgid "Please type your message."
+msgstr ""
+
+#: includes/class-support.php:114
+msgid "You already have 10 open conversations. Please continue in one of them."
+msgstr ""
+
+#. translators: 1: ticket number, 2: organisation, 3: subject
+#: includes/class-support.php:138
+#, php-format
+msgid "New support chat #%1$d from %2$s: %3$s"
+msgstr ""
+
+#. translators: %s: conversation subject
+#: includes/class-support.php:205
+#, php-format
+msgid "Support replied: %s"
+msgstr ""
+
+#. translators: 1: ticket number, 2: organisation
+#: includes/class-support.php:240
+#, php-format
+msgid "New message in support chat #%1$d (%2$s)"
+msgstr ""
+
+#: includes/class-support.php:264
+msgid "Support marked this conversation as solved."
+msgstr ""
+
+#: includes/class-support.php:264
+msgid "You closed this conversation."
+msgstr ""
+
+#: includes/class-support.php:265
+msgid "Conversation reopened."
+msgstr ""
+
+#. translators: %s: conversation subject
+#: includes/class-support.php:281
+#, php-format
+msgid "Conversation solved: %s"
+msgstr ""
+
+#: includes/class-support.php:282
+msgid "Need more help? Just send a new message in the same chat to reopen it."
+msgstr ""
+
+#: includes/class-support.php:321
+msgid "Pikacart Support"
+msgstr ""
+
+#: includes/class-support.php:328
+msgid "Customer"
 msgstr ""
 
 #: includes/class-uploads.php:71
@@ -1697,55 +1934,55 @@ msgstr ""
 msgid "Your bank could not complete the autopay renewal."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:157
+#: includes/rest/class-rest-account.php:166
 #: includes/rest/class-rest-public.php:56
 msgid "Please enter your name."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:163
+#: includes/rest/class-rest-account.php:172
 msgid "This mobile number is used by another account."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:182
+#: includes/rest/class-rest-account.php:191
 msgid "Profile saved."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:203
+#: includes/rest/class-rest-account.php:212
 msgid "We have sent a new verification link to your email."
 msgstr ""
 
 #. translators: %s: organisation name
-#: includes/rest/class-rest-account.php:215
+#: includes/rest/class-rest-account.php:224
 #, php-format
 msgid "Account deletion request: %s"
 msgstr ""
 
-#: includes/rest/class-rest-account.php:225
+#: includes/rest/class-rest-account.php:234
 msgid "Your request has been sent. We will delete your account and data and confirm by email."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:241
+#: includes/rest/class-rest-account.php:250
 msgid "Organisation details saved."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:265
+#: includes/rest/class-rest-account.php:274
 msgid "Please enter a valid organisation email."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:298
-#: includes/rest/class-rest-account.php:322
+#: includes/rest/class-rest-account.php:307
+#: includes/rest/class-rest-account.php:331
 msgid "Unknown image type."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:311
+#: includes/rest/class-rest-account.php:320
 msgid "Image uploaded."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:328
+#: includes/rest/class-rest-account.php:337
 msgid "Image removed."
 msgstr ""
 
-#: includes/rest/class-rest-account.php:347
+#: includes/rest/class-rest-account.php:356
 msgid "Saved."
 msgstr ""
 
@@ -1775,58 +2012,57 @@ msgstr ""
 msgid "Sorry, the message could not be sent. Please email us at %s."
 msgstr ""
 
-#: includes/rest/class-rest.php:28
+#: includes/rest/class-rest-support.php:65
+msgid "Conversation not found."
+msgstr ""
+
+#: includes/rest/class-rest.php:29
 msgid "Please log in again."
 msgstr ""
 
-#: includes/rest/class-rest.php:32
+#: includes/rest/class-rest.php:33
 msgid "No organisation is linked to this login."
 msgstr ""
 
 #. translators: %s: support email
-#: includes/rest/class-rest.php:39
+#: includes/rest/class-rest.php:40
 #, php-format
 msgid "This account is suspended. Please contact %s."
 msgstr ""
 
-#: includes/rest/class-rest.php:54
+#: includes/rest/class-rest.php:55
 msgid "This page has expired. Please refresh and try again."
 msgstr ""
 
 #: templates/app.php:16
-#: assets/js/app/main.js:28
+#: assets/js/app/main.js:29
 msgid "Create ID card"
 msgstr ""
 
 #: templates/app.php:17
-#: assets/js/app/main.js:29
+#: assets/js/app/main.js:30
 msgid "My Projects"
 msgstr ""
 
 #: templates/app.php:18
-#: assets/js/app/main.js:30
+#: assets/js/app/main.js:31
 msgid "Members"
 msgstr ""
 
 #: templates/app.php:19
-#: assets/js/app/main.js:31
+#: assets/js/app/main.js:32
 msgid "Print Sheets"
 msgstr ""
 
 #: templates/app.php:20
-#: assets/js/app/main.js:32
+#: assets/js/app/main.js:33
 msgid "My Designs"
 msgstr ""
 
 #: templates/app.php:22
-#: templates/app.php:78
-#: assets/js/app/main.js:34
-msgid "Subscription"
-msgstr ""
-
-#: templates/app.php:23
+#: templates/app.php:94
 #: assets/js/app/main.js:35
-msgid "Support"
+msgid "Subscription"
 msgstr ""
 
 #: templates/app.php:40
@@ -1841,22 +2077,34 @@ msgstr ""
 msgid "Close menu"
 msgstr ""
 
-#: templates/app.php:65
+#: templates/app.php:68
 msgid "Open menu"
 msgstr ""
 
-#: templates/app.php:95
+#: templates/app.php:73
+#: templates/app.php:79
+msgid "Notifications"
+msgstr ""
+
+#: templates/app.php:80
+msgid "Mark all read"
+msgstr ""
+
+#: templates/app.php:111
 msgid "Please turn on JavaScript to use the Pikacart dashboard."
 msgstr ""
 
 #: templates/auth.php:13
 #: templates/auth.php:98
-#: templates/auth.php:165
+#: templates/auth.php:169
 msgid "Log in"
 msgstr ""
 
 #: templates/auth.php:14
-#: templates/auth.php:100
+msgid "Create your free account"
+msgstr ""
+
+#: templates/auth.php:14
 msgid "Start your free trial"
 msgstr ""
 
@@ -1893,13 +2141,13 @@ msgid "Welcome back. Log in to manage your ID cards."
 msgstr ""
 
 #: templates/auth.php:87
-#: templates/auth.php:129
+#: templates/auth.php:133
 msgid "Password"
 msgstr ""
 
 #: templates/auth.php:90
-#: templates/auth.php:132
-#: templates/auth.php:188
+#: templates/auth.php:136
+#: templates/auth.php:192
 #: assets/js/auth.js:137
 msgid "Show password"
 msgstr ""
@@ -1916,70 +2164,78 @@ msgstr ""
 msgid "New to Pikacart?"
 msgstr ""
 
+#: templates/auth.php:100
+msgid "Create a free account"
+msgstr ""
+
+#: templates/auth.php:107
+msgid "Free forever. Every feature included. No card needed."
+msgstr ""
+
 #. translators: %s: trial length like "2 hours"
-#: templates/auth.php:106
+#: templates/auth.php:109
 #, php-format
 msgid "Every feature free for %s. No card needed."
 msgstr ""
 
-#: templates/auth.php:111
+#: templates/auth.php:115
 #: assets/js/app/views/onboarding.js:49
 #: assets/js/app/views/organisation.js:38
 msgid "Organisation name"
 msgstr ""
 
-#: templates/auth.php:112
+#: templates/auth.php:116
 msgid "e.g. Sunrise Public School"
 msgstr ""
 
-#: templates/auth.php:124
+#: templates/auth.php:128
 #: assets/js/app/views/account.js:20
 #: assets/js/app/views/organisation.js:21
 msgid "Mobile number"
 msgstr ""
 
-#: templates/auth.php:134
-#: templates/auth.php:190
+#: templates/auth.php:138
+#: templates/auth.php:194
 #: assets/js/app/views/account.js:31
 msgid "At least 8 characters."
 msgstr ""
 
 #. translators: 1: terms link, 2: acceptable use link
-#: templates/auth.php:148
+#: templates/auth.php:152
 #, php-format
 msgid "I am authorised to issue ID cards for this organisation, and I agree to the <a href=\"%1$s\" target=\"_blank\">Terms</a> and <a href=\"%2$s\" target=\"_blank\">Acceptable Use Policy</a>."
 msgstr ""
 
-#: templates/auth.php:163
+#: templates/auth.php:167
 msgid "Create account and start trial"
 msgstr ""
 
-#: templates/auth.php:165
+#: templates/auth.php:169
 msgid "Already have an account?"
 msgstr ""
 
-#: templates/auth.php:168
+#: templates/auth.php:172
 msgid "Enter your email and we will send you a link to choose a new password."
 msgstr ""
 
-#: templates/auth.php:175
+#: templates/auth.php:179
 msgid "Send reset link"
 msgstr ""
 
-#: templates/auth.php:177
+#: templates/auth.php:181
 msgid "Back to login"
 msgstr ""
 
-#: templates/auth.php:180
+#: templates/auth.php:184
 msgid "Choose a new password for your account."
 msgstr ""
 
-#: templates/auth.php:185
+#: templates/auth.php:189
 #: assets/js/app/views/account.js:31
 msgid "New password"
 msgstr ""
 
-#: templates/auth.php:193
+#: templates/auth.php:197
 msgid "Save new password"
 msgstr ""
 
@@ -2000,6 +2256,77 @@ msgstr ""
 msgid "Copied!"
 msgstr ""
 
+#: assets/js/admin/support.js:40
+#: assets/js/app/api.js:42
+#: assets/js/auth.js:108
+#: assets/js/public.js:33
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: assets/js/admin/support.js:67
+msgid "New support message"
+msgstr ""
+
+#: assets/js/admin/support.js:79
+msgid "No conversations here."
+msgstr ""
+
+#: assets/js/admin/support.js:89
+#: assets/js/app/views/support.js:83
+msgid "You:"
+msgstr ""
+
+#: assets/js/admin/support.js:128
+msgid "Inbox"
+msgstr ""
+
+#: assets/js/admin/support.js:130
+msgid "Open account"
+msgstr ""
+
+#: assets/js/admin/support.js:135
+msgid "Customer is typing…"
+msgstr ""
+
+#: assets/js/admin/support.js:137
+msgid "Type your reply… (Enter to send, Shift+Enter for a new line)"
+msgstr ""
+
+#: assets/js/admin/support.js:137
+msgid "Reply"
+msgstr ""
+
+#: assets/js/admin/support.js:138
+#: assets/js/app/views/support.js:149
+msgid "Send"
+msgstr ""
+
+#: assets/js/admin/support.js:170
+#: assets/js/app/views/support.js:237
+msgid "Reopen"
+msgstr ""
+
+#: assets/js/admin/support.js:170
+msgid "Mark as solved"
+msgstr ""
+
+#: assets/js/admin/support.js:206
+msgid "No messages yet."
+msgstr ""
+
+#: assets/js/admin/support.js:213
+#: assets/js/app/views/support.js:228
+msgid "Seen"
+msgstr ""
+
+#: assets/js/admin/support.js:216
+msgid "Customer is online now"
+msgstr ""
+
+#: assets/js/admin/support.js:319
+msgid "Turn on desktop alerts for new messages"
+msgstr ""
+
 #: assets/js/app/api.js:27
 #: assets/js/auth.js:123
 msgid "No internet connection. Please check your network and try again."
@@ -2007,12 +2334,6 @@ msgstr ""
 
 #: assets/js/app/api.js:39
 msgid "Your session has ended. Please log in again."
-msgstr ""
-
-#: assets/js/app/api.js:42
-#: assets/js/auth.js:108
-#: assets/js/public.js:33
-msgid "Something went wrong. Please try again."
 msgstr ""
 
 #: assets/js/app/invoice.js:36
@@ -2051,64 +2372,86 @@ msgstr ""
 msgid "This is a computer-generated invoice and needs no signature."
 msgstr ""
 
-#: assets/js/app/main.js:158
-#: assets/js/app/views/subscription.js:129
-msgid "Trial ends in"
+#: assets/js/app/live.js:74
+msgid "ago"
+msgstr ""
+
+#: assets/js/app/live.js:76
+msgid "You are all caught up."
 msgstr ""
 
 #: assets/js/app/main.js:159
+#: assets/js/app/views/subscription.js:131
+msgid "Trial ends in"
+msgstr ""
+
+#: assets/js/app/main.js:160
 #, js-format
 msgid "Free trial ends in %s"
 msgstr ""
 
-#: assets/js/app/main.js:161
+#: assets/js/app/main.js:162
 #, js-format
 msgid "Active till %s"
 msgstr ""
 
-#: assets/js/app/main.js:163
+#: assets/js/app/main.js:164
 #, js-format
 msgid "Ends %s"
 msgstr ""
 
 #: assets/js/app/main.js:166
+msgid "Upgrade"
+msgstr ""
+
+#: assets/js/app/main.js:167
+msgid "Free plan. Upgrade to remove the watermark."
+msgstr ""
+
+#: assets/js/app/main.js:170
 #, js-format
 msgid "Subscribe %s/month"
 msgstr ""
 
-#: assets/js/app/main.js:177
+#: assets/js/app/main.js:181
 msgid "Your free trial has ended"
 msgstr ""
 
-#: assets/js/app/main.js:177
+#: assets/js/app/main.js:181
 #, js-format
 msgid "Your designs and data are saved. Subscribe for %s per month to keep creating, downloading and printing cards."
 msgstr ""
 
-#: assets/js/app/main.js:177
-#: assets/js/app/views/dashboard.js:32
+#: assets/js/app/main.js:181
+#: assets/js/app/views/dashboard.js:39
 #, js-format
 msgid "Subscribe for %s per month"
 msgstr ""
 
-#: assets/js/app/main.js:179
-msgid "You are on the free trial. Everything works; downloads and prints carry a \"PIKACART TRIAL\" watermark."
+#: assets/js/app/main.js:184
+#, js-format
+msgid "Free plan: everything works, free forever. Downloaded cards carry a \"%1$s\" watermark. Upgrade for %2$s/month for clean, professional cards."
 msgstr ""
 
-#: assets/js/app/main.js:179
+#: assets/js/app/main.js:184
+#: assets/js/app/main.js:186
 msgid "Remove watermark"
 msgstr ""
 
-#: assets/js/app/main.js:182
+#: assets/js/app/main.js:186
+msgid "You are on the free trial. Everything works; downloads and prints carry a \"PIKACART TRIAL\" watermark."
+msgstr ""
+
+#: assets/js/app/main.js:189
 #, js-format
 msgid "Please verify your email. We sent a link to %s."
 msgstr ""
 
-#: assets/js/app/main.js:182
+#: assets/js/app/main.js:189
 msgid "Send again"
 msgstr ""
 
-#: assets/js/app/main.js:206
+#: assets/js/app/main.js:213
 msgid "Your free trial has ended. Your work is saved."
 msgstr ""
 
@@ -2225,145 +2568,164 @@ msgstr ""
 msgid "Good evening"
 msgstr ""
 
+#: assets/js/app/views/dashboard.js:30
+#: assets/js/app/views/subscription.js:143
+msgid "Free forever"
+msgstr ""
+
 #: assets/js/app/views/dashboard.js:31
+#, js-format
+msgid "Every feature works. Downloaded cards carry \"%s\". Upgrade for clean, professional cards."
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:32
+#, js-format
+msgid "Remove watermark · %s/month"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:38
 msgid "left in your free trial. Every feature is open; exports carry a watermark."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:36
+#: assets/js/app/views/dashboard.js:43
 msgid "Plan active"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:38
+#: assets/js/app/views/dashboard.js:45
 msgid "Renews automatically on this date."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:38
+#: assets/js/app/views/dashboard.js:45
 msgid "Your plan is paid until this date."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:38
+#: assets/js/app/views/dashboard.js:45
 msgid "You keep full access until this date."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:39
+#: assets/js/app/views/dashboard.js:46
 msgid "Manage subscription"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:45
+#: assets/js/app/views/dashboard.js:52
 msgid "Your work is saved. Subscribe to continue creating, downloading and printing."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:46
+#: assets/js/app/views/dashboard.js:53
 msgid "Subscribe now"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:52
+#: assets/js/app/views/dashboard.js:59
 msgid "Total cards"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:53
+#: assets/js/app/views/dashboard.js:60
 msgid "Projects"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:54
+#: assets/js/app/views/dashboard.js:61
 msgid "Ready"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:55
+#: assets/js/app/views/dashboard.js:62
 msgid "Printed"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:56
+#: assets/js/app/views/dashboard.js:63
 msgid "Drafts"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:61
-#: assets/js/app/views/dashboard.js:88
+#: assets/js/app/views/dashboard.js:68
+#: assets/js/app/views/dashboard.js:96
 msgid "New ID card"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:61
+#: assets/js/app/views/dashboard.js:68
 msgid "Pick a design"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:62
+#: assets/js/app/views/dashboard.js:69
 msgid "Import from Excel"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:62
+#: assets/js/app/views/dashboard.js:69
 msgid "Add many people"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:63
+#: assets/js/app/views/dashboard.js:70
 msgid "Print sheet"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:63
+#: assets/js/app/views/dashboard.js:70
 msgid "Cards with cut marks"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:64
+#: assets/js/app/views/dashboard.js:71
 msgid "Design on Demand"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:64
+#: assets/js/app/views/dashboard.js:71
 msgid "We set up your design"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:69
+#: assets/js/app/views/dashboard.js:76
 msgid "Choose your category"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:70
+#: assets/js/app/views/dashboard.js:77
 msgid "Add address and phone"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:71
+#: assets/js/app/views/dashboard.js:78
 msgid "Upload your logo"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:72
+#: assets/js/app/views/dashboard.js:79
 msgid "Upload the signature"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:73
+#: assets/js/app/views/dashboard.js:80
 msgid "Upload the official seal"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:74
+#: assets/js/app/views/dashboard.js:81
 msgid "Verify your email"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:80
+#: assets/js/app/views/dashboard.js:82
+msgid "Upgrade to remove the watermark"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:88
 msgid "No announcements right now."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:98
+#: assets/js/app/views/dashboard.js:106
 msgid "Quick actions"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:105
+#: assets/js/app/views/dashboard.js:113
 msgid "Recent projects"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:106
+#: assets/js/app/views/dashboard.js:114
 #: assets/js/app/views/upcoming.js:21
 msgid "No card projects yet"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:106
+#: assets/js/app/views/dashboard.js:114
 msgid "Start your first project by choosing a design for your students or staff."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:106
+#: assets/js/app/views/dashboard.js:114
 msgid "Create your first ID card"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:110
+#: assets/js/app/views/dashboard.js:118
 msgid "Finish your setup"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:117
+#: assets/js/app/views/dashboard.js:125
 msgid "From Pikacart"
 msgstr ""
 
@@ -2445,6 +2807,7 @@ msgid "Skip for now"
 msgstr ""
 
 #: assets/js/app/views/onboarding.js:85
+#: assets/js/app/views/support.js:91
 msgid "Back"
 msgstr ""
 
@@ -2532,205 +2895,327 @@ msgstr ""
 msgid "When someone scans a card's QR code, they see only the details you tick here."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:27
+#: assets/js/app/views/subscription.js:28
 msgid "Could not open the payment window. Please check your internet connection and try again."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:40
+#: assets/js/app/views/subscription.js:41
 msgid "Payment window closed. No money was taken."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:45
+#: assets/js/app/views/subscription.js:46
 msgid "The payment failed. Please try again or use another method."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:52
-msgid "You are on the free trial."
-msgstr ""
-
 #: assets/js/app/views/subscription.js:53
-msgid "Your plan is active."
+msgid "You are on the Free plan. Free forever; downloaded cards carry the Pikacart watermark."
 msgstr ""
 
 #: assets/js/app/views/subscription.js:54
-msgid "Autopay is cancelled. You keep access until the end date."
+msgid "You are on the free trial."
 msgstr ""
 
 #: assets/js/app/views/subscription.js:55
+msgid "Your plan is active."
+msgstr ""
+
+#: assets/js/app/views/subscription.js:56
+msgid "Autopay is cancelled. You keep access until the end date."
+msgstr ""
+
+#: assets/js/app/views/subscription.js:57
 msgid "Your plan is not active. Subscribe to continue."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:69
+#: assets/js/app/views/subscription.js:71
 msgid "Try again"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:94
+#: assets/js/app/views/subscription.js:96
 msgid "per month"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:94
+#: assets/js/app/views/subscription.js:96
 #, js-format
 msgid "per %d days"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:97
+#: assets/js/app/views/subscription.js:99
 msgid "Current plan"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:101
+#: assets/js/app/views/subscription.js:103
 msgid "Subscribe with autopay"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:101
+#: assets/js/app/views/subscription.js:103
 msgid "UPI autopay or card. Renews automatically, cancel anytime."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:102
+#: assets/js/app/views/subscription.js:104
 #, js-format
 msgid "Pay once for %d days"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:102
+#: assets/js/app/views/subscription.js:104
 msgid "For banks that do not support autopay. No renewal."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:121
+#: assets/js/app/views/subscription.js:123
 msgid "Payments are in TEST mode. No real money is taken."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:122
+#: assets/js/app/views/subscription.js:124
 #, js-format
 msgid "Online payment is being set up. Please contact %s to subscribe."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:125
+#: assets/js/app/views/subscription.js:127
 msgid "Your plan"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:128
+#: assets/js/app/views/subscription.js:130
 msgid "Plan"
 msgstr ""
 
 #: assets/js/app/views/subscription.js:130
-msgid "Paid until"
-msgstr ""
-
-#: assets/js/app/views/subscription.js:131
-msgid "On"
-msgstr ""
-
-#: assets/js/app/views/subscription.js:131
-msgid "Off"
+msgid "Free (with watermark)"
 msgstr ""
 
 #: assets/js/app/views/subscription.js:132
-msgid "Next billing date"
+msgid "Paid until"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:133
+msgid "On"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:133
+msgid "Off"
 msgstr ""
 
 #: assets/js/app/views/subscription.js:134
+msgid "Next billing date"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:136
 msgid "Cancel autopay"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:139
-msgid "Payment history"
-msgstr ""
-
-#: assets/js/app/views/subscription.js:142
-msgid "Secure payment by Razorpay. We never see your card or UPI PIN."
+#: assets/js/app/views/subscription.js:141
+msgid "Free vs Pro: how your cards look"
 msgstr ""
 
 #: assets/js/app/views/subscription.js:143
+msgid "Free plan card with watermark"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:143
+#, js-format
+msgid "All features. Cards carry \"%s\" across the card."
+msgstr ""
+
+#: assets/js/app/views/subscription.js:144
+msgid "Pro plan card without watermark"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:144
+#, js-format
+msgid "Pro · %s/month"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:144
+msgid "Clean, professional cards ready for official use."
+msgstr ""
+
+#: assets/js/app/views/subscription.js:148
+msgid "Payment history"
+msgstr ""
+
+#: assets/js/app/views/subscription.js:151
+msgid "Secure payment by Razorpay. We never see your card or UPI PIN."
+msgstr ""
+
+#: assets/js/app/views/subscription.js:152
 msgid "Refund and cancellation policy"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:156
+#: assets/js/app/views/subscription.js:173
 msgid "Cancel autopay?"
 msgstr ""
 
-#: assets/js/app/views/subscription.js:157
+#: assets/js/app/views/subscription.js:174
 msgid "You will not be charged again. You keep full access until the end of the period you already paid for."
 msgstr ""
 
-#: assets/js/app/views/subscription.js:158
+#: assets/js/app/views/subscription.js:175
 msgid "Yes, cancel autopay"
 msgstr ""
 
-#: assets/js/app/views/support.js:13
-msgid "How long is the free trial?"
+#: assets/js/app/views/support.js:22
+msgid "Is Pikacart really free?"
 msgstr ""
 
-#: assets/js/app/views/support.js:13
-msgid "The trial starts when you register. The timer at the top shows exactly how much time is left. Every feature works during the trial; downloads carry a watermark."
-msgstr ""
-
-#: assets/js/app/views/support.js:14
-msgid "What happens when the trial ends?"
-msgstr ""
-
-#: assets/js/app/views/support.js:14
+#: assets/js/app/views/support.js:22
 #, js-format
-msgid "Nothing is deleted. Your designs and data stay saved. Subscribe for %s per month to keep creating, downloading and printing."
+msgid "Yes. The Free plan is free forever with every feature. Downloaded cards carry a \"%1$s\" watermark. Upgrade for %2$s per month for clean cards."
 msgstr ""
 
-#: assets/js/app/views/support.js:15
+#: assets/js/app/views/support.js:23
 msgid "My bank does not support autopay. Can I still pay?"
 msgstr ""
 
-#: assets/js/app/views/support.js:15
+#: assets/js/app/views/support.js:23
 msgid "Yes. On the Subscription page choose \"Pay once\". You pay for one period by UPI, card or net banking, with no automatic renewal."
 msgstr ""
 
-#: assets/js/app/views/support.js:16
+#: assets/js/app/views/support.js:24
 msgid "How do I cancel autopay?"
 msgstr ""
 
-#: assets/js/app/views/support.js:16
+#: assets/js/app/views/support.js:24
 msgid "Open Subscription and click \"Cancel autopay\". You keep access until the end of the period you already paid for."
 msgstr ""
 
-#: assets/js/app/views/support.js:17
+#: assets/js/app/views/support.js:25
 msgid "Money was deducted but my plan is not active."
 msgstr ""
 
-#: assets/js/app/views/support.js:17
-msgid "Payments are usually confirmed within a few minutes. If it still shows inactive after 30 minutes, email us your payment ID from the bank SMS or Razorpay email."
+#: assets/js/app/views/support.js:25
+msgid "Payments are usually confirmed within a few minutes. If not, start a chat here with your payment ID from the bank SMS."
 msgstr ""
 
-#: assets/js/app/views/support.js:18
-msgid "Can I use my own card design?"
-msgstr ""
-
-#: assets/js/app/views/support.js:18
-msgid "Yes. Upload your front and back design and place the photo, name and QR code yourself, or use Design on Demand and our team will set it up for you."
-msgstr ""
-
-#: assets/js/app/views/support.js:19
+#: assets/js/app/views/support.js:26
 msgid "Can I make Aadhaar, PAN or other government ID cards?"
 msgstr ""
 
-#: assets/js/app/views/support.js:19
-msgid "No. Pikacart is only for cards your organisation issues to its own people. Imitating government-issued IDs is not allowed and leads to suspension."
+#: assets/js/app/views/support.js:26
+msgid "No. Pikacart is only for cards your organisation issues to its own people. Imitating government-issued IDs is not allowed."
 msgstr ""
 
-#: assets/js/app/views/support.js:25
-msgid "Questions people often ask"
+#: assets/js/app/views/support.js:40
+msgid "Your conversations"
 msgstr ""
 
-#: assets/js/app/views/support.js:34
-msgid "Talk to us"
+#: assets/js/app/views/support.js:41
+msgid "New chat"
 msgstr ""
 
-#: assets/js/app/views/support.js:35
-msgid "We usually reply within one working day."
+#: assets/js/app/views/support.js:58
+#: assets/js/app/views/support.js:233
+msgid "Support team is online"
 msgstr ""
 
-#: assets/js/app/views/support.js:36
-#, js-format
-msgid "Help with %s"
+#: assets/js/app/views/support.js:58
+#: assets/js/app/views/support.js:233
+msgid "We usually reply within a few hours"
 msgstr ""
 
-#: assets/js/app/views/support.js:38
-msgid "Please mention your organisation name and registered email."
+#: assets/js/app/views/support.js:78
+msgid "No conversations yet. Start a chat and our team will help you."
+msgstr ""
+
+#: assets/js/app/views/support.js:84
+msgid "New reply"
+msgstr ""
+
+#: assets/js/app/views/support.js:92
+#: assets/js/app/views/support.js:130
+msgid "Start a new chat"
+msgstr ""
+
+#: assets/js/app/views/support.js:93
+msgid "Tell us what you need. You can keep chatting in the same conversation."
+msgstr ""
+
+#: assets/js/app/views/support.js:95
+msgid "Subject"
+msgstr ""
+
+#: assets/js/app/views/support.js:95
+msgid "e.g. Help with payment"
+msgstr ""
+
+#: assets/js/app/views/support.js:97
+msgid "Payment or plan"
+msgstr ""
+
+#: assets/js/app/views/support.js:97
+msgid "Card design help"
+msgstr ""
+
+#: assets/js/app/views/support.js:97
+msgid "Import / Excel"
+msgstr ""
+
+#: assets/js/app/views/support.js:97
+msgid "Printing"
+msgstr ""
+
+#: assets/js/app/views/support.js:97
+msgid "Something else"
+msgstr ""
+
+#: assets/js/app/views/support.js:100
+msgid "Start chat"
+msgstr ""
+
+#: assets/js/app/views/support.js:102
+#: assets/js/app/views/support.js:131
+msgid "Quick answers"
+msgstr ""
+
+#: assets/js/app/views/support.js:115
+msgid "Chat started. We will reply here soon."
+msgstr ""
+
+#: assets/js/app/views/support.js:128
+msgid "How can we help?"
+msgstr ""
+
+#: assets/js/app/views/support.js:129
+msgid "Chat with the Pikacart team. Replies appear here instantly and you get a notification."
+msgstr ""
+
+#: assets/js/app/views/support.js:139
+#: assets/js/app/views/support.js:307
+msgid "Back to conversations"
+msgstr ""
+
+#: assets/js/app/views/support.js:145
+msgid "Support is typing…"
+msgstr ""
+
+#: assets/js/app/views/support.js:146
+msgid "This conversation is solved. Send a message to reopen it."
+msgstr ""
+
+#: assets/js/app/views/support.js:148
+msgid "Type a message…"
+msgstr ""
+
+#: assets/js/app/views/support.js:176
+msgid "Mark this conversation as solved?"
+msgstr ""
+
+#: assets/js/app/views/support.js:176
+msgid "You can reopen it anytime by sending a new message."
+msgstr ""
+
+#: assets/js/app/views/support.js:176
+msgid "Yes, solved"
+msgstr ""
+
+#: assets/js/app/views/support.js:237
+msgid "Mark solved"
+msgstr ""
+
+#: assets/js/app/views/support.js:269
+msgid "Sending…"
+msgstr ""
+
+#: assets/js/app/views/support.js:282
+msgid "Not sent. Tap to retry."
 msgstr ""
 
 #: assets/js/app/views/upcoming.js:16

@@ -61,7 +61,7 @@ class PKC_Admin_Dashboard {
 			self::stat( __( 'Total accounts', 'pikacart' ), number_format_i18n( $s['accounts_total'] ), '◎', 'brand' );
 			self::stat( __( 'New today', 'pikacart' ), number_format_i18n( $s['new_today'] ), '+', 'brand' );
 			self::stat( __( 'New this month', 'pikacart' ), number_format_i18n( $s['new_month'] ), '+', 'brand' );
-			self::stat( __( 'On trial', 'pikacart' ), number_format_i18n( $s['status']['trial'] ), '⏱', 'amber' );
+			self::stat( __( 'Free plan', 'pikacart' ), number_format_i18n( $s['status']['free'] + $s['status']['trial'] ), '★', 'amber' );
 			self::stat( __( 'Active', 'pikacart' ), number_format_i18n( $s['status']['active'] ), '✓', 'green' );
 			self::stat( __( 'Expired', 'pikacart' ), number_format_i18n( $s['status']['expired'] ), '○', 'grey' );
 			self::stat( __( 'Suspended', 'pikacart' ), number_format_i18n( $s['status']['suspended'] ), '⛔', 'red' );
@@ -72,7 +72,7 @@ class PKC_Admin_Dashboard {
 		<h2 class="pkc-section-title"><?php esc_html_e( 'Business health', 'pikacart' ); ?></h2>
 		<div class="pkc-stats pkc-stats-wide">
 			<?php
-			self::stat( __( 'Trial to paid', 'pikacart' ), $s['conversion'] . '%', '↗', 'brand', __( 'Accounts that paid after their trial', 'pikacart' ) );
+			self::stat( __( 'Free to paid', 'pikacart' ), $s['conversion'] . '%', '↗', 'brand', __( 'Accounts that have paid at least once', 'pikacart' ) );
 			self::stat( __( 'Monthly recurring revenue', 'pikacart' ), pkc_money( $s['mrr'] ), '₹', 'green' );
 			self::stat( __( 'Failed payments this month', 'pikacart' ), number_format_i18n( $s['failed_month'] ), '!', 'red' );
 			self::stat( __( 'Renewals due in 7 days', 'pikacart' ), number_format_i18n( $s['renewals_7d'] ), '⟳', 'amber' );

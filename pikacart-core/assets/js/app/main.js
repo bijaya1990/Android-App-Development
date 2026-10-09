@@ -11,6 +11,7 @@ import subscription from './views/subscription.js';
 import account from './views/account.js';
 import support from './views/support.js';
 import upcoming from './views/upcoming.js';
+import { initLive, closeBell } from './live.js';
 
 const { __, sprintf } = window.wp.i18n;
 const cfg = window.PKC;
@@ -161,6 +162,9 @@ function updatePill() {
 		pill.innerHTML = `${ icon( 'check-circle' ) }<span>${ esc( sprintf( __( 'Active till %s', 'pikacart' ), s.period_end_text ) ) }</span>`;
 	} else if ( s.status === 'cancelled' ) {
 		pill.innerHTML = `${ icon( 'info' ) }<span>${ esc( sprintf( __( 'Ends %s', 'pikacart' ), s.period_end_text ) ) }</span>`;
+	} else if ( s.status === 'free' ) {
+		pill.innerHTML = `${ icon( 'sparkles' ) }<span class="pill-label">${ esc( __( 'Free plan', 'pikacart' ) ) } ·</span> <strong>${ esc( __( 'Upgrade', 'pikacart' ) ) }</strong>`;
+		pill.setAttribute( 'aria-label', __( 'Free plan. Upgrade to remove the watermark.', 'pikacart' ) );
 	} else {
 		const price = store.me.plan ? store.me.plan.price_text : '₹59';
 		pill.innerHTML = `${ icon( 'lock' ) }<span>${ esc( sprintf( __( 'Subscribe %s/month', 'pikacart' ), price ) ) }</span>`;
@@ -175,6 +179,9 @@ function renderBanners() {
 	if ( me.state.status === 'expired' ) {
 		const price = me.plan ? me.plan.price_text : '₹59';
 		out.push( `<div class="banner banner-lock">${ icon( 'lock' ) }<div><strong>${ esc( __( 'Your free trial has ended', 'pikacart' ) ) }</strong><span>${ esc( sprintf( __( 'Your designs and data are saved. Subscribe for %s per month to keep creating, downloading and printing cards.', 'pikacart' ), price ) ) }</span></div><a class="btn btn-accent btn-sm" href="${ esc( ctx.url( 'subscription' ) ) }" data-link>${ esc( sprintf( __( 'Subscribe for %s per month', 'pikacart' ), price ) ) }</a></div>` );
+	} else if ( me.state.status === 'free' ) {
+		const price = me.plan ? me.plan.price_text : '₹59';
+		out.push( `<div class="banner banner-trial">${ icon( 'sparkles' ) }<div><span>${ esc( sprintf( __( 'Free plan: everything works, free forever. Downloaded cards carry a "%1$s" watermark. Upgrade for %2$s/month for clean, professional cards.', 'pikacart' ), me.watermark.text, price ) ) }</span></div><a class="btn btn-sm" href="${ esc( ctx.url( 'subscription' ) ) }" data-link>${ esc( __( 'Remove watermark', 'pikacart' ) ) }</a></div>` );
 	} else if ( me.state.status === 'trial' ) {
 		out.push( `<div class="banner banner-trial">${ icon( 'sparkles' ) }<div><span>${ esc( __( 'You are on the free trial. Everything works; downloads and prints carry a "PIKACART TRIAL" watermark.', 'pikacart' ) ) }</span></div><a class="btn btn-sm" href="${ esc( ctx.url( 'subscription' ) ) }" data-link>${ esc( __( 'Remove watermark', 'pikacart' ) ) }</a></div>` );
 	}
@@ -224,6 +231,7 @@ function openMenu() {
 }
 function closeMenu() {
 	document.body.classList.remove( 'menu-open' );
+	closeBell();
 	const menu = document.getElementById( 'profile-menu' );
 	menu.hidden = true;
 	document.querySelector( '.profile-btn' ).setAttribute( 'aria-expanded', 'false' );
@@ -281,5 +289,6 @@ document.addEventListener( 'keydown', ( e ) => {
 window.addEventListener( 'popstate', render );
 
 renderShell();
+initLive( ctx );
 render();
 setInterval( tick, 1000 );

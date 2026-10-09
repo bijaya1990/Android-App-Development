@@ -49,6 +49,9 @@ require PKC_DIR . 'templates/partials/head.php';
 				<a class="nav-link" href="<?php echo esc_url( pkc_url( 'app', $pkc_item[0] ) ); ?>" data-route="<?php echo esc_attr( $pkc_item[0] ); ?>">
 					<svg class="pkc-i"><use href="#i-<?php echo esc_attr( $pkc_item[1] ); ?>"></use></svg>
 					<span><?php echo esc_html( $pkc_item[2] ); ?></span>
+					<?php if ( 'support' === $pkc_item[0] ) : ?>
+						<span class="nav-badge" id="support-badge" hidden></span>
+					<?php endif; ?>
 				</a>
 			<?php endforeach; ?>
 		</nav>
@@ -65,7 +68,20 @@ require PKC_DIR . 'templates/partials/head.php';
 			<button type="button" class="icon-btn menu-btn" data-action="open-menu" aria-label="<?php esc_attr_e( 'Open menu', 'pikacart' ); ?>"><svg class="pkc-i"><use href="#i-menu"></use></svg></button>
 			<h1 class="page-title" id="page-title"><?php esc_html_e( 'Dashboard', 'pikacart' ); ?></h1>
 			<div class="topbar-right">
-				<a class="status-pill" id="status-pill" href="<?php echo esc_url( pkc_url( 'app', 'subscription' ) ); ?>" hidden></a>
+				<a class="status-pill" id="status-pill" href="<?php echo esc_url( pkc_url( 'app', 'subscription' ) ); ?>" data-link hidden></a>
+				<div class="bell">
+					<button type="button" class="icon-btn bell-btn" data-action="toggle-bell" aria-haspopup="true" aria-expanded="false" aria-label="<?php esc_attr_e( 'Notifications', 'pikacart' ); ?>">
+						<svg class="pkc-i"><use href="#i-bell"></use></svg>
+						<span class="bell-count" id="bell-count" hidden></span>
+					</button>
+					<div class="bell-panel" id="bell-panel" hidden>
+						<div class="bell-head">
+							<strong><?php esc_html_e( 'Notifications', 'pikacart' ); ?></strong>
+							<button type="button" class="btn btn-ghost btn-sm" data-action="read-all"><?php esc_html_e( 'Mark all read', 'pikacart' ); ?></button>
+						</div>
+						<div class="bell-list" id="bell-list"></div>
+					</div>
+				</div>
 				<div class="profile">
 					<button type="button" class="profile-btn" data-action="toggle-profile" aria-haspopup="true" aria-expanded="false">
 						<span class="avatar" id="avatar"></span>

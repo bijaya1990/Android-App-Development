@@ -71,7 +71,7 @@ class PKC_Organisations {
 				'mobile'        => $data['mobile'],
 				'org_email'     => $data['email'],
 				'phone'         => $data['mobile'],
-				'status'        => $trial_allowed ? 'trial' : 'expired',
+				'status'        => PKC_Access::free_forever() ? 'free' : ( $trial_allowed ? 'trial' : 'expired' ),
 				'trial_start'   => $now,
 				'trial_end'     => $trial_allowed ? pkc_now( $minutes * 60 ) : $now,
 				'verify_fields' => wp_json_encode( self::verify_field_defaults() ),

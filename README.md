@@ -34,11 +34,28 @@ To update later, upload the new ZIP the same way. WordPress asks "Replace curren
 
 ---
 
+## New in version 1.1
+
+- **Free plan forever.** Every account can use Pikacart free for life, with every feature. Downloaded cards carry a professional **"Made with www.pikacart.in"** watermark: a fine diagonal pattern across the whole card (so a free card can't pass as an official card) plus a neat branded ribbon at the bottom. It is drawn into the image itself, not a removable overlay. **₹59/month removes it.** You can switch back to a time-limited trial in *Pikacart → Settings → Free plan and Plans*, and change the watermark text there.
+- **Live chat support.** Each customer can open chat conversations from *Support* in their dashboard. You answer from **Pikacart → Support** in wp-admin. Messages appear automatically within a few seconds on both sides, with "typing…", "Seen" ticks, online status, *Mark as solved* and reopen. Works on phones.
+- **Notifications.** A bell in the customer dashboard (support replies, payments, plan ending, account changes), a count in the browser tab, and pop-up messages. You see unread chats as a red badge in the wp-admin menu and top bar, and can turn on desktop alerts.
+- **Emails stay smart.** Customers get an email for a support reply only when they are not online; you get an email for a new chat and for new messages when no admin is online.
+
+Existing installs upgrade automatically when you upload the new ZIPs (your data is kept; accounts on an ended trial move to the Free plan).
+
+### Test the new features (5 minutes)
+1. Register a test account in a private window. The top bar shows **Free plan · Upgrade**; the Subscription page shows the **Free vs Pro** card preview with the watermark.
+2. In the customer dashboard open **Support → New chat**, pick a topic and send a message.
+3. In wp-admin open **Pikacart → Support**. The chat appears with an unread dot. Open it and start typing: the customer sees "Support is typing…". Send a reply.
+4. In the customer window the reply appears by itself in a few seconds; the bell shows a red count. Reply back; in wp-admin you see the message and **Seen** under your reply.
+5. Click **Mark as solved**. The customer sees "solved"; sending a new message reopens it.
+6. Repeat steps 2–5 on a phone.
+
 ## What Phase 1 contains
 
 - Register (organisation, contact person, email, mobile, password, "I am authorised" box), login, email verification, forgot/reset/change password.
 - Anti-spam: hidden honeypot field plus a time check; limits on login, registration and password reset attempts.
-- **2-hour free trial** (editable) with a live countdown in the dashboard; one trial per email and per mobile number.
+- **Free plan forever** with watermark (default), or a time-limited trial with a live countdown if you prefer (one trial per email and per mobile number).
 - Account states: Trial, Active, Expired, Suspended, Cancelled, all checked on the server.
 - **Razorpay**: ₹59/month autopay (UPI/card) plus a one-time 30-day payment, test/live switch, signature checks, webhook handling where a repeated event never extends twice, auto-numbered invoices (PDF download), cancel autopay.
 - **10 emails**, all editable: verify, welcome, trial ending, trial ended, payment success, payment failed, expiring soon, suspended, reactivated, reset password.

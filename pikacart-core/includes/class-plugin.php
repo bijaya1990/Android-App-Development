@@ -22,8 +22,9 @@ final class PKC_Plugin {
 	private function __construct() {
 		$this->includes();
 
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
-		add_action( 'plugins_loaded', array( 'PKC_Installer', 'maybe_upgrade' ), 5 );
+		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
+		// Upgrades run on init so translations are ready (WordPress 6.7+ requirement).
+		add_action( 'init', array( 'PKC_Installer', 'maybe_upgrade' ), 1 );
 		add_action( 'init', array( 'PKC_Router', 'init' ) );
 		add_action( 'init', array( 'PKC_Roles', 'init' ) );
 		add_action( 'init', array( 'PKC_Shortcodes', 'init' ) );
@@ -51,6 +52,8 @@ final class PKC_Plugin {
 			'class-organisations.php',
 			'class-access.php',
 			'class-uploads.php',
+			'class-notifications.php',
+			'class-support.php',
 			'class-emails.php',
 			'class-accounts.php',
 			'class-razorpay.php',
@@ -66,10 +69,12 @@ final class PKC_Plugin {
 			'rest/class-rest-account.php',
 			'rest/class-rest-billing.php',
 			'rest/class-rest-public.php',
+			'rest/class-rest-support.php',
 			'admin/class-admin.php',
 			'admin/class-admin-dashboard.php',
 			'admin/class-admin-accounts.php',
 			'admin/class-admin-payments.php',
+			'admin/class-admin-support.php',
 			'admin/class-admin-settings.php',
 		);
 		foreach ( $files as $file ) {

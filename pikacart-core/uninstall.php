@@ -15,7 +15,7 @@ if ( empty( $pkc_settings['remove_data'] ) ) {
 
 global $wpdb;
 
-$pkc_tables = array( 'organisations', 'plans', 'subscriptions', 'payments', 'expenses', 'coupons', 'categories', 'subtypes', 'sizes', 'palettes', 'templates', 'projects', 'members', 'selffill_links', 'design_requests', 'tickets', 'ticket_replies', 'notices', 'activity_log', 'webhook_events', 'reports', 'trial_claims' );
+$pkc_tables = array( 'organisations', 'plans', 'subscriptions', 'payments', 'expenses', 'coupons', 'categories', 'subtypes', 'sizes', 'palettes', 'templates', 'projects', 'members', 'selffill_links', 'design_requests', 'tickets', 'ticket_replies', 'notifications', 'notices', 'activity_log', 'webhook_events', 'reports', 'trial_claims' );
 
 // Delete organisation logins (never administrators or editors).
 $pkc_org_users = get_users(

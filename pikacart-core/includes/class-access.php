@@ -2,8 +2,13 @@
 /**
  * Account states and the server-side lock.
  *
- * States: trial, active, expired, suspended, cancelled.
- * "cancelled" means autopay was cancelled but the paid period is still running.
+ * States: free, trial, active, expired, suspended, cancelled.
+ * - free:      lifetime free plan. Everything works; exports carry the
+ *              "Made with www.pikacart.in" watermark. (Default mode.)
+ * - trial:     time-limited trial (only when Settings > Free plan mode = trial).
+ * - expired:   trial ended (trial mode only).
+ * - active:    paid plan running, no watermark.
+ * - cancelled: autopay cancelled but the paid period is still running.
  *
  * @package Pikacart
  */
@@ -14,6 +19,7 @@ class PKC_Access {
 
 	public static function labels() {
 		return array(
+			'free'      => __( 'Free', 'pikacart' ),
 			'trial'     => __( 'Trial', 'pikacart' ),
 			'active'    => __( 'Active', 'pikacart' ),
 			'expired'   => __( 'Expired', 'pikacart' ),
@@ -25,6 +31,11 @@ class PKC_Access {
 	public static function label( $status ) {
 		$labels = self::labels();
 		return isset( $labels[ $status ] ) ? $labels[ $status ] : $status;
+	}
+
+	/** Lifetime free plan (default) or the old time-limited trial. */
+	public static function free_forever() {
+		return 'trial' !== pkc_setting( 'free_mode', 'forever' );
 	}
 
 	/**
@@ -50,6 +61,9 @@ class PKC_Access {
 			}
 		}
 
+		if ( self::free_forever() ) {
+			return 'free';
+		}
 		if ( pkc_ts( $org->trial_end ) > $now ) {
 			return 'trial';
 		}
@@ -71,19 +85,51 @@ class PKC_Access {
 			if ( 'trial' === $old && 'expired' === $state ) {
 				PKC_Emails::send_to_org( $org, 'trial_ended' );
 			}
+			if ( in_array( $old, array( 'active', 'cancelled' ), true ) && 'free' === $state ) {
+				PKC_Notifications::add(
+					$org->id,
+					'plan',
+					__( 'Your paid plan has ended', 'pikacart' ),
+					__( 'You are back on the Free plan. Downloads now carry the Pikacart watermark. Renew anytime to remove it.', 'pikacart' ),
+					'subscription'
+				);
+			}
 			$org->status = $state;
 		}
 		return $org;
 	}
 
-	/** Can create cards, download and print. */
-	public static function can_work( $org ) {
-		return $org && in_array( $org->status, array( 'trial', 'active', 'cancelled' ), true );
+	/**
+	 * Update every account after the free plan mode changes (or on upgrade).
+	 */
+	public static function recompute_all() {
+		global $wpdb;
+		$ids = $wpdb->get_col( 'SELECT id FROM ' . pkc_table( 'organisations' ) . " WHERE status IN ('free','trial','expired')" );
+		foreach ( $ids as $id ) {
+			$org = PKC_Organisations::get( (int) $id );
+			if ( ! $org ) {
+				continue;
+			}
+			$state = self::compute( $org );
+			if ( $state !== $org->status ) {
+				// Quiet update: no "trial ended" emails for a settings change.
+				PKC_Organisations::update( $org->id, array( 'status' => $state ) );
+			}
+		}
 	}
 
-	/** Exports carry a watermark during the trial. */
+	/** Can create cards, download and print. */
+	public static function can_work( $org ) {
+		return $org && in_array( $org->status, array( 'free', 'trial', 'active', 'cancelled' ), true );
+	}
+
+	/** Exports carry the watermark on the free plan and during a trial. */
 	public static function needs_watermark( $org ) {
-		return $org && 'trial' === $org->status;
+		return $org && in_array( $org->status, array( 'free', 'trial' ), true );
+	}
+
+	public static function is_paid( $org ) {
+		return $org && in_array( $org->status, array( 'active', 'cancelled' ), true );
 	}
 
 	/**
@@ -105,5 +151,11 @@ class PKC_Access {
 			),
 			array( 'status' => 402 )
 		);
+	}
+
+	/** Watermark text drawn on free exports. */
+	public static function watermark_text() {
+		$text = trim( (string) pkc_setting( 'watermark_text', 'Made with www.pikacart.in' ) );
+		return '' !== $text ? $text : 'Made with www.pikacart.in';
 	}
 }

@@ -24,7 +24,14 @@ export default function dashboard( el, ctx ) {
 	const price = me.plan ? me.plan.price_text : '₹59';
 
 	let planCard = '';
-	if ( s.status === 'trial' ) {
+	if ( s.status === 'free' ) {
+		planCard = `<div class="card plan-card plan-trial">
+			<div class="plan-card-top">${ icon( 'sparkles' ) }<span>${ esc( __( 'Free plan', 'pikacart' ) ) }</span></div>
+			<div class="big-date plan-free-title">${ esc( __( 'Free forever', 'pikacart' ) ) }</div>
+			<p>${ esc( sprintf( __( 'Every feature works. Downloaded cards carry "%s". Upgrade for clean, professional cards.', 'pikacart' ), me.watermark.text ) ) }</p>
+			<a class="btn btn-primary" href="${ esc( ctx.url( 'subscription' ) ) }" data-link>${ esc( sprintf( __( 'Remove watermark · %s/month', 'pikacart' ), price ) ) }</a>
+		</div>`;
+	} else if ( s.status === 'trial' ) {
 		planCard = `<div class="card plan-card plan-trial">
 			<div class="plan-card-top">${ icon( 'clock' ) }<span>${ esc( __( 'Free trial', 'pikacart' ) ) }</span></div>
 			<div class="big-timer" data-countdown>${ esc( clock( s.trial_end - ctx.now() ) ) }</div>
@@ -72,6 +79,7 @@ export default function dashboard( el, ctx ) {
 		[ !! org.sign, __( 'Upload the signature', 'pikacart' ), 'organisation' ],
 		[ !! org.seal, __( 'Upload the official seal', 'pikacart' ), 'organisation' ],
 		[ !! me.user.verified, __( 'Verify your email', 'pikacart' ), 'account' ],
+		[ me.state.status === 'active' || me.state.status === 'cancelled', __( 'Upgrade to remove the watermark', 'pikacart' ), 'subscription' ],
 	];
 	const doneCount = steps.filter( ( x ) => x[ 0 ] ).length;
 

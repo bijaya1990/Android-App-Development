@@ -383,6 +383,15 @@ class PKC_Billing {
 		PKC_Organisations::set_meta( $org_id, 'expiry_warned_for', '' );
 		$org = PKC_Access::refresh( PKC_Organisations::get( $org_id ) );
 
+		PKC_Notifications::add(
+			$org_id,
+			'payment',
+			/* translators: %s: amount */
+			sprintf( __( 'Payment received: %s', 'pikacart' ), pkc_money( $common['amount_paise'] ) ),
+			/* translators: 1: date, 2: invoice number */
+			sprintf( __( 'Your plan is active until %1$s. Watermark removed. Invoice %2$s is ready.', 'pikacart' ), pkc_date( gmdate( 'Y-m-d H:i:s', $end ), get_option( 'date_format', 'j M Y' ) ), $invoice ),
+			'subscription'
+		);
 		PKC_Activity_Log::add( 'payment.success', $org_id, pkc_money( $common['amount_paise'] ) . ' · ' . $payment_id . ' · ' . $invoice );
 		PKC_Emails::send_to_org(
 			$org,
@@ -436,6 +445,13 @@ class PKC_Billing {
 		if ( ! $inserted ) {
 			return;
 		}
+		PKC_Notifications::add(
+			$org_id,
+			'payment',
+			__( 'Payment failed', 'pikacart' ),
+			$reason ? $reason : __( 'Your payment did not go through. Please try again.', 'pikacart' ),
+			'subscription'
+		);
 		PKC_Activity_Log::add( 'payment.failed', $org_id, $payment_id . ( $reason ? ' · ' . $reason : '' ) );
 		PKC_Emails::send_to_org(
 			PKC_Organisations::get( $org_id ),

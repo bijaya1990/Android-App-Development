@@ -81,6 +81,15 @@ class PKC_REST_Account {
 				'by_status' => $cards,
 			),
 			'catalog'  => self::catalog(),
+			'live'     => array(
+				'notifications' => PKC_Notifications::unread_count( $org->id ),
+				'support'       => PKC_Support::org_unread_count( $org->id ),
+				'latest'        => PKC_Notifications::latest_id( $org->id ),
+			),
+			'watermark' => array(
+				'text'         => PKC_Access::watermark_text(),
+				'freeForever'  => PKC_Access::free_forever(),
+			),
 			'notices'  => self::notices( $org->id ),
 			'links'    => array(
 				'terms'   => pkc_page_url( 'terms' ),

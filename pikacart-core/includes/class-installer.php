@@ -29,8 +29,13 @@ class PKC_Installer {
 	 * Runs on every load: upgrades the database after a plugin update.
 	 */
 	public static function maybe_upgrade() {
-		if ( (int) get_option( 'pkc_db_version', 0 ) < PKC_DB_VERSION ) {
+		$from = (int) get_option( 'pkc_db_version', 0 );
+		if ( $from < PKC_DB_VERSION ) {
 			self::install();
+			if ( $from > 0 && $from < 2 ) {
+				// Version 2 introduced the lifetime free plan.
+				PKC_Access::recompute_all();
+			}
 			PKC_Roles::add_roles();
 			update_option( 'pkc_flush_rewrite', 1 );
 		}
@@ -349,11 +354,18 @@ class PKC_Installer {
   status varchar(20) NOT NULL DEFAULT 'open',
   is_read_admin tinyint(1) NOT NULL DEFAULT 0,
   is_read_user tinyint(1) NOT NULL DEFAULT 1,
+  last_author varchar(10) NOT NULL DEFAULT 'org',
+  last_message text NULL,
+  last_message_at datetime NULL DEFAULT NULL,
+  user_seen_at datetime NULL DEFAULT NULL,
+  admin_seen_at datetime NULL DEFAULT NULL,
+  last_emailed_at datetime NULL DEFAULT NULL,
   created_at datetime NULL DEFAULT NULL,
   updated_at datetime NULL DEFAULT NULL,
   PRIMARY KEY  (id),
   KEY org_id (org_id),
-  KEY status (status)
+  KEY status (status),
+  KEY last_message_at (last_message_at)
 ) $c;";
 
 		$sql[] = "CREATE TABLE {$t('ticket_replies')} (
@@ -365,6 +377,19 @@ class PKC_Installer {
   created_at datetime NULL DEFAULT NULL,
   PRIMARY KEY  (id),
   KEY ticket_id (ticket_id)
+) $c;";
+
+		$sql[] = "CREATE TABLE {$t('notifications')} (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  org_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  type varchar(30) NOT NULL DEFAULT '',
+  title varchar(255) NOT NULL DEFAULT '',
+  body text NULL,
+  link varchar(255) NOT NULL DEFAULT '',
+  is_read tinyint(1) NOT NULL DEFAULT 0,
+  created_at datetime NULL DEFAULT NULL,
+  PRIMARY KEY  (id),
+  KEY org_read (org_id,is_read)
 ) $c;";
 
 		$sql[] = "CREATE TABLE {$t('notices')} (

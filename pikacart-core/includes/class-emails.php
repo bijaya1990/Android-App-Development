@@ -25,8 +25,8 @@ class PKC_Emails {
 			),
 			'welcome'         => array(
 				'label'   => __( 'Welcome', 'pikacart' ),
-				'subject' => 'Welcome to {site}! Your free trial has started',
-				'body'    => "Hello {name},\n\nWelcome to {site}. Your free trial for {org} has started and lasts {minutes} minutes. Every feature is open, and exports carry a trial watermark.\n\n[button]Open my dashboard[/button]\n\nAfter the trial, continue for just {price} per month.",
+				'subject' => 'Welcome to {site}! Your account is ready',
+				'body'    => "Hello {name},\n\nWelcome to {site}. Your account for {org} is ready.\n\n{plan_line}\n\n[button]Open my dashboard[/button]",
 			),
 			'trial_ending'    => array(
 				'label'   => __( 'Trial ending soon', 'pikacart' ),
@@ -62,6 +62,11 @@ class PKC_Emails {
 				'label'   => __( 'Account reactivated', 'pikacart' ),
 				'subject' => 'Your {site} account is active again',
 				'body'    => "Hello {name},\n\nGood news: your {site} account for {org} has been reactivated. You can log in and continue.\n\n[button]Open my dashboard[/button]",
+			),
+			'support_reply'   => array(
+				'label'   => __( 'Support reply', 'pikacart' ),
+				'subject' => 'New reply from {site} support: {subject}',
+				'body'    => "Hello {name},\n\nOur support team replied to your conversation \"{subject}\":\n\n{message}\n\n[button]Open the chat[/button]",
 			),
 			'reset_password'  => array(
 				'label'   => __( 'Reset password', 'pikacart' ),
@@ -105,6 +110,11 @@ class PKC_Emails {
 				'minutes'       => (int) pkc_setting( 'trial_minutes', 120 ),
 				'price'         => pkc_money( PKC_Billing::default_plan_price() ),
 				'reason'        => '',
+				'plan_line'     => PKC_Access::free_forever()
+					/* translators: %s: price */
+					? sprintf( __( 'You can use Pikacart free forever. Free cards carry a small "Made with www.pikacart.in" watermark. Upgrade for %s per month to remove it.', 'pikacart' ), pkc_money( PKC_Billing::default_plan_price() ) )
+					/* translators: 1: minutes, 2: price */
+					: sprintf( __( 'Your free trial lasts %1$d minutes. Every feature is open. After the trial, continue for %2$s per month.', 'pikacart' ), (int) pkc_setting( 'trial_minutes', 120 ), pkc_money( PKC_Billing::default_plan_price() ) ),
 			),
 			$vars
 		);

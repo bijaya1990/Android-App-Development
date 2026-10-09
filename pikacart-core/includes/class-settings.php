@@ -20,7 +20,7 @@ class PKC_Settings {
 	public static function tabs() {
 		return array(
 			'general'     => __( 'General', 'pikacart' ),
-			'trial'       => __( 'Trial and Plans', 'pikacart' ),
+			'trial'       => __( 'Free plan and Plans', 'pikacart' ),
 			'razorpay'    => __( 'Razorpay', 'pikacart' ),
 			'emails'      => __( 'Emails', 'pikacart' ),
 			'homepage'    => __( 'Homepage', 'pikacart' ),
@@ -53,12 +53,13 @@ class PKC_Settings {
 			'social_youtube'     => array( 'general', 'url', __( 'YouTube link', 'pikacart' ), '', '' ),
 			'social_whatsapp'    => array( 'general', 'text', __( 'WhatsApp number', 'pikacart' ), '', '' ),
 
-			// Trial.
-			'trial_minutes'      => array( 'trial', 'number', __( 'Free trial length (minutes)', 'pikacart' ), 120, __( '120 minutes = 2 hours.', 'pikacart' ) ),
+			// Free plan / trial.
+			'free_mode'          => array( 'trial', 'select', __( 'Free plan mode', 'pikacart' ), 'forever', __( 'Lifetime free: every account can use Pikacart free forever, and downloads carry the watermark. Trial: free only for the trial length, then locked until they pay.', 'pikacart' ), array( 'forever' => __( 'Lifetime free with watermark (recommended)', 'pikacart' ), 'trial' => __( 'Time-limited trial, then locked', 'pikacart' ) ) ),
+			'watermark_text'     => array( 'trial', 'text', __( 'Watermark text on free cards', 'pikacart' ), 'Made with www.pikacart.in', __( 'Drawn across every free card and on a ribbon at the bottom. Paid plans have no watermark.', 'pikacart' ) ),
+			'trial_minutes'      => array( 'trial', 'number', __( 'Trial length in minutes (trial mode only)', 'pikacart' ), 120, __( '120 minutes = 2 hours.', 'pikacart' ) ),
 			'trial_warn_minutes' => array( 'trial', 'number', __( 'Send "trial ending" email this many minutes before the end', 'pikacart' ), 30, '' ),
 			'expiry_warn_days'   => array( 'trial', 'number', __( 'Send "subscription expiring" email this many days before the end', 'pikacart' ), 3, '' ),
 			'grace_hours'        => array( 'trial', 'number', __( 'Autopay grace period (hours)', 'pikacart' ), 48, __( 'Keeps an autopay account active while Razorpay retries a renewal.', 'pikacart' ) ),
-			'watermark_text'     => array( 'trial', 'text', __( 'Trial watermark text', 'pikacart' ), 'PIKACART TRIAL', '' ),
 
 			// Razorpay.
 			'rzp_mode'           => array( 'razorpay', 'select', __( 'Mode', 'pikacart' ), 'test', '', array( 'test' => __( 'Test mode', 'pikacart' ), 'live' => __( 'Live mode', 'pikacart' ) ) ),
@@ -72,7 +73,7 @@ class PKC_Settings {
 			// Homepage.
 			'home_hero_title'    => array( 'homepage', 'text', __( 'Hero headline', 'pikacart' ), 'Professional ID cards in minutes', '' ),
 			'home_hero_text'     => array( 'homepage', 'textarea', __( 'Hero text', 'pikacart' ), 'Design, manage and print ID cards for your school, college or company. Import from Excel, verify with real QR codes, print on any holder size.', '' ),
-			'home_hero_button'   => array( 'homepage', 'text', __( 'Hero button text', 'pikacart' ), 'Start Free Trial', '' ),
+			'home_hero_button'   => array( 'homepage', 'text', __( 'Hero button text', 'pikacart' ), 'Start Free', '' ),
 
 			// SEO.
 			'seo_gsc'            => array( 'seo', 'text', __( 'Google Search Console verification code', 'pikacart' ), '', __( 'Only the code inside content="...".', 'pikacart' ) ),
@@ -95,6 +96,7 @@ class PKC_Settings {
 			$f[ 'email_' . $key . '_subject' ] = array( 'emails', 'text', sprintf( /* translators: %s: email name */ __( '%s: subject', 'pikacart' ), $mail['label'] ), $mail['subject'], '' );
 			$f[ 'email_' . $key . '_body' ]    = array( 'emails', 'emailbody', sprintf( /* translators: %s: email name */ __( '%s: message', 'pikacart' ), $mail['label'] ), $mail['body'], '' );
 		}
+		$f['email_support_reply'] = array( 'emails', 'checkbox', __( 'Email customers when support replies and they are not online', 'pikacart' ), 1, '' );
 		$f['email_from_name']  = array( 'emails', 'text', __( 'Sender name', 'pikacart' ), 'Pikacart', '' );
 		$f['email_from_email'] = array( 'emails', 'email', __( 'Sender email', 'pikacart' ), '', __( 'Leave empty to use the support email. Use an address on your own domain.', 'pikacart' ) );
 

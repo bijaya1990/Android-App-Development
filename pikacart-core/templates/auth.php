@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 $pkc_view   = $pkc['view'];
 $pkc_titles = array(
 	'login'           => __( 'Log in', 'pikacart' ),
-	'register'        => __( 'Start your free trial', 'pikacart' ),
+	'register'        => PKC_Access::free_forever() ? __( 'Create your free account', 'pikacart' ) : __( 'Start your free trial', 'pikacart' ),
 	'forgot-password' => __( 'Forgot password', 'pikacart' ),
 	'reset-password'  => __( 'Choose a new password', 'pikacart' ),
 );
@@ -97,13 +97,17 @@ require PKC_DIR . 'templates/partials/head.php';
 					<div class="form-msg" role="alert" aria-live="polite"></div>
 					<button type="submit" class="btn btn-primary btn-block"><?php esc_html_e( 'Log in', 'pikacart' ); ?></button>
 				</form>
-				<p class="auth-switch"><?php esc_html_e( 'New to Pikacart?', 'pikacart' ); ?> <a href="<?php echo esc_url( pkc_url( 'register' ) ); ?>"><?php esc_html_e( 'Start your free trial', 'pikacart' ); ?></a></p>
+				<p class="auth-switch"><?php esc_html_e( 'New to Pikacart?', 'pikacart' ); ?> <a href="<?php echo esc_url( pkc_url( 'register' ) ); ?>"><?php esc_html_e( 'Create a free account', 'pikacart' ); ?></a></p>
 
 			<?php elseif ( 'register' === $pkc_view ) : ?>
 				<p class="auth-sub">
 					<?php
-					/* translators: %s: trial length like "2 hours" */
-					echo esc_html( sprintf( __( 'Every feature free for %s. No card needed.', 'pikacart' ), $pkc_trial_text ) );
+					echo esc_html(
+						PKC_Access::free_forever()
+							? __( 'Free forever. Every feature included. No card needed.', 'pikacart' )
+							/* translators: %s: trial length like "2 hours" */
+							: sprintf( __( 'Every feature free for %s. No card needed.', 'pikacart' ), $pkc_trial_text )
+					);
 					?>
 				</p>
 				<form class="pkc-form" data-endpoint="auth/register" novalidate>
@@ -160,7 +164,7 @@ require PKC_DIR . 'templates/partials/head.php';
 						</span>
 					</label>
 					<div class="form-msg" role="alert" aria-live="polite"></div>
-					<button type="submit" class="btn btn-primary btn-block"><?php esc_html_e( 'Create account and start trial', 'pikacart' ); ?></button>
+					<button type="submit" class="btn btn-primary btn-block"><?php echo esc_html( PKC_Access::free_forever() ? __( 'Create free account', 'pikacart' ) : __( 'Create account and start trial', 'pikacart' ) ); ?></button>
 				</form>
 				<p class="auth-switch"><?php esc_html_e( 'Already have an account?', 'pikacart' ); ?> <a href="<?php echo esc_url( pkc_url( 'login' ) ); ?>"><?php esc_html_e( 'Log in', 'pikacart' ); ?></a></p>
 

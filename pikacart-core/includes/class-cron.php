@@ -43,7 +43,9 @@ class PKC_Cron {
 	}
 
 	public static function run() {
-		self::trial_warnings();
+		if ( ! PKC_Access::free_forever() ) {
+			self::trial_warnings();
+		}
 		self::refresh_due();
 		self::expiry_warnings();
 	}
@@ -109,6 +111,14 @@ class PKC_Cron {
 			}
 			$sub = PKC_Billing::active_subscription( $org->id );
 			if ( ! $sub ) {
+				PKC_Notifications::add(
+					$org->id,
+					'plan',
+					__( 'Your plan ends soon', 'pikacart' ),
+					/* translators: %s: date */
+					sprintf( __( 'Your paid plan ends on %s. Renew to keep downloading without the watermark.', 'pikacart' ), pkc_date( $org->period_end, get_option( 'date_format', 'j M Y' ) ) ),
+					'subscription'
+				);
 				PKC_Emails::send_to_org(
 					$org,
 					'expiring_soon',

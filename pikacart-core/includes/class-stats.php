@@ -48,7 +48,7 @@ class PKC_Stats {
 		}
 		$total = array_sum( $status_counts );
 
-		$ended_trials = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $orgs WHERE trial_end <= %s", pkc_now() ) );
+		$ended_trials = PKC_Access::free_forever() ? $total : (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $orgs WHERE trial_end <= %s", pkc_now() ) );
 		$paid_orgs    = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT org_id) FROM $pay WHERE status = 'captured'" );
 		$conversion   = $ended_trials ? round( $paid_orgs * 100 / $ended_trials, 1 ) : 0;
 

@@ -50,7 +50,7 @@ defined( 'ABSPATH' ) || exit;
 					<a class="t-btn t-btn-primary" href="<?php echo esc_url( pkc_theme_url( 'app' ) ); ?>"><?php esc_html_e( 'My dashboard', 'pikacart' ); ?></a>
 				<?php else : ?>
 					<a class="t-btn t-btn-ghost" href="<?php echo esc_url( pkc_theme_url( 'login' ) ); ?>"><?php esc_html_e( 'Login', 'pikacart' ); ?></a>
-					<a class="t-btn t-btn-primary" href="<?php echo esc_url( pkc_theme_url( 'register' ) ); ?>"><?php esc_html_e( 'Start Free Trial', 'pikacart' ); ?></a>
+					<a class="t-btn t-btn-primary" href="<?php echo esc_url( pkc_theme_url( 'register' ) ); ?>"><?php esc_html_e( 'Start Free', 'pikacart' ); ?></a>
 				<?php endif; ?>
 			</div>
 		</nav>

@@ -97,7 +97,7 @@ class PKC_Accounts {
 		}
 
 		// One trial per email and per mobile, even after an account is deleted.
-		$trial_allowed = ! self::claimed( 'email', $email ) && ! self::claimed( 'mobile', $mobile );
+		$trial_allowed = PKC_Access::free_forever() || ( ! self::claimed( 'email', $email ) && ! self::claimed( 'mobile', $mobile ) );
 
 		$login   = self::unique_login( $email );
 		$user_id = wp_insert_user(
@@ -146,10 +146,17 @@ class PKC_Accounts {
 
 		return array(
 			'redirect' => pkc_url( 'app' ),
-			'message'  => $trial_allowed
-				? __( 'Welcome! Your free trial has started.', 'pikacart' )
-				: __( 'Your account is ready. A free trial was already used with this email or mobile number, so please subscribe to continue.', 'pikacart' ),
+			'message'  => self::welcome_message( $trial_allowed ),
 		);
+	}
+
+	private static function welcome_message( $trial_allowed ) {
+		if ( PKC_Access::free_forever() ) {
+			return __( 'Welcome! Your free account is ready.', 'pikacart' );
+		}
+		return $trial_allowed
+			? __( 'Welcome! Your free trial has started.', 'pikacart' )
+			: __( 'Your account is ready. A free trial was already used with this email or mobile number, so please subscribe to continue.', 'pikacart' );
 	}
 
 	private static function unique_login( $email ) {
