@@ -133,6 +133,7 @@ class PKC_Accounts {
 		self::claim( 'email', $email );
 		self::claim( 'mobile', $mobile );
 		update_user_meta( $user_id, 'pkc_authorised_at', pkc_now() );
+		update_user_meta( $user_id, 'pkc_px_signup', 1 );
 		PKC_Activity_Log::add( 'account.registered', $org_id, $org_name );
 
 		$org = PKC_Organisations::get( $org_id );

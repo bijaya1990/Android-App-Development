@@ -270,6 +270,7 @@ class PKC_Router {
 		if ( self::current() || is_admin() ) {
 			return;
 		}
+		self::meta_pixel();
 		$gsc = trim( (string) pkc_setting( 'seo_gsc', '' ) );
 		if ( $gsc ) {
 			echo '<meta name="google-site-verification" content="' . esc_attr( $gsc ) . '" />' . "\n";
@@ -283,6 +284,25 @@ class PKC_Router {
 		if ( '' !== $custom ) {
 			echo $custom . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- Saved only by users with unfiltered_html.
 		}
+	}
+
+	/**
+	 * Meta Pixel base code, on public pages and on Pikacart's own pages.
+	 * A fresh sign-up is reported once, on the first page after registering.
+	 */
+	public static function meta_pixel() {
+		$id = trim( (string) pkc_setting( 'meta_pixel_id', '' ) );
+		if ( ! preg_match( '/^\d{6,20}$/', $id ) ) {
+			return;
+		}
+		$extra = '';
+		$user  = get_current_user_id();
+		if ( $user && get_user_meta( $user, 'pkc_px_signup', true ) ) {
+			delete_user_meta( $user, 'pkc_px_signup' );
+			$extra = "fbq('track','CompleteRegistration');";
+		}
+		echo "<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','" . esc_js( $id ) . "');fbq('track','PageView');" . $extra . "</script>\n";
+		echo '<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=' . esc_attr( $id ) . '&ev=PageView&noscript=1"></noscript>' . "\n";
 	}
 
 	public static function public_footer() {

@@ -20,5 +20,6 @@ PKC_Assets::register();
 <?php
 wp_site_icon();
 wp_print_styles( $pkc_styles );
+PKC_Router::meta_pixel();
 ?>
 </head>

@@ -91,6 +91,7 @@ class PKC_Settings {
 			'home_seo_text'      => array( 'seo', 'textarea', __( 'Homepage SEO text (shown at the bottom)', 'pikacart' ), '', '' ),
 			'seo_gsc'            => array( 'seo', 'text', __( 'Google Search Console verification code', 'pikacart' ), '', __( 'Only the code inside content="...".', 'pikacart' ) ),
 			'seo_ga'             => array( 'seo', 'text', __( 'Google Analytics ID', 'pikacart' ), '', __( 'Example: G-XXXXXXX', 'pikacart' ) ),
+			'meta_pixel_id'      => array( 'seo', 'text', __( 'Meta (Facebook) Pixel ID', 'pikacart' ), '', __( 'Only the number, e.g. 1234567890123456. Tracks page views on every page, sign-ups (CompleteRegistration) and payments (Purchase).', 'pikacart' ) ),
 			'seo_head_scripts'   => array( 'seo', 'code', __( 'Custom header scripts', 'pikacart' ), '', __( 'Added to the public pages only, never to the app.', 'pikacart' ) ),
 			'seo_footer_scripts' => array( 'seo', 'code', __( 'Custom footer scripts', 'pikacart' ), '', '' ),
 

@@ -82,6 +82,9 @@ export default function subscription( el, ctx ) {
 				const result = await openCheckout( start.checkout );
 				const res = await api( kind === 'autopay' ? 'billing/verify-subscription' : 'billing/verify-order', { method: 'POST', body: result } );
 				ctx.setMe( res.me );
+				if ( window.fbq && start.checkout && start.checkout.amount ) {
+					window.fbq( 'track', 'Purchase', { value: start.checkout.amount / 100, currency: start.checkout.currency || 'INR' } );
+				}
 				toast( res.message );
 				load();
 			} catch ( err ) {
