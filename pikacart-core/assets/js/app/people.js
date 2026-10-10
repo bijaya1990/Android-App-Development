@@ -12,6 +12,7 @@ import { esc, icon, toast, confirmDialog, withLoading, emptyState, formData } fr
 import { cropPhoto, compressPhoto } from './image.js';
 import { renderSide } from '../card/render.js';
 import { exportCards, printCards } from './exporter.js';
+import { sheetImages, photoFiles, pickPhoto as findPhoto } from './xlsx-photos.js';
 
 const { __, _n, sprintf } = window.wp.i18n;
 
@@ -64,6 +65,86 @@ export function projectFields( P ) {
 	return out;
 }
 
+const HINTS = () => ( {
+	name: [ __( 'Full name as it should print on the card', 'pikacart' ), 'Aarav Mehta' ],
+	id_no: [ __( 'Unique number for each person (roll no., employee ID…). Also the photo file name.', 'pikacart' ), '1001' ],
+	photo: [ __( 'Paste the photo into this cell, or type the photo file name. Leave empty to match a photo named by the ID number.', 'pikacart' ), '1001.jpg' ],
+	class: [ __( 'Class or course', 'pikacart' ), 'VIII' ],
+	section: [ __( 'Section or division', 'pikacart' ), 'A' ],
+	designation: [ __( 'Designation or pass type', 'pikacart' ), 'Teacher' ],
+	department: [ __( 'Department or area', 'pikacart' ), 'Science' ],
+	mobile: [ __( '10-digit mobile number', 'pikacart' ), '9876543210' ],
+	email: [ __( 'Email address', 'pikacart' ), 'aarav@example.com' ],
+	dob: [ __( 'Date of birth as DD-MM-YYYY', 'pikacart' ), '12-05-2012' ],
+	blood_group: [ __( 'Blood group', 'pikacart' ), 'B+' ],
+	guardian: [ __( 'Father or guardian name', 'pikacart' ), 'Mr. Rakesh Mehta' ],
+	address: [ __( 'Home address', 'pikacart' ), '12 MG Road, Bhubaneswar' ],
+	emergency: [ __( 'Emergency contact number', 'pikacart' ), '9876500000' ],
+	valid_from: [ __( 'Card valid from, DD-MM-YYYY', 'pikacart' ), '01-04-2026' ],
+	valid_until: [ __( 'Card valid until, DD-MM-YYYY', 'pikacart' ), '31-03-2027' ],
+} );
+
+const TEXT_KEYS = [ 'id_no', 'mobile', 'emergency', 'dob', 'valid_from', 'valid_until' ];
+
+/**
+ * A blank Excel made for this project's design: one column per field the
+ * design uses (required ones marked *), a "How to fill" sheet, and a hidden
+ * sheet that lets the import match every column automatically.
+ */
+export function blankExcel( P ) {
+	const X = window.XLSX;
+	const photoField = ( P.data.subtype ? P.data.subtype.fields : [] ).find( ( f ) => f.key === 'photo' );
+	const fields = [ ...projectFields( P ), { key: 'photo', label: __( 'Photo', 'pikacart' ), required: !! ( photoField && photoField.required ) } ];
+	const head = fields.map( ( f ) => f.label + ( f.required ? ' *' : '' ) );
+	const ws = X.utils.aoa_to_sheet( [ head ] );
+	// Number-like columns are text, so IDs like 0012 keep their zeros.
+	const ROWS = 1000;
+	fields.forEach( ( f, c ) => {
+		if ( TEXT_KEYS.includes( f.key ) ) {
+			for ( let r = 1; r <= ROWS; r++ ) {
+				ws[ X.utils.encode_cell( { r, c } ) ] = { t: 's', v: '', z: '@' };
+			}
+		}
+	} );
+	ws[ '!ref' ] = X.utils.encode_range( { s: { r: 0, c: 0 }, e: { r: ROWS, c: Math.max( 0, fields.length - 1 ) } } );
+	ws[ '!cols' ] = fields.map( ( f, i ) => ( { wch: f.key === 'photo' ? 16 : Math.max( 14, head[ i ].length + 4 ) } ) );
+	// Taller rows so a pasted photo fits in its cell.
+	ws[ '!rows' ] = [ { hpt: 22 }, ...Array.from( { length: 300 }, () => ( { hpt: 60 } ) ) ];
+
+	const hints = HINTS();
+	const site = window.PKC.site || 'Pikacart';
+	const help = X.utils.aoa_to_sheet( [
+		[ sprintf( __( '%1$s · %2$s', 'pikacart' ), site, P.project.name ) ],
+		[ __( 'Fill one person per row on the "People" sheet, then upload this same file in People → Import Excel / CSV. Do not change or move the headings.', 'pikacart' ) ],
+		[ __( 'Columns marked * must be filled. Organisation details (name, logo, address, signature) come from your profile and are not needed here.', 'pikacart' ) ],
+		[ __( 'Photo: paste the picture into the Photo cell of that person (Insert → Pictures → Place in Cell, or a picture placed on the cell). Or type the photo file name (e.g. aarav.jpg) and choose the photos or a ZIP when you upload. Or leave it empty and name each photo by the ID number (1001.jpg).', 'pikacart' ) ],
+		[],
+		[ __( 'Column', 'pikacart' ), __( 'Required', 'pikacart' ), __( 'What to write', 'pikacart' ), __( 'Example', 'pikacart' ) ],
+		...fields.map( ( f ) => [ f.label, f.required ? __( 'Yes', 'pikacart' ) : __( 'No', 'pikacart' ), ( hints[ f.key ] || [ __( 'Your own field', 'pikacart' ) ] )[ 0 ], ( hints[ f.key ] || [ '', '' ] )[ 1 ] ] ),
+	] );
+	help[ '!cols' ] = [ { wch: 26 }, { wch: 10 }, { wch: 70 }, { wch: 24 } ];
+	const meta = X.utils.aoa_to_sheet( [ [ 'pikacart', 1 ], [ 'project', P.project.id ], [ 'keys', ...fields.map( ( f ) => f.key ) ] ] );
+
+	const wb = X.utils.book_new();
+	X.utils.book_append_sheet( wb, ws, 'People' );
+	X.utils.book_append_sheet( wb, help, 'How to fill' );
+	X.utils.book_append_sheet( wb, meta, '_pikacart' );
+	wb.Workbook = { Sheets: [ { Hidden: 0 }, { Hidden: 0 }, { Hidden: 1 } ] };
+	const name = ( P.project.name || 'people' ).replace( /[^\w\- ]+/g, '' ).trim().replace( /\s+/g, '-' ) || 'people';
+	X.writeFile( wb, `${ name }-blank.xlsx` );
+}
+
+/** Column keys written by blankExcel(), or null for any other file. */
+function pikacartKeys( wb ) {
+	const meta = wb.Sheets._pikacart;
+	if ( ! meta ) {
+		return null;
+	}
+	const rows = window.XLSX.utils.sheet_to_json( meta, { header: 1, defval: '' } );
+	const keys = ( rows.find( ( r ) => r[ 0 ] === 'keys' ) || [] ).slice( 1 ).map( String );
+	return keys.length ? keys : null;
+}
+
 /** Width/height ratio of the design's photo frame. */
 export function photoAspect( P ) {
 	const size = P.size();
@@ -88,11 +169,12 @@ export default function peopleStep( body, P ) {
 	body.innerHTML = `<div class="people">
 		<div class="people-actions">
 			<button type="button" class="btn btn-primary" data-do="add">${ icon( 'plus' ) }${ esc( __( 'Add person', 'pikacart' ) ) }</button>
+			<button type="button" class="btn" data-do="blank">${ icon( 'download' ) }${ esc( __( 'Blank Excel for this design', 'pikacart' ) ) }</button>
 			<button type="button" class="btn" data-do="import">${ icon( 'upload' ) }${ esc( __( 'Import Excel / CSV', 'pikacart' ) ) }</button>
 			<label class="btn">${ icon( 'image' ) }${ esc( __( 'Bulk photos', 'pikacart' ) ) }<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden data-bulkphotos></label>
 			<button type="button" class="btn" data-do="selffill">${ icon( 'external' ) }${ esc( __( 'Self-fill link', 'pikacart' ) ) }</button>
 			<div class="dropdown"><button type="button" class="btn" data-do="exportmenu">${ icon( 'download' ) }${ esc( __( 'Export list', 'pikacart' ) ) }</button>
-				<div class="dropdown-menu" hidden data-exportmenu><button type="button" data-export="xlsx">Excel (.xlsx)</button><button type="button" data-export="csv">CSV</button><button type="button" data-export="sample">${ esc( __( 'Sample import file', 'pikacart' ) ) }</button></div></div>
+				<div class="dropdown-menu" hidden data-exportmenu><button type="button" data-export="xlsx">Excel (.xlsx)</button><button type="button" data-export="csv">CSV</button><button type="button" data-export="sample">${ esc( __( 'Blank Excel for this design', 'pikacart' ) ) }</button></div></div>
 		</div>
 		<div class="status-tabs" data-tabs></div>
 		<div class="people-filters card">
@@ -178,7 +260,15 @@ export default function peopleStep( body, P ) {
 		if ( ! st.rows.length ) {
 			list.innerHTML = st.trash
 				? `<p class="muted center pad">${ esc( __( 'The recycle bin is empty. Deleted people stay here for 30 days.', 'pikacart' ) ) }</p>`
-				: emptyState( { art: 'people', title: st.search || st.status ? __( 'Nobody matches these filters', 'pikacart' ) : __( 'No people yet', 'pikacart' ), text: __( 'Add people one by one, import an Excel file, or share a self-fill link.', 'pikacart' ) } );
+				: ( st.search || st.status ? emptyState( { art: 'people', title: __( 'Nobody matches these filters', 'pikacart' ), text: __( 'Try another search or status.', 'pikacart' ) } ) : `<div class="xl-guide">
+					<h3>${ esc( __( 'Make all cards at once with Excel', 'pikacart' ) ) }</h3>
+					<ol>
+						<li><strong>${ esc( __( 'Download the blank Excel', 'pikacart' ) ) }</strong><span>${ esc( __( 'It already has the right column headings for this design.', 'pikacart' ) ) }</span><button type="button" class="btn btn-primary btn-sm" data-do="blank">${ icon( 'download' ) }${ esc( __( 'Blank Excel', 'pikacart' ) ) }</button></li>
+						<li><strong>${ esc( __( 'Fill one person per row', 'pikacart' ) ) }</strong><span>${ esc( __( 'Just type the values. Columns marked * are required.', 'pikacart' ) ) }</span></li>
+						<li><strong>${ esc( __( 'Upload it', 'pikacart' ) ) }</strong><span>${ esc( __( 'Every column is matched automatically and the cards are ready.', 'pikacart' ) ) }</span><button type="button" class="btn btn-sm" data-do="import">${ icon( 'upload' ) }${ esc( __( 'Upload Excel', 'pikacart' ) ) }</button></li>
+					</ol>
+					<p class="muted small">${ esc( __( 'Or add people one by one, or share a self-fill link.', 'pikacart' ) ) }</p>
+				</div>` );
 			$( '[data-pager]' ).innerHTML = '';
 			syncBulk();
 			return;
@@ -298,6 +388,9 @@ export default function peopleStep( body, P ) {
 				editPerson( null );
 			} else if ( a === 'import' ) {
 				importWizard();
+			} else if ( a === 'blank' ) {
+				blankExcel( P );
+				toast( __( 'Blank Excel downloaded. Fill one person per row, then use Import Excel / CSV.', 'pikacart' ) );
 			} else if ( a === 'selffill' ) {
 				selfFill();
 			} else if ( a === 'exportmenu' ) {
@@ -576,14 +669,6 @@ export default function peopleStep( body, P ) {
 
 	/* ---------- Import ---------- */
 
-	function sampleRows() {
-		const demo = { name: 'Aarav Mehta', id_no: '1001', class: 'VIII', section: 'A', designation: 'Teacher', department: 'Science', mobile: '9876543210', email: 'aarav@example.com', dob: '12-05-2012', blood_group: 'B+', guardian: 'Mr. Rakesh Mehta', address: '12 MG Road, Bhubaneswar', emergency: '9876500000', valid_from: '01-04-2026', valid_until: '31-03-2027' };
-		const head = fields.map( ( f ) => f.label );
-		const row = fields.map( ( f ) => demo[ f.key ] || '' );
-		const row2 = fields.map( ( f ) => ( f.key === 'name' ? 'Ananya Iyer' : f.key === 'id_no' ? '1002' : demo[ f.key ] || '' ) );
-		return [ head, row, row2 ];
-	}
-
 	function importWizard() {
 		const root = document.getElementById( 'modal-root' );
 		const wrap = document.createElement( 'div' );
@@ -606,9 +691,9 @@ export default function peopleStep( body, P ) {
 			<p><strong>${ esc( __( 'Choose your Excel (.xlsx) or CSV file', 'pikacart' ) ) }</strong></p>
 			<p class="muted small">${ esc( __( 'The first row must have column names. Photos can be added later with Bulk photos.', 'pikacart' ) ) }</p>
 			<label class="btn btn-primary">${ esc( __( 'Choose file', 'pikacart' ) ) }<input type="file" accept=".xlsx,.xls,.csv" hidden data-file></label>
-			<button type="button" class="btn btn-ghost" data-sample>${ icon( 'download' ) }${ esc( __( 'Download sample file', 'pikacart' ) ) }</button>
+			<button type="button" class="btn btn-ghost" data-sample>${ icon( 'download' ) }${ esc( __( 'Download blank Excel for this design', 'pikacart' ) ) }</button>
 		</div>`;
-		stage.querySelector( '[data-sample]' ).addEventListener( 'click', () => exportList( 'sample' ) );
+		stage.querySelector( '[data-sample]' ).addEventListener( 'click', () => blankExcel( P ) );
 		stage.querySelector( '[data-file]' ).addEventListener( 'change', async ( e ) => {
 			const file = e.target.files[ 0 ];
 			if ( ! file ) {
@@ -619,7 +704,8 @@ export default function peopleStep( body, P ) {
 				// CSV: keep every value exactly as typed (no US date guessing).
 				const isCsv = /\.(csv|txt)$/i.test( file.name );
 				const wb = window.XLSX.read( buf, { type: 'array', cellDates: false, cellNF: true, raw: isCsv } );
-				const sheet = wb.Sheets[ wb.SheetNames[ 0 ] ];
+				const keys = pikacartKeys( wb );
+				const sheet = wb.Sheets[ keys && wb.Sheets.People ? 'People' : wb.SheetNames[ 0 ] ];
 				// Excel: show real date cells as DD-MM-YYYY (Indian format).
 				Object.keys( sheet ).forEach( ( k ) => {
 					const c = sheet[ k ];
@@ -627,16 +713,44 @@ export default function peopleStep( body, P ) {
 						c.w = window.XLSX.SSF.format( 'dd-mm-yyyy', c.v );
 					}
 				} );
-				const rows = window.XLSX.utils.sheet_to_json( sheet, { header: 1, defval: '', raw: false, blankrows: false } );
+				// Keep each row's sheet row number so pasted photos can be matched to it.
+				const startRow = sheet[ '!ref' ] ? window.XLSX.utils.decode_range( sheet[ '!ref' ] ).s.r : 0;
+				const rows = window.XLSX.utils.sheet_to_json( sheet, { header: 1, defval: '', raw: false, blankrows: true } )
+					.map( ( r, i ) => {
+						r.sheetRow = startRow + i;
+						return r;
+					} )
+					.filter( ( r, i ) => i === 0 || r.some( ( v ) => String( v ).trim() !== '' ) );
+				src.buf = isCsv ? null : buf;
+				src.sheetName = keys && wb.Sheets.People ? 'People' : wb.SheetNames[ 0 ];
+				src.files = new Map();
 				if ( rows.length < 2 ) {
 					toast( __( 'This file has no rows to import.', 'pikacart' ), 'error' );
 					return;
 				}
-				mapping( rows );
+				if ( keys ) {
+					ready( rows, keys );
+				} else {
+					mapping( rows );
+				}
 			} catch ( err ) {
 				toast( __( 'Could not read this file. Please save it as .xlsx or .csv and try again.', 'pikacart' ), 'error' );
 			}
 		} );
+
+		const src = { buf: null, sheetName: '', files: new Map() };
+
+		/** "Add photos" input shown before importing: photo files or a ZIP. */
+		function photoPicker() {
+			return `<div class="xl-photos"><label class="btn btn-sm">${ icon( 'image' ) }${ esc( __( 'Add photos or a ZIP (optional)', 'pikacart' ) ) }<input type="file" accept="image/png,image/jpeg,image/webp,.zip" multiple hidden data-photos></label><span class="muted small" data-photo-msg>${ esc( __( 'Photos pasted inside the Excel are picked up automatically.', 'pikacart' ) ) }</span></div>`;
+		}
+		function bindPhotoPicker() {
+			const input = stage.querySelector( '[data-photos]' );
+			input?.addEventListener( 'change', async () => {
+				src.files = await photoFiles( [ ...input.files ] );
+				stage.querySelector( '[data-photo-msg]' ).textContent = sprintf( _n( '%d photo ready to match', '%d photos ready to match', src.files.size, 'pikacart' ), src.files.size );
+			} );
+		}
 
 		function guess( header ) {
 			const h = String( header ).toLowerCase().replace( /[^a-z]/g, '' );
@@ -656,6 +770,7 @@ export default function peopleStep( body, P ) {
 				emergency: [ 'emergency', 'emergencycontact', 'emergencyno' ],
 				valid_from: [ 'validfrom', 'issuedate', 'from' ],
 				valid_until: [ 'validuntil', 'validtill', 'validupto', 'expiry', 'expirydate', 'till' ],
+				photo: [ 'photo', 'photofile', 'photoname', 'image', 'picture', 'pic' ],
 				session: [ 'session', 'year', 'academicyear' ],
 			};
 			for ( const [ k, list ] of Object.entries( map ) ) {
@@ -667,16 +782,41 @@ export default function peopleStep( body, P ) {
 			return f ? f.key : '';
 		}
 
+		/** Our own blank Excel: every column is already known, no matching needed. */
+		function ready( rows, keys ) {
+			const allowed = new Set( [ ...fields.map( ( f ) => f.key ), 'valid_until', 'session', 'photo' ] );
+			const map = {};
+			keys.forEach( ( k, i ) => {
+				if ( allowed.has( k ) ) {
+					map[ k ] = i;
+				}
+			} );
+			if ( map.name === undefined || map.id_no === undefined ) {
+				mapping( rows );
+				return;
+			}
+			const head = rows[ 0 ];
+			stage.innerHTML = `<div class="xl-ready">${ icon( 'check-circle' ) }<div><strong>${ esc( sprintf( _n( '%d person found in your Pikacart Excel', '%d people found in your Pikacart Excel', rows.length - 1, 'pikacart' ), rows.length - 1 ) ) }</strong><span>${ esc( __( 'All columns match this design. Check the first rows and import.', 'pikacart' ) ) }</span></div></div>
+				<div class="table-wrap"><table class="table small-table"><thead><tr>${ head.map( ( h ) => `<th>${ esc( h ) }</th>` ).join( '' ) }</tr></thead><tbody>${ rows.slice( 1, 6 ).map( ( r ) => `<tr>${ head.map( ( h, i ) => `<td>${ esc( r[ i ] ) }</td>` ).join( '' ) }</tr>` ).join( '' ) }</tbody></table></div>
+				${ photoPicker() }
+				<div class="field"><label>${ esc( __( 'If an ID number already exists', 'pikacart' ) ) }</label><select data-mode><option value="skip">${ esc( __( 'Skip that row and report it', 'pikacart' ) ) }</option><option value="update">${ esc( __( 'Update the existing person', 'pikacart' ) ) }</option></select></div>
+				<div class="modal-actions"><button type="button" class="btn" data-close>${ esc( __( 'Cancel', 'pikacart' ) ) }</button><button type="button" class="btn btn-primary" data-go>${ esc( sprintf( __( 'Import %d people', 'pikacart' ), rows.length - 1 ) ) }</button></div>`;
+			bindPhotoPicker();
+			stage.querySelector( '[data-go]' ).addEventListener( 'click', () => run( rows, map, stage.querySelector( '[data-mode]' ).value ) );
+		}
+
 		function mapping( rows ) {
 			const head = rows[ 0 ];
-			const targets = [ ...fields, ...( fields.some( ( f ) => f.key === 'valid_until' ) ? [] : [ { key: 'valid_until', label: LABELS().valid_until } ] ), { key: 'session', label: LABELS().session } ];
+			const targets = [ ...fields, ...( fields.some( ( f ) => f.key === 'valid_until' ) ? [] : [ { key: 'valid_until', label: LABELS().valid_until } ] ), { key: 'session', label: LABELS().session }, { key: 'photo', label: __( 'Photo (file name)', 'pikacart' ) } ];
 			const opts = ( sel ) => `<option value="">${ esc( __( '— Do not import —', 'pikacart' ) ) }</option>` + targets.map( ( t ) => `<option value="${ t.key }" ${ t.key === sel ? 'selected' : '' }>${ esc( t.label ) }</option>` ).join( '' );
 			stage.innerHTML = `<p>${ esc( sprintf( __( '%d rows found. Match your columns to Pikacart fields:', 'pikacart' ), rows.length - 1 ) ) }</p>
 				<div class="map-grid">${ head.map( ( h, i ) => `<div class="map-row"><span class="map-col">${ esc( h || sprintf( __( 'Column %d', 'pikacart' ), i + 1 ) ) }</span>${ icon( 'chevron-right' ) }<select data-col="${ i }">${ opts( guess( h ) ) }</select></div>` ).join( '' ) }</div>
 				<h4 class="sub-h">${ esc( __( 'Preview of the first rows', 'pikacart' ) ) }</h4>
 				<div class="table-wrap"><table class="table small-table"><thead><tr>${ head.map( ( h ) => `<th>${ esc( h ) }</th>` ).join( '' ) }</tr></thead><tbody>${ rows.slice( 1, 6 ).map( ( r ) => `<tr>${ head.map( ( h, i ) => `<td>${ esc( r[ i ] ) }</td>` ).join( '' ) }</tr>` ).join( '' ) }</tbody></table></div>
+				${ photoPicker() }
 				<div class="field"><label>${ esc( __( 'If an ID number already exists', 'pikacart' ) ) }</label><select data-mode><option value="skip">${ esc( __( 'Skip that row and report it', 'pikacart' ) ) }</option><option value="update">${ esc( __( 'Update the existing person', 'pikacart' ) ) }</option></select></div>
 				<div class="modal-actions"><button type="button" class="btn" data-close>${ esc( __( 'Cancel', 'pikacart' ) ) }</button><button type="button" class="btn btn-primary" data-go>${ esc( sprintf( __( 'Import %d rows', 'pikacart' ), rows.length - 1 ) ) }</button></div>`;
+			bindPhotoPicker();
 			stage.querySelector( '[data-go]' ).addEventListener( 'click', () => {
 				const map = {};
 				stage.querySelectorAll( '[data-col]' ).forEach( ( s ) => {
@@ -693,10 +833,13 @@ export default function peopleStep( body, P ) {
 		}
 
 		async function run( rows, map, mode ) {
+			const photoCol = map.photo;
 			const data = rows.slice( 1 ).map( ( r ) => {
 				const o = {};
 				Object.entries( map ).forEach( ( [ k, i ] ) => {
-					o[ k ] = String( r[ i ] ?? '' ).trim();
+					if ( k !== 'photo' ) {
+						o[ k ] = String( r[ i ] ?? '' ).trim();
+					}
 				} );
 				return o;
 			} );
@@ -718,16 +861,44 @@ export default function peopleStep( body, P ) {
 			}
 			const ok = results.filter( ( r ) => r.ok ).length;
 			const bad = results.filter( ( r ) => ! r.ok );
+
+			// Photos: pasted in the Excel, chosen as files/ZIP, or named by ID number.
+			let photoNote = '';
+			const okRows = new Set( results.filter( ( r ) => r.ok ).map( ( r ) => r.row ) );
+			const pasted = src.buf ? await sheetImages( src.buf, src.sheetName, photoCol === undefined ? -1 : photoCol ) : new Map();
+			const items = [];
+			rows.slice( 1 ).forEach( ( r, k ) => {
+				if ( ! okRows.has( k + 2 ) ) {
+					return;
+				}
+				const id = data[ k ].id_no;
+				const blob = pasted.get( r.sheetRow ) || findPhoto( src.files, photoCol === undefined ? '' : r[ photoCol ], id );
+				if ( blob ) {
+					items.push( { id, blob, label: `${ data[ k ].name || id } (${ __( 'row', 'pikacart' ) } ${ k + 2 })` } );
+				}
+			} );
+			if ( items.length ) {
+				stage.querySelector( '[data-msg]' ).textContent = __( 'Adding photos…', 'pikacart' );
+				const up = await uploadPhotos( items, ( done, total ) => {
+					stage.querySelector( '[data-bar]' ).style.width = Math.round( ( done / total ) * 100 ) + '%';
+					stage.querySelector( '[data-msg]' ).textContent = sprintf( __( '%1$d of %2$d photos added…', 'pikacart' ), done, total );
+				} );
+				photoNote = `<p class="big-num ok">${ icon( 'image' ) } ${ esc( sprintf( _n( '%d photo added', '%d photos added', up.ok, 'pikacart' ), up.ok ) ) }</p>${ up.unmatched.length ? `<ul class="small muted unmatched">${ up.unmatched.slice( 0, 50 ).map( ( n ) => `<li>${ esc( n ) }</li>` ).join( '' ) }</ul>` : '' }`;
+			}
+			const missing = ok - items.length;
+			// Report the row numbers as they appear in the Excel file.
+			const realRow = ( n ) => ( rows[ n - 1 ] && rows[ n - 1 ].sheetRow !== undefined ? rows[ n - 1 ].sheetRow + 1 : n );
 			stage.innerHTML = `<div class="import-result">
 				<p class="big-num ok">${ icon( 'check-circle' ) } ${ esc( sprintf( _n( '%d person imported', '%d people imported', ok, 'pikacart' ), ok ) ) }</p>
 				${ bad.length ? `<p class="big-num bad">${ icon( 'alert' ) } ${ esc( sprintf( _n( '%d row needs attention', '%d rows need attention', bad.length, 'pikacart' ), bad.length ) ) }</p>
-				<div class="table-wrap"><table class="table small-table"><thead><tr><th>${ esc( __( 'Row', 'pikacart' ) ) }</th><th>${ esc( __( 'Reason', 'pikacart' ) ) }</th></tr></thead><tbody>${ bad.slice( 0, 200 ).map( ( r ) => `<tr><td>${ r.row }</td><td>${ esc( r.error ) }</td></tr>` ).join( '' ) }</tbody></table></div>
+				<div class="table-wrap"><table class="table small-table"><thead><tr><th>${ esc( __( 'Row', 'pikacart' ) ) }</th><th>${ esc( __( 'Reason', 'pikacart' ) ) }</th></tr></thead><tbody>${ bad.slice( 0, 200 ).map( ( r ) => `<tr><td>${ realRow( r.row ) }</td><td>${ esc( r.error ) }</td></tr>` ).join( '' ) }</tbody></table></div>
 				<button type="button" class="btn btn-sm" data-errcsv>${ icon( 'download' ) }${ esc( __( 'Download error report', 'pikacart' ) ) }</button>` : '' }
-				<p class="muted small">${ esc( __( 'Next: add photos with "Bulk photos" — name each photo by ID number, e.g. 1001.jpg.', 'pikacart' ) ) }</p>
-				<div class="modal-actions"><button type="button" class="btn btn-primary" data-close>${ esc( __( 'Done', 'pikacart' ) ) }</button></div>
+				${ photoNote }
+				${ missing > 0 ? `<p class="muted small">${ esc( sprintf( _n( 'No photo was found in the file for %d person. Add it with "Bulk photos" (name each photo by ID number, e.g. 1001.jpg) or by editing the person.', 'No photo was found in the file for %d people. Add them with "Bulk photos" (name each photo by ID number, e.g. 1001.jpg) or by editing the person.', missing, 'pikacart' ), missing ) ) }</p>` : '' }
+				<div class="modal-actions"><button type="button" class="btn" data-close>${ esc( __( 'Done', 'pikacart' ) ) }</button>${ ok ? `<a class="btn btn-primary" href="${ esc( P.ctx.url( `projects/${ pid }/download` ) ) }" data-link data-close>${ icon( 'download' ) }${ esc( __( 'Download the cards', 'pikacart' ) ) }</a>` : '' }</div>
 			</div>`;
 			stage.querySelector( '[data-errcsv]' )?.addEventListener( 'click', () => {
-				const ws = window.XLSX.utils.aoa_to_sheet( [ [ 'Row', 'Reason' ], ...bad.map( ( r ) => [ r.row, r.error ] ) ] );
+				const ws = window.XLSX.utils.aoa_to_sheet( [ [ 'Row', 'Reason' ], ...bad.map( ( r ) => [ realRow( r.row ), r.error ] ) ] );
 				const wb = window.XLSX.utils.book_new();
 				window.XLSX.utils.book_append_sheet( wb, ws, 'Errors' );
 				window.XLSX.writeFile( wb, 'import-errors.csv', { bookType: 'csv' } );
@@ -740,10 +911,7 @@ export default function peopleStep( body, P ) {
 
 	async function exportList( kind ) {
 		if ( kind === 'sample' ) {
-			const ws = window.XLSX.utils.aoa_to_sheet( sampleRows() );
-			const wb = window.XLSX.utils.book_new();
-			window.XLSX.utils.book_append_sheet( wb, ws, 'People' );
-			window.XLSX.writeFile( wb, `pikacart-sample-${ ( P.data.subtype ? P.data.subtype.slug : 'people' ) }.xlsx` );
+			blankExcel( P );
 			return;
 		}
 		toast( __( 'Preparing your file…', 'pikacart' ), 'info' );
@@ -766,6 +934,50 @@ export default function peopleStep( body, P ) {
 
 	/* ---------- Bulk photos ---------- */
 
+	/** ID number (lower case) → person, for this project. */
+	async function peopleById() {
+		const byId = new Map();
+		for ( let page = 1; page < 200; page++ ) {
+			const res = await api( `projects/${ pid }/members?per_page=500&page=${ page }` );
+			res.members.forEach( ( m ) => byId.set( String( m.id_no ).trim().toLowerCase(), m ) );
+			if ( byId.size >= res.total || ! res.members.length ) {
+				break;
+			}
+		}
+		return byId;
+	}
+
+	/**
+	 * Compress and upload photos for people.
+	 * @param {Array} items [{ id: ID number, blob, label }]
+	 */
+	async function uploadPhotos( items, onProgress ) {
+		const byId = await peopleById();
+		const aspect = photoAspect( P );
+		const unmatched = [];
+		let ok = 0;
+		let done = 0;
+		for ( const it of items ) {
+			const m = byId.get( String( it.id ).trim().toLowerCase() );
+			if ( ! m ) {
+				unmatched.push( it.label );
+			} else {
+				try {
+					const blob = await compressPhoto( it.blob, 600, Math.round( 600 / aspect ) );
+					const fd = new FormData();
+					fd.append( 'file', blob, 'photo.jpg' );
+					await api( `members/${ m.id }/photo`, { method: 'POST', form: fd } );
+					ok++;
+				} catch ( e ) {
+					unmatched.push( `${ it.label } (${ e.message })` );
+				}
+			}
+			done++;
+			onProgress( done, items.length );
+		}
+		return { ok, unmatched };
+	}
+
 	async function bulkPhotos( files ) {
 		if ( ! files.length ) {
 			return;
@@ -776,39 +988,13 @@ export default function peopleStep( body, P ) {
 		wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="${ esc( __( 'Bulk photos', 'pikacart' ) ) }"><h2>${ esc( __( 'Matching photos…', 'pikacart' ) ) }</h2><p data-msg class="muted"></p><div class="progress big"><span data-bar style="width:0%"></span></div><div data-out></div></div>`;
 		root.appendChild( wrap );
 		const msg = wrap.querySelector( '[data-msg]' );
-		// Build an ID number → person map for this project.
-		const byId = new Map();
-		for ( let page = 1; page < 200; page++ ) {
-			const res = await api( `projects/${ pid }/members?per_page=500&page=${ page }` );
-			res.members.forEach( ( m ) => byId.set( String( m.id_no ).trim().toLowerCase(), m ) );
-			if ( byId.size >= res.total || ! res.members.length ) {
-				break;
+		const { ok, unmatched } = await uploadPhotos(
+			[ ...files ].map( ( f ) => ( { id: f.name.replace( /\.[^.]+$/, '' ), blob: f, label: f.name } ) ),
+			( done, total ) => {
+				wrap.querySelector( '[data-bar]' ).style.width = Math.round( ( done / total ) * 100 ) + '%';
+				msg.textContent = sprintf( __( '%1$d of %2$d photos processed', 'pikacart' ), done, total );
 			}
-		}
-		const aspect = photoAspect( P );
-		const unmatched = [];
-		let done = 0;
-		let ok = 0;
-		for ( const file of files ) {
-			const key = file.name.replace( /\.[^.]+$/, '' ).trim().toLowerCase();
-			const m = byId.get( key );
-			if ( ! m ) {
-				unmatched.push( file.name );
-			} else {
-				try {
-					const blob = await compressPhoto( file, 600, Math.round( 600 / aspect ) );
-					const fd = new FormData();
-					fd.append( 'file', blob, 'photo.jpg' );
-					await api( `members/${ m.id }/photo`, { method: 'POST', form: fd } );
-					ok++;
-				} catch ( e ) {
-					unmatched.push( `${ file.name } (${ e.message })` );
-				}
-			}
-			done++;
-			wrap.querySelector( '[data-bar]' ).style.width = Math.round( ( done / files.length ) * 100 ) + '%';
-			msg.textContent = sprintf( __( '%1$d of %2$d photos processed', 'pikacart' ), done, files.length );
-		}
+		);
 		wrap.querySelector( 'h2' ).textContent = __( 'Bulk photos finished', 'pikacart' );
 		wrap.querySelector( '[data-out]' ).innerHTML = `<p class="big-num ok">${ icon( 'check-circle' ) } ${ esc( sprintf( _n( '%d photo matched', '%d photos matched', ok, 'pikacart' ), ok ) ) }</p>
 			${ unmatched.length ? `<p class="big-num bad">${ icon( 'alert' ) } ${ esc( sprintf( _n( '%d photo did not match an ID number', '%d photos did not match an ID number', unmatched.length, 'pikacart' ), unmatched.length ) ) }</p><ul class="small muted unmatched">${ unmatched.slice( 0, 100 ).map( ( n ) => `<li>${ esc( n ) }</li>` ).join( '' ) }</ul>` : '' }

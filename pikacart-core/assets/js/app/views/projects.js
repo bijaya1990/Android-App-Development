@@ -12,6 +12,7 @@ import { thumb } from '../../card/gallery.js';
 import { cardSize, paletteOf, flagsOf } from '../../card/scene.js';
 import project from './project.js';
 import printView from '../print.js';
+import { blankExcel } from '../people.js';
 
 const { __, sprintf } = window.wp.i18n;
 
@@ -75,6 +76,8 @@ function list( el, ctx, mode ) {
 						${ p.status === 'archived' ? `<span class="badge">${ esc( __( 'Archived', 'pikacart' ) ) }</span>` : '' }
 					</div>
 					${ mode === 'projects' ? `<div class="proj-actions">
+						<a class="btn btn-sm" href="${ esc( ctx.url( `projects/${ p.id }/design` ) ) }" data-link>${ icon( 'palette' ) }${ esc( __( 'Change design', 'pikacart' ) ) }</a>
+						<button type="button" class="btn btn-sm" data-act="blank">${ icon( 'download' ) }${ esc( __( 'Blank Excel', 'pikacart' ) ) }</button>
 						<button type="button" class="btn btn-sm btn-ghost" data-act="rename">${ esc( __( 'Rename', 'pikacart' ) ) }</button>
 						<button type="button" class="btn btn-sm btn-ghost" data-act="dup">${ esc( __( 'Duplicate', 'pikacart' ) ) }</button>
 						<button type="button" class="btn btn-sm btn-ghost" data-act="session">${ esc( __( 'New session', 'pikacart' ) ) }</button>
@@ -108,6 +111,11 @@ function list( el, ctx, mode ) {
 
 	async function act( b, p ) {
 		const a = b.dataset.act;
+		if ( a === 'blank' ) {
+			blankExcel( { project: p, data: { subtype: p.subtype } } );
+			toast( __( 'Blank Excel downloaded with the columns of this design.', 'pikacart' ) );
+			return;
+		}
 		if ( a === 'rename' ) {
 			const wrap = await confirmDialog( { title: __( 'Rename project', 'pikacart' ), body: `<div class="field"><label for="rn">${ esc( __( 'Name', 'pikacart' ) ) }</label><input id="rn" value="${ esc( p.name ) }" maxlength="120"></div>`, confirm: __( 'Save', 'pikacart' ) } );
 			if ( wrap ) {

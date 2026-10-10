@@ -771,3 +771,25 @@ body.pkc-app-page { overflow-x: hidden; }
 	.req-item { grid-template-columns: 1fr auto; }
 	.req-thumbs { display: none; }
 }
+
+/* ---------- Change design + blank Excel ---------- */
+.proj-sub { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.proj-sub p { margin: 0; }
+.proj-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.tpl[hidden] { display: none !important; }
+.xl-guide { padding: 22px; text-align: left; }
+.xl-guide h3 { margin: 0 0 12px; }
+.xl-guide ol { list-style: none; counter-reset: xl; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
+.xl-guide li { counter-increment: xl; display: grid; grid-template-columns: 34px 1fr auto; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--pkc-line); border-radius: var(--pkc-r-md); background: var(--pkc-surface); }
+.xl-guide li::before { content: counter(xl); grid-row: 1 / 3; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--pkc-brand-50); color: var(--pkc-brand); font-weight: 700; }
+.xl-guide li span { grid-column: 2; color: var(--pkc-muted); font-size: var(--pkc-fs-sm); }
+.xl-guide li .btn { grid-column: 3; grid-row: 1 / 3; }
+.xl-ready { display: flex; gap: 12px; align-items: center; padding: 14px; margin-bottom: 12px; border-radius: var(--pkc-r-md); background: var(--pkc-success-50, #ECFDF5); }
+.xl-ready > .pkc-i { width: 32px; height: 32px; color: var(--pkc-success); flex: none; }
+.xl-ready div { display: grid; gap: 2px; }
+.xl-ready span { color: var(--pkc-muted); font-size: var(--pkc-fs-sm); }
+@media (max-width: 560px) {
+	.xl-guide li { grid-template-columns: 34px 1fr; }
+	.xl-guide li .btn { grid-column: 2; grid-row: auto; justify-self: start; margin-top: 8px; }
+}
+.xl-photos { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0; padding: 12px; border: 1px dashed var(--pkc-line-strong); border-radius: var(--pkc-r-md); }

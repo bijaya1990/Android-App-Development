@@ -34,6 +34,12 @@ To update later, upload the new ZIP the same way. WordPress asks "Replace curren
 
 ---
 
+## New in version 2.1
+
+- **Change design any time**: every project has a **Change design** button (in the project header and on each project in My Projects). People, details, size and colours are kept.
+- **Blank Excel for each design**: **Blank Excel** downloads a ready file with exactly the columns that design needs (required ones marked *), a "How to fill" sheet, and a **Photo** column. Organisation details (name, logo, address, signature) come from the profile, so they are not asked again.
+- **Upload it and the cards are ready**: the columns are matched automatically and photos are picked up from the Excel. Paste a photo into the Photo cell (Excel 365 "Place in Cell" or a picture placed on the cell), or type the photo file name and choose the photos or a ZIP in the same step, or name photos by the ID number. Then **Download the cards**.
+
 ## What's inside (version 2.0, all 5 phases)
 
 **For your customers (the organisation dashboard at `/app/`)**
@@ -75,7 +81,7 @@ To update later, upload the new ZIP the same way. WordPress asks "Replace curren
 1. Open the homepage: designs slide in the showcase and switch category by themselves; click a category chip.
 2. Click **Designs** in the menu → a category → change Portrait/Landscape, Premium, and a colour → open a design → **Use this design**.
 3. Register a new organisation → finish the quick setup → the chosen design opens. Change size and colour.
-4. **People** → add one person with a photo → **Import Excel/CSV** with 50 rows → **Bulk photos** named by ID number.
+4. **People** → add one person with a photo → **Blank Excel** → fill 50 rows (paste photos in the Photo column) → **Import Excel / CSV** → everyone appears with their photo. Then try **Change design**: the people stay.
 5. **Download & print** → PDF, then JPG, then PNG: free cards carry the watermark.
 6. **Open print sheet maker** → A4 → download the PDF and mark the cards as Printed.
 7. Scan a card's QR with your phone → the green "Valid card" page opens.

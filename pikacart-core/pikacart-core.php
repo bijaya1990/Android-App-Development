@@ -3,7 +3,7 @@
  * Plugin Name:       Pikacart Core
  * Plugin URI:        https://pikacart.in
  * Description:       Pikacart ID card platform: accounts, free trial, Razorpay subscriptions, organisation dashboard and Super Admin control room.
- * Version:           2.0.0
+ * Version:           2.1.0
  * Requires at least: 6.2
  * Requires PHP:      8.0
  * Author:            Pikacart
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PKC_VERSION', '2.0.0' );
+define( 'PKC_VERSION', '2.1.0' );
 define( 'PKC_DB_VERSION', 5 );
 define( 'PKC_FILE', __FILE__ );
 define( 'PKC_DIR', plugin_dir_path( __FILE__ ) );

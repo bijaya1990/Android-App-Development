@@ -14,7 +14,7 @@ import { thumb } from '../../card/gallery.js';
 import { demoVars, memberVars, kindOf } from '../../card/data.js';
 import { cardSize, paletteOf, layoutOf, enabledFields, flagsOf, projectInfo, supportsOrientation } from '../../card/scene.js';
 import editorStep from '../editor.js';
-import peopleStep from '../people.js';
+import peopleStep, { blankExcel } from '../people.js';
 import downloadStep from '../download.js';
 
 const { __, sprintf } = window.wp.i18n;
@@ -76,7 +76,13 @@ export default function project( el, ctx, params ) {
 					<input class="proj-name" value="${ esc( data.project.name ) }" maxlength="120" aria-label="${ esc( __( 'Project name', 'pikacart' ) ) }">
 					<span class="save-state" data-save aria-live="polite"></span>
 				</div>
-				<p class="muted small">${ esc( ( data.category ? data.category.name + ' · ' : '' ) + ( data.subtype ? data.subtype.name : '' ) ) }</p>
+				<div class="proj-sub">
+					<p class="muted small">${ esc( ( data.category ? data.category.name + ' · ' : '' ) + ( data.subtype ? data.subtype.name : '' ) + ( data.template ? ' · ' + data.template.name : '' ) ) }</p>
+					<div class="proj-tools">
+						${ step !== 'design' ? `<a class="btn btn-sm" href="${ esc( ctx.url( `projects/${ id }/design` ) ) }" data-link>${ icon( 'palette' ) }${ esc( __( 'Change design', 'pikacart' ) ) }</a>` : '' }
+						<button type="button" class="btn btn-sm" data-blank>${ icon( 'download' ) }${ esc( __( 'Blank Excel', 'pikacart' ) ) }</button>
+					</div>
+				</div>
 			</header>
 			<ol class="stepbar steps6" data-steps>
 				${ STEPS.map( ( s, i ) => {
@@ -99,6 +105,11 @@ export default function project( el, ctx, params ) {
 			}[ s ];
 			saveEl.className = `save-state is-${ s }`;
 			saveEl.innerHTML = `${ icon( map[ 0 ] ) }${ esc( map[ 1 ] ) }`;
+		} );
+
+		el.querySelector( '[data-blank]' ).addEventListener( 'click', () => {
+			blankExcel( P );
+			toast( __( 'Blank Excel downloaded with the columns of this design. Fill it and upload it in People.', 'pikacart' ) );
 		} );
 
 		const nameInput = el.querySelector( '.proj-name' );
@@ -225,17 +236,34 @@ function designStep( body, P ) {
 	body.innerHTML = `<div class="card">
 		<div class="card-head"><h3>${ esc( __( 'Choose a design', 'pikacart' ) ) }</h3><a class="btn btn-sm" href="${ esc( ctx.url( 'designs/request' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Design on Demand', 'pikacart' ) ) }</a></div>
 		${ P.project.design ? `<p class="banner banner-info">${ icon( 'info' ) }<span>${ esc( __( 'You have customised this design. Choosing another design starts again from its original layout.', 'pikacart' ) ) }</span></p>` : '' }
+		<p class="muted small">${ esc( __( 'Pick any design. Your people, details, size and colours stay the same, so you can change the design at any time.', 'pikacart' ) ) }</p>
+		<div class="chips" data-levels></div>
 		<div class="tpl-grid" data-grid></div>
 	</div>`;
+	let level = '';
 	api( `templates?subtype=${ P.project.subtype_id }` ).then( ( res ) => {
 		const grid = body.querySelector( '[data-grid]' );
 		if ( ! grid ) {
 			return;
 		}
 		const orient = P.project.orientation;
-		const list = res.templates.filter( ( t ) => supportsOrientation( t, orient ) );
+		const lv = body.querySelector( '[data-levels]' );
+		lv.innerHTML = [ [ '', __( 'All styles', 'pikacart' ) ], ...Object.entries( cat.levels ).filter( ( [ k ] ) => res.templates.some( ( t ) => t.level === k ) ) ].map( ( [ k, l ] ) => `<button type="button" class="chip ${ k === level ? 'is-on' : '' }" data-level="${ esc( k ) }">${ esc( l ) }</button>` ).join( '' );
+		lv.addEventListener( 'click', ( e ) => {
+			const b = e.target.closest( '[data-level]' );
+			if ( ! b ) {
+				return;
+			}
+			level = b.dataset.level;
+			lv.querySelectorAll( '[data-level]' ).forEach( ( x ) => x.classList.toggle( 'is-on', x === b ) );
+			grid.querySelectorAll( '.tpl' ).forEach( ( x ) => {
+				x.hidden = !! level && x.dataset.level !== level;
+			} );
+		} );
+		// Current design first.
+		const list = res.templates.filter( ( t ) => supportsOrientation( t, orient ) ).sort( ( a, b ) => ( b.id === P.project.template_id ) - ( a.id === P.project.template_id ) );
 		grid.className = `tpl-grid ${ orient === 'landscape' ? 'is-landscape' : '' }`;
-		grid.innerHTML = list.map( ( t ) => `<button type="button" class="tpl ${ t.id === P.project.template_id ? 'is-current' : '' }" data-tid="${ t.id }"><canvas></canvas><span class="tpl-meta"><strong>${ esc( t.name ) }</strong><span class="lvl lvl-${ esc( t.level ) }">${ esc( cat.levels[ t.level ] || t.level ) }</span></span></button>` ).join( '' );
+		grid.innerHTML = list.map( ( t ) => `<button type="button" class="tpl ${ t.id === P.project.template_id ? 'is-current' : '' }" data-tid="${ t.id }" data-level="${ esc( t.level ) }"><canvas></canvas><span class="tpl-meta"><strong>${ esc( t.name ) }</strong><span class="lvl lvl-${ esc( t.level ) }">${ esc( cat.levels[ t.level ] || t.level ) }</span></span></button>` ).join( '' );
 		grid.querySelectorAll( '.tpl' ).forEach( ( b, i ) => {
 			const t = list[ i ];
 			thumb( b.querySelector( 'canvas' ), { template: t, subtype: P.data.subtype, orientation: orient, palette: P.palette(), size: P.size(), org: orgVars( ctx.me.org ), index: 2, width: orient === 'landscape' ? 250 : 165 } );
@@ -249,7 +277,7 @@ function designStep( body, P ) {
 				P.data.template = t;
 				P.change( { template_id: t.id, design: null } );
 				grid.querySelectorAll( '.tpl' ).forEach( ( x ) => x.classList.toggle( 'is-current', x === b ) );
-				toast( __( 'Design changed.', 'pikacart' ) );
+				toast( __( 'Design changed. Your people and details are kept.', 'pikacart' ) );
 			} );
 		} );
 	} ).catch( ( e ) => toast( e.message, 'error' ) );
