@@ -3,8 +3,11 @@
  */
 
 import { esc, icon, clock, emptyState } from '../ui.js';
+import { api } from '../api.js';
+import { waitForAllSaves } from '../autosave.js';
+import { savedStep, stepLabel } from './project.js';
 
-const { __, sprintf } = window.wp.i18n;
+const { __, _n, sprintf } = window.wp.i18n;
 
 function greeting() {
 	const h = new Date().getHours();
@@ -103,6 +106,7 @@ export default function dashboard( el, ctx ) {
 			</div>
 		</div>
 
+		<div data-continue></div>
 		<h3 class="section-title">${ esc( __( 'Quick actions', 'pikacart' ) ) }</h3>
 		<div class="quick">
 			${ actions.map( ( a ) => `<a class="card quick-item" href="${ esc( ctx.url( a[ 0 ] ) ) }" data-link><span class="quick-icon">${ icon( a[ 1 ] ) }</span><span><strong>${ esc( a[ 2 ] ) }</strong><small>${ esc( a[ 3 ] ) }</small></span>${ icon( 'chevron-right', 'quick-arrow' ) }</a>` ).join( '' ) }
@@ -110,8 +114,8 @@ export default function dashboard( el, ctx ) {
 
 		<div class="dash-cols">
 			<section class="card">
-				<div class="card-head"><h3>${ esc( __( 'Recent projects', 'pikacart' ) ) }</h3></div>
-				${ emptyState( { art: 'cards', title: __( 'No card projects yet', 'pikacart' ), text: __( 'Start your first project by choosing a design for your students or staff.', 'pikacart' ), button: __( 'Create your first ID card', 'pikacart' ), href: ctx.url( 'create' ) } ) }
+				<div class="card-head"><h3>${ esc( __( 'Recent projects', 'pikacart' ) ) }</h3><a class="btn btn-sm btn-ghost" href="${ esc( ctx.url( 'projects' ) ) }" data-link>${ esc( __( 'All projects', 'pikacart' ) ) }</a></div>
+				<div data-recent><div class="skeleton" style="height:120px"></div></div>
 			</section>
 			<div class="dash-side">
 				${ doneCount < steps.length ? `<section class="card">
@@ -127,4 +131,29 @@ export default function dashboard( el, ctx ) {
 				</section>
 			</div>
 		</div>`;
+
+	// Recent projects, and a shortcut back to where the user left off.
+	waitForAllSaves().then( () => api( 'projects' ) ).then( ( res ) => {
+		const box = el.querySelector( '[data-recent]' );
+		if ( ! box ) {
+			return;
+		}
+		const list = res.projects.filter( ( p ) => p.status !== 'archived' );
+		if ( ! list.length ) {
+			box.innerHTML = emptyState( { art: 'cards', title: __( 'No card projects yet', 'pikacart' ), text: __( 'Start your first project by choosing a design for your students or staff.', 'pikacart' ), button: __( 'Create your first ID card', 'pikacart' ), href: ctx.url( 'create' ) } );
+			return;
+		}
+		box.innerHTML = `<ul class="recent-list">${ list.slice( 0, 5 ).map( ( p ) => `<li>
+			<a href="${ esc( ctx.url( savedStep( p ) ) ) }" data-link>
+				<span class="recent-info"><strong>${ esc( p.name ) }</strong><small class="muted">${ esc( [ p.subtype && p.subtype.name, p.template && p.template.name ].filter( Boolean ).join( ' · ' ) ) } · ${ esc( sprintf( _n( '%d person', '%d people', p.people || 0, 'pikacart' ), p.people || 0 ) ) }</small></span>
+				<span class="recent-step">${ esc( stepLabel( p ) ) } ${ icon( 'chevron-right' ) }</span>
+			</a></li>` ).join( '' ) }</ul>`;
+		const last = list[ 0 ];
+		el.querySelector( '[data-continue]' ).innerHTML = `<a class="card continue-card" href="${ esc( ctx.url( savedStep( last ) ) ) }" data-link>${ icon( 'refresh' ) }<span><strong>${ esc( __( 'Continue where you left off', 'pikacart' ) ) }</strong><small>${ esc( sprintf( __( '%1$s · %2$s · saved %3$s ago', 'pikacart' ), last.name, stepLabel( last ), last.updated ) ) }</small></span><span class="btn btn-primary btn-sm">${ esc( __( 'Continue', 'pikacart' ) ) }</span></a>`;
+	} ).catch( () => {
+		const box = el.querySelector( '[data-recent]' );
+		if ( box ) {
+			box.innerHTML = '';
+		}
+	} );
 }

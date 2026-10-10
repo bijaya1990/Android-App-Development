@@ -25,6 +25,7 @@ $pkc_icons = array(
 	'menu'      => '<path d="M4 6h16M4 12h16M4 18h16"/>',
 	'x'         => '<path d="M6 6l12 12M18 6 6 18"/>',
 	'check'     => '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+	'calendar'  => '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
 	'check-circle' => '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/>',
 	'alert'     => '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.01"/>',
 	'info'      => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>',

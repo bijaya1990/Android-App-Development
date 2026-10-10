@@ -94,6 +94,11 @@ class PKC_Router {
 			return;
 		}
 		nocache_headers();
+		// Never let a page cache (LiteSpeed Cache, WP Rocket, W3TC…) store app pages.
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		header( 'X-LiteSpeed-Cache-Control: no-cache' );
 		header( 'X-Robots-Tag: noindex, nofollow', true );
 
 		$user = wp_get_current_user();

@@ -22,7 +22,9 @@ export async function api( path, { method = 'GET', body = null, form = null } = 
 
 	let res;
 	try {
-		res = await fetch( cfg.rest + path, { method, headers, body: payload, credentials: 'same-origin' } );
+		// GET requests carry a unique value so no browser, server or plugin cache can serve old data.
+		const url = method === 'GET' ? cfg.rest + path + ( path.includes( '?' ) ? '&' : '?' ) + '_=' + Date.now() : cfg.rest + path;
+		res = await fetch( url, { method, headers, body: payload, credentials: 'same-origin', cache: 'no-store' } );
 	} catch ( e ) {
 		throw { message: __( 'No internet connection. Please check your network and try again.', 'pikacart' ), code: 'offline' };
 	}

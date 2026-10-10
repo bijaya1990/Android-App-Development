@@ -185,6 +185,16 @@ class PKC_Members {
 		}
 		list( $cols, $data ) = $clean;
 		$settings = pkc_json( $project->fields );
+		// Empty card dates take the project's common "valid from / valid upto" date.
+		foreach ( array( 'valid_from', 'valid_until' ) as $dk ) {
+			if ( empty( $cols[ $dk ] ) && ! ( $existing && $existing->$dk ) && ! empty( $settings[ $dk ] ) ) {
+				$d = self::parse_date( $settings[ $dk ] );
+				if ( $d ) {
+					$cols[ $dk ] = $d;
+					$data[ $dk ] = self::format_date( $d );
+				}
+			}
+		}
 		$session  = isset( $in['session'] ) ? mb_substr( sanitize_text_field( (string) $in['session'] ), 0, 40 ) : ( $existing ? $existing->session : (string) ( $settings['session'] ?? '' ) );
 		if ( '' !== $cols['id_no'] && self::id_taken( $org->id, $cols['id_no'], $session, $existing ? (int) $existing->id : 0 ) ) {
 			return new WP_Error(

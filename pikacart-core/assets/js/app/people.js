@@ -80,8 +80,8 @@ const HINTS = () => ( {
 	guardian: [ __( 'Father or guardian name', 'pikacart' ), 'Mr. Rakesh Mehta' ],
 	address: [ __( 'Home address', 'pikacart' ), '12 MG Road, Bhubaneswar' ],
 	emergency: [ __( 'Emergency contact number', 'pikacart' ), '9876500000' ],
-	valid_from: [ __( 'Card valid from, DD-MM-YYYY', 'pikacart' ), '01-04-2026' ],
-	valid_until: [ __( 'Card valid until, DD-MM-YYYY', 'pikacart' ), '31-03-2027' ],
+	valid_from: [ __( 'Card valid from, DD-MM-YYYY. Leave empty to use the date set in the project Details.', 'pikacart' ), '01-04-2026' ],
+	valid_until: [ __( 'Card valid upto, DD-MM-YYYY. Leave empty to use the date set in the project Details.', 'pikacart' ), '31-03-2027' ],
 } );
 
 const TEXT_KEYS = [ 'id_no', 'mobile', 'emergency', 'dob', 'valid_from', 'valid_until' ];
@@ -528,11 +528,12 @@ export default function peopleStep( body, P ) {
 				<div class="pf-fields">
 					${ fields.map( ( f ) => {
 						const type = f.key === 'email' ? 'email' : [ 'mobile', 'emergency' ].includes( f.key ) ? 'tel' : 'text';
-						const ph = [ 'dob', 'valid_from', 'valid_until' ].includes( f.key ) ? 'DD-MM-YYYY' : '';
+						const common = ( f.key === 'valid_until' || f.key === 'valid_from' ) && P.project.fields[ f.key ];
+						const ph = common ? sprintf( __( 'Leave empty for %s', 'pikacart' ), common ) : [ 'dob', 'valid_from', 'valid_until' ].includes( f.key ) ? 'DD-MM-YYYY' : '';
 						const input = f.key === 'address' ? `<textarea name="${ f.key }" rows="2">${ esc( val( f.key ) ) }</textarea>` : `<input type="${ type }" name="${ f.key }" value="${ esc( val( f.key ) ) }" placeholder="${ ph }" ${ f.required ? 'required' : '' }>`;
 						return `<div class="field ${ f.key === 'address' ? 'span2' : '' }"><label>${ esc( f.label ) }${ f.required ? ' *' : '' }</label>${ input }</div>`;
 					} ).join( '' ) }
-					${ fields.some( ( f ) => f.key === 'valid_until' ) ? '' : `<div class="field"><label>${ esc( LABELS().valid_until ) }</label><input name="valid_until" value="${ esc( m ? m.valid_until : '' ) }" placeholder="DD-MM-YYYY"></div>` }
+					${ fields.some( ( f ) => f.key === 'valid_until' ) ? '' : `<div class="field"><label>${ esc( LABELS().valid_until ) }</label><input name="valid_until" value="${ esc( m ? m.valid_until : '' ) }" placeholder="${ esc( P.project.fields.valid_until ? sprintf( __( 'Leave empty for %s', 'pikacart' ), P.project.fields.valid_until ) : 'DD-MM-YYYY' ) }"></div>` }
 					${ m ? `<div class="field"><label>${ esc( __( 'Status', 'pikacart' ) ) }</label><select name="status">${ [ 'draft', 'ready', 'printed', 'cancelled' ].map( ( s ) => `<option value="${ s }" ${ m.status === s ? 'selected' : '' }>${ esc( STATUS()[ s ] ) }</option>` ).join( '' ) }</select></div>` : '' }
 				</div>
 			</form>

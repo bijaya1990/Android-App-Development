@@ -158,7 +158,26 @@ class PKC_Projects {
 			}
 		}
 		if ( isset( $in['fields'] ) && is_array( $in['fields'] ) ) {
-			$data['fields'] = wp_json_encode( self::clean_settings( $in['fields'] ) );
+			$new_settings = self::clean_settings( $in['fields'] );
+			$data['fields'] = wp_json_encode( $new_settings );
+			// A new "valid from / valid upto for all cards" date updates every card
+			// that has no date of its own (or still had the old common date).
+			$old_settings = pkc_json( $project->fields );
+			foreach ( array( 'valid_from', 'valid_until' ) as $dk ) {
+				$old = PKC_Members::parse_date( $old_settings[ $dk ] ?? '' );
+				$new = PKC_Members::parse_date( $new_settings[ $dk ] );
+				if ( $new && $new !== $old ) {
+					$wpdb->query(
+						$wpdb->prepare(
+							'UPDATE ' . pkc_table( 'members' ) . " SET $dk = %s WHERE project_id = %d AND org_id = %d AND deleted_at IS NULL AND ( $dk IS NULL OR $dk = %s )", // phpcs:ignore WordPress.DB.PreparedSQL -- Column name from a fixed list.
+							$new,
+							$project->id,
+							$org->id,
+							$old ? $old : '0000-00-00'
+						)
+					);
+				}
+			}
 		}
 		if ( isset( $in['step'] ) ) {
 			$data['step'] = max( 1, min( 9, absint( $in['step'] ) ) );
@@ -213,6 +232,12 @@ class PKC_Projects {
 		return $d;
 	}
 
+	/** A DD-MM-YYYY date for project settings, or '' when empty or not a real date. */
+	private static function clean_date( $v ) {
+		$d = PKC_Members::parse_date( $v );
+		return $d ? PKC_Members::format_date( $d ) : '';
+	}
+
 	public static function clean_settings( $s ) {
 		$keys = array();
 		foreach ( (array) ( $s['on'] ?? array() ) as $k ) {
@@ -242,6 +267,8 @@ class PKC_Projects {
 			'card_title' => mb_substr( sanitize_text_field( $s['card_title'] ?? '' ), 0, 60 ),
 			'terms'      => mb_substr( sanitize_textarea_field( $s['terms'] ?? '' ), 0, 1200 ),
 			'session'    => mb_substr( sanitize_text_field( $s['session'] ?? '' ), 0, 40 ),
+			'valid_from' => self::clean_date( $s['valid_from'] ?? '' ),
+			'valid_until' => self::clean_date( $s['valid_until'] ?? '' ),
 			'bleed'      => ! empty( $s['bleed'] ),
 		);
 	}

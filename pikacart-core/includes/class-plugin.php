@@ -29,6 +29,7 @@ final class PKC_Plugin {
 		add_action( 'init', array( 'PKC_Roles', 'init' ) );
 		add_action( 'init', array( 'PKC_Shortcodes', 'init' ) );
 		add_action( 'rest_api_init', array( 'PKC_REST', 'register_routes' ) );
+		add_filter( 'rest_post_dispatch', array( 'PKC_REST', 'no_cache' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( 'PKC_Assets', 'register' ), 5 );
 		add_action( 'admin_enqueue_scripts', array( 'PKC_Assets', 'register' ), 5 );
 		add_filter( 'script_loader_tag', array( 'PKC_Assets', 'module_tag' ), 10, 3 );

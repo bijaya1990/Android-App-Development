@@ -12,6 +12,19 @@ class PKC_REST {
 
 	const NS = 'pkc/v1';
 
+	/**
+	 * Pikacart API answers are private and change all the time: tell every cache
+	 * (browser, LiteSpeed server cache, plugins) never to store them.
+	 */
+	public static function no_cache( $response, $server, $request ) {
+		if ( 0 === strpos( $request->get_route(), '/' . self::NS . '/' ) && 0 !== strpos( $request->get_route(), '/' . self::NS . '/public/' ) && $response instanceof WP_HTTP_Response ) {
+			$response->header( 'Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private' );
+			$response->header( 'X-LiteSpeed-Cache-Control', 'no-cache' );
+			$response->header( 'Pragma', 'no-cache' );
+		}
+		return $response;
+	}
+
 	public static function register_routes() {
 		PKC_REST_Auth::routes();
 		PKC_REST_Account::routes();

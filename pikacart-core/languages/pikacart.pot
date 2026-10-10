@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Pikacart Core 2.1.0\n"
+"Project-Id-Version: Pikacart Core 2.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pikacart-core\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-10T01:35:48+00:00\n"
+"POT-Creation-Date: 2026-10-10T02:41:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pikacart\n"
@@ -111,8 +111,8 @@ msgstr ""
 #: assets/js/app/people.js:190
 #: assets/js/app/people.js:282
 #: assets/js/app/people.js:292
-#: assets/js/app/people.js:536
-#: assets/js/app/people.js:926
+#: assets/js/app/people.js:537
+#: assets/js/app/people.js:927
 #: assets/js/app/views/subscription.js:116
 #: assets/js/app/views/subscription.js:122
 msgid "Status"
@@ -586,7 +586,7 @@ msgstr ""
 #: includes/admin/class-admin-catalog.php:27
 #: assets/js/app/people.js:97
 #: assets/js/app/people.js:525
-#: assets/js/app/people.js:926
+#: assets/js/app/people.js:927
 #: assets/js/app/views/organisation.js:13
 #: assets/js/card/editor-core.js:736
 msgid "Photo"
@@ -736,7 +736,7 @@ msgstr ""
 #: templates/verify.php:38
 #: assets/js/app/views/designs.js:227
 #: assets/js/app/views/organisation.js:14
-#: assets/js/app/views/projects.js:120
+#: assets/js/app/views/projects.js:122
 #: assets/js/card/editor-core.js:35
 msgid "Name"
 msgstr ""
@@ -806,7 +806,7 @@ msgstr ""
 #: includes/admin/class-admin-settings.php:225
 #: assets/js/admin/templates.js:68
 #: assets/js/app/people.js:296
-#: assets/js/app/views/project.js:406
+#: assets/js/app/views/project.js:428
 msgid "Edit"
 msgstr ""
 
@@ -893,10 +893,10 @@ msgstr ""
 
 #: includes/admin/class-admin-catalog.php:230
 #: includes/admin/class-admin-catalog.php:286
-#: assets/js/app/people.js:542
-#: assets/js/app/people.js:1030
+#: assets/js/app/people.js:543
+#: assets/js/app/people.js:1031
 #: assets/js/app/views/designs.js:228
-#: assets/js/app/views/projects.js:120
+#: assets/js/app/views/projects.js:122
 msgid "Save"
 msgstr ""
 
@@ -909,12 +909,12 @@ msgid "e.g. Large badge"
 msgstr ""
 
 #: includes/admin/class-admin-catalog.php:241
-#: assets/js/app/views/project.js:312
+#: assets/js/app/views/project.js:334
 msgid "Width (mm)"
 msgstr ""
 
 #: includes/admin/class-admin-catalog.php:242
-#: assets/js/app/views/project.js:313
+#: assets/js/app/views/project.js:335
 msgid "Height (mm)"
 msgstr ""
 
@@ -935,12 +935,12 @@ msgid "Secondary"
 msgstr ""
 
 #: includes/admin/class-admin-catalog.php:261
-#: assets/js/app/views/project.js:326
+#: assets/js/app/views/project.js:348
 msgid "Accent"
 msgstr ""
 
 #: includes/admin/class-admin-catalog.php:262
-#: assets/js/app/views/project.js:326
+#: assets/js/app/views/project.js:348
 #: assets/js/card/editor-core.js:91
 #: assets/js/card/editor-core.js:664
 #: assets/js/card/editor-core.js:720
@@ -1019,7 +1019,7 @@ msgstr ""
 
 #: includes/admin/class-admin-dashboard.php:64
 #: assets/js/app/main.js:204
-#: assets/js/app/views/dashboard.js:29
+#: assets/js/app/views/dashboard.js:32
 msgid "Free plan"
 msgstr ""
 
@@ -1028,7 +1028,7 @@ msgstr ""
 #: includes/class-access.php:25
 #: includes/class-members.php:23
 #: assets/js/app/people.js:44
-#: assets/js/app/views/dashboard.js:64
+#: assets/js/app/views/dashboard.js:67
 msgid "Expired"
 msgstr ""
 
@@ -1246,8 +1246,8 @@ msgstr ""
 #: assets/js/app/people.js:480
 #: assets/js/app/views/designs.js:184
 #: assets/js/app/views/designs.js:241
-#: assets/js/app/views/projects.js:84
-#: assets/js/app/views/projects.js:148
+#: assets/js/app/views/projects.js:86
+#: assets/js/app/views/projects.js:150
 #: assets/js/card/editor-core.js:713
 msgid "Delete"
 msgstr ""
@@ -1500,7 +1500,7 @@ msgid "Card"
 msgstr ""
 
 #: includes/admin/class-admin-reports.php:38
-#: assets/js/app/people.js:894
+#: assets/js/app/people.js:895
 msgid "Reason"
 msgstr ""
 
@@ -1583,16 +1583,16 @@ msgid "Due"
 msgstr ""
 
 #: includes/admin/class-admin-requests.php:64
-#: assets/js/app/people.js:635
-#: assets/js/app/views/create.js:153
+#: assets/js/app/people.js:636
+#: assets/js/app/views/create.js:176
 #: assets/js/app/views/designs.js:145
 #: assets/js/card/editor-core.js:108
 msgid "Front"
 msgstr ""
 
 #: includes/admin/class-admin-requests.php:64
-#: assets/js/app/people.js:635
-#: assets/js/app/views/create.js:153
+#: assets/js/app/people.js:636
+#: assets/js/app/views/create.js:176
 #: assets/js/app/views/designs.js:145
 #: assets/js/app/views/onboarding.js:85
 #: assets/js/app/views/support.js:91
@@ -1603,10 +1603,10 @@ msgstr ""
 #: includes/admin/class-admin-requests.php:71
 #: assets/js/admin/builder.js:156
 #: assets/js/app/print.js:78
-#: assets/js/app/views/create.js:79
+#: assets/js/app/views/create.js:101
 #: assets/js/app/views/designs.js:263
 #: assets/js/app/views/designs.js:317
-#: assets/js/app/views/project.js:302
+#: assets/js/app/views/project.js:324
 #: assets/js/public/showcase.js:362
 #: assets/js/public/showcase.js:440
 msgid "Landscape"
@@ -1615,10 +1615,10 @@ msgstr ""
 #: includes/admin/class-admin-requests.php:71
 #: assets/js/admin/builder.js:156
 #: assets/js/app/print.js:78
-#: assets/js/app/views/create.js:78
+#: assets/js/app/views/create.js:100
 #: assets/js/app/views/designs.js:263
 #: assets/js/app/views/designs.js:317
-#: assets/js/app/views/project.js:301
+#: assets/js/app/views/project.js:323
 #: assets/js/public/showcase.js:361
 #: assets/js/public/showcase.js:440
 msgid "Portrait"
@@ -1717,7 +1717,7 @@ msgstr ""
 
 #: includes/admin/class-admin-settings.php:137
 #: includes/admin/class-admin-settings.php:245
-#: assets/js/app/people.js:1024
+#: assets/js/app/people.js:1025
 msgid "Copy"
 msgstr ""
 
@@ -2089,7 +2089,7 @@ msgid "Logged in"
 msgstr ""
 
 #: includes/class-activity-log.php:48
-#: includes/class-router.php:126
+#: includes/class-router.php:131
 msgid "Email verified"
 msgstr ""
 
@@ -2133,7 +2133,7 @@ msgid "Autopay status changed"
 msgstr ""
 
 #: includes/class-activity-log.php:58
-#: assets/js/app/views/dashboard.js:43
+#: assets/js/app/views/dashboard.js:46
 msgid "Autopay cancelled"
 msgstr ""
 
@@ -2143,7 +2143,7 @@ msgstr ""
 
 #: includes/class-activity-log.php:60
 #: includes/class-emails.php:57
-#: includes/class-router.php:191
+#: includes/class-router.php:196
 msgid "Account suspended"
 msgstr ""
 
@@ -2479,7 +2479,7 @@ msgid "Please upload the front image."
 msgstr ""
 
 #: includes/class-designs.php:76
-#: assets/js/app/views/create.js:115
+#: assets/js/app/views/create.js:138
 msgid "My design"
 msgstr ""
 
@@ -2559,7 +2559,7 @@ msgid "Trial ending soon"
 msgstr ""
 
 #: includes/class-emails.php:37
-#: assets/js/app/views/dashboard.js:50
+#: assets/js/app/views/dashboard.js:53
 msgid "Trial ended"
 msgstr ""
 
@@ -2654,13 +2654,13 @@ msgstr ""
 
 #: includes/class-members.php:21
 #: assets/js/app/people.js:42
-#: assets/js/app/views/dashboard.js:61
+#: assets/js/app/views/dashboard.js:64
 msgid "Ready"
 msgstr ""
 
 #: includes/class-members.php:22
 #: assets/js/app/people.js:43
-#: assets/js/app/views/dashboard.js:62
+#: assets/js/app/views/dashboard.js:65
 msgid "Printed"
 msgstr ""
 
@@ -2694,13 +2694,13 @@ msgid "Person not found."
 msgstr ""
 
 #. translators: %s: ID number
-#: includes/class-members.php:193
+#: includes/class-members.php:203
 #, php-format
 msgid "ID number %s is already used by another person in this session."
 msgstr ""
 
 #. translators: %d: limit
-#: includes/class-members.php:205
+#: includes/class-members.php:215
 #, php-format
 msgid "A project can hold up to %d people. Please start a new project."
 msgstr ""
@@ -2723,13 +2723,13 @@ msgid "This design is not available."
 msgstr ""
 
 #: includes/class-projects.php:138
-#: assets/js/app/views/project.js:361
+#: assets/js/app/views/project.js:383
 msgid "Custom size must be between 20 and 330 mm."
 msgstr ""
 
 #. translators: %s: project name
 #. translators: %s: design name
-#: includes/class-projects.php:253
+#: includes/class-projects.php:280
 #: includes/rest/class-rest-designs.php:366
 #, php-format
 msgid "%s (copy)"
@@ -2777,60 +2777,60 @@ msgstr ""
 msgid "We will be back soon"
 msgstr ""
 
-#: includes/class-router.php:126
+#: includes/class-router.php:131
 msgid "Link not valid"
 msgstr ""
 
-#: includes/class-router.php:127
+#: includes/class-router.php:132
 msgid "Thank you! Your email address is confirmed."
 msgstr ""
 
-#: includes/class-router.php:127
+#: includes/class-router.php:132
 msgid "This verification link is invalid or was already used. You can send a new link from your dashboard."
 msgstr ""
 
-#: includes/class-router.php:129
+#: includes/class-router.php:134
 msgid "Go to my dashboard"
 msgstr ""
 
-#: includes/class-router.php:149
+#: includes/class-router.php:154
 msgid "Form closed"
 msgstr ""
 
-#: includes/class-router.php:177
+#: includes/class-router.php:182
 msgid "This is the organisation dashboard"
 msgstr ""
 
-#: includes/class-router.php:179
+#: includes/class-router.php:184
 msgid "You are logged in as a Super Admin. Manage Pikacart from the WordPress dashboard."
 msgstr ""
 
-#: includes/class-router.php:180
+#: includes/class-router.php:185
 msgid "Your login is not linked to an organisation. Please contact support."
 msgstr ""
 
-#: includes/class-router.php:182
+#: includes/class-router.php:187
 msgid "Open Pikacart control room"
 msgstr ""
 
-#: includes/class-router.php:182
-#: includes/class-router.php:198
+#: includes/class-router.php:187
+#: includes/class-router.php:203
 #: templates/app.php:60
 #: templates/app.php:95
 msgid "Log out"
 msgstr ""
 
 #. translators: %s: support email
-#: includes/class-router.php:194
+#: includes/class-router.php:199
 #, php-format
 msgid "This account has been suspended. Please contact %s for help."
 msgstr ""
 
-#: includes/class-router.php:214
+#: includes/class-router.php:219
 msgid "Please wait a moment"
 msgstr ""
 
-#: includes/class-router.php:215
+#: includes/class-router.php:220
 msgid "Too many checks from this device. Please try again in a minute."
 msgstr ""
 
@@ -3431,7 +3431,7 @@ msgid "Create free account"
 msgstr ""
 
 #: includes/class-shortcodes.php:99
-#: assets/js/app/views/dashboard.js:36
+#: assets/js/app/views/dashboard.js:39
 #: assets/js/app/views/subscription.js:135
 msgid "Free trial"
 msgstr ""
@@ -3448,7 +3448,7 @@ msgstr ""
 
 #. translators: %d: number of days
 #: includes/class-shortcodes.php:116
-#: assets/js/app/views/dashboard.js:51
+#: assets/js/app/views/dashboard.js:54
 msgid "/ month"
 msgstr ""
 
@@ -3828,37 +3828,37 @@ msgstr ""
 msgid "Conversation not found."
 msgstr ""
 
-#: includes/rest/class-rest.php:32
+#: includes/rest/class-rest.php:45
 msgid "Please log in again."
 msgstr ""
 
-#: includes/rest/class-rest.php:36
+#: includes/rest/class-rest.php:49
 msgid "No organisation is linked to this login."
 msgstr ""
 
-#: includes/rest/class-rest.php:43
+#: includes/rest/class-rest.php:56
 msgid "You are viewing this account as support. Changes are switched off."
 msgstr ""
 
 #. translators: %s: support email
-#: includes/rest/class-rest.php:52
+#: includes/rest/class-rest.php:65
 #, php-format
 msgid "This account is suspended. Please contact %s."
 msgstr ""
 
-#: includes/rest/class-rest.php:67
+#: includes/rest/class-rest.php:80
 msgid "This page has expired. Please refresh and try again."
 msgstr ""
 
 #: templates/app.php:16
 #: assets/js/app/main.js:31
-#: assets/js/app/views/projects.js:61
+#: assets/js/app/views/projects.js:63
 msgid "Create ID card"
 msgstr ""
 
 #: templates/app.php:17
 #: assets/js/app/main.js:32
-#: assets/js/app/views/project.js:74
+#: assets/js/app/views/project.js:87
 msgid "My Projects"
 msgstr ""
 
@@ -4243,7 +4243,7 @@ msgstr ""
 
 #: assets/js/admin/builder.js:116
 #: assets/js/app/views/designs.js:455
-#: assets/js/app/views/project.js:102
+#: assets/js/app/views/project.js:115
 msgid "Saving…"
 msgstr ""
 
@@ -4254,7 +4254,7 @@ msgstr ""
 
 #: assets/js/admin/builder.js:136
 #: assets/js/app/views/designs.js:426
-#: assets/js/app/views/project.js:104
+#: assets/js/app/views/project.js:117
 msgid "Not saved"
 msgstr ""
 
@@ -4298,10 +4298,10 @@ msgid "Featured (shown first and on the homepage)"
 msgstr ""
 
 #: assets/js/admin/builder.js:167
-#: assets/js/app/views/create.js:77
+#: assets/js/app/views/create.js:99
 #: assets/js/app/views/designs.js:263
 #: assets/js/app/views/designs.js:317
-#: assets/js/app/views/project.js:299
+#: assets/js/app/views/project.js:321
 #: assets/js/public/showcase.js:360
 msgid "Orientation"
 msgstr ""
@@ -4446,7 +4446,7 @@ msgid "Generated by Pikacart on"
 msgstr ""
 
 #: assets/js/admin/support.js:40
-#: assets/js/app/api.js:42
+#: assets/js/app/api.js:44
 #: assets/js/auth.js:108
 #: assets/js/fill.js:91
 #: assets/js/public.js:33
@@ -4539,7 +4539,7 @@ msgid "Published"
 msgstr ""
 
 #: assets/js/admin/templates.js:48
-#: assets/js/app/views/dashboard.js:63
+#: assets/js/app/views/dashboard.js:66
 msgid "Drafts"
 msgstr ""
 
@@ -4585,7 +4585,7 @@ msgstr ""
 
 #: assets/js/admin/templates.js:71
 #: assets/js/app/people.js:304
-#: assets/js/app/views/projects.js:82
+#: assets/js/app/views/projects.js:84
 #: assets/js/card/editor-core.js:712
 msgid "Duplicate"
 msgstr ""
@@ -4595,7 +4595,7 @@ msgid "Export"
 msgstr ""
 
 #: assets/js/admin/templates.js:85
-#: assets/js/app/views/create.js:109
+#: assets/js/app/views/create.js:132
 msgid "No designs match these filters."
 msgstr ""
 
@@ -4642,16 +4642,16 @@ msgstr ""
 msgid "Template imported as a draft."
 msgstr ""
 
-#: assets/js/app/api.js:27
+#: assets/js/app/api.js:29
 #: assets/js/auth.js:123
 msgid "No internet connection. Please check your network and try again."
 msgstr ""
 
-#: assets/js/app/api.js:39
+#: assets/js/app/api.js:41
 msgid "Your session has ended. Please log in again."
 msgstr ""
 
-#: assets/js/app/autosave.js:81
+#: assets/js/app/autosave.js:131
 msgid "You have unsaved changes."
 msgstr ""
 
@@ -4697,7 +4697,7 @@ msgid "Class or department"
 msgstr ""
 
 #: assets/js/app/download.js:43
-#: assets/js/app/people.js:660
+#: assets/js/app/people.js:661
 msgid "Format"
 msgstr ""
 
@@ -4714,22 +4714,22 @@ msgid "JPG images (ZIP)"
 msgstr ""
 
 #: assets/js/app/download.js:44
-#: assets/js/app/people.js:661
+#: assets/js/app/people.js:662
 msgid "Sides"
 msgstr ""
 
 #: assets/js/app/download.js:44
-#: assets/js/app/people.js:661
+#: assets/js/app/people.js:662
 msgid "Front and back"
 msgstr ""
 
 #: assets/js/app/download.js:44
-#: assets/js/app/people.js:661
+#: assets/js/app/people.js:662
 msgid "Front only"
 msgstr ""
 
 #: assets/js/app/download.js:44
-#: assets/js/app/people.js:661
+#: assets/js/app/people.js:662
 msgid "Back only"
 msgstr ""
 
@@ -4739,7 +4739,7 @@ msgstr ""
 
 #: assets/js/app/download.js:49
 #: assets/js/app/people.js:196
-#: assets/js/app/people.js:662
+#: assets/js/app/people.js:663
 #: assets/js/app/views/create.js:46
 msgid "Download"
 msgstr ""
@@ -4799,9 +4799,9 @@ msgstr ""
 
 #: assets/js/app/exporter.js:59
 #: assets/js/app/image.js:59
-#: assets/js/app/people.js:540
-#: assets/js/app/people.js:803
-#: assets/js/app/people.js:818
+#: assets/js/app/people.js:541
+#: assets/js/app/people.js:804
+#: assets/js/app/people.js:819
 #: assets/js/app/ui.js:50
 #: assets/js/app/views/designs.js:228
 #: assets/js/app/views/designs.js:266
@@ -4996,7 +4996,7 @@ msgid "Your designs and data are saved. Subscribe for %s per month to keep creat
 msgstr ""
 
 #: assets/js/app/main.js:222
-#: assets/js/app/views/dashboard.js:39
+#: assets/js/app/views/dashboard.js:42
 #, js-format
 msgid "Subscribe for %s per month"
 msgstr ""
@@ -5088,11 +5088,11 @@ msgid "Emergency contact number"
 msgstr ""
 
 #: assets/js/app/people.js:83
-msgid "Card valid from, DD-MM-YYYY"
+msgid "Card valid from, DD-MM-YYYY. Leave empty to use the date set in the project Details."
 msgstr ""
 
 #: assets/js/app/people.js:84
-msgid "Card valid until, DD-MM-YYYY"
+msgid "Card valid upto, DD-MM-YYYY. Leave empty to use the date set in the project Details."
 msgstr ""
 
 #: assets/js/app/people.js:117
@@ -5151,13 +5151,13 @@ msgid "Import Excel / CSV"
 msgstr ""
 
 #: assets/js/app/people.js:174
-#: assets/js/app/people.js:988
+#: assets/js/app/people.js:989
 msgid "Bulk photos"
 msgstr ""
 
 #: assets/js/app/people.js:175
-#: assets/js/app/people.js:1021
 #: assets/js/app/people.js:1022
+#: assets/js/app/people.js:1023
 msgid "Self-fill link"
 msgstr ""
 
@@ -5191,7 +5191,7 @@ msgstr ""
 
 #: assets/js/app/people.js:197
 #: assets/js/app/people.js:302
-#: assets/js/app/people.js:637
+#: assets/js/app/people.js:638
 #: assets/js/app/print.js:90
 msgid "Print"
 msgstr ""
@@ -5259,8 +5259,8 @@ msgid "It already has the right column headings for this design."
 msgstr ""
 
 #: assets/js/app/people.js:266
-#: assets/js/app/views/project.js:83
-#: assets/js/app/views/projects.js:80
+#: assets/js/app/views/project.js:96
+#: assets/js/app/views/projects.js:82
 msgid "Blank Excel"
 msgstr ""
 
@@ -5332,6 +5332,7 @@ msgid "Page %1$d of %2$d · %3$d people"
 msgstr ""
 
 #: assets/js/app/people.js:313
+#: assets/js/app/views/dashboard.js:148
 #, js-format
 msgid "%d person"
 msgid_plural "%d people"
@@ -5374,11 +5375,11 @@ msgid "Edit person"
 msgstr ""
 
 #: assets/js/app/people.js:521
-#: assets/js/app/people.js:634
-#: assets/js/app/people.js:677
-#: assets/js/app/people.js:1022
+#: assets/js/app/people.js:635
+#: assets/js/app/people.js:678
+#: assets/js/app/people.js:1023
 #: assets/js/app/ui.js:27
-#: assets/js/app/views/create.js:152
+#: assets/js/app/views/create.js:175
 #: assets/js/card/editor-core.js:700
 #: assets/js/public/showcase.js:436
 msgid "Close"
@@ -5388,283 +5389,289 @@ msgstr ""
 msgid "You can crop after choosing."
 msgstr ""
 
-#: assets/js/app/people.js:541
+#: assets/js/app/people.js:532
+#: assets/js/app/people.js:536
+#, js-format
+msgid "Leave empty for %s"
+msgstr ""
+
+#: assets/js/app/people.js:542
 msgid "Save and add another"
 msgstr ""
 
-#: assets/js/app/people.js:619
+#: assets/js/app/people.js:620
 msgid "Photo updated."
 msgstr ""
 
-#: assets/js/app/people.js:659
+#: assets/js/app/people.js:660
 #, js-format
 msgid "Download %d card"
 msgid_plural "Download %d cards"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:660
+#: assets/js/app/people.js:661
 msgid "One PDF (all cards)"
 msgstr ""
 
-#: assets/js/app/people.js:660
+#: assets/js/app/people.js:661
 msgid "PNG images in a ZIP"
 msgstr ""
 
-#: assets/js/app/people.js:660
+#: assets/js/app/people.js:661
 msgid "JPG images in a ZIP"
 msgstr ""
 
-#: assets/js/app/people.js:676
 #: assets/js/app/people.js:677
+#: assets/js/app/people.js:678
 msgid "Import from Excel or CSV"
 msgstr ""
 
-#: assets/js/app/people.js:691
+#: assets/js/app/people.js:692
 msgid "Choose your Excel (.xlsx) or CSV file"
 msgstr ""
 
-#: assets/js/app/people.js:692
+#: assets/js/app/people.js:693
 msgid "The first row must have column names. Photos can be added later with Bulk photos."
 msgstr ""
 
-#: assets/js/app/people.js:693
+#: assets/js/app/people.js:694
 msgid "Choose file"
 msgstr ""
 
-#: assets/js/app/people.js:694
+#: assets/js/app/people.js:695
 msgid "Download blank Excel for this design"
 msgstr ""
 
-#: assets/js/app/people.js:728
+#: assets/js/app/people.js:729
 msgid "This file has no rows to import."
 msgstr ""
 
-#: assets/js/app/people.js:737
+#: assets/js/app/people.js:738
 msgid "Could not read this file. Please save it as .xlsx or .csv and try again."
 msgstr ""
 
-#: assets/js/app/people.js:745
+#: assets/js/app/people.js:746
 msgid "Add photos or a ZIP (optional)"
 msgstr ""
 
-#: assets/js/app/people.js:745
+#: assets/js/app/people.js:746
 msgid "Photos pasted inside the Excel are picked up automatically."
 msgstr ""
 
-#: assets/js/app/people.js:751
+#: assets/js/app/people.js:752
 #, js-format
 msgid "%d photo ready to match"
 msgid_plural "%d photos ready to match"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:799
+#: assets/js/app/people.js:800
 #, js-format
 msgid "%d person found in your Pikacart Excel"
 msgid_plural "%d people found in your Pikacart Excel"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:799
+#: assets/js/app/people.js:800
 msgid "All columns match this design. Check the first rows and import."
 msgstr ""
 
-#: assets/js/app/people.js:802
-#: assets/js/app/people.js:817
+#: assets/js/app/people.js:803
+#: assets/js/app/people.js:818
 msgid "If an ID number already exists"
 msgstr ""
 
-#: assets/js/app/people.js:802
-#: assets/js/app/people.js:817
+#: assets/js/app/people.js:803
+#: assets/js/app/people.js:818
 msgid "Skip that row and report it"
 msgstr ""
 
-#: assets/js/app/people.js:802
-#: assets/js/app/people.js:817
+#: assets/js/app/people.js:803
+#: assets/js/app/people.js:818
 msgid "Update the existing person"
 msgstr ""
 
-#: assets/js/app/people.js:803
+#: assets/js/app/people.js:804
 #, js-format
 msgid "Import %d people"
 msgstr ""
 
-#: assets/js/app/people.js:810
+#: assets/js/app/people.js:811
 msgid "Photo (file name)"
 msgstr ""
 
-#: assets/js/app/people.js:811
-msgid "— Do not import —"
-msgstr ""
-
 #: assets/js/app/people.js:812
-#, js-format
-msgid "%d rows found. Match your columns to Pikacart fields:"
+msgid "— Do not import —"
 msgstr ""
 
 #: assets/js/app/people.js:813
 #, js-format
-msgid "Column %d"
+msgid "%d rows found. Match your columns to Pikacart fields:"
 msgstr ""
 
 #: assets/js/app/people.js:814
+#, js-format
+msgid "Column %d"
+msgstr ""
+
+#: assets/js/app/people.js:815
 msgid "Preview of the first rows"
 msgstr ""
 
-#: assets/js/app/people.js:818
+#: assets/js/app/people.js:819
 #, js-format
 msgid "Import %d rows"
 msgstr ""
 
-#: assets/js/app/people.js:828
+#: assets/js/app/people.js:829
 msgid "Please match the Name and ID number columns."
 msgstr ""
 
-#: assets/js/app/people.js:846
+#: assets/js/app/people.js:847
 msgid "Importing…"
 msgstr ""
 
-#: assets/js/app/people.js:860
+#: assets/js/app/people.js:861
 #, js-format
 msgid "Imported %1$d of %2$d rows…"
 msgstr ""
 
-#: assets/js/app/people.js:877
+#: assets/js/app/people.js:878
 msgid "row"
 msgstr ""
 
-#: assets/js/app/people.js:881
+#: assets/js/app/people.js:882
 msgid "Adding photos…"
 msgstr ""
 
-#: assets/js/app/people.js:884
+#: assets/js/app/people.js:885
 #, js-format
 msgid "%1$d of %2$d photos added…"
 msgstr ""
 
-#: assets/js/app/people.js:886
+#: assets/js/app/people.js:887
 #, js-format
 msgid "%d photo added"
 msgid_plural "%d photos added"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:892
+#: assets/js/app/people.js:893
 #, js-format
 msgid "%d person imported"
 msgid_plural "%d people imported"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:893
+#: assets/js/app/people.js:894
 #, js-format
 msgid "%d row needs attention"
 msgid_plural "%d rows need attention"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:894
+#: assets/js/app/people.js:895
 msgid "Row"
 msgstr ""
 
-#: assets/js/app/people.js:895
+#: assets/js/app/people.js:896
 msgid "Download error report"
 msgstr ""
 
-#: assets/js/app/people.js:897
+#: assets/js/app/people.js:898
 #, js-format
 msgid "No photo was found in the file for %d person. Add it with \"Bulk photos\" (name each photo by ID number, e.g. 1001.jpg) or by editing the person."
 msgid_plural "No photo was found in the file for %d people. Add them with \"Bulk photos\" (name each photo by ID number, e.g. 1001.jpg) or by editing the person."
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:898
-#: assets/js/app/people.js:1002
+#: assets/js/app/people.js:899
+#: assets/js/app/people.js:1003
 msgid "Done"
 msgstr ""
 
-#: assets/js/app/people.js:898
+#: assets/js/app/people.js:899
 msgid "Download the cards"
 msgstr ""
 
-#: assets/js/app/people.js:917
+#: assets/js/app/people.js:918
 msgid "Preparing your file…"
 msgstr ""
 
-#: assets/js/app/people.js:926
+#: assets/js/app/people.js:927
 msgid "Verification link"
 msgstr ""
 
-#: assets/js/app/people.js:988
+#: assets/js/app/people.js:989
 msgid "Matching photos…"
 msgstr ""
 
-#: assets/js/app/people.js:995
+#: assets/js/app/people.js:996
 #, js-format
 msgid "%1$d of %2$d photos processed"
 msgstr ""
 
-#: assets/js/app/people.js:998
+#: assets/js/app/people.js:999
 msgid "Bulk photos finished"
 msgstr ""
 
-#: assets/js/app/people.js:999
+#: assets/js/app/people.js:1000
 #, js-format
 msgid "%d photo matched"
 msgid_plural "%d photos matched"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:1000
+#: assets/js/app/people.js:1001
 #, js-format
 msgid "%d photo did not match an ID number"
 msgid_plural "%d photos did not match an ID number"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/app/people.js:1001
+#: assets/js/app/people.js:1002
 msgid "Tip: name each photo exactly by the person's ID number, e.g. 1001.jpg."
 msgstr ""
 
-#: assets/js/app/people.js:1023
+#: assets/js/app/people.js:1024
 msgid "Share this link with students or staff. They fill their own details and photo; entries arrive as \"Pending\" for you to approve."
 msgstr ""
 
-#: assets/js/app/people.js:1025
+#: assets/js/app/people.js:1026
 msgid "Please fill your ID card details here:"
 msgstr ""
 
-#: assets/js/app/people.js:1025
+#: assets/js/app/people.js:1026
 msgid "Open form"
 msgstr ""
 
-#: assets/js/app/people.js:1026
+#: assets/js/app/people.js:1027
 msgid "Link is open"
 msgstr ""
 
-#: assets/js/app/people.js:1027
+#: assets/js/app/people.js:1028
 msgid "Close automatically on (optional)"
 msgstr ""
 
-#: assets/js/app/people.js:1027
+#: assets/js/app/people.js:1028
 msgid "No link yet."
 msgstr ""
 
-#: assets/js/app/people.js:1029
+#: assets/js/app/people.js:1030
 msgid "Create a new link"
 msgstr ""
 
-#: assets/js/app/people.js:1029
+#: assets/js/app/people.js:1030
 msgid "Create link"
 msgstr ""
 
-#: assets/js/app/people.js:1045
+#: assets/js/app/people.js:1046
 msgid "Link copied."
 msgstr ""
 
 #: assets/js/app/print.js:25
-#: assets/js/app/views/project.js:309
+#: assets/js/app/views/project.js:331
 msgid "Custom size"
 msgstr ""
 
@@ -5915,44 +5922,48 @@ msgstr ""
 msgid "People"
 msgstr ""
 
-#: assets/js/app/views/create.js:54
+#: assets/js/app/views/create.js:72
 msgid "What kind of ID card?"
 msgstr ""
 
-#: assets/js/app/views/create.js:54
+#: assets/js/app/views/create.js:72
 msgid "Pick a category and a card type. Each has 50 professional styles."
 msgstr ""
 
-#: assets/js/app/views/create.js:55
+#: assets/js/app/views/create.js:73
 #: assets/js/app/views/designs.js:162
 #: assets/js/app/views/designs.js:255
 msgid "Use my own design"
 msgstr ""
 
-#: assets/js/app/views/create.js:58
+#: assets/js/app/views/create.js:74
+msgid "Continue choosing a design"
+msgstr ""
+
+#: assets/js/app/views/create.js:77
 msgid "Your category"
 msgstr ""
 
-#: assets/js/app/views/create.js:74
-#: assets/js/app/views/dashboard.js:71
+#: assets/js/app/views/create.js:96
+#: assets/js/app/views/dashboard.js:74
 #: assets/js/app/views/designs.js:167
 #: assets/js/app/views/designs.js:309
-#: assets/js/app/views/project.js:237
+#: assets/js/app/views/project.js:259
 msgid "Design on Demand"
 msgstr ""
 
-#: assets/js/app/views/create.js:81
+#: assets/js/app/views/create.js:103
 #: assets/js/card/editor-core.js:691
 msgid "Style"
 msgstr ""
 
-#: assets/js/app/views/create.js:82
-#: assets/js/app/views/project.js:251
+#: assets/js/app/views/create.js:104
+#: assets/js/app/views/project.js:273
 #: assets/js/public/showcase.js:365
 msgid "All styles"
 msgstr ""
 
-#: assets/js/app/views/create.js:85
+#: assets/js/app/views/create.js:107
 #: assets/js/card/editor-core.js:677
 #: assets/js/card/editor-core.js:689
 #: assets/js/card/editor-core.js:698
@@ -5960,191 +5971,208 @@ msgstr ""
 msgid "Colour"
 msgstr ""
 
-#: assets/js/app/views/create.js:86
+#: assets/js/app/views/create.js:108
 #: assets/js/public/showcase.js:369
 msgid "Original colours"
 msgstr ""
 
-#: assets/js/app/views/create.js:156
+#: assets/js/app/views/create.js:179
 #: assets/js/card/editor-core.js:626
 msgid "Custom colour"
 msgstr ""
 
-#: assets/js/app/views/create.js:156
+#: assets/js/app/views/create.js:179
 msgid "Custom brand colour"
 msgstr ""
 
-#: assets/js/app/views/create.js:158
+#: assets/js/app/views/create.js:181
 msgid "Back to designs"
 msgstr ""
 
-#: assets/js/app/views/create.js:158
+#: assets/js/app/views/create.js:181
 #: assets/js/app/views/designs.js:181
-#: assets/js/app/views/project.js:274
+#: assets/js/app/views/project.js:296
 #: assets/js/public/showcase.js:385
 #: assets/js/public/showcase.js:445
 msgid "Use this design"
 msgstr ""
 
-#: assets/js/app/views/create.js:197
+#: assets/js/app/views/create.js:220
 msgid "Design selected. Now choose the size and colours."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:12
+#: assets/js/app/views/dashboard.js:15
 msgid "Good morning"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:15
+#: assets/js/app/views/dashboard.js:18
 msgid "Good afternoon"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:17
+#: assets/js/app/views/dashboard.js:20
 msgid "Good evening"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:30
+#: assets/js/app/views/dashboard.js:33
 #: assets/js/app/views/subscription.js:148
 msgid "Free forever"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:31
+#: assets/js/app/views/dashboard.js:34
 #, js-format
 msgid "Every feature works. Downloaded cards carry \"%s\". Upgrade for clean, professional cards."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:32
+#: assets/js/app/views/dashboard.js:35
 #, js-format
 msgid "Remove watermark · %s/month"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:38
+#: assets/js/app/views/dashboard.js:41
 msgid "left in your free trial. Every feature is open; exports carry a watermark."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:43
+#: assets/js/app/views/dashboard.js:46
 msgid "Plan active"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:45
+#: assets/js/app/views/dashboard.js:48
 msgid "Renews automatically on this date."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:45
+#: assets/js/app/views/dashboard.js:48
 msgid "Your plan is paid until this date."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:45
+#: assets/js/app/views/dashboard.js:48
 msgid "You keep full access until this date."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:46
+#: assets/js/app/views/dashboard.js:49
 msgid "Manage subscription"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:52
+#: assets/js/app/views/dashboard.js:55
 msgid "Your work is saved. Subscribe to continue creating, downloading and printing."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:53
+#: assets/js/app/views/dashboard.js:56
 msgid "Subscribe now"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:59
+#: assets/js/app/views/dashboard.js:62
 msgid "Total cards"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:60
+#: assets/js/app/views/dashboard.js:63
 msgid "Projects"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:68
-#: assets/js/app/views/dashboard.js:96
+#: assets/js/app/views/dashboard.js:71
+#: assets/js/app/views/dashboard.js:99
 msgid "New ID card"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:68
+#: assets/js/app/views/dashboard.js:71
 msgid "Pick a design"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:69
+#: assets/js/app/views/dashboard.js:72
 msgid "Import from Excel"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:69
+#: assets/js/app/views/dashboard.js:72
 msgid "Add many people"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:70
+#: assets/js/app/views/dashboard.js:73
 msgid "Print sheet"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:70
+#: assets/js/app/views/dashboard.js:73
 msgid "Cards with cut marks"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:71
+#: assets/js/app/views/dashboard.js:74
 msgid "We set up your design"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:76
+#: assets/js/app/views/dashboard.js:79
 msgid "Choose your category"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:77
+#: assets/js/app/views/dashboard.js:80
 msgid "Add address and phone"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:78
+#: assets/js/app/views/dashboard.js:81
 msgid "Upload your logo"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:79
+#: assets/js/app/views/dashboard.js:82
 msgid "Upload the signature"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:80
+#: assets/js/app/views/dashboard.js:83
 msgid "Upload the official seal"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:81
+#: assets/js/app/views/dashboard.js:84
 msgid "Verify your email"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:82
+#: assets/js/app/views/dashboard.js:85
 msgid "Upgrade to remove the watermark"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:88
+#: assets/js/app/views/dashboard.js:91
 msgid "No announcements right now."
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:106
+#: assets/js/app/views/dashboard.js:110
 msgid "Quick actions"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:113
+#: assets/js/app/views/dashboard.js:117
 msgid "Recent projects"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:114
-#: assets/js/app/views/projects.js:61
-msgid "No card projects yet"
+#: assets/js/app/views/dashboard.js:117
+msgid "All projects"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:114
-msgid "Start your first project by choosing a design for your students or staff."
-msgstr ""
-
-#: assets/js/app/views/dashboard.js:114
-msgid "Create your first ID card"
-msgstr ""
-
-#: assets/js/app/views/dashboard.js:118
+#: assets/js/app/views/dashboard.js:122
 msgid "Finish your setup"
 msgstr ""
 
-#: assets/js/app/views/dashboard.js:125
+#: assets/js/app/views/dashboard.js:129
 msgid "From Pikacart"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:143
+#: assets/js/app/views/projects.js:63
+msgid "No card projects yet"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:143
+msgid "Start your first project by choosing a design for your students or staff."
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:143
+msgid "Create your first ID card"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:152
+msgid "Continue where you left off"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:152
+#, js-format
+msgid "%1$s · %2$s · saved %3$s ago"
+msgstr ""
+
+#: assets/js/app/views/dashboard.js:152
+msgid "Continue"
 msgstr ""
 
 #: assets/js/app/views/designs.js:72
@@ -6218,7 +6246,7 @@ msgid "Place fields"
 msgstr ""
 
 #: assets/js/app/views/designs.js:183
-#: assets/js/app/views/projects.js:81
+#: assets/js/app/views/projects.js:83
 msgid "Rename"
 msgstr ""
 
@@ -6260,7 +6288,7 @@ msgstr ""
 
 #: assets/js/app/views/designs.js:261
 #: assets/js/app/views/designs.js:315
-#: assets/js/app/views/project.js:306
+#: assets/js/app/views/project.js:328
 msgid "Card size"
 msgstr ""
 
@@ -6337,7 +6365,7 @@ msgstr ""
 
 #: assets/js/app/views/designs.js:406
 #: assets/js/app/views/designs.js:424
-#: assets/js/app/views/project.js:100
+#: assets/js/app/views/project.js:113
 msgid "Saved"
 msgstr ""
 
@@ -6460,7 +6488,7 @@ msgid "Validity dates"
 msgstr ""
 
 #: assets/js/app/views/organisation.js:37
-#: assets/js/app/views/project.js:406
+#: assets/js/app/views/project.js:428
 msgid "Organisation details"
 msgstr ""
 
@@ -6505,271 +6533,295 @@ msgstr ""
 msgid "Download & print"
 msgstr ""
 
-#: assets/js/app/views/project.js:49
+#: assets/js/app/views/project.js:62
 msgid "Back to projects"
 msgstr ""
 
-#: assets/js/app/views/project.js:69
+#: assets/js/app/views/project.js:82
 msgid "We restored changes that were not saved last time."
 msgstr ""
 
-#: assets/js/app/views/project.js:76
+#: assets/js/app/views/project.js:89
 msgid "Project name"
 msgstr ""
 
-#: assets/js/app/views/project.js:82
-#: assets/js/app/views/projects.js:79
+#: assets/js/app/views/project.js:95
+#: assets/js/app/views/projects.js:81
 msgid "Change design"
 msgstr ""
 
-#: assets/js/app/views/project.js:101
+#: assets/js/app/views/project.js:114
 msgid "Unsaved changes"
 msgstr ""
 
-#: assets/js/app/views/project.js:103
+#: assets/js/app/views/project.js:116
 msgid "Offline: will retry"
 msgstr ""
 
-#: assets/js/app/views/project.js:112
+#: assets/js/app/views/project.js:125
 msgid "Blank Excel downloaded with the columns of this design. Fill it and upload it in People."
 msgstr ""
 
-#: assets/js/app/views/project.js:227
+#: assets/js/app/views/project.js:249
 msgid "Live preview"
 msgstr ""
 
-#: assets/js/app/views/project.js:227
+#: assets/js/app/views/project.js:249
 #, js-format
 msgid "Showing %s"
 msgstr ""
 
-#: assets/js/app/views/project.js:227
+#: assets/js/app/views/project.js:249
 #: assets/js/card/editor-core.js:114
 msgid "Sample person"
 msgstr ""
 
-#: assets/js/app/views/project.js:237
+#: assets/js/app/views/project.js:259
 msgid "Choose a design"
 msgstr ""
 
-#: assets/js/app/views/project.js:238
+#: assets/js/app/views/project.js:260
 msgid "You have customised this design. Choosing another design starts again from its original layout."
 msgstr ""
 
-#: assets/js/app/views/project.js:239
+#: assets/js/app/views/project.js:261
 msgid "Pick any design. Your people, details, size and colours stay the same, so you can change the design at any time."
 msgstr ""
 
-#: assets/js/app/views/project.js:274
+#: assets/js/app/views/project.js:296
 msgid "Use this design instead?"
 msgstr ""
 
-#: assets/js/app/views/project.js:274
+#: assets/js/app/views/project.js:296
 msgid "Your fine-tuning on the current design will be replaced."
 msgstr ""
 
-#: assets/js/app/views/project.js:280
+#: assets/js/app/views/project.js:302
 msgid "Design changed. Your people and details are kept."
 msgstr ""
 
-#: assets/js/app/views/project.js:306
+#: assets/js/app/views/project.js:328
 msgid "Match the holder you use"
 msgstr ""
 
-#: assets/js/app/views/project.js:309
+#: assets/js/app/views/project.js:331
 msgid "Any size in millimetres"
 msgstr ""
 
-#: assets/js/app/views/project.js:315
+#: assets/js/app/views/project.js:337
 msgid "Add 2 mm bleed to downloads (for PVC card printers)"
 msgstr ""
 
-#: assets/js/app/views/project.js:318
+#: assets/js/app/views/project.js:340
 msgid "Colours"
 msgstr ""
 
-#: assets/js/app/views/project.js:319
+#: assets/js/app/views/project.js:341
 msgid "Suggested for this design"
 msgstr ""
 
-#: assets/js/app/views/project.js:321
+#: assets/js/app/views/project.js:343
 msgid "More colours"
 msgstr ""
 
-#: assets/js/app/views/project.js:324
+#: assets/js/app/views/project.js:346
 msgid "Match my brand colours"
 msgstr ""
 
-#: assets/js/app/views/project.js:326
+#: assets/js/app/views/project.js:348
 msgid "Main colour"
 msgstr ""
 
-#: assets/js/app/views/project.js:326
+#: assets/js/app/views/project.js:348
 msgid "Second colour"
 msgstr ""
 
-#: assets/js/app/views/project.js:401
+#: assets/js/app/views/project.js:423
 msgid "logo"
 msgstr ""
 
-#: assets/js/app/views/project.js:401
+#: assets/js/app/views/project.js:423
 msgid "signature"
 msgstr ""
 
-#: assets/js/app/views/project.js:401
+#: assets/js/app/views/project.js:423
 msgid "address"
 msgstr ""
 
-#: assets/js/app/views/project.js:411
+#: assets/js/app/views/project.js:433
 #, js-format
 msgid "Add your %s in Organisation to complete the cards."
 msgstr ""
 
-#: assets/js/app/views/project.js:413
+#: assets/js/app/views/project.js:435
 #: assets/js/card/editor-core.js:49
 msgid "Card title"
 msgstr ""
 
-#: assets/js/app/views/project.js:414
+#: assets/js/app/views/project.js:436
 msgid "Session / year"
 msgstr ""
 
-#: assets/js/app/views/project.js:418
+#: assets/js/app/views/project.js:440
+msgid "Card validity"
+msgstr ""
+
+#: assets/js/app/views/project.js:441
+msgid "One date for all cards in this project. A person can still have their own date (in Add person or in the Excel); empty ones use this date."
+msgstr ""
+
+#: assets/js/app/views/project.js:443
+msgid "Valid upto"
+msgstr ""
+
+#: assets/js/app/views/project.js:444
+msgid "Valid from (optional)"
+msgstr ""
+
+#: assets/js/app/views/project.js:448
 msgid "Fields on the card"
 msgstr ""
 
-#: assets/js/app/views/project.js:419
+#: assets/js/app/views/project.js:449
 msgid "Switched-off or empty fields disappear from the card with no blank gap."
 msgstr ""
 
-#: assets/js/app/views/project.js:423
+#: assets/js/app/views/project.js:453
 msgid "Your own fields (up to 5)"
 msgstr ""
 
-#: assets/js/app/views/project.js:428
+#: assets/js/app/views/project.js:458
 msgid "e.g. House, Bus route, Hostel room"
 msgstr ""
 
-#: assets/js/app/views/project.js:428
+#: assets/js/app/views/project.js:458
 #, js-format
 msgid "Custom field %d"
 msgstr ""
 
-#: assets/js/app/views/project.js:433
+#: assets/js/app/views/project.js:463
 msgid "Back side, QR code and barcode"
 msgstr ""
 
-#: assets/js/app/views/project.js:435
+#: assets/js/app/views/project.js:465
 msgid "QR code on front"
 msgstr ""
 
-#: assets/js/app/views/project.js:435
+#: assets/js/app/views/project.js:465
 msgid "QR code on back"
 msgstr ""
 
-#: assets/js/app/views/project.js:435
+#: assets/js/app/views/project.js:465
 msgid "Barcode on front"
 msgstr ""
 
-#: assets/js/app/views/project.js:435
+#: assets/js/app/views/project.js:465
 msgid "Barcode on back"
 msgstr ""
 
-#: assets/js/app/views/project.js:435
+#: assets/js/app/views/project.js:465
 msgid "Renewal box (session & signature)"
 msgstr ""
 
-#: assets/js/app/views/project.js:437
+#: assets/js/app/views/project.js:467
 msgid "Terms and conditions (back side)"
 msgstr ""
 
-#: assets/js/app/views/project.js:438
+#: assets/js/app/views/project.js:468
 msgid "The QR code opens a secure verification page. Choose what it shows in Organisation → Verification page privacy."
 msgstr ""
 
-#: assets/js/app/views/projects.js:42
+#: assets/js/app/views/project.js:495
+msgid "Write the date as DD-MM-YYYY, e.g. 31-03-2027."
+msgstr ""
+
+#: assets/js/app/views/project.js:499
+msgid "Saved. Shown on every card that has no date of its own."
+msgstr ""
+
+#: assets/js/app/views/projects.js:43
 msgid "Your card projects"
 msgstr ""
 
-#: assets/js/app/views/projects.js:42
+#: assets/js/app/views/projects.js:43
 msgid "Each project is one design with its list of people."
 msgstr ""
 
-#: assets/js/app/views/projects.js:43
+#: assets/js/app/views/projects.js:44
 msgid "Choose a project"
 msgstr ""
 
-#: assets/js/app/views/projects.js:43
+#: assets/js/app/views/projects.js:44
 msgid "Pick the project whose people you want to manage."
 msgstr ""
 
-#: assets/js/app/views/projects.js:44
+#: assets/js/app/views/projects.js:45
 msgid "Print sheets"
 msgstr ""
 
-#: assets/js/app/views/projects.js:44
+#: assets/js/app/views/projects.js:45
 msgid "Pick a project to arrange its cards on paper with cut marks."
 msgstr ""
 
-#: assets/js/app/views/projects.js:61
+#: assets/js/app/views/projects.js:63
 msgid "Create your first project by choosing a design for your students or staff."
 msgstr ""
 
-#: assets/js/app/views/projects.js:66
+#: assets/js/app/views/projects.js:68
 msgid "New project"
 msgstr ""
 
-#: assets/js/app/views/projects.js:75
+#: assets/js/app/views/projects.js:77
 #, js-format
 msgid "saved %s ago"
 msgstr ""
 
-#: assets/js/app/views/projects.js:76
+#: assets/js/app/views/projects.js:78
 msgid "Archived"
 msgstr ""
 
-#: assets/js/app/views/projects.js:83
-#: assets/js/app/views/projects.js:135
+#: assets/js/app/views/projects.js:85
+#: assets/js/app/views/projects.js:137
 msgid "New session"
 msgstr ""
 
-#: assets/js/app/views/projects.js:116
+#: assets/js/app/views/projects.js:118
 msgid "Blank Excel downloaded with the columns of this design."
 msgstr ""
 
-#: assets/js/app/views/projects.js:120
+#: assets/js/app/views/projects.js:122
 msgid "Rename project"
 msgstr ""
 
-#: assets/js/app/views/projects.js:124
+#: assets/js/app/views/projects.js:126
 msgid "Renamed."
 msgstr ""
 
-#: assets/js/app/views/projects.js:129
+#: assets/js/app/views/projects.js:131
 msgid "Project duplicated (people are not copied)."
 msgstr ""
 
-#: assets/js/app/views/projects.js:133
+#: assets/js/app/views/projects.js:135
 msgid "Start a new session"
 msgstr ""
 
-#: assets/js/app/views/projects.js:134
+#: assets/js/app/views/projects.js:136
 msgid "Creates a copy of this project for the new year with all people and photos. Last year's project is archived."
 msgstr ""
 
-#: assets/js/app/views/projects.js:135
+#: assets/js/app/views/projects.js:137
 msgid "Promote students to the next class"
 msgstr ""
 
-#: assets/js/app/views/projects.js:136
+#: assets/js/app/views/projects.js:138
 msgid "Create new session"
 msgstr ""
 
-#: assets/js/app/views/projects.js:148
+#: assets/js/app/views/projects.js:150
 msgid "Delete this project?"
 msgstr ""
 
-#: assets/js/app/views/projects.js:148
+#: assets/js/app/views/projects.js:150
 msgid "Its people move to the recycle bin for 30 days."
 msgstr ""
 

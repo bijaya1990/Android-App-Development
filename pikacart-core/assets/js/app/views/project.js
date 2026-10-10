@@ -8,7 +8,7 @@
 import { api } from '../api.js';
 import { esc, icon, toast, confirmDialog } from '../ui.js';
 import { catalog, orgVars } from '../catalog.js';
-import { createAutosave } from '../autosave.js';
+import { createAutosave, waitForSave } from '../autosave.js';
 import { renderSide } from '../../card/render.js';
 import { thumb } from '../../card/gallery.js';
 import { demoVars, memberVars, kindOf } from '../../card/data.js';
@@ -28,6 +28,17 @@ export const STEPS = [
 	[ 'download', () => __( 'Download & print', 'pikacart' ) ],
 ];
 
+/** Route of the step where the user left a project (project.step is 1-based). */
+export function savedStep( p ) {
+	const i = Math.max( 0, Math.min( STEPS.length - 1, ( Number( p.step ) || 2 ) - 1 ) );
+	return `projects/${ p.id }/${ STEPS[ i ][ 0 ] }`;
+}
+
+export function stepLabel( p ) {
+	const i = Math.max( 0, Math.min( STEPS.length - 1, ( Number( p.step ) || 2 ) - 1 ) );
+	return STEPS[ i ][ 1 ]();
+}
+
 export default function project( el, ctx, params ) {
 	const id = Number( params[ 0 ] );
 	const step = STEPS.find( ( s ) => s[ 0 ] === params[ 1 ] ) ? params[ 1 ] : 'setup';
@@ -42,6 +53,8 @@ export default function project( el, ctx, params ) {
 		let data;
 		let sample = null;
 		try {
+			// Changes from the step just left (font, size, colour…) are saved first.
+			await waitForSave( id );
 			[ cat, data ] = await Promise.all( [ catalog(), api( `projects/${ id }` ) ] );
 			const first = await api( `projects/${ id }/members?per_page=1&sort=created` );
 			sample = first.members[ 0 ] || null;
@@ -182,7 +195,15 @@ export function makeP( ctx, cat, data, sample, getAutosave ) {
 			if ( m ) {
 				return memberVars( m, ctx.me.org, projectInfo( data.project, data.subtype ), P.kind() );
 			}
-			return demoVars( P.kind(), 0, Object.assign( { subtype_name: data.subtype ? data.subtype.name : '' }, orgVars( ctx.me.org ), projectInfo( data.project, data.subtype ) ) );
+			const info = projectInfo( data.project, data.subtype );
+			const dates = {};
+			if ( info.valid_until ) {
+				dates.valid_until = info.valid_until;
+			}
+			if ( info.valid_from ) {
+				dates.valid_from = info.valid_from;
+			}
+			return demoVars( P.kind(), 0, Object.assign( { subtype_name: data.subtype ? data.subtype.name : '' }, orgVars( ctx.me.org ), info ), dates );
 		},
 		fieldsOn() {
 			return [ ...enabledFields( data.project ), ...( data.project.fields.custom || [] ).map( ( c ) => c.key ).filter( ( k ) => ( data.project.fields.on || [] ).includes( k ) ) ];
@@ -214,6 +235,7 @@ export function makeP( ctx, cat, data, sample, getAutosave ) {
 
 /** Load a project and its context (no autosave) for other screens. */
 export async function loadProject( ctx, id ) {
+	await waitForSave( id );
 	const [ cat, data ] = await Promise.all( [ catalog(), api( `projects/${ id }` ) ] );
 	const first = await api( `projects/${ id }/members?per_page=1&sort=created` );
 	return makeP( ctx, cat, data, first.members[ 0 ] || null, null );
@@ -415,6 +437,14 @@ function detailsStep( body, P ) {
 				</div>
 			</section>
 			<section class="card">
+				<div class="card-head"><h3>${ icon( 'calendar' ) } ${ esc( __( 'Card validity', 'pikacart' ) ) }</h3></div>
+				<p class="muted small">${ esc( __( 'One date for all cards in this project. A person can still have their own date (in Add person or in the Excel); empty ones use this date.', 'pikacart' ) ) }</p>
+				<div class="grid-2">
+					<div class="field"><label for="d-vu">${ esc( __( 'Valid upto', 'pikacart' ) ) }</label><input id="d-vu" data-date="valid_until" value="${ esc( f.valid_until || '' ) }" placeholder="31-03-${ new Date().getFullYear() + 1 }" inputmode="numeric" maxlength="10"><small class="field-hint" data-date-msg="valid_until"></small></div>
+					<div class="field"><label for="d-vf">${ esc( __( 'Valid from (optional)', 'pikacart' ) ) }</label><input id="d-vf" data-date="valid_from" value="${ esc( f.valid_from || '' ) }" placeholder="01-04-${ new Date().getFullYear() }" inputmode="numeric" maxlength="10"><small class="field-hint" data-date-msg="valid_from"></small></div>
+				</div>
+			</section>
+			<section class="card">
 				<div class="card-head"><h3>${ esc( __( 'Fields on the card', 'pikacart' ) ) }</h3></div>
 				<p class="muted small">${ esc( __( 'Switched-off or empty fields disappear from the card with no blank gap.', 'pikacart' ) ) }</p>
 				<div class="toggle-list cols2">
@@ -452,6 +482,34 @@ function detailsStep( body, P ) {
 		refresh();
 	};
 	body.querySelectorAll( '[data-k]' ).forEach( ( i ) => i.addEventListener( 'input', () => save( { [ i.dataset.k ]: i.value } ) ) );
+	// Dates: DD-MM-YYYY. A valid date also switches the field on so it prints.
+	body.querySelectorAll( '[data-date]' ).forEach( ( i ) => i.addEventListener( 'input', () => {
+		const k = i.dataset.date;
+		const v = i.value.trim().replace( /[./]/g, '-' );
+		const msg = body.querySelector( `[data-date-msg="${ k }"]` );
+		const m = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec( v );
+		// A real calendar date (31-02 or 31-04 are rejected).
+		const dt = m ? new Date( Number( m[ 3 ] ), Number( m[ 2 ] ) - 1, Number( m[ 1 ] ) ) : null;
+		const real = !! dt && dt.getFullYear() === Number( m[ 3 ] ) && dt.getMonth() === Number( m[ 2 ] ) - 1 && dt.getDate() === Number( m[ 1 ] ) && Number( m[ 3 ] ) >= 2000;
+		if ( v && ! real ) {
+			msg.textContent = __( 'Write the date as DD-MM-YYYY, e.g. 31-03-2027.', 'pikacart' );
+			msg.className = 'field-hint is-error';
+			return;
+		}
+		msg.textContent = v ? __( 'Saved. Shown on every card that has no date of its own.', 'pikacart' ) : '';
+		msg.className = 'field-hint';
+		const date = real ? `${ m[ 1 ].padStart( 2, '0' ) }-${ m[ 2 ].padStart( 2, '0' ) }-${ m[ 3 ] }` : '';
+		const on = new Set( P.project.fields.on || [] );
+		const offered = subFields.some( ( x ) => x.key === k );
+		if ( date && offered && ! on.has( k ) ) {
+			on.add( k );
+			const box = body.querySelector( `[data-field="${ k }"]` );
+			if ( box ) {
+				box.checked = true;
+			}
+		}
+		save( { [ k ]: date, on: [ ...on ] } );
+	} ) );
 	body.querySelectorAll( '[data-field]' ).forEach( ( i ) => i.addEventListener( 'change', () => {
 		const on = new Set( P.project.fields.on || [] );
 		if ( i.checked ) {

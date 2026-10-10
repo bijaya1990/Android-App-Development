@@ -75,6 +75,8 @@ export function projectInfo( project, subtype ) {
 		custom: f.custom || [],
 		session: f.session || '',
 		subtype_name: subtype ? subtype.name : '',
+		valid_from: f.valid_from || '',
+		valid_until: f.valid_until || '',
 	};
 }
 

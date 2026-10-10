@@ -6,11 +6,12 @@
  */
 
 import { api } from '../api.js';
+import { waitForAllSaves } from '../autosave.js';
 import { esc, icon, toast, confirmDialog, emptyState, withLoading } from '../ui.js';
 import { catalog, orgVars } from '../catalog.js';
 import { thumb } from '../../card/gallery.js';
 import { cardSize, paletteOf, flagsOf } from '../../card/scene.js';
-import project from './project.js';
+import project, { savedStep } from './project.js';
 import printView from '../print.js';
 import { blankExcel } from '../people.js';
 
@@ -48,6 +49,7 @@ function list( el, ctx, mode ) {
 		let cat;
 		let data;
 		try {
+			await waitForAllSaves();
 			[ cat, data ] = await Promise.all( [ catalog(), api( 'projects' ) ] );
 		} catch ( e ) {
 			el.innerHTML = `<div class="card"><p>${ esc( e.message ) }</p></div>`;
@@ -61,7 +63,7 @@ function list( el, ctx, mode ) {
 			el.innerHTML = `<section class="card">${ emptyState( { art: 'cards', title: __( 'No card projects yet', 'pikacart' ), text: __( 'Create your first project by choosing a design for your students or staff.', 'pikacart' ), button: __( 'Create ID card', 'pikacart' ), href: ctx.url( 'create' ) } ) }</section>`;
 			return;
 		}
-		const target = ( p ) => ( mode === 'projects' ? `projects/${ p.id }/${ [ 'design', 'design', 'design', 'setup', 'details', 'editor', 'people', 'download' ][ p.step ] || 'setup' }` : mode === 'members' ? `projects/${ p.id }/people` : `print/${ p.id }` );
+		const target = ( p ) => ( mode === 'projects' ? savedStep( p ) : mode === 'members' ? `projects/${ p.id }/people` : `print/${ p.id }` );
 		el.innerHTML = `<div class="section-head-row"><div><h2 class="h2">${ esc( intro[ 0 ] ) }</h2><p class="muted">${ esc( intro[ 1 ] ) }</p></div>
 			<a class="btn btn-primary" href="${ esc( ctx.url( 'create' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'New project', 'pikacart' ) ) }</a></div>
 			<div class="proj-grid">
@@ -146,8 +148,18 @@ function list( el, ctx, mode ) {
 			}
 		} else if ( a === 'del' ) {
 			if ( await confirmDialog( { title: __( 'Delete this project?', 'pikacart' ), message: __( 'Its people move to the recycle bin for 30 days.', 'pikacart' ), confirm: __( 'Delete', 'pikacart' ), danger: true } ) ) {
-				await api( `projects/${ p.id }/delete`, { method: 'POST' } ).then( ( r ) => toast( r.message ) ).catch( ( e ) => toast( e.message, 'error' ) );
-				ctx.navigate( 'projects', true );
+				try {
+					const r = await api( `projects/${ p.id }/delete`, { method: 'POST' } );
+					toast( r.message );
+				} catch ( e ) {
+					// Already deleted (e.g. a second click): just refresh the list.
+					if ( e.code !== 'pkc_not_found' ) {
+						toast( e.message, 'error' );
+						return;
+					}
+				}
+				b.closest( '.proj-card' )?.remove();
+				ctx.navigate( mode === 'projects' ? 'projects' : mode, true );
 			}
 		}
 	}

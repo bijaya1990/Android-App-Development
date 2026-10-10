@@ -130,7 +130,7 @@ body.pkc { margin: 0; font-family: var(--pkc-font); font-size: var(--pkc-fs-md);
 /* Forms */
 .pkc .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--pkc-s4); }
 .pkc .field label { font-size: var(--pkc-fs-sm); font-weight: 600; color: var(--pkc-ink); }
-.pkc input[type="text"], .pkc input[type="email"], .pkc input[type="tel"], .pkc input[type="password"], .pkc input[type="url"], .pkc input[type="number"], .pkc input[type="date"], .pkc input[type="search"], .pkc select, .pkc textarea {
+.pkc input:not([type]), .pkc input[type="text"], .pkc input[type="email"], .pkc input[type="tel"], .pkc input[type="password"], .pkc input[type="url"], .pkc input[type="number"], .pkc input[type="date"], .pkc input[type="search"], .pkc select, .pkc textarea {
 	width: 100%; min-height: 44px; padding: 10px 14px; border: 1px solid var(--pkc-line-strong); border-radius: var(--pkc-r-sm); background: var(--pkc-surface); color: var(--pkc-ink); font: 400 var(--pkc-fs-md)/1.4 var(--pkc-font); transition: border-color var(--pkc-t), box-shadow var(--pkc-t);
 }
 .pkc textarea { min-height: 96px; resize: vertical; }

@@ -34,6 +34,12 @@ To update later, upload the new ZIP the same way. WordPress asks "Replace curren
 
 ---
 
+## New in version 2.2
+
+- **Valid upto for all cards**: in a project's **Details** step, set one "Valid upto" (and optional "Valid from") date. Every card without its own date uses it, and changing it updates those cards. A person can still have their own date (Add person or the Excel).
+- **Continue where you left off**: the dashboard shows your latest project and recent projects; each opens on the step where you stopped. The design gallery remembers the card type, orientation, style and colour you were looking at.
+- **Fixes**: changes (font, size, colours) are always saved before the next step opens, so the new style shows everywhere; a deleted project disappears at once; Pikacart pages and data are never stored by LiteSpeed Cache or other cache plugins.
+
 ## New in version 2.1
 
 - **Change design any time**: every project has a **Change design** button (in the project header and on each project in My Projects). People, details, size and colours are kept.
