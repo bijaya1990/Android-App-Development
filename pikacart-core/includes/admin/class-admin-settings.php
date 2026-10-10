@@ -123,7 +123,7 @@ class PKC_Admin_Settings {
 	 * Razorpay setup steps and the webhook URL to copy.
 	 */
 	private static function razorpay_help() {
-		$events = 'subscription.activated, subscription.charged, subscription.pending, subscription.halted, subscription.cancelled, subscription.completed, payment.failed, payment.captured, order.paid';
+		$events = 'subscription.activated, subscription.charged, subscription.pending, subscription.halted, subscription.cancelled, subscription.completed, payment.failed, payment.captured, order.paid, refund.processed';
 		?>
 		<div class="pkc-panel pkc-note">
 			<h3><?php esc_html_e( 'How to connect Razorpay', 'pikacart' ); ?></h3>
