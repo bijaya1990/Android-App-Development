@@ -56,6 +56,7 @@ export default function project( el, ctx, params ) {
 			// Changes from the step just left (font, size, colour…) are saved first.
 			await waitForSave( id );
 			[ cat, data ] = await Promise.all( [ catalog(), api( `projects/${ id }` ) ] );
+			await sameOrg( ctx, data );
 			const first = await api( `projects/${ id }/members?per_page=1&sort=created` );
 			sample = first.members[ 0 ] || null;
 		} catch ( e ) {
@@ -237,8 +238,20 @@ export function makeP( ctx, cat, data, sample, getAutosave ) {
 export async function loadProject( ctx, id ) {
 	await waitForSave( id );
 	const [ cat, data ] = await Promise.all( [ catalog(), api( `projects/${ id }` ) ] );
+	await sameOrg( ctx, data );
 	const first = await api( `projects/${ id }/members?per_page=1&sort=created` );
 	return makeP( ctx, cat, data, first.members[ 0 ] || null, null );
+}
+
+/**
+ * A project of another organisation was opened (e.g. from a saved link): the
+ * server switched to that organisation, so load its details for the cards.
+ */
+async function sameOrg( ctx, data ) {
+	const cid = data.project.client_id;
+	if ( cid && cid !== ctx.me.client ) {
+		await ctx.reloadMe();
+	}
 }
 
 /* ---------- Shared preview block ---------- */

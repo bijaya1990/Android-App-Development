@@ -1,7 +1,8 @@
 /**
- * Create ID card: choose category and card type, then pick one of 50 styles
+ * Create ID card: first choose the organisation (school, college, office...)
+ * the card is for, then the category and card type, then one of 50 styles
  * with filters (orientation, style level, colour) and a live preview.
- * Routes: create, create/{subtypeId}
+ * Routes: create (organisation), create/types, create/{subtypeId}
  */
 
 import { api } from '../api.js';
@@ -12,8 +13,9 @@ import { renderSide } from '../../card/render.js';
 import { layoutFor } from '../../card/families.js';
 import { demoVars, kindOf } from '../../card/data.js';
 import { supportsOrientation } from '../../card/scene.js';
+import { orgMark, orgName, orgStats, switchOrg, activeOrg } from '../orgs.js';
 
-const { __, sprintf } = window.wp.i18n;
+const { __, _n, sprintf } = window.wp.i18n;
 
 const CAT_ICONS = { school: 'school', college: 'college', book: 'book', briefcase: 'briefcase', health: 'health', heart: 'heart', ticket: 'ticket', shield: 'shield', users: 'users', mic: 'mic' };
 
@@ -27,10 +29,14 @@ export default function create( el, ctx, params ) {
 				return;
 			}
 			const sid = Number( params[ 0 ] || 0 );
-			if ( sid ) {
+			if ( ! ctx.me.client ) {
+				orgPicker( el, ctx );
+			} else if ( sid ) {
 				gallery( el, ctx, cat, sid, () => alive );
-			} else {
+			} else if ( params[ 0 ] === 'types' ) {
 				chooser( el, ctx, cat );
+			} else {
+				orgPicker( el, ctx );
 			}
 		} )
 		.catch( ( e ) => {
@@ -63,12 +69,62 @@ function rememberCreate( v ) {
 	}
 }
 
+/** Step 0: which organisation is this ID card for? */
+function orgPicker( el, ctx ) {
+	let query = '';
+	const draw = () => {
+		const me = ctx.me;
+		const term = query.trim().toLowerCase();
+		const list = [ ...me.clients ].sort( ( a, b ) => ( b.id === me.client ) - ( a.id === me.client ) );
+		const shown = list.filter( ( o ) => ! term || orgName( o ).toLowerCase().includes( term ) );
+		el.innerHTML = `<div class="org-pick">
+			<div class="org-pick-head">
+				<span class="eyebrow">${ esc( __( 'New ID card', 'pikacart' ) ) }</span>
+				<h2 class="h2">${ esc( __( 'Which organisation is this ID card for?', 'pikacart' ) ) }</h2>
+				<p class="muted">${ esc( __( 'Choose the school, college or office. Its logo, address and signature go on the cards, and the project is saved in its folder.', 'pikacart' ) ) }</p>
+			</div>
+			${ list.length > 6 ? `<div class="org-search"><span>${ icon( 'search' ) }</span><input type="search" data-q value="${ esc( query ) }" placeholder="${ esc( __( 'Search organisations…', 'pikacart' ) ) }" aria-label="${ esc( __( 'Search organisations', 'pikacart' ) ) }"></div>` : '' }
+			<div class="org-pick-grid">
+				<a class="org-pick-item org-pick-add" href="${ esc( ctx.url( 'organisations/new/card' ) ) }" data-link>
+					<span class="org-mark lg is-add">${ icon( 'plus' ) }</span>
+					<span class="org-pick-t"><b>${ esc( __( 'Add a new organisation', 'pikacart' ) ) }</b><small>${ esc( __( 'School, college, office, hospital…', 'pikacart' ) ) }</small></span>
+				</a>
+				${ shown.map( ( o ) => `<button type="button" class="org-pick-item${ o.id === me.client ? ' is-last' : '' }" data-org="${ o.id }">
+					${ orgMark( o, 'lg' ) }
+					<span class="org-pick-t"><b>${ esc( orgName( o ) ) }</b><small>${ esc( orgStats( o ) ) }</small>${ o.id === me.client ? `<em>${ esc( __( 'Last used', 'pikacart' ) ) }</em>` : '' }</span>
+					${ icon( 'chevron-right' ) }
+				</button>` ).join( '' ) }
+			</div>
+			${ term && ! shown.length ? `<p class="muted center">${ esc( __( 'No organisation matches your search.', 'pikacart' ) ) }</p>` : '' }
+		</div>`;
+		const q = el.querySelector( '[data-q]' );
+		if ( q ) {
+			q.addEventListener( 'input', () => {
+				query = q.value;
+				const pos = q.selectionStart;
+				draw();
+				const n = el.querySelector( '[data-q]' );
+				n.focus();
+				n.setSelectionRange( pos, pos );
+			} );
+		}
+		el.querySelectorAll( '[data-org]' ).forEach( ( b ) => b.addEventListener( 'click', () => withLoading( b, async () => {
+			if ( await switchOrg( ctx, Number( b.dataset.org ), true ) ) {
+				ctx.navigate( 'create/types' );
+			}
+		} ) ) );
+	};
+	draw();
+}
+
 function chooser( el, ctx, cat ) {
 	const mine = ctx.me.org.category_id;
 	const last = lastCreate();
-	const lastSub = last && last.org === ctx.me.org.id ? findSubtype( cat, last.sid ) : {};
+	const lastSub = last && last.org === ctx.me.client ? findSubtype( cat, last.sid ) : {};
+	const forOrg = activeOrg( ctx.me );
 	const ordered = [ ...cat.tree ].sort( ( a, b ) => ( b.id === mine ) - ( a.id === mine ) );
 	el.innerHTML = `${ stepBar( 1 ) }
+		${ forOrg ? `<div class="card-for">${ orgMark( forOrg, 'sm' ) }<span>${ esc( __( 'Card for', 'pikacart' ) ) } <b>${ esc( orgName( forOrg ) ) }</b></span><a href="${ esc( ctx.url( 'create' ) ) }" data-link>${ esc( __( 'Change', 'pikacart' ) ) }</a></div>` : '' }
 		<div class="section-head-row"><div><h2 class="h2">${ esc( __( 'What kind of ID card?', 'pikacart' ) ) }</h2><p class="muted">${ esc( __( 'Pick a category and a card type. Each has 50 professional styles.', 'pikacart' ) ) }</p></div>
 		<a class="btn" href="${ esc( ctx.url( 'designs' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Use my own design', 'pikacart' ) ) }</a></div>
 		${ lastSub.subtype ? `<a class="card continue-card" href="${ esc( ctx.url( 'create/' + lastSub.subtype.id ) ) }" data-link>${ icon( 'refresh' ) }<span><strong>${ esc( __( 'Continue choosing a design', 'pikacart' ) ) }</strong><small>${ esc( lastSub.category.name + ' · ' + lastSub.subtype.name ) }</small></span>${ icon( 'chevron-right' ) }</a>` : '' }
@@ -83,16 +139,16 @@ function chooser( el, ctx, cat ) {
 async function gallery( el, ctx, cat, sid, alive ) {
 	const { category, subtype } = findSubtype( cat, sid );
 	if ( ! subtype ) {
-		ctx.navigate( 'create', true );
+		ctx.navigate( 'create/types', true );
 		return;
 	}
 	const saved = lastCreate();
-	const st = Object.assign( { orientation: 'portrait', level: '', palette: 0, own: false }, saved && saved.sid === sid && saved.org === ctx.me.org.id ? saved.st : {} );
-	const remember = () => rememberCreate( { org: ctx.me.org.id, sid, st } );
+	const st = Object.assign( { orientation: 'portrait', level: '', palette: 0, own: false }, saved && saved.sid === sid && saved.org === ctx.me.client ? saved.st : {} );
+	const remember = () => rememberCreate( { org: ctx.me.client, sid, st } );
 	remember();
 	el.innerHTML = `${ stepBar( 2 ) }
 		<div class="section-head-row">
-			<div><a class="back-link" href="${ esc( ctx.url( 'create' ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( category.name ) }</a><h2 class="h2">${ esc( subtype.name ) }</h2></div>
+			<div><a class="back-link" href="${ esc( ctx.url( 'create/types' ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( category.name ) }</a><h2 class="h2">${ esc( subtype.name ) }</h2></div>
 			<a class="btn" href="${ esc( ctx.url( 'designs/request' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Design on Demand', 'pikacart' ) ) }</a>
 		</div>
 		<div class="filters card">

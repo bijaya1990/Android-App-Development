@@ -268,9 +268,36 @@ class PKC_Installer {
   KEY status (status)
 ) $c;";
 
+		$sql[] = "CREATE TABLE {$t('clients')} (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  org_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  name varchar(190) NOT NULL DEFAULT '',
+  category_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  tagline varchar(255) NOT NULL DEFAULT '',
+  address text NULL,
+  phone varchar(40) NOT NULL DEFAULT '',
+  org_email varchar(190) NOT NULL DEFAULT '',
+  website varchar(190) NOT NULL DEFAULT '',
+  logo varchar(255) NOT NULL DEFAULT '',
+  sign varchar(255) NOT NULL DEFAULT '',
+  seal varchar(255) NOT NULL DEFAULT '',
+  signatory_name varchar(190) NOT NULL DEFAULT '',
+  signatory_title varchar(190) NOT NULL DEFAULT '',
+  event_name varchar(190) NOT NULL DEFAULT '',
+  session_year varchar(40) NOT NULL DEFAULT '',
+  terms text NULL,
+  verify_fields text NULL,
+  created_at datetime NULL DEFAULT NULL,
+  updated_at datetime NULL DEFAULT NULL,
+  deleted_at datetime NULL DEFAULT NULL,
+  PRIMARY KEY  (id),
+  KEY org_id (org_id)
+) $c;";
+
 		$sql[] = "CREATE TABLE {$t('projects')} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   org_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  client_id bigint(20) unsigned NOT NULL DEFAULT 0,
   subtype_id bigint(20) unsigned NOT NULL DEFAULT 0,
   template_id bigint(20) unsigned NOT NULL DEFAULT 0,
   name varchar(190) NOT NULL DEFAULT '',
@@ -288,6 +315,7 @@ class PKC_Installer {
   deleted_at datetime NULL DEFAULT NULL,
   PRIMARY KEY  (id),
   KEY org_id (org_id),
+  KEY client_id (client_id),
   KEY status (status)
 ) $c;";
 

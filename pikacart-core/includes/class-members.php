@@ -121,12 +121,30 @@ class PKC_Members {
 		return array( $cols, $data );
 	}
 
-	/** Is this ID number already used in the account for the same session? */
-	public static function id_taken( $org_id, $id_no, $session, $exclude = 0 ) {
+	/**
+	 * Is this ID number already used for the same session inside the same
+	 * organisation (school, college...) as the project? Two different colleges
+	 * of one account may both have an ID number "1001".
+	 */
+	public static function id_taken( $org_id, $id_no, $session, $exclude = 0, $project_id = 0 ) {
 		global $wpdb;
+		$m = pkc_table( 'members' );
+		$p = pkc_table( 'projects' );
+		if ( $project_id ) {
+			return (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT mm.id FROM $m mm INNER JOIN $p pp ON pp.id = mm.project_id WHERE mm.org_id = %d AND mm.id_no = %s AND mm.session = %s AND mm.id <> %d AND mm.deleted_at IS NULL AND pp.client_id = (SELECT client_id FROM $p WHERE id = %d) LIMIT 1",
+					$org_id,
+					$id_no,
+					(string) $session,
+					$exclude,
+					$project_id
+				)
+			);
+		}
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT id FROM ' . pkc_table( 'members' ) . ' WHERE org_id = %d AND id_no = %s AND session = %s AND id <> %d AND deleted_at IS NULL LIMIT 1',
+				"SELECT id FROM $m WHERE org_id = %d AND id_no = %s AND session = %s AND id <> %d AND deleted_at IS NULL LIMIT 1",
 				$org_id,
 				$id_no,
 				(string) $session,
@@ -196,7 +214,7 @@ class PKC_Members {
 			}
 		}
 		$session  = isset( $in['session'] ) ? mb_substr( sanitize_text_field( (string) $in['session'] ), 0, 40 ) : ( $existing ? $existing->session : (string) ( $settings['session'] ?? '' ) );
-		if ( '' !== $cols['id_no'] && self::id_taken( $org->id, $cols['id_no'], $session, $existing ? (int) $existing->id : 0 ) ) {
+		if ( '' !== $cols['id_no'] && self::id_taken( $org->id, $cols['id_no'], $session, $existing ? (int) $existing->id : 0, (int) $project->id ) ) {
 			return new WP_Error(
 				'pkc_duplicate',
 				/* translators: %s: ID number */
@@ -400,7 +418,7 @@ class PKC_Members {
 			if ( ! $m || (int) $m->project_id !== (int) $project_id || ! $m->deleted_at ) {
 				continue;
 			}
-			if ( self::id_taken( $org_id, $m->id_no, $m->session, $m->id ) ) {
+			if ( self::id_taken( $org_id, $m->id_no, $m->session, $m->id, (int) $m->project_id ) ) {
 				continue; // Someone else now uses this ID number.
 			}
 			$wpdb->update( pkc_table( 'members' ), array( 'deleted_at' => null ), array( 'id' => $id ) );
@@ -424,7 +442,7 @@ class PKC_Members {
 		$base  = $member->id_no . '-copy';
 		$id_no = $base;
 		$i     = 1;
-		while ( self::id_taken( $org->id, $id_no, $member->session ) ) {
+		while ( self::id_taken( $org->id, $id_no, $member->session, 0, (int) $member->project_id ) ) {
 			$id_no = $base . ( ++$i );
 		}
 		$row['id_no']        = $id_no;

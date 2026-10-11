@@ -6,8 +6,9 @@
 import { api } from '../api.js';
 import { esc, icon, toast, formData, markError, withLoading } from '../ui.js';
 import { uploaderHTML, bindUploaders } from '../uploader.js';
+import { orgMark, activeOrg } from '../orgs.js';
 
-const { __ } = window.wp.i18n;
+const { __, sprintf } = window.wp.i18n;
 
 const VERIFY_LABELS = () => ( {
 	photo: __( 'Photo', 'pikacart' ),
@@ -26,11 +27,21 @@ const VERIFY_LABELS = () => ( {
 
 export default function organisation( el, ctx ) {
 	function draw() {
+		if ( ! ctx.me.client ) {
+			el.innerHTML = `<div class="card org-empty"><h3>${ esc( __( 'No organisation yet', 'pikacart' ) ) }</h3><p>${ esc( __( 'Add the school, college or office you make cards for. Its details are edited here.', 'pikacart' ) ) }</p><a class="btn btn-primary" href="${ esc( ctx.url( 'organisations/new' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'Add organisation', 'pikacart' ) ) }</a></div>`;
+			return;
+		}
 		const org = ctx.me.org;
+		const cur = activeOrg( ctx.me );
 		const cats = ctx.me.catalog.map( ( c ) => `<option value="${ c.id }" ${ org.category_id === c.id ? 'selected' : '' }>${ esc( c.name ) }</option>` ).join( '' );
 		const labels = VERIFY_LABELS();
 
-		el.innerHTML = `<form class="org-form" novalidate>
+		el.innerHTML = `<div class="org-context">
+				${ orgMark( cur, 'md' ) }
+				<div><small>${ esc( __( 'Editing the details of', 'pikacart' ) ) }</small><b>${ esc( org.name || __( 'New organisation', 'pikacart' ) ) }</b></div>
+				<a class="btn btn-sm" href="${ esc( ctx.url( 'organisations' ) ) }" data-link>${ icon( 'building' ) }${ esc( ctx.me.clients.length > 1 ? sprintf( __( 'Switch (%d)', 'pikacart' ), ctx.me.clients.length ) : __( 'All organisations', 'pikacart' ) ) }</a>
+			</div>
+			<form class="org-form" novalidate>
 			<div class="page-grid">
 				<div class="page-main">
 					<section class="card">

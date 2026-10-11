@@ -20,6 +20,9 @@ class PKC_REST_Account {
 			array( 'org/upload', 'POST', 'upload' ),
 			array( 'org/remove-image', 'POST', 'remove_image' ),
 			array( 'onboarding', 'POST', 'onboarding' ),
+			array( 'clients', 'POST', 'client_create' ),
+			array( 'clients/switch', 'POST', 'client_switch' ),
+			array( 'clients/(?P<id>\d+)/delete', 'POST', 'client_delete' ),
 		);
 		foreach ( $routes as $r ) {
 			register_rest_route(
@@ -43,8 +46,11 @@ class PKC_REST_Account {
 		$plan = PKC_Billing::default_plan();
 		$sub  = PKC_Billing::active_subscription( $org->id );
 
-		$projects = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . pkc_table( 'projects' ) . ' WHERE org_id = %d AND deleted_at IS NULL', $org->id ) );
-		$by_status = $wpdb->get_results( $wpdb->prepare( 'SELECT status, COUNT(*) AS n FROM ' . pkc_table( 'members' ) . ' WHERE org_id = %d AND deleted_at IS NULL GROUP BY status', $org->id ) );
+		// Everything below is for the organisation the account is working in.
+		$client    = PKC_Clients::active( $org );
+		$cid       = $client ? (int) $client->id : -1;
+		$projects  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . pkc_table( 'projects' ) . ' WHERE org_id = %d AND client_id = %d AND deleted_at IS NULL', $org->id, $cid ) );
+		$by_status = $wpdb->get_results( $wpdb->prepare( 'SELECT mm.status, COUNT(*) AS n FROM ' . pkc_table( 'members' ) . ' mm INNER JOIN ' . pkc_table( 'projects' ) . ' pp ON pp.id = mm.project_id WHERE mm.org_id = %d AND pp.client_id = %d AND pp.deleted_at IS NULL AND mm.deleted_at IS NULL GROUP BY mm.status', $org->id, $cid ) );
 		$cards     = array(
 			'draft'     => 0,
 			'ready'     => 0,
@@ -62,7 +68,13 @@ class PKC_REST_Account {
 				'email'    => $user ? $user->user_email : '',
 				'verified' => $user ? PKC_Accounts::is_verified( $user->ID ) : false,
 			),
-			'org'      => PKC_Organisations::to_app( $org ),
+			'org'      => PKC_Organisations::to_app( PKC_Clients::overlay( $org, $client ) ),
+			'account'  => array(
+				'name'         => $org->name,
+				'contact_name' => $org->contact_name,
+			),
+			'client'   => $client ? (int) $client->id : 0,
+			'clients'  => array_map( array( 'PKC_Clients', 'to_app' ), PKC_Clients::list_for( $org->id ) ),
 			'view_as'  => PKC_Organisations::viewing_as() ? array(
 				'exit' => wp_nonce_url( admin_url( 'admin-post.php?action=pkc_view_as_exit' ), 'pkc_view_as_exit' ),
 			) : null,
@@ -246,8 +258,12 @@ class PKC_REST_Account {
 		if ( is_wp_error( $data ) ) {
 			return $data;
 		}
-		PKC_Organisations::update( $org->id, $data );
-		PKC_Activity_Log::add( 'org.updated', $org->id );
+		$client = PKC_Clients::active( $org );
+		if ( ! $client ) {
+			return self::no_client();
+		}
+		self::save_profile( $org, $client, $data );
+		PKC_Activity_Log::add( 'org.updated', $org->id, $client->name );
 		return PKC_REST::ok(
 			array(
 				'message' => __( 'Organisation details saved.', 'pikacart' ),
@@ -299,6 +315,84 @@ class PKC_REST_Account {
 		return $data;
 	}
 
+	private static function no_client() {
+		return new WP_Error( 'pkc_no_client', __( 'Please add the organisation (school, college, office...) first.', 'pikacart' ), array( 'status' => 400 ) );
+	}
+
+	/** Profile fields go to the organisation; the contact person stays with the account. */
+	private static function save_profile( $org, $client, $data ) {
+		if ( isset( $data['contact_name'] ) ) {
+			PKC_Organisations::update( $org->id, array( 'contact_name' => $data['contact_name'] ) );
+			unset( $data['contact_name'] );
+		}
+		if ( isset( $data['onboarded'] ) ) {
+			if ( ! (int) $org->onboarded ) {
+				PKC_Organisations::update( $org->id, array( 'onboarded' => 1 ) );
+			}
+			unset( $data['onboarded'] );
+		}
+		PKC_Clients::update( $client->id, $data );
+	}
+
+	/**
+	 * Add an organisation and start working in it.
+	 */
+	public static function client_create( WP_REST_Request $r ) {
+		$org  = PKC_REST::org();
+		$data = self::clean_org_fields( $r );
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+		unset( $data['contact_name'] );
+		if ( PKC_Clients::count_for( $org->id ) >= 2000 ) {
+			return new WP_Error( 'pkc_invalid', __( 'You have reached the limit of organisations for one account.', 'pikacart' ), array( 'status' => 400 ) );
+		}
+		PKC_Clients::ensure( $org );
+		$id = PKC_Clients::create( $org->id, $data );
+		if ( ! $id ) {
+			return new WP_Error( 'pkc_error', __( 'Could not add the organisation. Please try again.', 'pikacart' ), array( 'status' => 500 ) );
+		}
+		PKC_Clients::set_active( $org, $id );
+		return PKC_REST::ok(
+			array(
+				'message' => __( 'Organisation added.', 'pikacart' ),
+				'id'      => $id,
+				'me'      => self::me_payload( PKC_Organisations::get( $org->id ) ),
+			)
+		);
+	}
+
+	/** Close the current organisation's work and open another one. */
+	public static function client_switch( WP_REST_Request $r ) {
+		$org = PKC_REST::org();
+		PKC_Clients::ensure( $org );
+		$id = absint( $r->get_param( 'id' ) );
+		if ( ! PKC_Clients::set_active( $org, $id ) ) {
+			return new WP_Error( 'pkc_not_found', __( 'Organisation not found.', 'pikacart' ), array( 'status' => 404 ) );
+		}
+		$client = PKC_Clients::get( $org->id, $id );
+		return PKC_REST::ok(
+			array(
+				/* translators: %s: organisation name */
+				'message' => sprintf( __( 'Now working on %s.', 'pikacart' ), $client->name ? $client->name : __( 'the new organisation', 'pikacart' ) ),
+				'me'      => self::me_payload( PKC_Organisations::get( $org->id ) ),
+			)
+		);
+	}
+
+	public static function client_delete( WP_REST_Request $r ) {
+		$org = PKC_REST::org();
+		if ( ! PKC_Clients::delete( $org, absint( $r['id'] ) ) ) {
+			return new WP_Error( 'pkc_not_found', __( 'Organisation not found.', 'pikacart' ), array( 'status' => 404 ) );
+		}
+		return PKC_REST::ok(
+			array(
+				'message' => __( 'Organisation deleted. Its people are in the recycle bin for 30 days.', 'pikacart' ),
+				'me'      => self::me_payload( PKC_Organisations::get( $org->id ) ),
+			)
+		);
+	}
+
 	/**
 	 * Upload logo, signature or seal (PNG keeps transparency).
 	 */
@@ -312,12 +406,16 @@ class PKC_REST_Account {
 		if ( ! PKC_Rate_Limit::hit( 'upload', (string) $org->id, 60, HOUR_IN_SECONDS ) ) {
 			return PKC_Rate_Limit::error();
 		}
+		$client = PKC_Clients::active( $org );
+		if ( ! $client ) {
+			return self::no_client();
+		}
 		$saved = PKC_Uploads::save_image( $files['file'] ?? null, $org, $type );
 		if ( is_wp_error( $saved ) ) {
 			return $saved;
 		}
-		PKC_Uploads::delete_url( $org, $org->{$type} );
-		PKC_Organisations::update( $org->id, array( $type => esc_url_raw( $saved['url'] ) ) );
+		self::forget_image( $org, $client, $type );
+		PKC_Clients::update( $client->id, array( $type => esc_url_raw( $saved['url'] ) ) );
 		return PKC_REST::ok(
 			array(
 				'message' => __( 'Image uploaded.', 'pikacart' ),
@@ -333,14 +431,34 @@ class PKC_REST_Account {
 		if ( ! in_array( $type, array( 'logo', 'sign', 'seal' ), true ) ) {
 			return new WP_Error( 'pkc_invalid', __( 'Unknown image type.', 'pikacart' ), array( 'status' => 400 ) );
 		}
-		PKC_Uploads::delete_url( $org, $org->{$type} );
-		PKC_Organisations::update( $org->id, array( $type => '' ) );
+		$client = PKC_Clients::active( $org );
+		if ( ! $client ) {
+			return self::no_client();
+		}
+		self::forget_image( $org, $client, $type );
+		PKC_Clients::update( $client->id, array( $type => '' ) );
 		return PKC_REST::ok(
 			array(
 				'message' => __( 'Image removed.', 'pikacart' ),
 				'me'      => self::me_payload( PKC_Organisations::get( $org->id ) ),
 			)
 		);
+	}
+
+	/**
+	 * Delete an old logo/signature/seal file only when no other organisation of
+	 * the account (or the account's original profile) still uses it.
+	 */
+	private static function forget_image( $org, $client, $type ) {
+		global $wpdb;
+		$url = (string) $client->{$type};
+		if ( '' === $url ) {
+			return;
+		}
+		$used = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . pkc_table( 'clients' ) . " WHERE org_id = %d AND id <> %d AND $type = %s", $org->id, $client->id, $url ) ); // phpcs:ignore WordPress.DB.PreparedSQL -- $type is one of logo/sign/seal.
+		if ( ! $used && $url !== (string) $org->{$type} ) {
+			PKC_Uploads::delete_url( $org, $url );
+		}
 	}
 
 	public static function onboarding( WP_REST_Request $r ) {
@@ -353,7 +471,13 @@ class PKC_REST_Account {
 			$data['onboarded'] = 1;
 			PKC_Activity_Log::add( 'onboarding.completed', $org->id );
 		}
-		PKC_Organisations::update( $org->id, $data );
+		$client = PKC_Clients::active( $org );
+		if ( ! $client ) {
+			$id     = PKC_Clients::create( $org->id, array_diff_key( $data, array( 'contact_name' => 1, 'onboarded' => 1 ) ) );
+			$client = PKC_Clients::get( $org->id, $id );
+			PKC_Clients::set_active( $org, $id );
+		}
+		self::save_profile( $org, $client, $data );
 		return PKC_REST::ok(
 			array(
 				'message' => __( 'Saved.', 'pikacart' ),

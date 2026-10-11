@@ -13,6 +13,8 @@ import support from './views/support.js';
 import create from './views/create.js';
 import projects from './views/projects.js';
 import designs from './views/designs.js';
+import organisations from './views/organisations.js';
+import { orgMark, orgName, orgMenuList, switchOrg, activeOrg } from './orgs.js';
 import { initLive, closeBell } from './live.js';
 
 const { __, sprintf } = window.wp.i18n;
@@ -28,12 +30,13 @@ const store = {
 const routes = {
 	'': { title: __( 'Dashboard', 'pikacart' ), view: dashboard },
 	welcome: { title: __( 'Welcome', 'pikacart' ), view: onboarding },
+	organisations: { title: __( 'Organisations', 'pikacart' ), view: organisations },
 	create: { title: __( 'Create ID card', 'pikacart' ), view: create },
 	projects: { title: __( 'My Projects', 'pikacart' ), view: projects( 'projects' ) },
 	members: { title: __( 'Members', 'pikacart' ), view: projects( 'members' ) },
 	print: { title: __( 'Print Sheets', 'pikacart' ), view: projects( 'print' ) },
 	designs: { title: __( 'My Designs', 'pikacart' ), view: designs },
-	organisation: { title: __( 'Organisation', 'pikacart' ), view: organisation },
+	organisation: { title: __( 'Organisation details', 'pikacart' ), view: organisation },
 	subscription: { title: __( 'Subscription', 'pikacart' ), view: subscription },
 	support: { title: __( 'Support', 'pikacart' ), view: support },
 	account: { title: __( 'Account', 'pikacart' ), view: account },
@@ -97,12 +100,6 @@ function render() {
 		history.replaceState( {}, '', ctx.url() );
 	}
 
-	// New accounts see the short onboarding first (they can skip it).
-	if ( key === '' && ! store.me.org.onboarded && ! store.skippedWelcome ) {
-		key = 'welcome';
-		history.replaceState( {}, '', ctx.url( 'welcome' ) );
-	}
-
 	// A design picked on the public website before logging in or registering.
 	if ( key !== 'welcome' && pendingDesign() ) {
 		return;
@@ -133,10 +130,14 @@ function render() {
 	store.cleanup = route.view( view, ctx, path.split( '/' ).slice( 1 ) ) || null;
 
 	closeMenu();
+	closeOrgMenu();
 	window.scrollTo( 0, 0 );
 }
 
 function pendingDesign() {
+	if ( ! store.me.client ) {
+		return false; // Keep it until the first organisation is added.
+	}
 	let use = null;
 	try {
 		use = JSON.parse( window.localStorage.getItem( 'pkc_use' ) || 'null' );
@@ -175,15 +176,56 @@ function initials( name ) {
 
 function renderShell() {
 	const me = store.me;
-	const avatar = document.getElementById( 'avatar' );
-	if ( me.org.logo ) {
-		avatar.innerHTML = `<img src="${ esc( me.org.logo ) }" alt="">`;
-	} else {
-		avatar.textContent = initials( me.org.name );
-	}
-	document.getElementById( 'profile-name' ).textContent = me.org.name;
+	const accountName = ( me.account && me.account.name ) || me.org.name;
+	document.getElementById( 'avatar' ).textContent = initials( accountName );
+	document.getElementById( 'profile-name' ).textContent = accountName;
+	renderOrgSwitch();
 	updatePill();
 	renderBanners();
+}
+
+/* ---------- Organisation switcher (top bar) ---------- */
+
+function renderOrgSwitch() {
+	const box = document.getElementById( 'org-switch' );
+	if ( ! box ) {
+		return;
+	}
+	const me = store.me;
+	const cur = activeOrg( me );
+	const open = box.classList.contains( 'is-open' );
+	if ( ! cur ) {
+		box.innerHTML = `<a class="org-switch-btn is-empty" href="${ esc( ctx.url( 'organisations/new' ) ) }" data-link>${ icon( 'plus' ) }<span class="org-switch-t"><small>${ esc( __( 'Making cards for', 'pikacart' ) ) }</small><b>${ esc( __( 'Add organisation', 'pikacart' ) ) }</b></span></a>`;
+		return;
+	}
+	box.innerHTML = `<button type="button" class="org-switch-btn" data-action="toggle-org" aria-haspopup="true" aria-expanded="${ open }">
+			${ orgMark( cur, 'sm' ) }
+			<span class="org-switch-t"><small>${ esc( __( 'Working for', 'pikacart' ) ) }</small><b>${ esc( orgName( cur ) ) }</b></span>
+			${ icon( 'chevron-down' ) }
+		</button>
+		<div class="org-menu" ${ open ? '' : 'hidden' } role="menu">
+			${ me.clients.length > 6 ? `<div class="org-menu-search">${ icon( 'search' ) }<input type="search" data-org-q placeholder="${ esc( __( 'Search organisations…', 'pikacart' ) ) }" aria-label="${ esc( __( 'Search organisations', 'pikacart' ) ) }"></div>` : '' }
+			<div class="org-menu-list" data-org-list>${ orgMenuList( me ) }</div>
+			<div class="org-menu-foot">
+				<a href="${ esc( ctx.url( 'organisations/new' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'Add organisation', 'pikacart' ) ) }</a>
+				<a href="${ esc( ctx.url( 'organisations' ) ) }" data-link>${ icon( 'building' ) }${ esc( __( 'All organisations', 'pikacart' ) ) }</a>
+			</div>
+		</div>`;
+}
+
+function closeOrgMenu() {
+	const box = document.getElementById( 'org-switch' );
+	if ( box && box.classList.contains( 'is-open' ) ) {
+		box.classList.remove( 'is-open' );
+		renderOrgSwitch();
+	}
+}
+
+/** After switching, show the same kind of screen for the other organisation. */
+function afterSwitch() {
+	const key = currentPath().split( '/' )[ 0 ];
+	const home = { projects: 'projects', members: 'members', print: 'print', create: 'create/types', organisation: 'organisation', organisations: 'organisations' };
+	navigate( key in home ? home[ key ] : '', false );
 }
 
 function updatePill() {
@@ -292,6 +334,27 @@ document.addEventListener( 'click', async ( e ) => {
 			action.setAttribute( 'aria-expanded', String( ! menu.hidden ) );
 			e.stopPropagation();
 			return;
+		} else if ( a === 'toggle-org' ) {
+			const box = document.getElementById( 'org-switch' );
+			box.classList.toggle( 'is-open' );
+			renderOrgSwitch();
+			const q = box.querySelector( '[data-org-q]' );
+			if ( q ) {
+				q.focus();
+			}
+			if ( box.classList.contains( 'is-open' ) ) {
+				// Fresh project and card counts for the list.
+				api( 'me' ).then( ( me ) => {
+					store.me = me;
+					const list = document.querySelector( '[data-org-list]' );
+					const term = box.querySelector( '[data-org-q]' );
+					if ( list ) {
+						list.innerHTML = orgMenuList( me, term ? term.value : '' );
+					}
+				} ).catch( () => {} );
+			}
+			e.stopPropagation();
+			return;
 		} else if ( a === 'resend-verify' ) {
 			action.disabled = true;
 			try {
@@ -312,6 +375,19 @@ document.addEventListener( 'click', async ( e ) => {
 		return;
 	}
 
+	const pick = e.target.closest( '.org-menu [data-org]' );
+	if ( pick ) {
+		const id = Number( pick.dataset.org );
+		closeOrgMenu();
+		if ( id !== store.me.client && await switchOrg( ctx, id ) ) {
+			afterSwitch();
+		}
+		return;
+	}
+	if ( ! e.target.closest( '.org-switch' ) ) {
+		closeOrgMenu();
+	}
+
 	if ( ! e.target.closest( '.profile' ) ) {
 		const menu = document.getElementById( 'profile-menu' );
 		if ( ! menu.hidden ) {
@@ -324,6 +400,16 @@ document.addEventListener( 'click', async ( e ) => {
 document.addEventListener( 'keydown', ( e ) => {
 	if ( e.key === 'Escape' ) {
 		closeMenu();
+		closeOrgMenu();
+	}
+} );
+
+document.addEventListener( 'input', ( e ) => {
+	if ( e.target.matches( '[data-org-q]' ) ) {
+		const list = document.querySelector( '[data-org-list]' );
+		if ( list ) {
+			list.innerHTML = orgMenuList( store.me, e.target.value );
+		}
 	}
 } );
 

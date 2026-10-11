@@ -243,7 +243,7 @@ class PKC_Router {
 			'verify',
 			array(
 				'member' => $m,
-				'org'    => $org,
+				'org'    => PKC_Clients::for_project( $org, (int) $m->project_id ),
 				'status' => $status,
 			)
 		);

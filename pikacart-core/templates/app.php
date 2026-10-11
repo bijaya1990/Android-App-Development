@@ -13,12 +13,13 @@ $pkc_title  = __( 'Dashboard', 'pikacart' );
 $pkc_styles = array( 'pkc-app', 'pkc-card-fonts', 'pkc-cropper' );
 $pkc_nav    = array(
 	array( '', 'home', __( 'Dashboard', 'pikacart' ) ),
+	array( 'organisations', 'building', __( 'Organisations', 'pikacart' ) ),
 	array( 'create', 'plus', __( 'Create ID card', 'pikacart' ) ),
 	array( 'projects', 'folder', __( 'My Projects', 'pikacart' ) ),
 	array( 'members', 'users', __( 'Members', 'pikacart' ) ),
 	array( 'print', 'printer', __( 'Print Sheets', 'pikacart' ) ),
 	array( 'designs', 'palette', __( 'My Designs', 'pikacart' ) ),
-	array( 'organisation', 'building', __( 'Organisation', 'pikacart' ) ),
+	array( 'organisation', 'edit', __( 'Organisation details', 'pikacart' ) ),
 	array( 'subscription', 'card', __( 'Subscription', 'pikacart' ) ),
 	array( 'support', 'help', __( 'Support', 'pikacart' ) ),
 	array( 'account', 'user', __( 'Account', 'pikacart' ) ),
@@ -67,6 +68,7 @@ require PKC_DIR . 'templates/partials/head.php';
 		<header class="topbar">
 			<button type="button" class="icon-btn menu-btn" data-action="open-menu" aria-label="<?php esc_attr_e( 'Open menu', 'pikacart' ); ?>"><svg class="pkc-i"><use href="#i-menu"></use></svg></button>
 			<h1 class="page-title" id="page-title"><?php esc_html_e( 'Dashboard', 'pikacart' ); ?></h1>
+			<div class="org-switch" id="org-switch"></div>
 			<div class="topbar-right">
 				<a class="status-pill" id="status-pill" href="<?php echo esc_url( pkc_url( 'app', 'subscription' ) ); ?>" data-link hidden></a>
 				<div class="bell">
@@ -90,7 +92,7 @@ require PKC_DIR . 'templates/partials/head.php';
 					</button>
 					<div class="profile-menu" id="profile-menu" hidden>
 						<a href="<?php echo esc_url( pkc_url( 'app', 'account' ) ); ?>" data-route="account"><svg class="pkc-i"><use href="#i-user"></use></svg><?php esc_html_e( 'Account', 'pikacart' ); ?></a>
-						<a href="<?php echo esc_url( pkc_url( 'app', 'organisation' ) ); ?>" data-route="organisation"><svg class="pkc-i"><use href="#i-building"></use></svg><?php esc_html_e( 'Organisation', 'pikacart' ); ?></a>
+						<a href="<?php echo esc_url( pkc_url( 'app', 'organisations' ) ); ?>" data-route="organisations"><svg class="pkc-i"><use href="#i-building"></use></svg><?php esc_html_e( 'Organisations', 'pikacart' ); ?></a>
 						<a href="<?php echo esc_url( pkc_url( 'app', 'subscription' ) ); ?>" data-route="subscription"><svg class="pkc-i"><use href="#i-card"></use></svg><?php esc_html_e( 'Subscription', 'pikacart' ); ?></a>
 						<a href="<?php echo esc_url( wp_logout_url( pkc_url( 'login' ) ) ); ?>"><svg class="pkc-i"><use href="#i-logout"></use></svg><?php esc_html_e( 'Log out', 'pikacart' ); ?></a>
 					</div>

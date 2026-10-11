@@ -174,7 +174,7 @@ class PKC_Organisations {
 			PKC_Razorpay::request( 'POST', 'subscriptions/' . rawurlencode( $sub->rzp_subscription_id ) . '/cancel', array( 'cancel_at_cycle_end' => 0 ), $sub->mode );
 		}
 
-		foreach ( array( 'projects', 'members', 'selffill_links', 'design_requests', 'subscriptions', 'notices' ) as $table ) {
+		foreach ( array( 'clients', 'projects', 'members', 'selffill_links', 'design_requests', 'subscriptions', 'notices' ) as $table ) {
 			$wpdb->delete( pkc_table( $table ), array( 'org_id' => $org_id ) );
 		}
 		$wpdb->delete( pkc_table( 'templates' ), array( 'owner_org_id' => $org_id ) );

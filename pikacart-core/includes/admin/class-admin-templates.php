@@ -86,7 +86,7 @@ class PKC_Admin_Templates {
 			array(
 				'catalog'  => self::catalog_config(),
 				'template' => PKC_Catalog::template_to_app( $tpl ),
-				'org'      => $org ? PKC_Organisations::to_app( $org ) : null,
+				'org'      => $org ? PKC_Organisations::to_app( PKC_Clients::overlay( $org, PKC_Clients::active( $org ) ) ) : null,
 				'request'  => $request ? array_merge(
 					PKC_Designs::request_to_app( $request ),
 					array(

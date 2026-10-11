@@ -53,6 +53,7 @@ final class PKC_Plugin {
 			'class-activity-log.php',
 			'class-rate-limit.php',
 			'class-organisations.php',
+			'class-clients.php',
 			'class-access.php',
 			'class-uploads.php',
 			'class-notifications.php',

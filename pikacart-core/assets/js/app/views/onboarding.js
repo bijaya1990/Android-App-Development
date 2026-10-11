@@ -1,18 +1,26 @@
 /**
- * Short onboarding after registration: category, organisation details,
- * logo, signature and seal. Saved once and reused on every card.
+ * Organisation setup wizard: category, details, logo, signature and seal.
+ * Saved once and reused on every card of that organisation.
+ * mode "new" adds another organisation (school, college, office...) to the
+ * account and opens it; otherwise it edits the organisation in use.
  */
 
 import { api } from '../api.js';
 import { esc, icon, toast, formData, markError, withLoading } from '../ui.js';
 import { uploaderHTML, bindUploaders } from '../uploader.js';
 
-const { __ } = window.wp.i18n;
+const { __, sprintf } = window.wp.i18n;
+
+const BLANK = { category_id: 0, name: '', tagline: '', address: '', phone: '', org_email: '', website: '', session_year: '', logo: '', sign: '', seal: '', signatory_name: '', signatory_title: '' };
 
 const CAT_ICONS = { school: 'school', college: 'college', book: 'book', briefcase: 'briefcase', health: 'health', heart: 'heart', ticket: 'ticket', shield: 'shield', users: 'users', mic: 'mic' };
 
-export default function onboarding( el, ctx ) {
-	let step = ctx.me.org.category_id ? 2 : 1;
+export default function onboarding( el, ctx, params = [], opts = {} ) {
+	const isNew = opts.mode === 'new';
+	let created = false;
+	const cur = () => ( isNew && ! created ? BLANK : ctx.me.org );
+	let step = ! isNew && ctx.me.org.category_id ? 2 : 1;
+	const leave = () => ctx.navigate( opts.next || ( isNew ? 'organisations' : '' ) );
 
 	const steps = [
 		__( 'Category', 'pikacart' ),
@@ -24,16 +32,16 @@ export default function onboarding( el, ctx ) {
 		return `<ol class="stepbar">${ steps.map( ( label, i ) => {
 			const n = i + 1;
 			const cls = n < step ? 'is-done' : ( n === step ? 'is-current' : '' );
-			return `<li class="${ cls }"><button type="button" data-step="${ n }" ${ n > step && ! ctx.me.org.category_id ? 'disabled' : '' }><span class="step-dot">${ n < step ? icon( 'check' ) : n }</span><span class="step-label">${ esc( label ) }</span></button></li>`;
+			return `<li class="${ cls }"><button type="button" data-step="${ n }" ${ n > step && ! cur().category_id ? 'disabled' : '' }><span class="step-dot">${ n < step ? icon( 'check' ) : n }</span><span class="step-label">${ esc( label ) }</span></button></li>`;
 		} ).join( '' ) }</ol>`;
 	}
 
 	function draw() {
-		const org = ctx.me.org;
+		const org = cur();
 		let body = '';
 
 		if ( step === 1 ) {
-			body = `<h2>${ esc( __( 'What kind of organisation are you?', 'pikacart' ) ) }</h2>
+			body = `<h2>${ esc( isNew ? __( 'What kind of organisation is it?', 'pikacart' ) : __( 'What kind of organisation are you?', 'pikacart' ) ) }</h2>
 				<p class="muted">${ esc( __( 'This picks the best designs to start with. You can use every other category later too.', 'pikacart' ) ) }</p>
 				<div class="cat-grid">
 					${ ctx.me.catalog.map( ( c ) => `<button type="button" class="cat-tile ${ org.category_id === c.id ? 'is-selected' : '' }" data-cat="${ c.id }" aria-pressed="${ org.category_id === c.id }">
@@ -43,7 +51,7 @@ export default function onboarding( el, ctx ) {
 					</button>` ).join( '' ) }
 				</div>`;
 		} else if ( step === 2 ) {
-			body = `<h2>${ esc( __( 'Your organisation details', 'pikacart' ) ) }</h2>
+			body = `<h2>${ esc( isNew ? __( 'School, college or organisation details', 'pikacart' ) : __( 'Your organisation details', 'pikacart' ) ) }</h2>
 				<p class="muted">${ esc( __( 'These print on every card, so check the spelling carefully.', 'pikacart' ) ) }</p>
 				<form class="ob-form" novalidate>
 					<div class="field"><label for="ob-name">${ esc( __( 'Organisation name', 'pikacart' ) ) }</label><input id="ob-name" name="name" type="text" value="${ esc( org.name ) }" required></div>
@@ -76,8 +84,8 @@ export default function onboarding( el, ctx ) {
 
 		el.innerHTML = `<div class="onboarding">
 			<div class="ob-head">
-				<div><span class="eyebrow">${ esc( __( 'Quick setup', 'pikacart' ) ) }</span><h1 class="ob-title">${ esc( __( 'Let\'s set up your ID cards', 'pikacart' ) ) }</h1></div>
-				<button type="button" class="btn btn-ghost" data-skip>${ esc( __( 'Skip for now', 'pikacart' ) ) }</button>
+				<div><span class="eyebrow">${ esc( isNew ? __( 'New organisation', 'pikacart' ) : __( 'Quick setup', 'pikacart' ) ) }</span><h1 class="ob-title">${ esc( isNew ? __( 'Add a school, college or organisation', 'pikacart' ) : __( 'Let\'s set up your ID cards', 'pikacart' ) ) }</h1>${ isNew ? `<p class="muted ob-sub">${ esc( __( 'Its name, logo, address and signature print on its cards. Its projects and people stay in their own folder.', 'pikacart' ) ) }</p>` : '' }</div>
+				<button type="button" class="btn btn-ghost" data-skip>${ esc( isNew ? __( 'Cancel', 'pikacart' ) : __( 'Skip for now', 'pikacart' ) ) }</button>
 			</div>
 			${ stepBar() }
 			<div class="card ob-card">${ body }</div>
@@ -112,7 +120,20 @@ export default function onboarding( el, ctx ) {
 		el.querySelectorAll( '[data-cat]' ).forEach( ( b ) => {
 			b.addEventListener( 'click', async () => {
 				el.querySelectorAll( '[data-cat]' ).forEach( ( x ) => x.classList.toggle( 'is-selected', x === b ) );
-				if ( await save( { category_id: Number( b.dataset.cat ) }, null ) ) {
+				const category = Number( b.dataset.cat );
+				if ( isNew && ! created ) {
+					// The new organisation is created now and becomes the one in use.
+					try {
+						const res = await api( 'clients', { method: 'POST', body: { category_id: category } } );
+						created = res.id;
+						ctx.setMe( res.me );
+					} catch ( err ) {
+						toast( err.message, 'error' );
+						return;
+					}
+					step = 2;
+					draw();
+				} else if ( await save( { category_id: category }, null ) ) {
 					step = 2;
 					draw();
 				}
@@ -132,15 +153,28 @@ export default function onboarding( el, ctx ) {
 			const finish = step === 3;
 			if ( await save( finish ? { finish: 1 } : {}, e.currentTarget ) ) {
 				if ( finish ) {
-					toast( __( 'All set! Your details will appear on every card.', 'pikacart' ) );
-					ctx.navigate( '' );
+					toast( isNew ? sprintf( __( '%s is ready. Its details will appear on its cards.', 'pikacart' ), ctx.me.org.name ) : __( 'All set! Your details will appear on every card.', 'pikacart' ) );
+					leave();
 				} else {
 					step += 1;
 					draw();
 				}
 			}
 		} );
-		el.querySelector( '[data-skip]' ).addEventListener( 'click', () => {
+		el.querySelector( '[data-skip]' ).addEventListener( 'click', async () => {
+			if ( isNew ) {
+				// Cancelled before giving it a name: remove the empty organisation.
+				if ( created && ! ctx.me.org.name ) {
+					try {
+						const res = await api( `clients/${ created }/delete`, { method: 'POST' } );
+						ctx.setMe( res.me );
+					} catch ( err ) {
+						// Nothing to undo.
+					}
+				}
+				ctx.navigate( opts.next && opts.next.indexOf( 'create' ) === 0 ? 'create' : 'organisations' );
+				return;
+			}
 			ctx.skipWelcome();
 			ctx.navigate( '' );
 		} );

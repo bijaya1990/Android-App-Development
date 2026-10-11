@@ -18,14 +18,16 @@ class PKC_Projects {
 		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . pkc_table( 'projects' ) . " WHERE id = %d AND org_id = %d$extra", $id, $org_id ) );
 	}
 
-	public static function list_for( $org_id ) {
+	/** Projects of one organisation of the account (client_id), newest first. */
+	public static function list_for( $org_id, $client_id ) {
 		global $wpdb;
 		$p = pkc_table( 'projects' );
 		$m = pkc_table( 'members' );
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT pr.*, (SELECT COUNT(*) FROM $m mm WHERE mm.project_id = pr.id AND mm.deleted_at IS NULL) AS people FROM $p pr WHERE pr.org_id = %d AND pr.deleted_at IS NULL ORDER BY pr.updated_at DESC LIMIT 200",
-				$org_id
+				"SELECT pr.*, (SELECT COUNT(*) FROM $m mm WHERE mm.project_id = pr.id AND mm.deleted_at IS NULL) AS people FROM $p pr WHERE pr.org_id = %d AND pr.client_id = %d AND pr.deleted_at IS NULL ORDER BY pr.updated_at DESC LIMIT 500",
+				$org_id,
+				$client_id
 			)
 		);
 	}
@@ -83,6 +85,7 @@ class PKC_Projects {
 			pkc_table( 'projects' ),
 			array(
 				'org_id'      => $org->id,
+				'client_id'   => isset( $org->client_id ) ? (int) $org->client_id : 0,
 				'subtype_id'  => $subtype->id,
 				'template_id' => $tpl->id,
 				'name'        => $name,
@@ -308,6 +311,7 @@ class PKC_Projects {
 		}
 		return array(
 			'id'          => (int) $p->id,
+			'client_id'   => isset( $p->client_id ) ? (int) $p->client_id : 0,
 			'name'        => $p->name,
 			'subtype_id'  => (int) $p->subtype_id,
 			'template_id' => (int) $p->template_id,

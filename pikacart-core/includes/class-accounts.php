@@ -72,7 +72,7 @@ class PKC_Accounts {
 		$password = (string) ( $in['password'] ?? '' );
 
 		if ( mb_strlen( $org_name ) < 2 ) {
-			return self::err( __( 'Please enter your organisation name.', 'pikacart' ), 'org_name' );
+			return self::err( __( 'Please enter your name or shop name.', 'pikacart' ), 'org_name' );
 		}
 		if ( mb_strlen( $contact ) < 2 ) {
 			return self::err( __( 'Please enter the contact person name.', 'pikacart' ), 'contact_name' );

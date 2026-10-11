@@ -257,7 +257,7 @@ class PKC_REST_Members {
 			$rownum = $start + $i;
 			$row    = is_array( $row ) ? $row : array();
 			$id_no  = trim( (string) ( $row['id_no'] ?? '' ) );
-			$exists = '' !== $id_no ? PKC_Members::id_taken( $org->id, $id_no, (string) ( $row['session'] ?? $settings['session'] ?? '' ) ) : 0;
+			$exists = '' !== $id_no ? PKC_Members::id_taken( $org->id, $id_no, (string) ( $row['session'] ?? $settings['session'] ?? '' ), 0, (int) $p->id ) : 0;
 			if ( $exists ) {
 				$existing = PKC_Members::get( $org->id, $exists );
 				if ( 'update' !== $mode || ! $existing || (int) $existing->project_id !== (int) $p->id ) {
@@ -380,7 +380,8 @@ class PKC_REST_Members {
 		if ( ! $org || ! $p || 'suspended' === $org->status ) {
 			return new WP_Error( 'pkc_closed', __( 'This form is closed. Please contact your institution.', 'pikacart' ), array( 'status' => 410 ) );
 		}
-		return array( $link, $org, $p );
+		// The form shows the school/college the project belongs to.
+		return array( $link, PKC_Clients::for_project( $org, $p->id ), $p );
 	}
 
 	/** Fields the public form asks for (switched-on fields of the project). */

@@ -230,6 +230,23 @@ class PKC_Admin_Accounts {
 					</div>
 				</div>
 
+				<?php $pkc_clients = PKC_Clients::list_for( $org->id ); ?>
+				<div class="pkc-panel pkc-panel-flush">
+					<div class="pkc-panel-head"><h3><?php echo esc_html( sprintf( /* translators: %d: number */ __( 'Organisations (%d)', 'pikacart' ), count( $pkc_clients ) ) ); ?></h3></div>
+					<?php if ( $pkc_clients ) : ?>
+						<table class="pkc-table">
+							<thead><tr><th><?php esc_html_e( 'Organisation', 'pikacart' ); ?></th><th><?php esc_html_e( 'Projects', 'pikacart' ); ?></th><th><?php esc_html_e( 'Cards', 'pikacart' ); ?></th><th><?php esc_html_e( 'Last work', 'pikacart' ); ?></th></tr></thead>
+							<tbody>
+								<?php foreach ( $pkc_clients as $pkc_c ) : ?>
+									<tr><td><strong><?php echo esc_html( $pkc_c->name ? $pkc_c->name : __( '(no name yet)', 'pikacart' ) ); ?></strong></td><td><?php echo (int) $pkc_c->projects; ?></td><td><?php echo (int) $pkc_c->cards; ?></td><td><?php echo esc_html( $pkc_c->last_work ? pkc_date( $pkc_c->last_work ) : '—' ); ?></td></tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					<?php else : ?>
+						<p class="pkc-empty"><?php esc_html_e( 'No organisation added yet.', 'pikacart' ); ?></p>
+					<?php endif; ?>
+				</div>
+
 				<div class="pkc-panel pkc-panel-flush">
 					<div class="pkc-panel-head"><h3><?php esc_html_e( 'Payments', 'pikacart' ); ?></h3></div>
 					<?php if ( $payments ) : ?>

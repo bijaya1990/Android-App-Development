@@ -112,8 +112,9 @@ require PKC_DIR . 'templates/partials/head.php';
 				</p>
 				<form class="pkc-form" data-endpoint="auth/register" novalidate>
 					<div class="field">
-						<label for="org_name"><?php esc_html_e( 'Organisation name', 'pikacart' ); ?></label>
-						<input type="text" id="org_name" name="org_name" autocomplete="organization" placeholder="<?php esc_attr_e( 'e.g. Sunrise Public School', 'pikacart' ); ?>" required>
+						<label for="org_name"><?php esc_html_e( 'Your name or shop name', 'pikacart' ); ?></label>
+						<input type="text" id="org_name" name="org_name" autocomplete="organization" placeholder="<?php esc_attr_e( 'e.g. Ramesh Computer Centre', 'pikacart' ); ?>" required>
+						<small class="field-note"><?php esc_html_e( 'You can make cards for many schools, colleges and offices. You add each one when you create its cards.', 'pikacart' ); ?></small>
 					</div>
 					<div class="field">
 						<label for="contact_name"><?php esc_html_e( 'Contact person', 'pikacart' ); ?></label>

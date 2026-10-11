@@ -74,10 +74,11 @@ class PKC_REST_Cards {
 
 	public static function projects() {
 		$org       = PKC_Organisations::current();
+		$client    = PKC_Clients::active( $org );
 		$templates = array();
 		$subtypes  = array();
 		$out       = array();
-		foreach ( PKC_Projects::list_for( $org->id ) as $p ) {
+		foreach ( ( $client ? PKC_Projects::list_for( $org->id, $client->id ) : array() ) as $p ) {
 			$row = PKC_Projects::to_app( $p );
 			if ( ! isset( $templates[ $p->template_id ] ) ) {
 				$t                            = PKC_Catalog::template( $p->template_id );
@@ -114,7 +115,11 @@ class PKC_REST_Cards {
 		if ( is_wp_error( $lock ) ) {
 			return $lock;
 		}
-		$p = PKC_Projects::create( $org, absint( $r->get_param( 'subtype_id' ) ), absint( $r->get_param( 'template_id' ) ), (string) $r->get_param( 'name' ) );
+		$client = PKC_Clients::active( $org );
+		if ( ! $client ) {
+			return new WP_Error( 'pkc_no_client', __( 'Please add the organisation (school, college, office...) first.', 'pikacart' ), array( 'status' => 400 ) );
+		}
+		$p = PKC_Projects::create( PKC_Clients::overlay( $org, $client ), absint( $r->get_param( 'subtype_id' ) ), absint( $r->get_param( 'template_id' ) ), (string) $r->get_param( 'name' ) );
 		if ( is_wp_error( $p ) ) {
 			return $p;
 		}
@@ -124,7 +129,15 @@ class PKC_REST_Cards {
 	public static function project( WP_REST_Request $r ) {
 		$org = PKC_Organisations::current();
 		$p   = PKC_Projects::get( $org->id, absint( $r['id'] ) );
-		return $p ? PKC_REST::ok( self::project_payload( $org, $p ) ) : self::not_found();
+		if ( ! $p ) {
+			return self::not_found();
+		}
+		// Opening a project of another organisation switches to that organisation.
+		PKC_Clients::ensure( $org );
+		if ( (int) $p->client_id && (int) $p->client_id !== PKC_Clients::active_id( $org ) ) {
+			PKC_Clients::set_active( $org, (int) $p->client_id );
+		}
+		return PKC_REST::ok( self::project_payload( $org, $p ) );
 	}
 
 	public static function update( WP_REST_Request $r ) {

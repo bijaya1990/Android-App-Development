@@ -6,6 +6,7 @@ import { esc, icon, clock, emptyState } from '../ui.js';
 import { api } from '../api.js';
 import { waitForAllSaves } from '../autosave.js';
 import { savedStep, stepLabel } from './project.js';
+import { orgMark, activeOrg } from '../orgs.js';
 
 const { __, _n, sprintf } = window.wp.i18n;
 
@@ -20,10 +21,33 @@ function greeting() {
 	return __( 'Good evening', 'pikacart' );
 }
 
+/** A new account: add the first school, college or office to make cards for. */
+function firstOrg( el, ctx, first ) {
+	el.innerHTML = `<section class="card first-org">
+		<div class="first-org-text">
+			<span class="eyebrow">${ esc( __( 'Welcome to Pikacart', 'pikacart' ) ) }</span>
+			<h2>${ esc( greeting() ) }${ first ? ', ' + esc( first ) : '' } 👋</h2>
+			<p>${ esc( __( 'Who are you making ID cards for? Add the school, college or office once with its name, logo, address and signature. You can add as many organisations as you like; each keeps its own projects and people.', 'pikacart' ) ) }</p>
+			<a class="btn btn-primary btn-lg" href="${ esc( ctx.url( 'organisations/new/card' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'Add organisation and start', 'pikacart' ) ) }</a>
+		</div>
+		<ol class="first-org-steps">
+			<li><span>1</span><div><b>${ esc( __( 'Add the organisation', 'pikacart' ) ) }</b><small>${ esc( __( 'Name, logo, address, signature', 'pikacart' ) ) }</small></div></li>
+			<li><span>2</span><div><b>${ esc( __( 'Pick a design', 'pikacart' ) ) }</b><small>${ esc( __( '1,500+ ready designs', 'pikacart' ) ) }</small></div></li>
+			<li><span>3</span><div><b>${ esc( __( 'Import people from Excel', 'pikacart' ) ) }</b><small>${ esc( __( 'With photos, in one go', 'pikacart' ) ) }</small></div></li>
+			<li><span>4</span><div><b>${ esc( __( 'Print or download', 'pikacart' ) ) }</b><small>${ esc( __( 'A4 sheets, PVC cards, images', 'pikacart' ) ) }</small></div></li>
+		</ol>
+	</section>`;
+}
+
 export default function dashboard( el, ctx ) {
 	const me = ctx.me;
 	const s = me.state;
 	const first = ( me.user.name || me.org.contact_name || '' ).split( ' ' )[ 0 ];
+	if ( ! me.client ) {
+		firstOrg( el, ctx, first );
+		return;
+	}
+	const cur = activeOrg( me );
 	const price = me.plan ? me.plan.price_text : '₹59';
 
 	let planCard = '';
@@ -76,7 +100,7 @@ export default function dashboard( el, ctx ) {
 
 	const org = me.org;
 	const steps = [
-		[ !! org.category_id, __( 'Choose your category', 'pikacart' ), 'welcome' ],
+		[ !! org.category_id, __( 'Choose the category', 'pikacart' ), 'organisation' ],
 		[ !! ( org.address && org.phone ), __( 'Add address and phone', 'pikacart' ), 'organisation' ],
 		[ !! org.logo, __( 'Upload your logo', 'pikacart' ), 'organisation' ],
 		[ !! org.sign, __( 'Upload the signature', 'pikacart' ), 'organisation' ],
@@ -94,7 +118,7 @@ export default function dashboard( el, ctx ) {
 		<section class="hello">
 			<div>
 				<h2>${ esc( greeting() ) }${ first ? ', ' + esc( first ) : '' } 👋</h2>
-				<p class="muted">${ esc( org.name ) }</p>
+				<p class="hello-org">${ cur ? orgMark( cur, 'sm' ) : '' }<span>${ esc( __( 'Working for', 'pikacart' ) ) } <b>${ esc( org.name || __( 'New organisation', 'pikacart' ) ) }</b></span>${ me.clients.length > 1 ? `<a href="${ esc( ctx.url( 'organisations' ) ) }" data-link>${ esc( sprintf( __( 'Switch (%d)', 'pikacart' ), me.clients.length ) ) }</a>` : `<a href="${ esc( ctx.url( 'organisations/new' ) ) }" data-link>${ esc( __( 'Add another', 'pikacart' ) ) }</a>` }</p>
 			</div>
 			<a class="btn btn-primary" href="${ esc( ctx.url( 'create' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'New ID card', 'pikacart' ) ) }</a>
 		</section>

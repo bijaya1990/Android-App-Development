@@ -14,6 +14,7 @@ import { cardSize, paletteOf, flagsOf } from '../../card/scene.js';
 import project, { savedStep } from './project.js';
 import printView from '../print.js';
 import { blankExcel } from '../people.js';
+import { orgMark, activeOrg } from '../orgs.js';
 
 const { __, sprintf } = window.wp.i18n;
 
@@ -59,12 +60,18 @@ function list( el, ctx, mode ) {
 			return;
 		}
 		const items = data.projects.filter( ( p ) => mode === 'projects' || p.status !== 'archived' || true );
+		const cur = activeOrg( ctx.me );
+		if ( ! cur ) {
+			el.innerHTML = `<div class="card org-empty"><h3>${ esc( __( 'Add an organisation first', 'pikacart' ) ) }</h3><p>${ esc( __( 'Projects are kept inside each school, college or office. Add the first one to start.', 'pikacart' ) ) }</p><a class="btn btn-primary" href="${ esc( ctx.url( 'organisations/new/card' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'Add organisation', 'pikacart' ) ) }</a></div>`;
+			return;
+		}
+		const orgLine = `<p class="hello-org">${ orgMark( cur, 'sm' ) }<span><b>${ esc( cur.name || __( 'New organisation', 'pikacart' ) ) }</b></span><a href="${ esc( ctx.url( 'organisations' ) ) }" data-link>${ esc( ctx.me.clients.length > 1 ? __( 'Switch organisation', 'pikacart' ) : __( 'Add another organisation', 'pikacart' ) ) }</a></p>`;
 		if ( ! items.length ) {
-			el.innerHTML = `<section class="card">${ emptyState( { art: 'cards', title: __( 'No card projects yet', 'pikacart' ), text: __( 'Create your first project by choosing a design for your students or staff.', 'pikacart' ), button: __( 'Create ID card', 'pikacart' ), href: ctx.url( 'create' ) } ) }</section>`;
+			el.innerHTML = `${ orgLine }<section class="card">${ emptyState( { art: 'cards', title: __( 'No card projects yet', 'pikacart' ), text: __( 'Create your first project by choosing a design for your students or staff.', 'pikacart' ), button: __( 'Create ID card', 'pikacart' ), href: ctx.url( 'create' ) } ) }</section>`;
 			return;
 		}
 		const target = ( p ) => ( mode === 'projects' ? savedStep( p ) : mode === 'members' ? `projects/${ p.id }/people` : `print/${ p.id }` );
-		el.innerHTML = `<div class="section-head-row"><div><h2 class="h2">${ esc( intro[ 0 ] ) }</h2><p class="muted">${ esc( intro[ 1 ] ) }</p></div>
+		el.innerHTML = `${ orgLine }<div class="section-head-row"><div><h2 class="h2">${ esc( intro[ 0 ] ) }</h2><p class="muted">${ esc( intro[ 1 ] ) }</p></div>
 			<a class="btn btn-primary" href="${ esc( ctx.url( 'create' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'New project', 'pikacart' ) ) }</a></div>
 			<div class="proj-grid">
 			${ items.map( ( p ) => {
