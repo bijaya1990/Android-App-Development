@@ -56,8 +56,8 @@ export function projectFields( P ) {
 	const out = [];
 	sub.forEach( ( f ) => {
 		if ( f.key === 'name' || f.key === 'id_no' || on.has( f.key ) ) {
-			// With automatic ID numbers the ID column may stay empty.
-			const auto = f.key === 'id_no' && P.project.fields.id_auto;
+			// With automatic ID numbers, or the ID number off on the card, the ID column may stay empty.
+			const auto = f.key === 'id_no' && ( P.project.fields.id_auto || ! on.has( 'id_no' ) );
 			out.push( { key: f.key, label: f.label || labels[ f.key ] || f.key, required: auto ? false : !! f.required, auto } );
 		}
 	} );
@@ -170,7 +170,7 @@ export default function peopleStep( body, P ) {
 	const st = { page: 1, search: '', status: '', class: '', section: '', department: '', session: '', sort: 'created', order: 'asc', trash: false, selected: new Set(), rows: [], total: 0, facets: null, counts: {} };
 	let alive = true;
 	const fields = projectFields( P );
-	const autoId = !! P.project.fields.id_auto;
+	const autoId = !! P.project.fields.id_auto || ! ( P.project.fields.on || [] ).includes( 'id_no' );
 	const pid = P.project.id;
 
 	body.innerHTML = `<div class="people">

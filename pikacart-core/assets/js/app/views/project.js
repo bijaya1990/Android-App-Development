@@ -471,7 +471,7 @@ function detailsStep( body, P ) {
 	const f = p.fields;
 	const org = ctx.me.org;
 	const subFields = ( P.data.subtype ? P.data.subtype.fields : [] );
-	const locked = [ 'photo', 'name', 'id_no' ];
+	const locked = [ 'photo', 'name' ];
 	const flags = flagsOf( p );
 	const missing = [ ! org.logo && __( 'logo', 'pikacart' ), ! org.sign && __( 'signature', 'pikacart' ), ! org.address && __( 'address', 'pikacart' ) ].filter( Boolean );
 
@@ -509,12 +509,13 @@ function detailsStep( body, P ) {
 					</div>
 					<p class="id-preview" data-idpreview></p>
 				</div>
+				<p class="id-preview" data-idoff ${ ( f.on || [] ).includes( 'id_no' ) ? 'hidden' : '' }>${ icon( 'info' ) }<span>${ esc( __( 'ID number is switched off in "Fields on the card", so it is not printed. You do not need to type it: each person still gets a hidden number for the QR code and verification.', 'pikacart' ) ) }</span></p>
 			</section>
 			<section class="card">
 				<div class="card-head"><h3>${ esc( __( 'Fields on the card', 'pikacart' ) ) }</h3></div>
 				<p class="muted small">${ esc( __( 'Switched-off or empty fields disappear from the card with no blank gap.', 'pikacart' ) ) }</p>
 				<div class="toggle-list cols2">
-					${ subFields.map( ( x ) => `<label class="toggle ${ locked.includes( x.key ) ? 'is-locked' : '' }"><input type="checkbox" data-field="${ esc( x.key ) }" ${ ( f.on || [] ).includes( x.key ) || locked.includes( x.key ) ? 'checked' : '' } ${ locked.includes( x.key ) ? 'disabled' : '' }><span class="toggle-ui"></span><span>${ esc( x.label ) }${ x.required ? ' *' : '' }</span></label>` ).join( '' ) }
+					${ subFields.map( ( x ) => `<label class="toggle ${ locked.includes( x.key ) ? 'is-locked' : '' }"><input type="checkbox" data-field="${ esc( x.key ) }" ${ ( f.on || [] ).includes( x.key ) || locked.includes( x.key ) ? 'checked' : '' } ${ locked.includes( x.key ) ? 'disabled' : '' }><span class="toggle-ui"></span><span>${ esc( x.label ) }${ x.required && x.key !== 'id_no' ? ' *' : '' }</span></label>` ).join( '' ) }
 				</div>
 				<h4 class="sub-h">${ esc( __( 'Your own fields (up to 5)', 'pikacart' ) ) }</h4>
 				<p class="muted small">${ esc( __( 'Type a name (e.g. House) and switch it on. Then fill each person\'s value in step 7 (Add person or the Excel). Until then the preview shows [House].', 'pikacart' ) ) }</p>
@@ -611,6 +612,10 @@ function detailsStep( body, P ) {
 			on.delete( i.dataset.field );
 		}
 		locked.forEach( ( k ) => on.add( k ) );
+		const off = body.querySelector( '[data-idoff]' );
+		if ( off ) {
+			off.hidden = on.has( 'id_no' );
+		}
 		save( { on: [ ...on ] } );
 	} ) );
 	body.querySelectorAll( '[data-cf]' ).forEach( ( i ) => i.addEventListener( 'input', () => {

@@ -125,7 +125,10 @@ class PKC_Members {
 	/** Automatic ID number settings of a project, or null when switched off. */
 	public static function auto_id( $project ) {
 		$s = pkc_json( $project->fields );
-		if ( empty( $s['id_auto'] ) ) {
+		// ID number switched off on the card: nobody types it, each person still
+		// gets a hidden number for the QR code, verification and photo matching.
+		$hidden = ! in_array( 'id_no', (array) ( $s['on'] ?? array( 'id_no' ) ), true );
+		if ( empty( $s['id_auto'] ) && ! $hidden ) {
 			return null;
 		}
 		return array(
