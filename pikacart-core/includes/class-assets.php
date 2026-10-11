@@ -15,6 +15,9 @@ class PKC_Assets {
 	/** @var bool */
 	private static $done = false;
 
+	/** @var bool */
+	private static $map_done = false;
+
 	public static function register() {
 		if ( self::$done ) {
 			return;
@@ -81,7 +84,9 @@ class PKC_Assets {
 			return $tag;
 		}
 		// Only change the tag that loads the file, not inline config scripts.
-		return preg_replace_callback(
+		$map = self::$map_done ? '' : self::import_map();
+		self::$map_done = true;
+		return $map . preg_replace_callback(
 			'/<script\b([^>]*\ssrc=[^>]*)>/i',
 			function ( $m ) {
 				$attrs = preg_replace( '/\stype=(["\'])[^"\']*\1/i', '', $m[1] );
@@ -89,6 +94,30 @@ class PKC_Assets {
 			},
 			$tag
 		);
+	}
+
+	/**
+	 * Import map that adds ?ver= to every module the entry files import, so a
+	 * plugin update is picked up at once instead of browsers running cached
+	 * copies of the imported files.
+	 */
+	private static function import_map() {
+		$dir  = PKC_DIR . 'assets/js/';
+		$base = PKC_URL . 'assets/js/';
+		$map  = array();
+		$it   = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ) );
+		foreach ( $it as $file ) {
+			if ( 'js' !== $file->getExtension() ) {
+				continue;
+			}
+			$rel         = str_replace( '\\', '/', substr( $file->getPathname(), strlen( $dir ) ) );
+			$url         = $base . $rel;
+			$map[ $url ] = $url . '?ver=' . PKC_VERSION;
+		}
+		if ( ! $map ) {
+			return '';
+		}
+		return '<script type="importmap">' . wp_json_encode( array( 'imports' => $map ), JSON_UNESCAPED_SLASHES ) . "</script>\n";
 	}
 
 	/**
