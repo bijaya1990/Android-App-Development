@@ -95,3 +95,8 @@
 .fill-crop img { max-width: 100%; display: block; }
 
 .pkc .field-note { display: block; margin-top: 5px; font-size: 12.5px; line-height: 1.4; color: var(--pkc-muted); }
+.fill-done { text-align: center; padding: 12px 0 4px; }
+.fill-done > .pkc-i { width: 56px; height: 56px; color: var(--pkc-success); }
+.fill-done h2 { font-size: var(--pkc-fs-xl); margin: 10px 0 6px; }
+.fill-done p { margin: 0 0 8px; }
+.fill-done .btn { margin-top: 14px; }

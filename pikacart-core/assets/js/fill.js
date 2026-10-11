@@ -89,15 +89,24 @@
 			fetch( cfg.rest + 'public/fill/' + cfg.token, { method: 'POST', body: fd } )
 				.then( function ( r ) { return r.json().then( function ( d ) { return { ok: r.ok, d: d }; } ); } )
 				.then( function ( x ) {
-					show( x.d.message || __( 'Something went wrong. Please try again.', 'pikacart' ), x.ok );
-					if ( x.ok ) {
-						form.reset();
-						cropper.destroy();
-						cropper = null;
-						document.getElementById( 'fill-crop' ).hidden = true;
-						box.innerHTML = '';
-						btn.hidden = true;
+					if ( ! x.ok ) {
+						show( x.d.message || __( 'Something went wrong. Please try again.', 'pikacart' ), false );
+						return;
 					}
+					// Sent: replace the whole form (photo and consent too) with a done screen.
+					cropper.destroy();
+					cropper = null;
+					var done = document.createElement( 'div' );
+					done.className = 'fill-done';
+					done.setAttribute( 'role', 'status' );
+					done.innerHTML = '<svg class="pkc-i" aria-hidden="true"><use href="#i-check-circle"></use></svg>' +
+						'<h2>' + esc( __( 'Details sent', 'pikacart' ) ) + '</h2>' +
+						'<p>' + esc( x.d.message || __( 'Thank you! Your details were sent to your institution for approval.', 'pikacart' ) ) + '</p>' +
+						'<p class="hint">' + esc( __( 'Nothing more to do. You can close this page.', 'pikacart' ) ) + '</p>' +
+						'<button type="button" class="btn btn-block">' + esc( __( 'Fill for another person', 'pikacart' ) ) + '</button>';
+					done.querySelector( 'button' ).addEventListener( 'click', function () { window.location.reload(); } );
+					form.replaceWith( done );
+					window.scrollTo( 0, 0 );
 				} )
 				.catch( function () { show( __( 'No internet connection. Please try again.', 'pikacart' ), false ); } )
 				.finally( function () {
