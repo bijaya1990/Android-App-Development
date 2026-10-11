@@ -51,7 +51,7 @@ export default function printView( el, ctx, pid ) {
 	let alive = true;
 	let P = null;
 	let members = [];
-	const st = { paper: 'a4', orient: 'portrait', cw: 210, ch: 297, mode: 'pair', fold: true, margin: 8, gap: 4, marks: true, border: false, which: 'all' };
+	const st = { paper: 'a4', orient: 'portrait', cw: 210, ch: 297, mode: 'pair', fold: false, margin: 5, gap: 8, marks: true, border: false, which: 'all' };
 	const lowCache = new Map();
 
 	el.innerHTML = '<div class="skeleton-grid"><div class="skeleton sk-wide"></div></div>';
@@ -78,10 +78,10 @@ export default function printView( el, ctx, pid ) {
 				<div class="seg"><button type="button" data-orient="portrait" class="is-on">${ esc( __( 'Portrait', 'pikacart' ) ) }</button><button type="button" data-orient="landscape">${ esc( __( 'Landscape', 'pikacart' ) ) }</button></div>
 				<div class="field"><label>${ esc( __( 'Which cards', 'pikacart' ) ) }</label><select data-k="which"><option value="all">${ esc( __( 'All people', 'pikacart' ) ) }</option><option value="ready">${ esc( __( 'Ready only', 'pikacart' ) ) }</option><option value="draft">${ esc( __( 'Draft only', 'pikacart' ) ) }</option></select></div>
 				<div class="field"><label>${ esc( __( 'Layout', 'pikacart' ) ) }</label><select data-k="mode"><option value="pair">${ esc( __( 'Front and back side by side', 'pikacart' ) ) }</option><option value="front">${ esc( __( 'Fronts only', 'pikacart' ) ) }</option><option value="back">${ esc( __( 'Backs only', 'pikacart' ) ) }</option></select></div>
-				<label class="toggle"><input type="checkbox" data-k="fold" checked><span class="toggle-ui"></span><span>${ esc( __( 'Fold line between front and back', 'pikacart' ) ) }</span></label>
+				<label class="toggle"><input type="checkbox" data-k="fold"><span class="toggle-ui"></span><span>${ esc( __( 'Fold line between front and back', 'pikacart' ) ) }</span></label>
 				<div class="grid-2">
-					<div class="field"><label>${ esc( __( 'Page margin (mm)', 'pikacart' ) ) }</label><input type="number" data-k="margin" value="8" min="0" max="50" step="0.5"></div>
-					<div class="field"><label>${ esc( __( 'Gap (mm)', 'pikacart' ) ) }</label><input type="number" data-k="gap" value="4" min="0" max="30" step="0.5"></div>
+					<div class="field"><label>${ esc( __( 'Page margin (mm)', 'pikacart' ) ) }</label><input type="number" data-k="margin" value="5" min="0" max="50" step="0.5"></div>
+					<div class="field"><label>${ esc( __( 'Gap (mm)', 'pikacart' ) ) }</label><input type="number" data-k="gap" value="8" min="0" max="30" step="0.5"></div>
 				</div>
 				<label class="toggle"><input type="checkbox" data-k="marks" checked><span class="toggle-ui"></span><span>${ esc( __( 'Cut marks with scissors', 'pikacart' ) ) }</span></label>
 				<label class="toggle"><input type="checkbox" data-k="border"><span class="toggle-ui"></span><span>${ esc( __( 'Thin border around each card', 'pikacart' ) ) }</span></label>
@@ -164,11 +164,13 @@ export default function printView( el, ctx, pid ) {
 			g.fillStyle = '#fff';
 			g.fillRect( 0, 0, c.width, c.height );
 			const items = list.slice( pg * sh.perPage, ( pg + 1 ) * sh.perPage );
+			const boxes = [];
+			let pd = null;
 			for ( let i = 0; i < items.length; i++ ) {
 				if ( token !== drawToken ) {
 					return;
 				}
-				await drawUnit( {
+				pd = pd || {
 					image: async ( m, side, x, y, w, h ) => g.drawImage( await lowImage( m, side ), x * scale, y * scale, w * scale, h * scale ),
 					line: ( x1, y1, x2, y2, dash ) => {
 						g.strokeStyle = '#111';
@@ -186,7 +188,11 @@ export default function printView( el, ctx, pid ) {
 						g.strokeRect( x * scale, y * scale, w * scale, h * scale );
 					},
 					scissors: ( x, y, s, rot ) => drawScissorsCanvas( g, x * scale, y * scale, s * scale, rot ),
-				}, items[ i ].m, sh.slots[ i ], sh );
+				};
+				boxes.push( ...await drawUnit( pd, items[ i ].m, sh.slots[ i ], sh ) );
+			}
+			if ( pd ) {
+				drawGuides( pd, boxes );
 			}
 		}
 	}
@@ -204,29 +210,43 @@ export default function printView( el, ctx, pid ) {
 		if ( sh.pair && st.fold ) {
 			d.line( slot.x + card.w, slot.y - 2, slot.x + card.w, slot.y + card.h + 2, true );
 		}
-		if ( st.marks ) {
-			const L = 3;
-			const off = 1;
-			const x0 = slot.x;
-			const x1 = slot.x + sh.unitW;
-			const y0 = slot.y;
-			const y1 = slot.y + card.h;
-			// Corner crop marks, outside the card area.
-			[ [ x0, y0, -1, -1 ], [ x1, y0, 1, -1 ], [ x0, y1, -1, 1 ], [ x1, y1, 1, 1 ] ].forEach( ( [ x, y, sx, sy ] ) => {
-				d.line( x + sx * off, y, x + sx * ( off + L ), y );
-				d.line( x, y + sy * off, x, y + sy * ( off + L ) );
-			} );
-			// Inner marks between front and back when not folding.
-			if ( sh.pair && ! st.fold ) {
-				const xm = slot.x + card.w;
-				const xb = xm + Number( st.gap );
-				[ xm, xb ].forEach( ( x ) => {
-					d.line( x, y0 - off, x, y0 - off - L );
-					d.line( x, y1 + off, x, y1 + off + L );
-				} );
-			}
-			d.scissors( x0 - off - 2.2, y0 - off - 2.2, 2.6, 0 );
+		// Boxes that get a cut line around them: each card, or the folded pair.
+		return sh.pair && ! st.fold
+			? cards.map( ( [ , x ] ) => [ x, slot.y, card.w, card.h ] )
+			: [ [ slot.x, slot.y, sh.unitW, card.h ] ];
+	}
+
+	/**
+	 * Dotted cut lines with scissors, drawn in the middle of the gap around every
+	 * card, so each card keeps an equal white border and no cut touches a card.
+	 */
+	function drawGuides( d, boxes ) {
+		if ( ! st.marks || ! boxes.length ) {
+			return;
 		}
+		const h = Number( st.gap ) / 2;
+		const segs = new Map();
+		const add = ( x1, y1, x2, y2 ) => {
+			const k = [ x1, y1, x2, y2 ].map( ( v ) => v.toFixed( 2 ) ).join( ',' );
+			segs.set( k, [ x1, y1, x2, y2 ] );
+		};
+		boxes.forEach( ( [ x, y, w, hh ] ) => {
+			const l = x - h;
+			const r = x + w + h;
+			const t = y - h;
+			const b = y + hh + h;
+			add( l, t, r, t );
+			add( l, b, r, b );
+			add( l, t, l, b );
+			add( r, t, r, b );
+		} );
+		const sz = 3;
+		segs.forEach( ( [ x1, y1, x2, y2 ] ) => {
+			d.line( x1, y1, x2, y2, true );
+		} );
+		segs.forEach( ( [ x1, y1, x2, y2 ] ) => {
+			d.scissors( ( x1 + x2 ) / 2, ( y1 + y2 ) / 2, sz, x1 === x2 ? 90 : 0 );
+		} );
 	}
 
 	function bind() {
@@ -292,8 +312,8 @@ export default function printView( el, ctx, pid ) {
 					pdf.addPage( [ pp.w, pp.h ], pp.w > pp.h ? 'landscape' : 'portrait' );
 				}
 				const items = list.slice( pg * sh.perPage, ( pg + 1 ) * sh.perPage );
-				for ( let i = 0; i < items.length; i++ ) {
-					await drawUnit( {
+				const boxes = [];
+				const pd = {
 						image: async ( m, side, x, y, w, h ) => pdf.addImage( await getHi( m, side ), 'JPEG', x, y, w, h, undefined, 'FAST' ),
 						line: ( x1, y1, x2, y2, dash ) => {
 							pdf.setDrawColor( 17, 17, 17 );
@@ -308,9 +328,12 @@ export default function printView( el, ctx, pid ) {
 							pdf.setLineWidth( 0.15 );
 							pdf.rect( x, y, w, h );
 						},
-						scissors: ( x, y, s ) => drawScissorsPdf( pdf, x, y, s ),
-					}, items[ i ].m, sh.slots[ i ], sh );
+						scissors: ( x, y, s, rot ) => drawScissorsPdf( pdf, x, y, s, rot ),
+				};
+				for ( let i = 0; i < items.length; i++ ) {
+					boxes.push( ...await drawUnit( pd, items[ i ].m, sh.slots[ i ], sh ) );
 				}
+				drawGuides( pd, boxes );
 			}
 			const name = ( P.project.name || 'cards' ).replace( /[^\w\- ]+/g, '' ).trim().replace( /\s+/g, '-' );
 			pdf.save( `${ name }-print-sheets.pdf` );
@@ -320,8 +343,8 @@ export default function printView( el, ctx, pid ) {
 			for ( let pg = 0; pg < pages; pg++ ) {
 				let inner = '';
 				const items = list.slice( pg * sh.perPage, ( pg + 1 ) * sh.perPage );
-				for ( let i = 0; i < items.length; i++ ) {
-					await drawUnit( {
+				const boxes = [];
+				const pd = {
 						image: async ( m, side, x, y, w, h ) => {
 							inner += `<img src="${ await getHi( m, side ) }" style="left:${ x }mm;top:${ y }mm;width:${ w }mm;height:${ h }mm">`;
 						},
@@ -332,11 +355,14 @@ export default function printView( el, ctx, pid ) {
 						rect: ( x, y, w, h ) => {
 							inner += `<i class="bd" style="left:${ x }mm;top:${ y }mm;width:${ w }mm;height:${ h }mm"></i>`;
 						},
-						scissors: ( x, y ) => {
-							inner += `<b class="sc" style="left:${ x - 1 }mm;top:${ y - 1.6 }mm">✂</b>`;
+						scissors: ( x, y, s, rot ) => {
+							inner += `<b class="sc" style="left:${ x - s / 2 }mm;top:${ y - s / 2 }mm;width:${ s }mm;height:${ s }mm;transform:rotate(${ rot || 0 }deg)">✂</b>`;
 						},
-					}, items[ i ].m, sh.slots[ i ], sh );
+				};
+				for ( let i = 0; i < items.length; i++ ) {
+					boxes.push( ...await drawUnit( pd, items[ i ].m, sh.slots[ i ], sh ) );
 				}
+				drawGuides( pd, boxes );
 				html += `<section class="pg">${ inner }</section>`;
 			}
 			win.document.open();
@@ -346,10 +372,10 @@ export default function printView( el, ctx, pid ) {
 				.pg{position:relative;width:${ pp.w }mm;height:${ pp.h }mm;overflow:hidden;page-break-after:always;break-after:page}
 				.pg:last-child{page-break-after:auto;break-after:auto}
 				.pg img{position:absolute;display:block}
-				.ln{position:absolute;border-left:0.2mm solid #111;border-top:0.2mm solid #111}
+				.ln{position:absolute;border-left:0.2mm solid #555;border-top:0.2mm solid #555}
 				.ln.dash{border-style:dashed}
 				.bd{position:absolute;outline:0.15mm solid #b4b4b4;box-sizing:border-box}
-				.sc{position:absolute;font:3mm/1 Arial,sans-serif;color:#111}
+				.sc{position:absolute;font:2.8mm/1 Arial,sans-serif;color:#111;background:#fff;display:flex;align-items:center;justify-content:center}
 				.note{font:14px sans-serif;padding:12px;background:#fff6e0;color:#7a4b00} @media print{.note{display:none}}
 				</style></head><body><div class="note">${ esc( __( 'Choose "Actual size" (100% scale), no margins, and turn off headers and footers.', 'pikacart' ) ) }</div>${ html }
 				<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script></body></html>` );
@@ -376,31 +402,53 @@ export default function printView( el, ctx, pid ) {
 	};
 }
 
-/* Small scissor symbol drawn as vector shapes (no special font needed). */
-function drawScissorsCanvas( g, x, y, s ) {
+/* Small scissor symbol drawn as vector shapes (no special font needed).
+   (x, y) is the centre; rot is 0 for a horizontal cut line, 90 for a vertical one.
+   A white patch behind it keeps the dotted line from running through it. */
+function scissorParts( x, y, s, rot ) {
+	const a = ( ( rot || 0 ) * Math.PI ) / 180;
+	const p = ( u, v ) => {
+		const dx = ( u - 0.5 ) * s;
+		const dy = ( v - 0.5 ) * s;
+		return [ x + dx * Math.cos( a ) - dy * Math.sin( a ), y + dx * Math.sin( a ) + dy * Math.cos( a ) ];
+	};
+	return {
+		rings: [ p( 0.22, 0.3 ), p( 0.22, 0.7 ) ],
+		r: s * 0.18,
+		blades: [ [ p( 0.36, 0.4 ), p( 1, 0.85 ) ], [ p( 0.36, 0.6 ), p( 1, 0.15 ) ] ],
+	};
+}
+
+function drawScissorsCanvas( g, x, y, s, rot ) {
+	const k = scissorParts( x, y, s, rot );
 	g.save();
+	g.setLineDash( [] );
+	g.fillStyle = '#fff';
+	g.fillRect( x - s * 0.6, y - s * 0.6, s * 1.2, s * 1.2 );
 	g.strokeStyle = '#111';
-	g.lineWidth = Math.max( 0.6, s * 0.12 );
+	g.lineWidth = Math.max( 0.6, s * 0.1 );
 	g.beginPath();
-	g.arc( x + s * 0.22, y + s * 0.3, s * 0.18, 0, Math.PI * 2 );
-	g.moveTo( x + s * 0.22 + s * 0.18, y + s * 0.7 );
-	g.arc( x + s * 0.22, y + s * 0.7, s * 0.18, 0, Math.PI * 2 );
-	g.moveTo( x + s * 0.36, y + s * 0.4 );
-	g.lineTo( x + s, y + s * 0.85 );
-	g.moveTo( x + s * 0.36, y + s * 0.6 );
-	g.lineTo( x + s, y + s * 0.15 );
+	k.rings.forEach( ( [ cx, cy ] ) => {
+		g.moveTo( cx + k.r, cy );
+		g.arc( cx, cy, k.r, 0, Math.PI * 2 );
+	} );
+	k.blades.forEach( ( [ [ x1, y1 ], [ x2, y2 ] ] ) => {
+		g.moveTo( x1, y1 );
+		g.lineTo( x2, y2 );
+	} );
 	g.stroke();
 	g.restore();
 }
 
-function drawScissorsPdf( pdf, x, y, s ) {
-	pdf.setDrawColor( 17, 17, 17 );
-	pdf.setLineWidth( 0.18 );
+function drawScissorsPdf( pdf, x, y, s, rot ) {
+	const k = scissorParts( x, y, s, rot );
 	if ( pdf.setLineDashPattern ) {
 		pdf.setLineDashPattern( [], 0 );
 	}
-	pdf.circle( x + s * 0.22, y + s * 0.3, s * 0.18 );
-	pdf.circle( x + s * 0.22, y + s * 0.7, s * 0.18 );
-	pdf.line( x + s * 0.36, y + s * 0.4, x + s, y + s * 0.85 );
-	pdf.line( x + s * 0.36, y + s * 0.6, x + s, y + s * 0.15 );
+	pdf.setFillColor( 255, 255, 255 );
+	pdf.rect( x - s * 0.6, y - s * 0.6, s * 1.2, s * 1.2, 'F' );
+	pdf.setDrawColor( 17, 17, 17 );
+	pdf.setLineWidth( 0.18 );
+	k.rings.forEach( ( [ cx, cy ] ) => pdf.circle( cx, cy, k.r ) );
+	k.blades.forEach( ( [ [ x1, y1 ], [ x2, y2 ] ] ) => pdf.line( x1, y1, x2, y2 ) );
 }
