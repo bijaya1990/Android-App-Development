@@ -273,6 +273,11 @@ class PKC_Projects {
 			'valid_from' => self::clean_date( $s['valid_from'] ?? '' ),
 			'valid_until' => self::clean_date( $s['valid_until'] ?? '' ),
 			'bleed'      => ! empty( $s['bleed'] ),
+			// Automatic ID numbers: prefix + running number, e.g. STU0001.
+			'id_auto'    => ! empty( $s['id_auto'] ),
+			'id_prefix'  => mb_substr( preg_replace( '/[^A-Za-z0-9\/\-_.]/', '', (string) ( $s['id_prefix'] ?? '' ) ), 0, 12 ),
+			'id_start'   => max( 0, min( 99999999, (int) ( $s['id_start'] ?? 1 ) ) ),
+			'id_digits'  => max( 1, min( 8, (int) ( $s['id_digits'] ?? 4 ) ) ),
 		);
 	}
 

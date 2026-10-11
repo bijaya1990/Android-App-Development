@@ -55,6 +55,8 @@ export function demoVars( kind, index = 0, org = {}, extra = {} ) {
 		name,
 		gender,
 		id_no: ( kind === 'student' ? 'STU' : 'EMP' ) + String( 1040 + index * 7 ),
+		roll_no: String( 12 + index * 3 ),
+		regd_no: `REG/${ year }/${ 400 + index * 13 }`,
 		class: isCollege ? COURSES[ index % COURSES.length ] : CLASSES[ index % CLASSES.length ],
 		section: isCollege ? '' : 'ABCD'[ index % 4 ],
 		designation: kind === 'other' ? 'Visitor' : DESIG[ index % DESIG.length ],

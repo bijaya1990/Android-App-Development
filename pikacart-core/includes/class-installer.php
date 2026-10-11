@@ -36,6 +36,9 @@ class PKC_Installer {
 				// Version 2 introduced the lifetime free plan.
 				PKC_Access::recompute_all();
 			}
+			if ( $from > 0 && $from < 7 ) {
+				self::add_student_numbers();
+			}
 			PKC_Roles::add_roles();
 			update_option( 'pkc_flush_rewrite', 1 );
 		}
@@ -609,6 +612,31 @@ class PKC_Installer {
 	}
 
 	/**
+	 * Version 7: student card types get optional "Roll No." and
+	 * "Registration No." fields (switched off, so existing cards do not change).
+	 */
+	private static function add_student_numbers() {
+		global $wpdb;
+		$rows = $wpdb->get_results( 'SELECT id, fields FROM ' . pkc_table( 'subtypes' ) );
+		foreach ( $rows as $row ) {
+			$fields = pkc_json( $row->fields );
+			$keys   = array_column( $fields, 'key' );
+			if ( ! in_array( 'class', $keys, true ) || in_array( 'roll_no', $keys, true ) ) {
+				continue;
+			}
+			$out = array();
+			foreach ( $fields as $f ) {
+				$out[] = $f;
+				if ( 'id_no' === ( $f['key'] ?? '' ) ) {
+					$out[] = array( 'key' => 'roll_no', 'label' => 'Roll No.', 'required' => false, 'on' => false );
+					$out[] = array( 'key' => 'regd_no', 'label' => 'Registration No.', 'required' => false, 'on' => false );
+				}
+			}
+			$wpdb->update( pkc_table( 'subtypes' ), array( 'fields' => wp_json_encode( $out ) ), array( 'id' => (int) $row->id ) );
+		}
+	}
+
+	/**
 	 * Field sets by kind of card. "on" means switched on by default.
 	 */
 	public static function default_fields( $kind ) {
@@ -621,6 +649,8 @@ class PKC_Installer {
 		switch ( $kind ) {
 			case 'student':
 				$extra = array(
+					array( 'key' => 'roll_no', 'label' => 'Roll No.', 'required' => false, 'on' => false ),
+					array( 'key' => 'regd_no', 'label' => 'Registration No.', 'required' => false, 'on' => false ),
 					array( 'key' => 'class', 'label' => 'Class / Course', 'required' => false, 'on' => true ),
 					array( 'key' => 'section', 'label' => 'Section', 'required' => false, 'on' => true ),
 					array( 'key' => 'guardian', 'label' => 'Father / Guardian name', 'required' => false, 'on' => true ),

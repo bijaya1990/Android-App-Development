@@ -423,7 +423,8 @@ class PKC_REST_Members {
 					'name' => $org->name,
 					'logo' => $org->logo,
 				),
-				'fields' => self::form_fields( $p ),
+				'fields'  => self::form_fields( $p ),
+				'auto_id' => (bool) PKC_Members::auto_id( $p ),
 			)
 		);
 	}

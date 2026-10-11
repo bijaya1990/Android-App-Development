@@ -20,7 +20,9 @@ const PER_PAGE = 25;
 
 const LABELS = () => ( {
 	name: __( 'Full name', 'pikacart' ),
-	id_no: __( 'Roll / ID number', 'pikacart' ),
+	id_no: __( 'ID number', 'pikacart' ),
+	roll_no: __( 'Roll No.', 'pikacart' ),
+	regd_no: __( 'Registration No.', 'pikacart' ),
 	class: __( 'Class / Course', 'pikacart' ),
 	section: __( 'Section', 'pikacart' ),
 	designation: __( 'Designation', 'pikacart' ),
@@ -54,7 +56,9 @@ export function projectFields( P ) {
 	const out = [];
 	sub.forEach( ( f ) => {
 		if ( f.key === 'name' || f.key === 'id_no' || on.has( f.key ) ) {
-			out.push( { key: f.key, label: f.label || labels[ f.key ] || f.key, required: !! f.required } );
+			// With automatic ID numbers the ID column may stay empty.
+			const auto = f.key === 'id_no' && P.project.fields.id_auto;
+			out.push( { key: f.key, label: f.label || labels[ f.key ] || f.key, required: auto ? false : !! f.required, auto } );
 		}
 	} );
 	( P.project.fields.custom || [] ).forEach( ( c ) => {
@@ -67,7 +71,9 @@ export function projectFields( P ) {
 
 const HINTS = () => ( {
 	name: [ __( 'Full name as it should print on the card', 'pikacart' ), 'Aarav Mehta' ],
-	id_no: [ __( 'Unique number for each person (roll no., employee ID…). Also the photo file name.', 'pikacart' ), '1001' ],
+	id_no: [ __( 'Unique number for each person (employee ID, admission no.…). Also the photo file name.', 'pikacart' ), '1001' ],
+	roll_no: [ __( 'Roll number in the class', 'pikacart' ), '23' ],
+	regd_no: [ __( 'Registration / enrolment number', 'pikacart' ), 'REG/2026/0457' ],
 	photo: [ __( 'Paste the photo into this cell, or type the photo file name. Leave empty to match a photo named by the ID number.', 'pikacart' ), '1001.jpg' ],
 	class: [ __( 'Class or course', 'pikacart' ), 'VIII' ],
 	section: [ __( 'Section or division', 'pikacart' ), 'A' ],
@@ -84,7 +90,7 @@ const HINTS = () => ( {
 	valid_until: [ __( 'Card valid upto, DD-MM-YYYY. Leave empty to use the date set in the project Details.', 'pikacart' ), '31-03-2027' ],
 } );
 
-const TEXT_KEYS = [ 'id_no', 'mobile', 'emergency', 'dob', 'valid_from', 'valid_until' ];
+const TEXT_KEYS = [ 'id_no', 'roll_no', 'regd_no', 'mobile', 'emergency', 'dob', 'valid_from', 'valid_until' ];
 
 /**
  * A blank Excel made for this project's design: one column per field the
@@ -120,7 +126,7 @@ export function blankExcel( P ) {
 		[ __( 'Photo: paste the picture into the Photo cell of that person (Insert → Pictures → Place in Cell, or a picture placed on the cell). Or type the photo file name (e.g. aarav.jpg) and choose the photos or a ZIP when you upload. Or leave it empty and name each photo by the ID number (1001.jpg).', 'pikacart' ) ],
 		[],
 		[ __( 'Column', 'pikacart' ), __( 'Required', 'pikacart' ), __( 'What to write', 'pikacart' ), __( 'Example', 'pikacart' ) ],
-		...fields.map( ( f ) => [ f.label, f.required ? __( 'Yes', 'pikacart' ) : __( 'No', 'pikacart' ), ( hints[ f.key ] || [ __( 'Your own field', 'pikacart' ) ] )[ 0 ], ( hints[ f.key ] || [ '', '' ] )[ 1 ] ] ),
+		...fields.map( ( f ) => [ f.label, f.required ? __( 'Yes', 'pikacart' ) : __( 'No', 'pikacart' ), f.auto ? __( 'Leave empty: Pikacart gives the next number automatically. Or type your own.', 'pikacart' ) : ( hints[ f.key ] || [ __( 'Your own field', 'pikacart' ) ] )[ 0 ], f.auto ? '' : ( hints[ f.key ] || [ '', '' ] )[ 1 ] ] ),
 	] );
 	help[ '!cols' ] = [ { wch: 26 }, { wch: 10 }, { wch: 70 }, { wch: 24 } ];
 	const meta = X.utils.aoa_to_sheet( [ [ 'pikacart', 1 ], [ 'project', P.project.id ], [ 'keys', ...fields.map( ( f ) => f.key ) ] ] );
@@ -164,6 +170,7 @@ export default function peopleStep( body, P ) {
 	const st = { page: 1, search: '', status: '', class: '', section: '', department: '', session: '', sort: 'created', order: 'asc', trash: false, selected: new Set(), rows: [], total: 0, facets: null, counts: {} };
 	let alive = true;
 	const fields = projectFields( P );
+	const autoId = !! P.project.fields.id_auto;
 	const pid = P.project.id;
 
 	body.innerHTML = `<div class="people">
@@ -529,7 +536,7 @@ export default function peopleStep( body, P ) {
 					${ fields.map( ( f ) => {
 						const type = f.key === 'email' ? 'email' : [ 'mobile', 'emergency' ].includes( f.key ) ? 'tel' : 'text';
 						const common = ( f.key === 'valid_until' || f.key === 'valid_from' ) && P.project.fields[ f.key ];
-						const ph = common ? sprintf( __( 'Leave empty for %s', 'pikacart' ), common ) : [ 'dob', 'valid_from', 'valid_until' ].includes( f.key ) ? 'DD-MM-YYYY' : '';
+						const ph = f.auto ? __( 'Leave empty: made automatically', 'pikacart' ) : common ? sprintf( __( 'Leave empty for %s', 'pikacart' ), common ) : [ 'dob', 'valid_from', 'valid_until' ].includes( f.key ) ? 'DD-MM-YYYY' : '';
 						const input = f.key === 'address' ? `<textarea name="${ f.key }" rows="2">${ esc( val( f.key ) ) }</textarea>` : `<input type="${ type }" name="${ f.key }" value="${ esc( val( f.key ) ) }" placeholder="${ ph }" ${ f.required ? 'required' : '' }>`;
 						return `<div class="field ${ f.key === 'address' ? 'span2' : '' }"><label>${ esc( f.label ) }${ f.required ? ' *' : '' }</label>${ input }</div>`;
 					} ).join( '' ) }
@@ -757,7 +764,9 @@ export default function peopleStep( body, P ) {
 			const h = String( header ).toLowerCase().replace( /[^a-z]/g, '' );
 			const map = {
 				name: [ 'name', 'fullname', 'studentname', 'employeename', 'staffname', 'membername' ],
-				id_no: [ 'id', 'idno', 'idnumber', 'rollno', 'rollnumber', 'roll', 'admissionno', 'empid', 'employeeid', 'regno', 'registrationno' ],
+				id_no: [ 'id', 'idno', 'idnumber', 'admissionno', 'empid', 'employeeid' ],
+				roll_no: [ 'rollno', 'rollnumber', 'roll', 'classroll' ],
+				regd_no: [ 'regdno', 'regno', 'regd', 'registrationno', 'registrationnumber', 'enrollmentno', 'enrolmentno', 'enrollmentnumber' ],
 				class: [ 'class', 'course', 'grade', 'std', 'standard' ],
 				section: [ 'section', 'sec', 'division' ],
 				designation: [ 'designation', 'role', 'post', 'position', 'passtype' ],
@@ -776,6 +785,10 @@ export default function peopleStep( body, P ) {
 			};
 			for ( const [ k, list ] of Object.entries( map ) ) {
 				if ( list.includes( h ) ) {
+					// Roll / registration number columns fill the ID when the card has no such field.
+					if ( ( k === 'roll_no' || k === 'regd_no' ) && ! fields.some( ( x ) => x.key === k ) ) {
+						return 'id_no';
+					}
 					return k;
 				}
 			}
@@ -792,7 +805,7 @@ export default function peopleStep( body, P ) {
 					map[ k ] = i;
 				}
 			} );
-			if ( map.name === undefined || map.id_no === undefined ) {
+			if ( map.name === undefined || ( map.id_no === undefined && ! autoId ) ) {
 				mapping( rows );
 				return;
 			}
@@ -825,8 +838,8 @@ export default function peopleStep( body, P ) {
 						map[ s.value ] = Number( s.dataset.col );
 					}
 				} );
-				if ( map.name === undefined || map.id_no === undefined ) {
-					toast( __( 'Please match the Name and ID number columns.', 'pikacart' ), 'error' );
+				if ( map.name === undefined || ( map.id_no === undefined && ! autoId ) ) {
+					toast( autoId ? __( 'Please match the Name column.', 'pikacart' ) : __( 'Please match the Name and ID number columns.', 'pikacart' ), 'error' );
 					return;
 				}
 				run( rows, map, stage.querySelector( '[data-mode]' ).value );
@@ -866,14 +879,17 @@ export default function peopleStep( body, P ) {
 			// Photos: pasted in the Excel, chosen as files/ZIP, or named by ID number.
 			let photoNote = '';
 			const okRows = new Set( results.filter( ( r ) => r.ok ).map( ( r ) => r.row ) );
+			// The ID number each row got (automatic numbers are made by the server).
+			const given = new Map( results.filter( ( r ) => r.ok ).map( ( r ) => [ r.row, r.id_no ] ) );
 			const pasted = src.buf ? await sheetImages( src.buf, src.sheetName, photoCol === undefined ? -1 : photoCol ) : new Map();
 			const items = [];
 			rows.slice( 1 ).forEach( ( r, k ) => {
 				if ( ! okRows.has( k + 2 ) ) {
 					return;
 				}
-				const id = data[ k ].id_no;
-				const blob = pasted.get( r.sheetRow ) || findPhoto( src.files, photoCol === undefined ? '' : r[ photoCol ], id );
+				const id = given.get( k + 2 ) || data[ k ].id_no;
+				const fileKey = data[ k ].id_no || data[ k ].roll_no || data[ k ].regd_no || id;
+				const blob = pasted.get( r.sheetRow ) || findPhoto( src.files, photoCol === undefined ? '' : r[ photoCol ], fileKey );
 				if ( blob ) {
 					items.push( { id, blob, label: `${ data[ k ].name || id } (${ __( 'row', 'pikacart' ) } ${ k + 2 })` } );
 				}

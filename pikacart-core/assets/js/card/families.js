@@ -41,7 +41,7 @@ const PAT = ( x, y, w, h, kind, o = {} ) => ( { t: 'pattern', x, y, w, h, kind, 
 export function rows( kind, withId = false ) {
 	const id = [ withId ? [ 'ID No.', '{{id_no}}', 'id_no' ] : null ];
 	const set = {
-		student: [ [ 'Class', '{{class_section}}', 'class' ], [ "Father's Name", '{{guardian}}', 'guardian' ], [ 'D.O.B.', '{{dob}}', 'dob' ], [ 'Blood Group', '{{blood_group}}', 'blood_group' ], [ 'Mobile', '{{mobile}}', 'mobile' ] ],
+		student: [ [ 'Roll No.', '{{roll_no}}', 'roll_no' ], [ 'Regd. No.', '{{regd_no}}', 'regd_no' ], [ 'Class', '{{class_section}}', 'class' ], [ "Father's Name", '{{guardian}}', 'guardian' ], [ 'D.O.B.', '{{dob}}', 'dob' ], [ 'Blood Group', '{{blood_group}}', 'blood_group' ], [ 'Mobile', '{{mobile}}', 'mobile' ] ],
 		staff: [ [ 'Designation', '{{designation}}', 'designation' ], [ 'Department', '{{department}}', 'department' ], [ 'Blood Group', '{{blood_group}}', 'blood_group' ], [ 'D.O.B.', '{{dob}}', 'dob' ], [ 'Mobile', '{{mobile}}', 'mobile' ], [ 'Email', '{{email}}', 'email' ] ],
 		other: [ [ 'Pass Type', '{{designation}}', 'designation' ], [ 'Area', '{{department}}', 'department' ], [ 'Mobile', '{{mobile}}', 'mobile' ] ],
 	}[ kind ] || [];

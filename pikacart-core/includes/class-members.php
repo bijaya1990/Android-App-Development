@@ -13,7 +13,7 @@ class PKC_Members {
 	const STATUSES = array( 'draft', 'ready', 'printed', 'expired', 'cancelled', 'pending' );
 
 	/** Field keys a person can have (plus cf1..cf5). */
-	const KEYS = array( 'name', 'id_no', 'class', 'section', 'designation', 'department', 'mobile', 'email', 'dob', 'blood_group', 'guardian', 'address', 'emergency', 'valid_from', 'valid_until', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5' );
+	const KEYS = array( 'name', 'id_no', 'roll_no', 'regd_no', 'class', 'section', 'designation', 'department', 'mobile', 'email', 'dob', 'blood_group', 'guardian', 'address', 'emergency', 'valid_from', 'valid_until', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5' );
 
 	public static function status_labels() {
 		return array(
@@ -93,8 +93,9 @@ class PKC_Members {
 			if ( mb_strlen( $name ) < 1 ) {
 				return new WP_Error( 'pkc_invalid', __( 'Full name is required.', 'pikacart' ), array( 'status' => 400, 'field' => 'name' ) );
 			}
-			if ( '' === $id_no ) {
-				return new WP_Error( 'pkc_invalid', __( 'Roll number / ID number is required.', 'pikacart' ), array( 'status' => 400, 'field' => 'id_no' ) );
+			// With automatic ID numbers an empty ID gets the next number when saved.
+			if ( '' === $id_no && ! self::auto_id( $project ) ) {
+				return new WP_Error( 'pkc_invalid', __( 'ID number is required. Or switch on "Make ID numbers automatically" in step 5 (Details).', 'pikacart' ), array( 'status' => 400, 'field' => 'id_no' ) );
 			}
 		}
 		if ( isset( $data['mobile'] ) && '' !== $data['mobile'] && ! preg_match( '/^[0-9+\-\s()]{6,20}$/', $data['mobile'] ) ) {
@@ -119,6 +120,47 @@ class PKC_Members {
 		}
 		unset( $data['name'], $data['id_no'] );
 		return array( $cols, $data );
+	}
+
+	/** Automatic ID number settings of a project, or null when switched off. */
+	public static function auto_id( $project ) {
+		$s = pkc_json( $project->fields );
+		if ( empty( $s['id_auto'] ) ) {
+			return null;
+		}
+		return array(
+			'prefix' => (string) ( $s['id_prefix'] ?? '' ),
+			'start'  => max( 0, (int) ( $s['id_start'] ?? 1 ) ),
+			'digits' => max( 1, min( 8, (int) ( $s['id_digits'] ?? 4 ) ) ),
+		);
+	}
+
+	/**
+	 * The next free automatic ID number of a project: prefix + number padded to
+	 * the chosen digits, one more than the highest one already used, and never
+	 * an ID used by someone else in the same organisation.
+	 */
+	public static function next_id( $org_id, $project, $session = '' ) {
+		global $wpdb;
+		$a = self::auto_id( $project );
+		if ( ! $a ) {
+			return '';
+		}
+		$like = $wpdb->esc_like( $a['prefix'] ) . '%';
+		$ids  = $wpdb->get_col( $wpdb->prepare( 'SELECT id_no FROM ' . pkc_table( 'members' ) . ' WHERE project_id = %d AND id_no LIKE %s', $project->id, $like ) );
+		$n    = $a['start'] - 1;
+		$len  = strlen( $a['prefix'] );
+		foreach ( $ids as $id ) {
+			$rest = substr( (string) $id, $len );
+			if ( '' !== $rest && ctype_digit( $rest ) ) {
+				$n = max( $n, (int) $rest );
+			}
+		}
+		do {
+			++$n;
+			$id = $a['prefix'] . str_pad( (string) $n, $a['digits'], '0', STR_PAD_LEFT );
+		} while ( self::id_taken( $org_id, $id, $session, 0, (int) $project->id ) );
+		return $id;
 	}
 
 	/**
@@ -214,6 +256,13 @@ class PKC_Members {
 			}
 		}
 		$session  = isset( $in['session'] ) ? mb_substr( sanitize_text_field( (string) $in['session'] ), 0, 40 ) : ( $existing ? $existing->session : (string) ( $settings['session'] ?? '' ) );
+		if ( '' === $cols['id_no'] ) {
+			if ( $existing && '' !== (string) $existing->id_no ) {
+				$cols['id_no'] = $existing->id_no; // Editing without an ID keeps the old one.
+			} elseif ( self::auto_id( $project ) ) {
+				$cols['id_no'] = self::next_id( $org->id, $project, $session );
+			}
+		}
 		if ( '' !== $cols['id_no'] && self::id_taken( $org->id, $cols['id_no'], $session, $existing ? (int) $existing->id : 0, (int) $project->id ) ) {
 			return new WP_Error(
 				'pkc_duplicate',

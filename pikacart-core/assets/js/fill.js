@@ -30,7 +30,8 @@
 				return;
 			}
 			var html = '<div class="field"><label for="f-name">' + esc( __( 'Full name', 'pikacart' ) ) + ' *</label><input id="f-name" name="name" required autocomplete="name"></div>' +
-				'<div class="field"><label for="f-id">' + esc( __( 'Roll number / ID number', 'pikacart' ) ) + ' *</label><input id="f-id" name="id_no" required></div>';
+				// With automatic ID numbers the institution gives the number.
+				( x.d.auto_id ? '' : '<div class="field"><label for="f-id">' + esc( __( 'ID number', 'pikacart' ) ) + ' *</label><input id="f-id" name="id_no" required></div>' );
 			x.d.fields.forEach( function ( f ) {
 				if ( [ 'photo', 'name', 'id_no' ].indexOf( f.key ) !== -1 ) {
 					return;
@@ -68,7 +69,7 @@
 		e.preventDefault();
 		var btn = form.querySelector( 'button[type=submit]' );
 		var fd = new FormData( form );
-		if ( ! form.name.value.trim() || ! form.id_no.value.trim() ) {
+		if ( ! form.name.value.trim() || ( form.id_no && ! form.id_no.value.trim() ) ) {
 			show( __( 'Please fill your name and ID number.', 'pikacart' ), false );
 			return;
 		}

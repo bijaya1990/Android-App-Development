@@ -41,6 +41,8 @@ export const FIELD_TOKENS = () => [
 	[ '{{email}}', __( 'Email', 'pikacart' ) ],
 	[ '{{dob}}', __( 'Date of birth', 'pikacart' ) ],
 	[ '{{blood_group}}', __( 'Blood group', 'pikacart' ) ],
+	[ '{{roll_no}}', __( 'Roll No.', 'pikacart' ) ],
+	[ '{{regd_no}}', __( 'Registration No.', 'pikacart' ) ],
 	[ '{{guardian}}', __( 'Father / guardian', 'pikacart' ) ],
 	[ '{{address}}', __( 'Address', 'pikacart' ) ],
 	[ '{{emergency}}', __( 'Emergency contact', 'pikacart' ) ],

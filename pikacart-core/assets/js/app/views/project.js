@@ -240,13 +240,33 @@ export function makeP( ctx, cat, data, sample, getAutosave ) {
 				demo: ! ( member || P.sample ),
 			};
 		},
+		/**
+		 * Screen preview only: a switched-on field with no value yet (your own
+		 * fields, Roll No.…) shows "[its name]" so it is clear it was added.
+		 * Downloads and prints never show these.
+		 */
+		previewOpts( side ) {
+			const opts = P.renderOpts( side );
+			const labels = { roll_no: __( 'Roll No.', 'pikacart' ), regd_no: __( 'Regd. No.', 'pikacart' ) };
+			( data.project.fields.custom || [] ).forEach( ( c ) => {
+				labels[ c.key ] = c.label;
+			} );
+			const vars = Object.assign( {}, opts.vars );
+			opts.fields.forEach( ( k ) => {
+				if ( labels[ k ] && ! String( vars[ k ] || '' ).trim() ) {
+					vars[ k ] = `[${ labels[ k ] }]`;
+				}
+			} );
+			opts.vars = vars;
+			return opts;
+		},
 		async preview( root ) {
 			const canvases = root.querySelectorAll( 'canvas[data-side]' );
 			const lay = P.layout();
 			const size = P.size();
 			for ( const c of canvases ) {
 				const w = Number( c.dataset.width || ( size.w > size.h ? 340 : 230 ) ) * Math.min( 2, devicePixelRatio || 1 );
-				await renderSide( c, lay[ c.dataset.side ], Object.assign( P.renderOpts( c.dataset.side ), { width: w } ) );
+				await renderSide( c, lay[ c.dataset.side ], Object.assign( P.previewOpts( c.dataset.side ), { width: w } ) );
 				c.style.aspectRatio = `${ size.w } / ${ size.h }`;
 			}
 		},
@@ -477,6 +497,19 @@ function detailsStep( body, P ) {
 					<div class="field"><label for="d-vf">${ esc( __( 'Valid from (optional)', 'pikacart' ) ) }</label><input id="d-vf" data-date="valid_from" value="${ esc( f.valid_from || '' ) }" placeholder="01-04-${ new Date().getFullYear() }" inputmode="numeric" maxlength="10"><small class="field-hint" data-date-msg="valid_from"></small></div>
 				</div>
 			</section>
+			<section class="card" data-idbox>
+				<div class="card-head"><h3>${ icon( 'idcard' ) } ${ esc( __( 'ID numbers', 'pikacart' ) ) }</h3></div>
+				<label class="toggle"><input type="checkbox" data-idauto ${ f.id_auto ? 'checked' : '' }><span class="toggle-ui"></span><span><strong>${ esc( __( 'Make ID numbers automatically', 'pikacart' ) ) }</strong></span></label>
+				<p class="muted small">${ esc( __( 'On: leave the ID number empty when adding people or in the Excel, and each person gets the next number. Off: you type every ID number yourself.', 'pikacart' ) ) }</p>
+				<div class="id-auto" ${ f.id_auto ? '' : 'hidden' }>
+					<div class="grid-3">
+						<div class="field"><label for="d-idp">${ esc( __( 'Starts with (prefix)', 'pikacart' ) ) }</label><input id="d-idp" data-id="id_prefix" value="${ esc( f.id_prefix || '' ) }" maxlength="12" placeholder="STU"></div>
+						<div class="field"><label for="d-ids">${ esc( __( 'First number', 'pikacart' ) ) }</label><input id="d-ids" data-id="id_start" type="number" min="0" value="${ esc( f.id_start ?? 1 ) }"></div>
+						<div class="field"><label for="d-idd">${ esc( __( 'Digits', 'pikacart' ) ) }</label><select id="d-idd" data-id="id_digits">${ [ 1, 2, 3, 4, 5, 6 ].map( ( n ) => `<option value="${ n }" ${ Number( f.id_digits || 4 ) === n ? 'selected' : '' }>${ n } (${ '0'.repeat( n - 1 ) }1)</option>` ).join( '' ) }</select></div>
+					</div>
+					<p class="id-preview" data-idpreview></p>
+				</div>
+			</section>
 			<section class="card">
 				<div class="card-head"><h3>${ esc( __( 'Fields on the card', 'pikacart' ) ) }</h3></div>
 				<p class="muted small">${ esc( __( 'Switched-off or empty fields disappear from the card with no blank gap.', 'pikacart' ) ) }</p>
@@ -484,6 +517,7 @@ function detailsStep( body, P ) {
 					${ subFields.map( ( x ) => `<label class="toggle ${ locked.includes( x.key ) ? 'is-locked' : '' }"><input type="checkbox" data-field="${ esc( x.key ) }" ${ ( f.on || [] ).includes( x.key ) || locked.includes( x.key ) ? 'checked' : '' } ${ locked.includes( x.key ) ? 'disabled' : '' }><span class="toggle-ui"></span><span>${ esc( x.label ) }${ x.required ? ' *' : '' }</span></label>` ).join( '' ) }
 				</div>
 				<h4 class="sub-h">${ esc( __( 'Your own fields (up to 5)', 'pikacart' ) ) }</h4>
+				<p class="muted small">${ esc( __( 'Type a name (e.g. House) and switch it on. Then fill each person\'s value in step 7 (Add person or the Excel). Until then the preview shows [House].', 'pikacart' ) ) }</p>
 				<div class="custom-fields">
 					${ [ 0, 1, 2, 3, 4 ].map( ( i ) => {
 						const c = ( f.custom || [] )[ i ];
@@ -515,6 +549,32 @@ function detailsStep( body, P ) {
 		refresh();
 	};
 	body.querySelectorAll( '[data-k]' ).forEach( ( i ) => i.addEventListener( 'input', () => save( { [ i.dataset.k ]: i.value } ) ) );
+	// Automatic ID numbers: prefix + running number, shown as an example.
+	const idPreview = () => {
+		const ff = P.project.fields;
+		const box = body.querySelector( '[data-idpreview]' );
+		const pad = ( n ) => String( n ).padStart( Number( ff.id_digits || 4 ), '0' );
+		const start = Number( ff.id_start ?? 1 );
+		const pre = ( ff.id_prefix || '' ).replace( /[^A-Za-z0-9/\-_.]/g, '' );
+		box.innerHTML = `${ icon( 'check-circle' ) }${ esc( __( 'New people get:', 'pikacart' ) ) } <b>${ esc( pre + pad( start ) ) }</b>, <b>${ esc( pre + pad( start + 1 ) ) }</b>, <b>${ esc( pre + pad( start + 2 ) ) }</b> …`;
+	};
+	idPreview();
+	body.querySelector( '[data-idauto]' ).addEventListener( 'change', ( e ) => {
+		const on = e.target.checked;
+		body.querySelector( '.id-auto' ).hidden = ! on;
+		const patch = { id_auto: on };
+		if ( on && P.project.fields.id_start === undefined ) {
+			patch.id_start = 1;
+			patch.id_digits = 4;
+		}
+		save( patch );
+		idPreview();
+	} );
+	body.querySelectorAll( '[data-id]' ).forEach( ( i ) => i.addEventListener( 'input', () => {
+		const k = i.dataset.id;
+		save( { [ k ]: k === 'id_prefix' ? i.value.trim() : Number( i.value ) } );
+		idPreview();
+	} ) );
 	// Dates: DD-MM-YYYY. A valid date also switches the field on so it prints.
 	body.querySelectorAll( '[data-date]' ).forEach( ( i ) => i.addEventListener( 'input', () => {
 		const k = i.dataset.date;
@@ -555,12 +615,27 @@ function detailsStep( body, P ) {
 	} ) );
 	body.querySelectorAll( '[data-cf]' ).forEach( ( i ) => i.addEventListener( 'input', () => {
 		const custom = [];
+		const on = new Set( P.project.fields.on || [] );
 		body.querySelectorAll( '[data-cf]' ).forEach( ( x, n ) => {
+			const key = 'cf' + ( n + 1 );
+			const box = body.querySelector( `[data-field="${ key }"]` );
 			if ( x.value.trim() ) {
-				custom.push( { key: 'cf' + ( n + 1 ), label: x.value.trim() } );
+				custom.push( { key, label: x.value.trim() } );
+				// Typing a name switches the field on; it shows on the card at once.
+				if ( x === i && ! on.has( key ) ) {
+					on.add( key );
+					if ( box ) {
+						box.checked = true;
+					}
+				}
+			} else if ( on.has( key ) ) {
+				on.delete( key );
+				if ( box ) {
+					box.checked = false;
+				}
 			}
 		} );
-		save( { custom } );
+		save( { custom, on: [ ...on ] } );
 	} ) );
 	body.querySelectorAll( '[data-flag]' ).forEach( ( i ) => i.addEventListener( 'change', () => {
 		save( { flags: Object.assign( {}, flagsOf( P.project ), { [ i.dataset.flag ]: i.checked } ) } );
