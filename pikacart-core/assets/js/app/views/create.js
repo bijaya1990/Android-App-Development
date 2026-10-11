@@ -14,7 +14,7 @@ import { layoutFor } from '../../card/families.js';
 import { demoVars, kindOf } from '../../card/data.js';
 import { supportsOrientation } from '../../card/scene.js';
 import { orgMark, orgName, orgStats, switchOrg, activeOrg } from '../orgs.js';
-import { journeyBar, journeyGuide } from '../journey.js';
+import { journeyBar, journeyGuide, guideBanner } from '../journey.js';
 
 const { __, _n, sprintf } = window.wp.i18n;
 
@@ -78,7 +78,7 @@ function orgPicker( el, ctx ) {
 		const term = query.trim().toLowerCase();
 		const list = [ ...me.clients ].sort( ( a, b ) => ( b.id === me.client ) - ( a.id === me.client ) );
 		const shown = list.filter( ( o ) => ! term || orgName( o ).toLowerCase().includes( term ) );
-		el.innerHTML = `${ journeyBar( 1, createHref( ctx ) ) }<div class="org-pick">
+		el.innerHTML = `${ guideBanner() }${ journeyBar( 1, createHref( ctx ) ) }<div class="org-pick">
 			${ journeyGuide( 1 ) }
 			${ list.length > 6 ? `<div class="org-search"><span>${ icon( 'search' ) }</span><input type="search" data-q value="${ esc( query ) }" placeholder="${ esc( __( 'Search organisations…', 'pikacart' ) ) }" aria-label="${ esc( __( 'Search organisations', 'pikacart' ) ) }"></div>` : '' }
 			<div class="org-pick-grid">

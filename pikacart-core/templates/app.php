@@ -13,6 +13,7 @@ $pkc_title  = __( 'Dashboard', 'pikacart' );
 $pkc_styles = array( 'pkc-app', 'pkc-card-fonts', 'pkc-cropper' );
 $pkc_nav    = array(
 	array( '', 'home', __( 'Dashboard', 'pikacart' ) ),
+	array( 'guide', 'book', __( 'Guide · गाइड', 'pikacart' ) ),
 	array( 'organisations', 'building', __( 'Organisations', 'pikacart' ) ),
 	array( 'create', 'plus', __( 'Create ID card', 'pikacart' ) ),
 	array( 'projects', 'folder', __( 'My Projects', 'pikacart' ) ),
@@ -70,6 +71,7 @@ require PKC_DIR . 'templates/partials/head.php';
 			<h1 class="page-title" id="page-title"><?php esc_html_e( 'Dashboard', 'pikacart' ); ?></h1>
 			<div class="org-switch" id="org-switch"></div>
 			<div class="topbar-right">
+				<a class="guide-top" href="<?php echo esc_url( pkc_url( 'app', 'guide' ) ); ?>" data-link title="<?php esc_attr_e( 'Step-by-step guide in Hindi and English', 'pikacart' ); ?>"><svg class="pkc-i"><use href="#i-book"></use></svg><span><?php esc_html_e( 'Guide', 'pikacart' ); ?></span></a>
 				<a class="status-pill" id="status-pill" href="<?php echo esc_url( pkc_url( 'app', 'subscription' ) ); ?>" data-link hidden></a>
 				<div class="bell">
 					<button type="button" class="icon-btn bell-btn" data-action="toggle-bell" aria-haspopup="true" aria-expanded="false" aria-label="<?php esc_attr_e( 'Notifications', 'pikacart' ); ?>">

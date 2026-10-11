@@ -56,8 +56,23 @@ export function journeyGuide( current, extra = '' ) {
 			<h2>${ esc( s[ 2 ] ) }${ s[ 4 ] ? ` <em>${ esc( __( 'Optional', 'pikacart' ) ) }</em>` : '' }</h2>
 			<p>${ esc( s[ 3 ] ) }</p>
 		</div>
-		${ extra }
+		<div class="journey-guide-extra">
+			${ extra }
+			<a class="journey-help" href="${ esc( window.PKC.app + 'guide/' + s[ 0 ] + '/' ) }" data-link title="${ esc( __( 'Step-by-step help for this step, in Hindi and English', 'pikacart' ) ) }">${ icon( 'book' ) }<span>${ esc( __( 'Help', 'pikacart' ) ) } · मदद</span></a>
+		</div>
 	</div>`;
+}
+
+/** Colourful "read the guide" strip for the Dashboard and the start of Create ID card. */
+export function guideBanner() {
+	return `<a class="guide-banner" href="${ esc( window.PKC.app + 'guide/' ) }" data-link>
+		<span class="guide-banner-icon">${ icon( 'book' ) }</span>
+		<span class="guide-banner-t">
+			<b>${ esc( __( 'New here? Read the step-by-step guide', 'pikacart' ) ) }</b>
+			<small>पूरी गाइड हिंदी में भी · ${ esc( __( 'With pictures, from sign-up to printing', 'pikacart' ) ) }</small>
+		</span>
+		<span class="guide-banner-go">${ esc( __( 'Open guide', 'pikacart' ) ) }${ icon( 'chevron-right' ) }</span>
+	</a>`;
 }
 
 /**

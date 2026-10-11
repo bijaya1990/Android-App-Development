@@ -7,6 +7,7 @@ import { api } from '../api.js';
 import { waitForAllSaves } from '../autosave.js';
 import { savedStep, stepLabel } from './project.js';
 import { orgMark, activeOrg } from '../orgs.js';
+import { guideBanner } from '../journey.js';
 
 const { __, _n, sprintf } = window.wp.i18n;
 
@@ -23,7 +24,7 @@ function greeting() {
 
 /** A new account: add the first school, college or office to make cards for. */
 function firstOrg( el, ctx, first ) {
-	el.innerHTML = `<section class="card first-org">
+	el.innerHTML = `${ guideBanner() }<section class="card first-org">
 		<div class="first-org-text">
 			<span class="eyebrow">${ esc( __( 'Welcome to Pikacart', 'pikacart' ) ) }</span>
 			<h2>${ esc( greeting() ) }${ first ? ', ' + esc( first ) : '' } 👋</h2>
@@ -123,6 +124,7 @@ export default function dashboard( el, ctx ) {
 			<a class="btn btn-primary" href="${ esc( ctx.url( 'create' ) ) }" data-link>${ icon( 'plus' ) }${ esc( __( 'New ID card', 'pikacart' ) ) }</a>
 		</section>
 
+		${ guideBanner() }
 		<div class="dash-top">
 			${ planCard }
 			<div class="stat-grid">

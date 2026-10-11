@@ -14,6 +14,7 @@ import create from './views/create.js';
 import projects from './views/projects.js';
 import designs from './views/designs.js';
 import organisations from './views/organisations.js';
+import guide from './views/guide.js';
 import { orgMark, orgName, orgMenuList, switchOrg, activeOrg } from './orgs.js';
 import { initLive, closeBell } from './live.js';
 
@@ -29,6 +30,7 @@ const store = {
 
 const routes = {
 	'': { title: __( 'Dashboard', 'pikacart' ), view: dashboard },
+	guide: { title: __( 'Guide · गाइड', 'pikacart' ), view: guide },
 	welcome: { title: __( 'Welcome', 'pikacart' ), view: onboarding },
 	organisations: { title: __( 'Organisations', 'pikacart' ), view: organisations },
 	create: { title: __( 'Create ID card', 'pikacart' ), view: create },
