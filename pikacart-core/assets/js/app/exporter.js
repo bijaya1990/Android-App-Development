@@ -35,9 +35,9 @@ async function watermarkFor( P, n ) {
 }
 
 /** Render one side of one person at print resolution. */
-export async function renderPrint( P, member, side, watermark, dpi = PRINT_DPI ) {
+export async function renderPrint( P, member, side, watermark, dpi = PRINT_DPI, noBleed = false ) {
 	const canvas = document.createElement( 'canvas' );
-	const bleedMm = P.project.fields.bleed ? 2 : 0;
+	const bleedMm = P.project.fields.bleed && ! noBleed ? 2 : 0;
 	const res = await renderSide( canvas, P.layout()[ side ], Object.assign( P.renderOpts( side, member ), {
 		pxPerMm: dpi / MM_PER_INCH,
 		bleedMm,
@@ -225,4 +225,105 @@ export async function printCards( P, members, sidesOpt = 'both' ) {
 		${ imgs.map( ( src ) => `<img src="${ src }" alt="">` ).join( '' ) }
 		<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script></body></html>` );
 	win.document.close();
+}
+
+/**
+ * Open one print job: every image is one page of exactly w × h mm.
+ * Resolves when the print window is closed (printed or cancelled).
+ */
+function printJob( win, title, imgs, w, h, note ) {
+	return new Promise( ( resolve ) => {
+		win.document.open();
+		win.document.write( `<!doctype html><html><head><title>${ esc( title ) }</title>
+			<style>@page { size: ${ w }mm ${ h }mm; margin: 0; } html,body{margin:0;padding:0;background:#fff}
+			img{display:block;width:${ w }mm;height:${ h }mm;object-fit:fill;page-break-after:always;break-after:page}
+			img:last-child{page-break-after:auto;break-after:auto}
+			.note{font:15px sans-serif;padding:14px;background:#fff6e0;color:#7a4b00} @media print{.note{display:none}}</style></head>
+			<body><div class="note">${ esc( note ) }</div>
+			${ imgs.map( ( src ) => `<img src="${ src }" alt="">` ).join( '' ) }
+			<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script></body></html>` );
+		win.document.close();
+		let done = false;
+		const finish = () => {
+			if ( ! done ) {
+				done = true;
+				clearInterval( poll );
+				try {
+					win.close();
+				} catch ( e ) {}
+				resolve();
+			}
+		};
+		win.addEventListener( 'afterprint', () => setTimeout( finish, 300 ) );
+		const poll = setInterval( () => {
+			if ( win.closed ) {
+				finish();
+			}
+		}, 700 );
+	} );
+}
+
+/**
+ * Print straight to a PVC card printer: one card per page at the chosen card
+ * size (e.g. CR80 85.6 × 54 mm), turned to match the design.
+ * duplex: front and back of each person in one job (the printer flips the card).
+ * Otherwise all fronts first, then the backs after the cards are put back in.
+ */
+export async function printPvc( P, members, { w, h, duplex, sides = 'both', confirmFlip } ) {
+	if ( ! members.length ) {
+		return false;
+	}
+	if ( P.ctx.me.state.can_work === false ) {
+		toast( __( 'Please subscribe to print cards.', 'pikacart' ), 'error' );
+		return false;
+	}
+	let win = window.open( '', '_blank' );
+	if ( ! win ) {
+		toast( __( 'Please allow pop-ups to print.', 'pikacart' ), 'error' );
+		return false;
+	}
+	win.document.write( `<p style="font-family:sans-serif;padding:24px">${ esc( __( 'Preparing cards for the card printer…', 'pikacart' ) ) }</p>` );
+	const card = P.size();
+	const portrait = card.h > card.w;
+	const pw = portrait ? Math.min( w, h ) : Math.max( w, h );
+	const ph = portrait ? Math.max( w, h ) : Math.min( w, h );
+	const wm = await watermarkFor( P, members.length );
+	const doFront = sides !== 'back';
+	const doBack = sides !== 'front' && !! P.layout().back;
+	const fronts = [];
+	const backs = [];
+	for ( const m of members ) {
+		if ( doFront ) {
+			fronts.push( ( await renderPrint( P, m, 'front', wm, PRINT_DPI, true ) ).canvas.toDataURL( 'image/jpeg', 0.93 ) );
+		}
+		if ( doBack ) {
+			backs.push( ( await renderPrint( P, m, 'back', wm, PRINT_DPI, true ) ).canvas.toDataURL( 'image/jpeg', 0.93 ) );
+		}
+		await tick();
+	}
+	const note = __( 'Choose your card printer, scale 100% (Actual size), margins None. The card size is already set.', 'pikacart' );
+	if ( duplex || ! fronts.length || ! backs.length ) {
+		const pages = [];
+		members.forEach( ( m, i ) => {
+			if ( fronts[ i ] ) {
+				pages.push( fronts[ i ] );
+			}
+			if ( backs[ i ] ) {
+				pages.push( backs[ i ] );
+			}
+		} );
+		await printJob( win, P.project.name, pages, pw, ph, duplex && fronts.length && backs.length ? `${ note } ${ __( 'Turn on "Print on both sides" in the printer settings.', 'pikacart' ) }` : note );
+		return true;
+	}
+	await printJob( win, P.project.name, fronts, pw, ph, `${ note } ${ __( 'Step 1 of 2: fronts.', 'pikacart' ) }` );
+	if ( ! ( await confirmFlip() ) ) {
+		return true;
+	}
+	win = window.open( '', '_blank' );
+	if ( ! win ) {
+		toast( __( 'Please allow pop-ups to print.', 'pikacart' ), 'error' );
+		return true;
+	}
+	await printJob( win, P.project.name, backs, pw, ph, `${ note } ${ __( 'Step 2 of 2: backs, in the same order.', 'pikacart' ) }` );
+	return true;
 }
