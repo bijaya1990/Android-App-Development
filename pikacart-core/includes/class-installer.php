@@ -39,6 +39,9 @@ class PKC_Installer {
 			if ( $from > 0 && $from < 7 ) {
 				self::add_student_numbers();
 			}
+			if ( $from > 0 && $from < 8 ) {
+				self::name_projects_by_organisation();
+			}
 			PKC_Roles::add_roles();
 			update_option( 'pkc_flush_rewrite', 1 );
 		}
@@ -615,6 +618,29 @@ class PKC_Installer {
 	 * Version 7: student card types get optional "Roll No." and
 	 * "Registration No." fields (switched off, so existing cards do not change).
 	 */
+	/**
+	 * Projects still carrying the old automatic name ("Student · 11 Oct 2026")
+	 * get the organisation's name instead ("Sunrise Public School · Student").
+	 * Names people typed themselves are left alone.
+	 */
+	private static function name_projects_by_organisation() {
+		global $wpdb;
+		$rows = $wpdb->get_results(
+			'SELECT p.id, p.org_id, p.client_id, p.name, s.name AS subtype, c.name AS client
+			FROM ' . pkc_table( 'projects' ) . ' p
+			INNER JOIN ' . pkc_table( 'subtypes' ) . ' s ON s.id = p.subtype_id
+			INNER JOIN ' . pkc_table( 'clients' ) . " c ON c.id = p.client_id
+			WHERE p.deleted_at IS NULL AND c.name <> ''
+			ORDER BY p.id ASC"
+		);
+		foreach ( $rows as $r ) {
+			if ( preg_match( '/^' . preg_quote( $r->subtype, '/' ) . ' · \d{1,2} \S+ \d{4}$/u', $r->name ) ) {
+				$name = PKC_Projects::default_name( $r->org_id, $r->client_id, $r->client, $r->subtype, $r->id );
+				$wpdb->update( pkc_table( 'projects' ), array( 'name' => $name ), array( 'id' => (int) $r->id ) );
+			}
+		}
+	}
+
 	private static function add_student_numbers() {
 		global $wpdb;
 		$rows = $wpdb->get_results( 'SELECT id, fields FROM ' . pkc_table( 'subtypes' ) );

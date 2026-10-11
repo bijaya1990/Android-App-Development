@@ -58,6 +58,22 @@ class PKC_Projects {
 		);
 	}
 
+	/**
+	 * "Sunrise Public School · Student": the organisation and the card type, so
+	 * projects are easy to find. A second one of the same kind gets " (2)".
+	 */
+	public static function default_name( $org_id, $client_id, $org_name, $subtype_name, $exclude = 0 ) {
+		global $wpdb;
+		$org_name = trim( (string) $org_name );
+		$base     = mb_substr( '' !== $org_name ? $org_name . ' · ' . $subtype_name : $subtype_name, 0, 110 );
+		$taken    = $wpdb->get_col( $wpdb->prepare( 'SELECT name FROM ' . pkc_table( 'projects' ) . ' WHERE org_id = %d AND client_id = %d AND id <> %d AND deleted_at IS NULL', $org_id, $client_id, $exclude ) );
+		$name     = $base;
+		for ( $n = 2; in_array( $name, $taken, true ); $n++ ) {
+			$name = $base . ' (' . $n . ')';
+		}
+		return $name;
+	}
+
 	public static function create( $org, $subtype_id, $template_id, $name = '' ) {
 		global $wpdb;
 		$subtype = PKC_Catalog::subtype( $subtype_id );
@@ -70,7 +86,7 @@ class PKC_Projects {
 		}
 		$size   = $wpdb->get_var( 'SELECT id FROM ' . pkc_table( 'sizes' ) . ' WHERE is_active = 1 ORDER BY sort_order ASC, id ASC LIMIT 1' );
 		$pals   = array_map( 'intval', pkc_json( $tpl->palettes ) );
-		$name   = $name ? mb_substr( sanitize_text_field( $name ), 0, 120 ) : $subtype->name . ' · ' . wp_date( 'j M Y' );
+		$name   = $name ? mb_substr( sanitize_text_field( $name ), 0, 120 ) : self::default_name( $org->id, isset( $org->client_id ) ? (int) $org->client_id : 0, (string) $org->name, $subtype->name );
 		$layout = pkc_json( $tpl->layout );
 		$orient = ( ! isset( $layout['recipe'] ) && empty( $layout['portrait'] ) && ! empty( $layout['landscape'] ) ) ? 'landscape' : 'portrait';
 		if ( ! empty( $layout['meta']['orientation'] ) ) {
