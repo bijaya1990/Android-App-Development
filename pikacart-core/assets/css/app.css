@@ -1031,3 +1031,6 @@ body.pkc-app-page { overflow-x: hidden; }
 .id-preview .pkc-i { width: 18px; height: 18px; color: var(--pkc-success); }
 .id-preview[hidden] { display: none; }
 .id-preview > span { flex: 1; min-width: 0; }
+.proj-who { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: var(--pkc-ink); line-height: 1.35; }
+.proj-who .pkc-i { width: 15px; height: 15px; flex: none; margin-top: 1px; color: var(--pkc-brand); }
+.proj-who b { font-weight: 600; }
