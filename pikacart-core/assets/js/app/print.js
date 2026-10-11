@@ -173,9 +173,9 @@ export default function printView( el, ctx, pid ) {
 				pd = pd || {
 					image: async ( m, side, x, y, w, h ) => g.drawImage( await lowImage( m, side ), x * scale, y * scale, w * scale, h * scale ),
 					line: ( x1, y1, x2, y2, dash ) => {
-						g.strokeStyle = '#111';
-						g.lineWidth = Math.max( 0.6, 0.2 * scale );
-						g.setLineDash( dash ? [ 1.5 * scale, 1.2 * scale ] : [] );
+						g.strokeStyle = dash ? '#b5b5b5' : '#111';
+						g.lineWidth = Math.max( 0.5, ( dash ? 0.1 : 0.2 ) * scale );
+						g.setLineDash( dash ? [ 1 * scale, 1 * scale ] : [] );
 						g.beginPath();
 						g.moveTo( x1 * scale, y1 * scale );
 						g.lineTo( x2 * scale, y2 * scale );
@@ -316,10 +316,15 @@ export default function printView( el, ctx, pid ) {
 				const pd = {
 						image: async ( m, side, x, y, w, h ) => pdf.addImage( await getHi( m, side ), 'JPEG', x, y, w, h, undefined, 'FAST' ),
 						line: ( x1, y1, x2, y2, dash ) => {
-							pdf.setDrawColor( 17, 17, 17 );
-							pdf.setLineWidth( 0.2 );
+							if ( dash ) {
+								pdf.setDrawColor( 181, 181, 181 );
+								pdf.setLineWidth( 0.1 );
+							} else {
+								pdf.setDrawColor( 17, 17, 17 );
+								pdf.setLineWidth( 0.2 );
+							}
 							if ( pdf.setLineDashPattern ) {
-								pdf.setLineDashPattern( dash ? [ 1.5, 1.2 ] : [], 0 );
+								pdf.setLineDashPattern( dash ? [ 1, 1 ] : [], 0 );
 							}
 							pdf.line( x1, y1, x2, y2 );
 						},
@@ -372,10 +377,10 @@ export default function printView( el, ctx, pid ) {
 				.pg{position:relative;width:${ pp.w }mm;height:${ pp.h }mm;overflow:hidden;page-break-after:always;break-after:page}
 				.pg:last-child{page-break-after:auto;break-after:auto}
 				.pg img{position:absolute;display:block}
-				.ln{position:absolute;border-left:0.2mm solid #555;border-top:0.2mm solid #555}
-				.ln.dash{border-style:dashed}
+				.ln{position:absolute;border-left:0.2mm solid #111;border-top:0.2mm solid #111}
+				.ln.dash{border-style:dashed;border-width:0.1mm;border-color:#b5b5b5}
 				.bd{position:absolute;outline:0.15mm solid #b4b4b4;box-sizing:border-box}
-				.sc{position:absolute;font:2.8mm/1 Arial,sans-serif;color:#111;background:#fff;display:flex;align-items:center;justify-content:center}
+				.sc{position:absolute;font:2.6mm/1 Arial,sans-serif;color:#9a9a9a;background:#fff;display:flex;align-items:center;justify-content:center}
 				.note{font:14px sans-serif;padding:12px;background:#fff6e0;color:#7a4b00} @media print{.note{display:none}}
 				</style></head><body><div class="note">${ esc( __( 'Choose "Actual size" (100% scale), no margins, and turn off headers and footers.', 'pikacart' ) ) }</div>${ html }
 				<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script></body></html>` );
@@ -425,8 +430,8 @@ function drawScissorsCanvas( g, x, y, s, rot ) {
 	g.setLineDash( [] );
 	g.fillStyle = '#fff';
 	g.fillRect( x - s * 0.6, y - s * 0.6, s * 1.2, s * 1.2 );
-	g.strokeStyle = '#111';
-	g.lineWidth = Math.max( 0.6, s * 0.1 );
+	g.strokeStyle = '#9a9a9a';
+	g.lineWidth = Math.max( 0.5, s * 0.07 );
 	g.beginPath();
 	k.rings.forEach( ( [ cx, cy ] ) => {
 		g.moveTo( cx + k.r, cy );
@@ -447,8 +452,8 @@ function drawScissorsPdf( pdf, x, y, s, rot ) {
 	}
 	pdf.setFillColor( 255, 255, 255 );
 	pdf.rect( x - s * 0.6, y - s * 0.6, s * 1.2, s * 1.2, 'F' );
-	pdf.setDrawColor( 17, 17, 17 );
-	pdf.setLineWidth( 0.18 );
+	pdf.setDrawColor( 154, 154, 154 );
+	pdf.setLineWidth( 0.12 );
 	k.rings.forEach( ( [ cx, cy ] ) => pdf.circle( cx, cy, k.r ) );
 	k.blades.forEach( ( [ [ x1, y1 ], [ x2, y2 ] ] ) => pdf.line( x1, y1, x2, y2 ) );
 }

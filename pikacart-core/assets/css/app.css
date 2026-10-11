@@ -807,3 +807,5 @@ body.pkc-app-page { overflow-x: hidden; }
 .recent-step { display: inline-flex; align-items: center; gap: 4px; font-size: var(--pkc-fs-xs); font-weight: 600; color: var(--pkc-brand); white-space: nowrap; }
 .field-hint { display: block; min-height: 1em; margin-top: 4px; font-size: var(--pkc-fs-xs); color: var(--pkc-success); }
 .field-hint.is-error { color: var(--pkc-danger); }
+.tip-line { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; padding: 8px 12px; border-radius: var(--pkc-radius-sm, 8px); background: var(--pkc-brand-50); color: var(--pkc-ink); font-size: var(--pkc-fs-sm, 14px); }
+.tip-line svg { flex: none; width: 18px; height: 18px; color: var(--pkc-brand); }

@@ -40,10 +40,11 @@ export default function downloadStep( body, P ) {
 				</div>
 				<div class="field" data-classbox hidden><label>${ esc( __( 'Class or department', 'pikacart' ) ) }</label><select data-class></select></div>
 				<div class="grid-2">
-					<div class="field"><label>${ esc( __( 'Format', 'pikacart' ) ) }</label><select data-format><option value="pdf">${ esc( __( 'PDF (best for printing)', 'pikacart' ) ) }</option><option value="png">${ esc( __( 'PNG images (ZIP)', 'pikacart' ) ) }</option><option value="jpg">${ esc( __( 'JPG images (ZIP)', 'pikacart' ) ) }</option></select></div>
+					<div class="field"><label>${ esc( __( 'Format', 'pikacart' ) ) }</label><select data-format><option value="pdf">${ esc( __( 'PDF (one card per page)', 'pikacart' ) ) }</option><option value="png">${ esc( __( 'PNG images (ZIP)', 'pikacart' ) ) }</option><option value="jpg">${ esc( __( 'JPG images (ZIP)', 'pikacart' ) ) }</option></select></div>
 					<div class="field"><label>${ esc( __( 'Sides', 'pikacart' ) ) }</label><select data-sides><option value="both">${ esc( __( 'Front and back', 'pikacart' ) ) }</option><option value="front">${ esc( __( 'Front only', 'pikacart' ) ) }</option><option value="back">${ esc( __( 'Back only', 'pikacart' ) ) }</option></select></div>
 				</div>
-				<p class="muted small">${ esc( __( 'Files are made at 300 DPI at the exact card size. Bleed can be switched on in Size & colour.', 'pikacart' ) ) }</p>
+				<p class="muted small">${ esc( __( 'Each page or image is exactly one card at 300 DPI, made for PVC card printers, print shops and sharing on phone. Bleed can be switched on in Size & colour.', 'pikacart' ) ) }</p>
+				<p class="tip-line">${ icon( 'printer' ) }${ esc( __( 'Printing on A4 paper? Use the Print sheet maker below: it puts many cards on each page with cut lines.', 'pikacart' ) ) }</p>
 				<p class="count-line" data-count></p>
 				<div class="btn-row">
 					<button type="button" class="btn btn-primary" data-go="download">${ icon( 'download' ) }${ esc( __( 'Download', 'pikacart' ) ) }</button>
