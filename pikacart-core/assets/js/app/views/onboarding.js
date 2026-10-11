@@ -8,6 +8,7 @@
 import { api } from '../api.js';
 import { esc, icon, toast, formData, markError, withLoading } from '../ui.js';
 import { uploaderHTML, bindUploaders } from '../uploader.js';
+import { journeyBar } from '../journey.js';
 
 const { __, sprintf } = window.wp.i18n;
 
@@ -82,7 +83,7 @@ export default function onboarding( el, ctx, params = [], opts = {} ) {
 				</form>`;
 		}
 
-		el.innerHTML = `<div class="onboarding">
+		el.innerHTML = `${ opts.next === 'create/types' ? journeyBar( 1, ( n ) => ( n === 1 ? ctx.url( 'create' ) : '' ) ) : '' }<div class="onboarding">
 			<div class="ob-head">
 				<div><span class="eyebrow">${ esc( isNew ? __( 'New organisation', 'pikacart' ) : __( 'Quick setup', 'pikacart' ) ) }</span><h1 class="ob-title">${ esc( isNew ? __( 'Add a school, college or organisation', 'pikacart' ) : __( 'Let\'s set up your ID cards', 'pikacart' ) ) }</h1>${ isNew ? `<p class="muted ob-sub">${ esc( __( 'Its name, logo, address and signature print on its cards. Its projects and people stay in their own folder.', 'pikacart' ) ) }</p>` : '' }</div>
 				<button type="button" class="btn btn-ghost" data-skip>${ esc( isNew ? __( 'Cancel', 'pikacart' ) : __( 'Skip for now', 'pikacart' ) ) }</button>
@@ -91,7 +92,7 @@ export default function onboarding( el, ctx, params = [], opts = {} ) {
 			<div class="card ob-card">${ body }</div>
 			<div class="ob-foot">
 				${ step > 1 ? `<button type="button" class="btn" data-back>${ icon( 'chevron-left' ) }${ esc( __( 'Back', 'pikacart' ) ) }</button>` : '<span></span>' }
-				${ step === 1 ? '' : `<button type="button" class="btn btn-primary" data-next>${ esc( step === 3 ? __( 'Finish setup', 'pikacart' ) : __( 'Save and continue', 'pikacart' ) ) }${ icon( 'chevron-right' ) }</button>` }
+				${ step === 1 ? '' : `<button type="button" class="btn btn-primary" data-next>${ esc( step === 3 ? ( opts.next === 'create/types' ? __( 'Save. Next: card type', 'pikacart' ) : __( 'Finish setup', 'pikacart' ) ) : __( 'Save and continue', 'pikacart' ) ) }${ icon( 'chevron-right' ) }</button>` }
 			</div>
 		</div>`;
 

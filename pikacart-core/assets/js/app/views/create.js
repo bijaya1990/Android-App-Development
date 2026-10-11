@@ -14,6 +14,7 @@ import { layoutFor } from '../../card/families.js';
 import { demoVars, kindOf } from '../../card/data.js';
 import { supportsOrientation } from '../../card/scene.js';
 import { orgMark, orgName, orgStats, switchOrg, activeOrg } from '../orgs.js';
+import { journeyBar, journeyGuide } from '../journey.js';
 
 const { __, _n, sprintf } = window.wp.i18n;
 
@@ -48,9 +49,9 @@ export default function create( el, ctx, params ) {
 	};
 }
 
-function stepBar( current ) {
-	const steps = [ __( 'Card type', 'pikacart' ), __( 'Design', 'pikacart' ), __( 'Size & colour', 'pikacart' ), __( 'Details', 'pikacart' ), __( 'Fine-tune', 'pikacart' ), __( 'People', 'pikacart' ), __( 'Download', 'pikacart' ) ];
-	return `<ol class="stepbar steps7">${ steps.map( ( s, i ) => `<li class="${ i + 1 < current ? 'is-done' : i + 1 === current ? 'is-current' : '' }"><span class="step-dot">${ i + 1 < current ? icon( 'check' ) : i + 1 }</span><span class="step-label">${ esc( s ) }</span></li>` ).join( '' ) }</ol>`;
+/** Links for the step bar while choosing: step 1 and (with an organisation) step 2. */
+function createHref( ctx ) {
+	return ( n ) => ( n === 1 ? ctx.url( 'create' ) : n === 2 && ctx.me.client ? ctx.url( 'create/types' ) : '' );
 }
 
 const LAST = 'pkc_last_create';
@@ -77,12 +78,8 @@ function orgPicker( el, ctx ) {
 		const term = query.trim().toLowerCase();
 		const list = [ ...me.clients ].sort( ( a, b ) => ( b.id === me.client ) - ( a.id === me.client ) );
 		const shown = list.filter( ( o ) => ! term || orgName( o ).toLowerCase().includes( term ) );
-		el.innerHTML = `<div class="org-pick">
-			<div class="org-pick-head">
-				<span class="eyebrow">${ esc( __( 'New ID card', 'pikacart' ) ) }</span>
-				<h2 class="h2">${ esc( __( 'Which organisation is this ID card for?', 'pikacart' ) ) }</h2>
-				<p class="muted">${ esc( __( 'Choose the school, college or office. Its logo, address and signature go on the cards, and the project is saved in its folder.', 'pikacart' ) ) }</p>
-			</div>
+		el.innerHTML = `${ journeyBar( 1, createHref( ctx ) ) }<div class="org-pick">
+			${ journeyGuide( 1 ) }
 			${ list.length > 6 ? `<div class="org-search"><span>${ icon( 'search' ) }</span><input type="search" data-q value="${ esc( query ) }" placeholder="${ esc( __( 'Search organisations…', 'pikacart' ) ) }" aria-label="${ esc( __( 'Search organisations', 'pikacart' ) ) }"></div>` : '' }
 			<div class="org-pick-grid">
 				<a class="org-pick-item org-pick-add" href="${ esc( ctx.url( 'organisations/new/card' ) ) }" data-link>
@@ -123,10 +120,9 @@ function chooser( el, ctx, cat ) {
 	const lastSub = last && last.org === ctx.me.client ? findSubtype( cat, last.sid ) : {};
 	const forOrg = activeOrg( ctx.me );
 	const ordered = [ ...cat.tree ].sort( ( a, b ) => ( b.id === mine ) - ( a.id === mine ) );
-	el.innerHTML = `${ stepBar( 1 ) }
+	el.innerHTML = `${ journeyBar( 2, createHref( ctx ) ) }
+		${ journeyGuide( 2, `<a class="btn btn-sm journey-extra" href="${ esc( ctx.url( 'designs' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Use my own design', 'pikacart' ) ) }</a>` ) }
 		${ forOrg ? `<div class="card-for">${ orgMark( forOrg, 'sm' ) }<span>${ esc( __( 'Card for', 'pikacart' ) ) } <b>${ esc( orgName( forOrg ) ) }</b></span><a href="${ esc( ctx.url( 'create' ) ) }" data-link>${ esc( __( 'Change', 'pikacart' ) ) }</a></div>` : '' }
-		<div class="section-head-row"><div><h2 class="h2">${ esc( __( 'What kind of ID card?', 'pikacart' ) ) }</h2><p class="muted">${ esc( __( 'Pick a category and a card type. Each has 50 professional styles.', 'pikacart' ) ) }</p></div>
-		<a class="btn" href="${ esc( ctx.url( 'designs' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Use my own design', 'pikacart' ) ) }</a></div>
 		${ lastSub.subtype ? `<a class="card continue-card" href="${ esc( ctx.url( 'create/' + lastSub.subtype.id ) ) }" data-link>${ icon( 'refresh' ) }<span><strong>${ esc( __( 'Continue choosing a design', 'pikacart' ) ) }</strong><small>${ esc( lastSub.category.name + ' · ' + lastSub.subtype.name ) }</small></span>${ icon( 'chevron-right' ) }</a>` : '' }
 		<div class="type-grid">
 			${ ordered.map( ( c ) => `<section class="card type-card ${ c.id === mine ? 'is-mine' : '' }">
@@ -146,10 +142,10 @@ async function gallery( el, ctx, cat, sid, alive ) {
 	const st = Object.assign( { orientation: 'portrait', level: '', palette: 0, own: false }, saved && saved.sid === sid && saved.org === ctx.me.client ? saved.st : {} );
 	const remember = () => rememberCreate( { org: ctx.me.client, sid, st } );
 	remember();
-	el.innerHTML = `${ stepBar( 2 ) }
+	el.innerHTML = `${ journeyBar( 3, createHref( ctx ) ) }
+		${ journeyGuide( 3, `<a class="btn btn-sm journey-extra" href="${ esc( ctx.url( 'designs/request' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Design on Demand', 'pikacart' ) ) }</a>` ) }
 		<div class="section-head-row">
-			<div><a class="back-link" href="${ esc( ctx.url( 'create/types' ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( category.name ) }</a><h2 class="h2">${ esc( subtype.name ) }</h2></div>
-			<a class="btn" href="${ esc( ctx.url( 'designs/request' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Design on Demand', 'pikacart' ) ) }</a>
+			<div><a class="back-link" href="${ esc( ctx.url( 'create/types' ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( __( 'Change card type', 'pikacart' ) ) }</a><h2 class="h2">${ esc( category.name + ' · ' + subtype.name ) }</h2></div>
 		</div>
 		<div class="filters card">
 			<div class="seg" role="group" aria-label="${ esc( __( 'Orientation', 'pikacart' ) ) }">

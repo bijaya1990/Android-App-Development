@@ -16,6 +16,7 @@ import { cardSize, paletteOf, layoutOf, enabledFields, flagsOf, projectInfo, sup
 import editorStep from '../editor.js';
 import peopleStep, { blankExcel } from '../people.js';
 import downloadStep from '../download.js';
+import { JOURNEY, journeyBar, journeyGuide, journeyNav, stepNo } from '../journey.js';
 
 const { __, sprintf } = window.wp.i18n;
 
@@ -98,12 +99,8 @@ export default function project( el, ctx, params ) {
 					</div>
 				</div>
 			</header>
-			<ol class="stepbar steps6" data-steps>
-				${ STEPS.map( ( s, i ) => {
-					const cur = STEPS.findIndex( ( x ) => x[ 0 ] === step );
-					return `<li class="${ i < cur ? 'is-done' : i === cur ? 'is-current' : '' }"><a href="${ esc( ctx.url( `projects/${ id }/${ s[ 0 ] }` ) ) }" data-link><span class="step-dot">${ i < cur ? icon( 'check' ) : i + 1 }</span><span class="step-label">${ esc( s[ 1 ]() ) }</span></a></li>`;
-				} ).join( '' ) }
-			</ol>
+			<div data-steps>${ journeyBar( stepNo( step ), ( n ) => ( n >= 3 ? ctx.url( `projects/${ id }/${ JOURNEY()[ n - 1 ][ 0 ] }` ) : '' ) ) }</div>
+			${ journeyGuide( stepNo( step ) ) }
 			<div class="proj-body" data-body></div>
 			<nav class="proj-nav" data-nav></nav>
 		</div>`;
@@ -132,13 +129,36 @@ export default function project( el, ctx, params ) {
 		const idx = STEPS.findIndex( ( s ) => s[ 0 ] === step );
 		const prev = STEPS[ idx - 1 ];
 		const next = STEPS[ idx + 1 ];
-		el.querySelector( '[data-nav]' ).innerHTML = `${ prev ? `<a class="btn" href="${ esc( ctx.url( `projects/${ id }/${ prev[ 0 ] }` ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( prev[ 1 ]() ) }</a>` : '<span></span>' }
-			${ next ? `<a class="btn btn-primary" href="${ esc( ctx.url( `projects/${ id }/${ next[ 0 ] }` ) ) }" data-link>${ esc( next[ 1 ]() ) }${ icon( 'chevron-right' ) }</a>` : '<span></span>' }`;
+		const nextNo = stepNo( step ) + 1;
+		el.querySelector( '[data-nav]' ).innerHTML = journeyNav(
+			prev ? { href: ctx.url( `projects/${ id }/${ prev[ 0 ] }` ), label: sprintf( __( 'Back: %s', 'pikacart' ), prev[ 1 ]() ) } : null,
+			next
+				? { href: ctx.url( `projects/${ id }/${ next[ 0 ] }` ), small: sprintf( __( 'Step %d', 'pikacart' ), nextNo ), label: step === 'editor' ? sprintf( __( 'Looks good. Next: %s', 'pikacart' ), next[ 1 ]() ) : sprintf( __( 'Next: %s', 'pikacart' ), next[ 1 ]() ) }
+				: { href: ctx.url( 'projects' ), small: __( 'All done', 'pikacart' ), label: __( 'Finish: go to My Projects', 'pikacart' ) }
+		);
 
 		// Save immediately on every step change.
 		el.querySelectorAll( '[data-steps] a, [data-nav] a' ).forEach( ( a ) => a.addEventListener( 'click', () => {
 			autosave.flush().catch( () => {} );
 		} ) );
+
+		// Step 7 → 8: there must be at least one person to print.
+		if ( step === 'people' ) {
+			el.querySelector( '[data-journey="next"]' ).addEventListener( 'click', async ( e ) => {
+				e.preventDefault();
+				e.stopPropagation();
+				try {
+					const res = await api( `projects/${ id }/members?per_page=1` );
+					if ( ! res.total ) {
+						toast( __( 'Add at least one person first: press "Add person" or "Import from Excel".', 'pikacart' ), 'error' );
+						return;
+					}
+				} catch ( err ) {
+					// Let them go on; the next screen shows the count.
+				}
+				ctx.navigate( `projects/${ id }/download` );
+			}, true );
+		}
 		if ( data.project.step !== idx + 1 ) {
 			autosave.set( { step: idx + 1 } );
 		}
