@@ -44,7 +44,8 @@ class PKC_Admin_Templates {
 			)
 		);
 		wp_enqueue_script( 'pkc-admin-templates' );
-		$actions = '<button type="button" class="pkc-btn" data-import>' . esc_html__( 'Import JSON', 'pikacart' ) . '</button>'
+		$actions = '<button type="button" class="pkc-btn" data-paste>' . esc_html__( 'Paste design code', 'pikacart' ) . '</button>'
+			. '<button type="button" class="pkc-btn" data-import>' . esc_html__( 'Import JSON', 'pikacart' ) . '</button>'
 			. '<button type="button" class="pkc-btn pkc-btn-primary" data-new>' . esc_html__( '+ New design', 'pikacart' ) . '</button>';
 		PKC_Admin::header( __( 'Templates', 'pikacart' ), __( 'Every public design. Build new ones visually, duplicate, import or export JSON, publish and feature.', 'pikacart' ), $actions );
 		?>

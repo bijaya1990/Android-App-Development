@@ -323,3 +323,12 @@ body.pkc-builder-page { margin: 0; background: var(--pkc-bg); }
 .pkc-admin .pkc-cat .pkc-table td:nth-child(2) { width: 50%; min-width: 280px; }
 .pkc-admin .pkc-cat .pkc-table td:nth-child(4) { text-align: right; }
 .pkc-admin .pkc-cat .pkc-edit[open] > form { text-align: left; position: relative; z-index: 2; min-width: min(680px, 80vw); margin-left: auto; }
+
+/* Paste design code */
+.paste-modal { max-width: 640px; }
+.paste-modal textarea { width: 100%; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--pkc-line); border-radius: 10px; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; resize: vertical; }
+.paste-info { min-height: 20px; margin: 8px 0 0; font-size: 13px; }
+.paste-info.is-ok { color: #15803d; font-weight: 600; }
+.paste-info.is-bad { color: #b91c1c; }
+.paste-pub { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; }
+.paste-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }

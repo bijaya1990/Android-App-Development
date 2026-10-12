@@ -210,4 +210,98 @@ file.addEventListener( 'change', async () => {
 	}
 } );
 
+/**
+ * Paste design code: the JSON of one exported design, or a list of them, pasted
+ * straight into a box instead of choosing a file. Each one is added as a draft,
+ * or published at once when the box is ticked.
+ */
+function pastedDesigns( text ) {
+	const data = JSON.parse( text.trim() );
+	const list = Array.isArray( data ) ? data : ( Array.isArray( data.designs ) ? data.designs : [ data ] );
+	if ( ! list.length || list.some( ( d ) => ! d || typeof d !== 'object' || ! d.layout ) ) {
+		throw new Error( __( 'This is not Pikacart design code. Use the code from "Export" or the code you were given.', 'pikacart' ) );
+	}
+	return list;
+}
+
+document.querySelector( '[data-paste]' ).addEventListener( 'click', () => {
+	const wrap = document.createElement( 'div' );
+	wrap.className = 'modal-wrap';
+	wrap.innerHTML = `<div class="modal paste-modal" role="dialog" aria-modal="true" aria-labelledby="paste-h">
+		<h2 id="paste-h">${ esc( __( 'Paste design code', 'pikacart' ) ) }</h2>
+		<p>${ esc( __( 'Paste the code of one design, or of many designs together, and press Add. Category, card type, colours and layout come from the code.', 'pikacart' ) ) }</p>
+		<textarea data-code rows="12" spellcheck="false" placeholder='{ "pikacart_template": 1, "name": "…", "layout": { … } }'></textarea>
+		<p class="paste-info" data-info></p>
+		<label class="paste-pub"><input type="checkbox" data-pub checked> ${ esc( __( 'Publish at once (customers see it straight away)', 'pikacart' ) ) }</label>
+		<div class="paste-actions">
+			<button type="button" class="pkc-btn" data-cancel>${ esc( __( 'Cancel', 'pikacart' ) ) }</button>
+			<button type="button" class="pkc-btn pkc-btn-primary" data-add disabled>${ esc( __( 'Add design', 'pikacart' ) ) }</button>
+		</div>
+	</div>`;
+	document.getElementById( 'modal-root' ).appendChild( wrap );
+	const code = wrap.querySelector( '[data-code]' );
+	const info = wrap.querySelector( '[data-info]' );
+	const add = wrap.querySelector( '[data-add]' );
+	const close = () => wrap.remove();
+	let list = [];
+	code.addEventListener( 'input', () => {
+		list = [];
+		add.disabled = true;
+		info.className = 'paste-info';
+		if ( ! code.value.trim() ) {
+			info.textContent = '';
+			return;
+		}
+		try {
+			list = pastedDesigns( code.value );
+			info.classList.add( 'is-ok' );
+			info.textContent = list.length === 1
+				? sprintf( __( 'Ready: "%1$s" for %2$s.', 'pikacart' ), list[ 0 ].name || __( 'Design', 'pikacart' ), ( list[ 0 ].subtype && list[ 0 ].subtype.name ) || __( 'the first card type', 'pikacart' ) )
+				: sprintf( __( 'Ready: %d designs.', 'pikacart' ), list.length );
+			add.textContent = list.length === 1 ? __( 'Add design', 'pikacart' ) : sprintf( __( 'Add %d designs', 'pikacart' ), list.length );
+			add.disabled = false;
+		} catch ( err ) {
+			info.classList.add( 'is-bad' );
+			info.textContent = err instanceof SyntaxError ? __( 'The code is incomplete or changed. Copy the whole code again, from the first { to the last }.', 'pikacart' ) : err.message;
+		}
+	} );
+	wrap.querySelector( '[data-cancel]' ).addEventListener( 'click', close );
+	wrap.addEventListener( 'click', ( e ) => {
+		if ( e.target === wrap ) {
+			close();
+		}
+	} );
+	add.addEventListener( 'click', async () => {
+		const publish = wrap.querySelector( '[data-pub]' ).checked;
+		add.disabled = true;
+		let done = 0;
+		const failed = [];
+		for ( const d of list ) {
+			add.textContent = sprintf( __( 'Adding %1$d of %2$d…', 'pikacart' ), done + failed.length + 1, list.length );
+			try {
+				const res = await api( 'admin/templates', { method: 'POST', body: { import: d } } );
+				if ( publish ) {
+					await api( `admin/templates/${ res.template.id }`, { method: 'POST', body: { status: 'published' } } );
+				}
+				done++;
+			} catch ( err ) {
+				failed.push( ( d.name || '?' ) + ': ' + err.message );
+			}
+		}
+		if ( done ) {
+			toast( sprintf( publish ? __( '%d design(s) added and published.', 'pikacart' ) : __( '%d design(s) added as drafts.', 'pikacart' ), done ) );
+		}
+		if ( failed.length ) {
+			info.className = 'paste-info is-bad';
+			info.textContent = failed.join( ' · ' );
+			add.textContent = __( 'Add design', 'pikacart' );
+			add.disabled = false;
+		} else {
+			close();
+		}
+		load();
+	} );
+	code.focus();
+} );
+
 load();
