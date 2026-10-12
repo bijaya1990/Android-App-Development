@@ -271,7 +271,13 @@ class PKC_REST_Designs {
 			$imp = $in['import'];
 			$st  = null;
 			if ( ! empty( $imp['subtype']['slug'] ) ) {
-				$st = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . pkc_table( 'subtypes' ) . ' WHERE slug = %s', sanitize_key( $imp['subtype']['slug'] ) ) );
+				// Sub-type slugs repeat across categories ("student" in School and in College), so match the category too.
+				if ( ! empty( $imp['category']['slug'] ) ) {
+					$st = $wpdb->get_row( $wpdb->prepare( 'SELECT s.* FROM ' . pkc_table( 'subtypes' ) . ' s INNER JOIN ' . pkc_table( 'categories' ) . ' c ON c.id = s.category_id WHERE s.slug = %s AND c.slug = %s', sanitize_key( $imp['subtype']['slug'] ), sanitize_key( $imp['category']['slug'] ) ) );
+				}
+				if ( ! $st ) {
+					$st = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . pkc_table( 'subtypes' ) . ' WHERE slug = %s', sanitize_key( $imp['subtype']['slug'] ) ) );
+				}
 			}
 			$in = array(
 				'name'       => isset( $imp['name'] ) ? $imp['name'] : __( 'Imported design', 'pikacart' ),
