@@ -34,8 +34,32 @@ export function defaultTerms( kind ) {
 	return 'This card is the property of the organisation and must be shown on request. It is not transferable and must be returned when leaving. If found, please return to the address below.';
 }
 
+/** Certificate heading from its type, e.g. "Certificate of Merit". */
+export function certificateTitle( subtypeName ) {
+	const n = String( subtypeName || '' );
+	const rules = [
+		[ /completion|computer|course/i, 'Certificate of Completion' ],
+		[ /participation|attendance|participant/i, 'Certificate of Participation' ],
+		[ /merit|topper/i, 'Certificate of Merit' ],
+		[ /winner/i, 'Certificate of Achievement' ],
+		[ /internship/i, 'Internship Certificate' ],
+		[ /training|workshop/i, 'Certificate of Training' ],
+		[ /skill|typing/i, 'Skill Certificate' ],
+		[ /sports/i, 'Sports Certificate' ],
+		[ /character|conduct/i, 'Character Certificate' ],
+		[ /membership/i, 'Certificate of Membership' ],
+		[ /speaker|guest/i, 'Certificate of Honour' ],
+		[ /volunteer|sevak|donor|blood/i, 'Certificate of Appreciation' ],
+	];
+	const hit = rules.find( ( r ) => r[ 0 ].test( n ) );
+	return hit ? hit[ 1 ] : 'Certificate of Appreciation';
+}
+
 /** Card title from the sub-type, e.g. "Student ID Card". */
 export function cardTitle( subtypeName, kind ) {
+	if ( kind === 'certificate' ) {
+		return certificateTitle( subtypeName );
+	}
 	if ( ! subtypeName ) {
 		return kind === 'student' ? 'Student ID Card' : 'Identity Card';
 	}
@@ -69,7 +93,13 @@ export function demoVars( kind, index = 0, org = {}, extra = {} ) {
 		valid_until: `31-03-${ year + 1 }`,
 		verify_url: ( window.PKC && window.PKC.home ? window.PKC.home : 'https://pikacart.in/' ) + 'verify/demo',
 		photo: '',
-	}, extra );
+	}, kind === 'certificate' ? {
+		id_no: 'CERT-' + String( 1 + index ).padStart( 4, '0' ),
+		course: [ 'Diploma in Computer Applications (DCA)', 'Annual Sports Meet', 'Science Exhibition', 'Tally Prime with GST', 'Inter-School Quiz' ][ index % 5 ],
+		grade: [ 'Grade A+', 'First Prize', 'Grade A', 'Second Prize', 'Excellent' ][ index % 5 ],
+		duration: `Jan ${ year } – Jun ${ year }`,
+		cert_date: `15-08-${ year }`,
+	} : {}, extra );
 	return finishVars( v, kind );
 }
 
@@ -77,6 +107,8 @@ export function demoVars( kind, index = 0, org = {}, extra = {} ) {
 export function finishVars( v, kind ) {
 	v.class_section = [ v.class, v.section ].filter( Boolean ).join( ' - ' );
 	v.card_title = v.card_title || cardTitle( v.subtype_name, kind );
+	// "Certificate of Merit" -> "of Merit", for designs that print "CERTIFICATE" large on its own.
+	v.title_rest = v.title_rest || String( v.card_title ).replace( /\bcertificate\b/i, '' ).replace( /\s+/g, ' ' ).trim();
 	v.terms = v.terms || defaultTerms( kind );
 	v.return_line = v.return_line || 'If found, please return to:';
 	return v;
@@ -111,6 +143,7 @@ export function memberVars( member, org, project = {}, kind = 'student' ) {
 		seal: org.seal || '',
 		terms: project.terms || org.terms || '',
 		card_title: project.card_title || '',
+		cert_date: d.cert_date || project.cert_date || '',
 		subtype_name: project.subtype_name || '',
 		verify_url: member.verify_token ? `${ window.PKC.home }verify/${ member.verify_token }` : `${ window.PKC.home }verify/demo`,
 	} );
@@ -122,6 +155,9 @@ export function memberVars( member, org, project = {}, kind = 'student' ) {
 
 /** Kind of card for a sub-type, from its default fields. */
 export function kindOf( subtype ) {
+	if ( subtype && subtype.doc === 'certificate' ) {
+		return 'certificate';
+	}
 	const fields = ( subtype && subtype.fields ) || [];
 	const keys = fields.map( ( f ) => f.key );
 	if ( keys.includes( 'class' ) ) {

@@ -1,0 +1,16 @@
+All fonts in this folder are free, open-licence fonts bundled locally so cards
+and certificates print the same everywhere.
+
+Licence: SIL Open Font License 1.1 (https://openfontlicense.org) for every font
+except where noted. Source files: Google Fonts, packaged by Fontsource
+(https://fontsource.org).
+
+Latin: Inter, Plus Jakarta Sans, Poppins, Montserrat, Lato, Raleway, Nunito,
+Oswald, Bebas Neue, Playfair Display, DM Serif Display, Merriweather, Roboto Slab,
+Cinzel, Cinzel Decorative, Cormorant Garamond, EB Garamond, Libre Baskerville,
+Great Vibes, Pinyon Script, Allura, Alex Brush, Parisienne, Italianno, Tangerine,
+Sacramento, Dancing Script.
+Odia: Noto Sans Oriya, Noto Serif Oriya, Anek Odia, Baloo Bhaina 2.
+Devanagari: Mukta, Noto Sans Devanagari, Noto Serif Devanagari, Tiro Devanagari
+Hindi, Rozha One, Yatra One, Martel, Hind, Laila, Kalam, Amita.
+Urdu / Arabic: Noto Nastaliq Urdu, Gulzar, Noto Naskh Arabic.

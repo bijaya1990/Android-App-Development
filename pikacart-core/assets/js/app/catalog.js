@@ -27,6 +27,22 @@ export function findSubtype( cat, id ) {
 	return { category: null, subtype: null };
 }
 
+/** Is this sub-type (or project data) a certificate rather than an ID card? */
+export function isCertificate( subtype ) {
+	return !! subtype && subtype.doc === 'certificate';
+}
+
+/** Card sizes for ID cards, page sizes for certificates. */
+export function sizesFor( cat, certificate ) {
+	const kind = certificate ? 'certificate' : 'card';
+	return ( cat.sizes || [] ).filter( ( s ) => ( s.kind || 'card' ) === kind );
+}
+
+/** The catalogue as seen by one project: only the sizes of its kind. */
+export function catalogFor( cat, subtype ) {
+	return Object.assign( {}, cat, { sizes: sizesFor( cat, isCertificate( subtype ) ) } );
+}
+
 /** Organisation values for previews so designs show the customer's own details. */
 export function orgVars( org ) {
 	const v = {};

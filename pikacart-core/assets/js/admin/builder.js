@@ -48,8 +48,19 @@ function subtype() {
 	return null;
 }
 
+/** Card sizes for ID card designs, page sizes for certificate designs. */
+function docKind() {
+	for ( const c of cat.tree ) {
+		if ( c.subtypes.some( ( x ) => x.id === state.subtype ) ) {
+			return c.kind || 'card';
+		}
+	}
+	return 'card';
+}
+
 function sizesFor( orient ) {
-	return cat.sizes.map( ( s ) => {
+	const kind = docKind();
+	return cat.sizes.filter( ( s ) => ( s.kind || 'card' ) === kind ).map( ( s ) => {
 		const short = Math.min( s.w, s.h );
 		const long = Math.max( s.w, s.h );
 		return Object.assign( {}, s, orient === 'landscape' ? { w: long, h: short } : { w: short, h: long } );

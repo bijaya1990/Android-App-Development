@@ -17,7 +17,7 @@ class PKC_Admin_Templates {
 	/** Catalogue data the admin scripts need (hidden categories included). */
 	public static function catalog_config() {
 		return array(
-			'tree'     => PKC_Catalog::tree( true ),
+			'tree'     => PKC_Catalog::tree( true, 'all' ),
 			'sizes'    => PKC_Catalog::sizes(),
 			'palettes' => PKC_Catalog::palettes( false ),
 			'levels'   => PKC_Catalog::level_labels(),

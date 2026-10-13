@@ -37,6 +37,10 @@ const LABELS = () => ( {
 	valid_from: __( 'Valid from', 'pikacart' ),
 	valid_until: __( 'Valid until', 'pikacart' ),
 	session: __( 'Session', 'pikacart' ),
+	course: __( 'Course / Event', 'pikacart' ),
+	grade: __( 'Grade / Position', 'pikacart' ),
+	duration: __( 'Duration', 'pikacart' ),
+	cert_date: __( 'Date', 'pikacart' ),
 } );
 
 const STATUS = () => ( {
@@ -74,6 +78,10 @@ const HINTS = () => ( {
 	id_no: [ __( 'Unique number for each person (employee ID, admission no.…). Also the photo file name.', 'pikacart' ), '1001' ],
 	roll_no: [ __( 'Roll number in the class', 'pikacart' ), '23' ],
 	regd_no: [ __( 'Registration / enrolment number', 'pikacart' ), 'REG/2026/0457' ],
+	course: [ __( 'Course, event or competition name', 'pikacart' ), 'Diploma in Computer Applications' ],
+	grade: [ __( 'Grade, prize or position', 'pikacart' ), 'Grade A / First Prize' ],
+	duration: [ __( 'Course duration or session', 'pikacart' ), 'Jan 2026 – Jun 2026' ],
+	cert_date: [ __( 'Date printed on the certificate. Leave empty to use the date set in Details.', 'pikacart' ), '15-08-2026' ],
 	photo: [ __( 'Paste the photo into this cell, or type the photo file name. Leave empty to match a photo named by the ID number.', 'pikacart' ), '1001.jpg' ],
 	class: [ __( 'Class or course', 'pikacart' ), 'VIII' ],
 	section: [ __( 'Section or division', 'pikacart' ), 'A' ],
@@ -90,7 +98,7 @@ const HINTS = () => ( {
 	valid_until: [ __( 'Card valid upto, DD-MM-YYYY. Leave empty to use the date set in the project Details.', 'pikacart' ), '31-03-2027' ],
 } );
 
-const TEXT_KEYS = [ 'id_no', 'roll_no', 'regd_no', 'mobile', 'emergency', 'dob', 'valid_from', 'valid_until' ];
+const TEXT_KEYS = [ 'id_no', 'roll_no', 'regd_no', 'mobile', 'emergency', 'dob', 'valid_from', 'valid_until', 'cert_date' ];
 
 /**
  * A blank Excel made for this project's design: one column per field the
@@ -764,7 +772,11 @@ export default function peopleStep( body, P ) {
 			const h = String( header ).toLowerCase().replace( /[^a-z]/g, '' );
 			const map = {
 				name: [ 'name', 'fullname', 'studentname', 'employeename', 'staffname', 'membername' ],
-				id_no: [ 'id', 'idno', 'idnumber', 'admissionno', 'empid', 'employeeid' ],
+				id_no: [ 'id', 'idno', 'idnumber', 'admissionno', 'empid', 'employeeid', 'certificateno', 'certno', 'serialno', 'slno' ],
+				course: [ 'course', 'coursename', 'event', 'eventname', 'competition', 'program', 'programme', 'training' ],
+				grade: [ 'grade', 'position', 'rank', 'prize', 'result', 'marks', 'division' ],
+				duration: [ 'duration', 'period' ],
+				cert_date: [ 'date', 'certificatedate', 'dateofissue', 'issuedon' ],
 				roll_no: [ 'rollno', 'rollnumber', 'roll', 'classroll' ],
 				regd_no: [ 'regdno', 'regno', 'regd', 'registrationno', 'registrationnumber', 'enrollmentno', 'enrolmentno', 'enrollmentnumber' ],
 				class: [ 'class', 'course', 'grade', 'std', 'standard' ],
@@ -788,6 +800,13 @@ export default function peopleStep( body, P ) {
 					// Roll / registration number columns fill the ID when the card has no such field.
 					if ( ( k === 'roll_no' || k === 'regd_no' ) && ! fields.some( ( x ) => x.key === k ) ) {
 						return 'id_no';
+					}
+					// ID cards have no course/grade field: those columns fill Class instead.
+					if ( ( k === 'course' || k === 'grade' ) && ! fields.some( ( x ) => x.key === k ) ) {
+						return 'class';
+					}
+					if ( ( k === 'cert_date' || k === 'duration' ) && ! fields.some( ( x ) => x.key === k ) ) {
+						continue;
 					}
 					return k;
 				}

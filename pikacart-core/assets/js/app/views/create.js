@@ -7,7 +7,7 @@
 
 import { api } from '../api.js';
 import { esc, icon, toast, withLoading } from '../ui.js';
-import { catalog, findSubtype, orgVars } from '../catalog.js';
+import { catalog, findSubtype, orgVars, sizesFor } from '../catalog.js';
 import { thumb } from '../../card/gallery.js';
 import { renderSide } from '../../card/render.js';
 import { layoutFor } from '../../card/families.js';
@@ -20,7 +20,13 @@ const { __, _n, sprintf } = window.wp.i18n;
 
 const CAT_ICONS = { school: 'school', college: 'college', book: 'book', briefcase: 'briefcase', health: 'health', heart: 'heart', ticket: 'ticket', shield: 'shield', users: 'users', mic: 'mic' };
 
-export default function create( el, ctx, params ) {
+/** Create certificate: the same steps, with certificate types and page sizes. */
+export function createCertificate( el, ctx, params ) {
+	return create( el, ctx, params, 'certificate' );
+}
+
+export default function create( el, ctx, params, mode = 'card' ) {
+	const M = modeOf( mode );
 	let alive = true;
 	el.innerHTML = '<div class="skeleton-grid"><div class="skeleton sk-card"></div><div class="skeleton sk-card"></div><div class="skeleton sk-card"></div></div>';
 
@@ -31,13 +37,13 @@ export default function create( el, ctx, params ) {
 			}
 			const sid = Number( params[ 0 ] || 0 );
 			if ( ! ctx.me.client ) {
-				orgPicker( el, ctx );
+				orgPicker( el, ctx, M );
 			} else if ( sid ) {
-				gallery( el, ctx, cat, sid, () => alive );
+				gallery( el, ctx, cat, sid, () => alive, M );
 			} else if ( params[ 0 ] === 'types' ) {
-				chooser( el, ctx, cat );
+				chooser( el, ctx, cat, M );
 			} else {
-				orgPicker( el, ctx );
+				orgPicker( el, ctx, M );
 			}
 		} )
 		.catch( ( e ) => {
@@ -49,12 +55,34 @@ export default function create( el, ctx, params ) {
 	};
 }
 
-/** Links for the step bar while choosing: step 1 and (with an organisation) step 2. */
-function createHref( ctx ) {
-	return ( n ) => ( n === 1 ? ctx.url( 'create' ) : n === 2 && ctx.me.client ? ctx.url( 'create/types' ) : '' );
+/** Wording and addresses for ID cards or certificates. */
+function modeOf( mode ) {
+	const cert = mode === 'certificate';
+	return {
+		cert,
+		doc: cert ? 'certificate' : 'card',
+		base: cert ? 'certificate' : 'create',
+		last: cert ? 'pkc_last_certificate' : 'pkc_last_create',
+	};
 }
 
-const LAST = 'pkc_last_create';
+/** Preview size: an ID card, or the first page size (A4) for certificates. */
+function docSize( cat, M, orientation ) {
+	if ( ! M.cert ) {
+		return orientation === 'landscape' ? { w: 86, h: 54 } : { w: 54, h: 86 };
+	}
+	const s = sizesFor( cat, true )[ 0 ] || { w: 210, h: 297 };
+	const a = Math.min( s.w, s.h );
+	const b = Math.max( s.w, s.h );
+	return orientation === 'landscape' ? { w: b, h: a } : { w: a, h: b };
+}
+
+/** Links for the step bar while choosing: step 1 and (with an organisation) step 2. */
+function createHref( ctx, M ) {
+	return ( n ) => ( n === 1 ? ctx.url( M.base ) : n === 2 && ctx.me.client ? ctx.url( M.base + '/types' ) : '' );
+}
+
+let LAST = 'pkc_last_create';
 function lastCreate() {
 	try {
 		return JSON.parse( window.localStorage.getItem( LAST ) || 'null' );
@@ -71,18 +99,18 @@ function rememberCreate( v ) {
 }
 
 /** Step 0: which organisation is this ID card for? */
-function orgPicker( el, ctx ) {
+function orgPicker( el, ctx, M ) {
 	let query = '';
 	const draw = () => {
 		const me = ctx.me;
 		const term = query.trim().toLowerCase();
 		const list = [ ...me.clients ].sort( ( a, b ) => ( b.id === me.client ) - ( a.id === me.client ) );
 		const shown = list.filter( ( o ) => ! term || orgName( o ).toLowerCase().includes( term ) );
-		el.innerHTML = `${ guideBanner() }${ journeyBar( 1, createHref( ctx ) ) }<div class="org-pick">
-			${ journeyGuide( 1 ) }
+		el.innerHTML = `${ guideBanner() }${ journeyBar( 1, createHref( ctx, M ), M.doc ) }<div class="org-pick">
+			${ journeyGuide( 1, '', M.doc ) }
 			${ list.length > 6 ? `<div class="org-search"><span>${ icon( 'search' ) }</span><input type="search" data-q value="${ esc( query ) }" placeholder="${ esc( __( 'Search organisations…', 'pikacart' ) ) }" aria-label="${ esc( __( 'Search organisations', 'pikacart' ) ) }"></div>` : '' }
 			<div class="org-pick-grid">
-				<a class="org-pick-item org-pick-add" href="${ esc( ctx.url( 'organisations/new/card' ) ) }" data-link>
+				<a class="org-pick-item org-pick-add" href="${ esc( ctx.url( M.cert ? 'organisations/new/cert' : 'organisations/new/card' ) ) }" data-link>
 					<span class="org-mark lg is-add">${ icon( 'plus' ) }</span>
 					<span class="org-pick-t"><b>${ esc( __( 'Add a new organisation', 'pikacart' ) ) }</b><small>${ esc( __( 'School, college, office, hospital…', 'pikacart' ) ) }</small></span>
 				</a>
@@ -107,45 +135,47 @@ function orgPicker( el, ctx ) {
 		}
 		el.querySelectorAll( '[data-org]' ).forEach( ( b ) => b.addEventListener( 'click', () => withLoading( b, async () => {
 			if ( await switchOrg( ctx, Number( b.dataset.org ), true ) ) {
-				ctx.navigate( 'create/types' );
+				ctx.navigate( M.base + '/types' );
 			}
 		} ) ) );
 	};
 	draw();
 }
 
-function chooser( el, ctx, cat ) {
+function chooser( el, ctx, cat, M ) {
+	LAST = M.last;
 	const mine = ctx.me.org.category_id;
 	const last = lastCreate();
 	const lastSub = last && last.org === ctx.me.client ? findSubtype( cat, last.sid ) : {};
 	const forOrg = activeOrg( ctx.me );
-	const ordered = [ ...cat.tree ].sort( ( a, b ) => ( b.id === mine ) - ( a.id === mine ) );
-	el.innerHTML = `${ journeyBar( 2, createHref( ctx ) ) }
-		${ journeyGuide( 2, `<a class="btn btn-sm journey-extra" href="${ esc( ctx.url( 'designs' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Use my own design', 'pikacart' ) ) }</a>` ) }
-		${ forOrg ? `<div class="card-for">${ orgMark( forOrg, 'sm' ) }<span>${ esc( __( 'Card for', 'pikacart' ) ) } <b>${ esc( orgName( forOrg ) ) }</b></span><a href="${ esc( ctx.url( 'create' ) ) }" data-link>${ esc( __( 'Change', 'pikacart' ) ) }</a></div>` : '' }
-		${ lastSub.subtype ? `<a class="card continue-card" href="${ esc( ctx.url( 'create/' + lastSub.subtype.id ) ) }" data-link>${ icon( 'refresh' ) }<span><strong>${ esc( __( 'Continue choosing a design', 'pikacart' ) ) }</strong><small>${ esc( lastSub.category.name + ' · ' + lastSub.subtype.name ) }</small></span>${ icon( 'chevron-right' ) }</a>` : '' }
+	const ordered = cat.tree.filter( ( c ) => ( c.kind || 'card' ) === M.doc ).sort( ( a, b ) => ( b.id === mine ) - ( a.id === mine ) );
+	el.innerHTML = `${ journeyBar( 2, createHref( ctx, M ), M.doc ) }
+		${ journeyGuide( 2, M.cert ? '' : `<a class="btn btn-sm journey-extra" href="${ esc( ctx.url( 'designs' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Use my own design', 'pikacart' ) ) }</a>`, M.doc ) }
+		${ forOrg ? `<div class="card-for">${ orgMark( forOrg, 'sm' ) }<span>${ esc( M.cert ? __( 'Certificate from', 'pikacart' ) : __( 'Card for', 'pikacart' ) ) } <b>${ esc( orgName( forOrg ) ) }</b></span><a href="${ esc( ctx.url( M.base ) ) }" data-link>${ esc( __( 'Change', 'pikacart' ) ) }</a></div>` : '' }
+		${ lastSub.subtype ? `<a class="card continue-card" href="${ esc( ctx.url( M.base + '/' + lastSub.subtype.id ) ) }" data-link>${ icon( 'refresh' ) }<span><strong>${ esc( __( 'Continue choosing a design', 'pikacart' ) ) }</strong><small>${ esc( lastSub.category.name + ' · ' + lastSub.subtype.name ) }</small></span>${ icon( 'chevron-right' ) }</a>` : '' }
 		<div class="type-grid">
 			${ ordered.map( ( c ) => `<section class="card type-card ${ c.id === mine ? 'is-mine' : '' }">
 				<div class="type-head"><span class="cat-icon">${ icon( CAT_ICONS[ c.icon ] || 'idcard' ) }</span><div><h3>${ esc( c.name ) }</h3>${ c.id === mine ? `<span class="badge badge-free">${ esc( __( 'Your category', 'pikacart' ) ) }</span>` : '' }</div></div>
-				<div class="type-subs">${ c.subtypes.map( ( s ) => `<a class="type-sub" href="${ esc( ctx.url( 'create/' + s.id ) ) }" data-link><span>${ esc( s.name ) }</span>${ icon( 'chevron-right' ) }</a>` ).join( '' ) }</div>
+				<div class="type-subs">${ c.subtypes.map( ( s ) => `<a class="type-sub" href="${ esc( ctx.url( M.base + '/' + s.id ) ) }" data-link><span>${ esc( s.name ) }</span>${ icon( 'chevron-right' ) }</a>` ).join( '' ) }</div>
 			</section>` ).join( '' ) }
 		</div>`;
 }
 
-async function gallery( el, ctx, cat, sid, alive ) {
+async function gallery( el, ctx, cat, sid, alive, M ) {
+	LAST = M.last;
 	const { category, subtype } = findSubtype( cat, sid );
 	if ( ! subtype ) {
-		ctx.navigate( 'create/types', true );
+		ctx.navigate( M.base + '/types', true );
 		return;
 	}
 	const saved = lastCreate();
-	const st = Object.assign( { orientation: 'portrait', level: '', palette: 0, own: false }, saved && saved.sid === sid && saved.org === ctx.me.client ? saved.st : {} );
+	const st = Object.assign( { orientation: M.cert ? 'landscape' : 'portrait', level: '', palette: 0, own: false }, saved && saved.sid === sid && saved.org === ctx.me.client ? saved.st : {} );
 	const remember = () => rememberCreate( { org: ctx.me.client, sid, st } );
 	remember();
-	el.innerHTML = `${ journeyBar( 3, createHref( ctx ) ) }
-		${ journeyGuide( 3, `<a class="btn btn-sm journey-extra" href="${ esc( ctx.url( 'designs/request' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Design on Demand', 'pikacart' ) ) }</a>` ) }
+	el.innerHTML = `${ journeyBar( 3, createHref( ctx, M ), M.doc ) }
+		${ journeyGuide( 3, `<a class="btn btn-sm journey-extra" href="${ esc( ctx.url( 'designs/request' ) ) }" data-link>${ icon( 'sparkles' ) }${ esc( __( 'Design on Demand', 'pikacart' ) ) }</a>`, M.doc ) }
 		<div class="section-head-row">
-			<div><a class="back-link" href="${ esc( ctx.url( 'create/types' ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( __( 'Change card type', 'pikacart' ) ) }</a><h2 class="h2">${ esc( category.name + ' · ' + subtype.name ) }</h2></div>
+			<div><a class="back-link" href="${ esc( ctx.url( M.base + '/types' ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( M.cert ? __( 'Change certificate type', 'pikacart' ) : __( 'Change card type', 'pikacart' ) ) }</a><h2 class="h2">${ esc( category.name + ' · ' + subtype.name ) }</h2></div>
 		</div>
 		<div class="filters card">
 			<div class="seg" role="group" aria-label="${ esc( __( 'Orientation', 'pikacart' ) ) }">
@@ -181,7 +211,7 @@ async function gallery( el, ctx, cat, sid, alive ) {
 		remember();
 		const list = templates.filter( ( t ) => ( ! st.level || t.level === st.level ) && supportsOrientation( t, st.orientation ) );
 		if ( ! list.length ) {
-			grid.innerHTML = `<p class="muted">${ esc( __( 'No designs match these filters.', 'pikacart' ) ) }</p>`;
+			grid.innerHTML = `<p class="muted">${ esc( templates.length ? __( 'No designs match these filters.', 'pikacart' ) : __( 'New designs for this type are coming soon. Meanwhile ask our team for one with Design on Demand.', 'pikacart' ) ) }</p>`;
 			return;
 		}
 		grid.className = `tpl-grid ${ st.orientation === 'landscape' ? 'is-landscape' : '' }`;
@@ -192,8 +222,8 @@ async function gallery( el, ctx, cat, sid, alive ) {
 		grid.querySelectorAll( '.tpl' ).forEach( ( b, i ) => {
 			const t = list[ i ];
 			const pal = palById( st.palette ) || palById( t.palettes[ 0 ] ) || cat.palettes[ 0 ];
-			thumb( b.querySelector( 'canvas' ), { template: t, subtype, orientation: st.orientation, palette: pal, index: i, org, width: st.orientation === 'landscape' ? 260 : 170 } );
-			b.addEventListener( 'click', () => preview( ctx, cat, subtype, t, st, org ) );
+			thumb( b.querySelector( 'canvas' ), { template: t, subtype, orientation: st.orientation, palette: pal, index: i, org, size: M.cert ? docSize( cat, M, st.orientation ) : undefined, width: st.orientation === 'landscape' ? ( M.cert ? 300 : 260 ) : ( M.cert ? 210 : 170 ) } );
+			b.addEventListener( 'click', () => preview( ctx, cat, subtype, t, st, org, M ) );
 		} );
 	}
 
@@ -216,7 +246,7 @@ async function gallery( el, ctx, cat, sid, alive ) {
 }
 
 /** Large preview with front/back and colour swatches that recolour live. */
-function preview( ctx, cat, subtype, t, st, org ) {
+function preview( ctx, cat, subtype, t, st, org, M ) {
 	const root = document.getElementById( 'modal-root' );
 	const wrap = document.createElement( 'div' );
 	wrap.className = 'modal-wrap';
@@ -225,7 +255,7 @@ function preview( ctx, cat, subtype, t, st, org ) {
 	let custom = null;
 	wrap.innerHTML = `<div class="modal modal-lg" role="dialog" aria-modal="true" aria-label="${ esc( t.name ) }">
 		<div class="modal-top"><div><h2>${ esc( t.name ) }</h2><span class="lvl lvl-${ esc( t.level ) }">${ esc( cat.levels[ t.level ] || '' ) }</span></div><button type="button" class="icon-btn" data-close aria-label="${ esc( __( 'Close', 'pikacart' ) ) }">${ icon( 'x' ) }</button></div>
-		<div class="pv ${ st.orientation === 'landscape' ? 'is-landscape' : '' }"><figure><canvas data-side="front"></canvas><figcaption>${ esc( __( 'Front', 'pikacart' ) ) }</figcaption></figure><figure><canvas data-side="back"></canvas><figcaption>${ esc( __( 'Back', 'pikacart' ) ) }</figcaption></figure></div>
+		<div class="pv ${ st.orientation === 'landscape' ? 'is-landscape' : '' } ${ M.cert ? 'is-doc' : '' }"><figure><canvas data-side="front"></canvas>${ M.cert ? '' : `<figcaption>${ esc( __( 'Front', 'pikacart' ) ) }</figcaption>` }</figure>${ M.cert ? '' : `<figure><canvas data-side="back"></canvas><figcaption>${ esc( __( 'Back', 'pikacart' ) ) }</figcaption></figure>` }</div>
 		<div class="pv-swatches">
 			${ pals.map( ( p ) => `<button type="button" class="swatch ${ p.id === pal.id ? 'is-on' : '' }" data-p="${ p.id }" title="${ esc( p.name ) }" style="--sw1:${ esc( p.p ) };--sw2:${ esc( p.a ) }"></button>` ).join( '' ) }
 			<label class="swatch swatch-custom" title="${ esc( __( 'Custom colour', 'pikacart' ) ) }">${ icon( 'plus' ) }<input type="color" value="${ esc( pal.p ) }" aria-label="${ esc( __( 'Custom brand colour', 'pikacart' ) ) }"></label>
@@ -233,11 +263,11 @@ function preview( ctx, cat, subtype, t, st, org ) {
 		<div class="modal-actions"><button type="button" class="btn" data-close>${ esc( __( 'Back to designs', 'pikacart' ) ) }</button><button type="button" class="btn btn-primary" data-use>${ esc( __( 'Use this design', 'pikacart' ) ) }${ icon( 'chevron-right' ) }</button></div>
 	</div>`;
 	root.appendChild( wrap );
-	const size = st.orientation === 'landscape' ? { w: 86, h: 54 } : { w: 54, h: 86 };
+	const size = docSize( cat, M, st.orientation );
 	const kind = kindOf( subtype );
 	const layout = layoutFor( t, st.orientation, size.w / size.h, kind );
 	const vars = demoVars( kind, 1, Object.assign( { subtype_name: subtype.name }, org ) );
-	const render = () => wrap.querySelectorAll( 'canvas[data-side]' ).forEach( ( c ) => renderSide( c, layout[ c.dataset.side ], { sizeMm: size, width: ( st.orientation === 'landscape' ? 420 : 300 ) * Math.min( 2, devicePixelRatio || 1 ), palette: custom || pal, vars, demo: true, side: c.dataset.side } ) );
+	const render = () => wrap.querySelectorAll( 'canvas[data-side]' ).forEach( ( c ) => renderSide( c, layout[ c.dataset.side ], { sizeMm: size, width: ( M.cert ? ( st.orientation === 'landscape' ? 760 : 520 ) : st.orientation === 'landscape' ? 420 : 300 ) * Math.min( 2, devicePixelRatio || 1 ), palette: custom || pal, vars, demo: true, side: c.dataset.side } ) );
 	render();
 	const close = () => {
 		wrap.remove();
@@ -269,7 +299,7 @@ function preview( ctx, cat, subtype, t, st, org ) {
 			const body = { orientation: st.orientation, palette: custom ? { p: custom.p, s: custom.s, a: custom.a, t: custom.t } : { id: pal.id } };
 			await api( `projects/${ res.project.id }`, { method: 'POST', body } );
 			close();
-			toast( __( 'Design selected. Now choose the size and colours.', 'pikacart' ) );
+			toast( M.cert ? __( 'Design selected. Now choose the paper size and colours.', 'pikacart' ) : __( 'Design selected. Now choose the size and colours.', 'pikacart' ) );
 			ctx.navigate( `projects/${ res.project.id }/setup` );
 		} catch ( err ) {
 			toast( err.message, 'error' );

@@ -80,7 +80,7 @@ function list( el, ctx, mode ) {
 					<a class="proj-thumb ${ size.w > size.h ? 'is-landscape' : '' }" href="${ esc( ctx.url( target( p ) ) ) }" data-link><canvas aria-hidden="true"></canvas></a>
 					<div class="proj-info">
 						<a class="proj-name-link" href="${ esc( ctx.url( target( p ) ) ) }" data-link><strong>${ esc( p.name ) }</strong></a>
-						<span class="proj-who">${ icon( 'building' ) }<span><b>${ esc( cur.name || '' ) }</b> · ${ esc( p.subtype ? p.subtype.name : '' ) }</span></span>
+						<span class="proj-who">${ icon( p.subtype && p.subtype.doc === 'certificate' ? 'star' : 'building' ) }<span><b>${ esc( cur.name || '' ) }</b> · ${ esc( p.subtype ? p.subtype.name : '' ) }${ p.subtype && p.subtype.doc === 'certificate' ? ` <em class="doc-badge">${ esc( __( 'Certificate', 'pikacart' ) ) }</em>` : '' }</span></span>
 						<span class="muted small">${ esc( size.w + '×' + size.h + ' mm' ) }</span>
 						<span class="muted small">${ esc( sprintf( _n( '%d person', '%d people', p.people || 0 ), p.people || 0 ) ) } · ${ esc( sprintf( __( 'saved %s ago', 'pikacart' ), p.updated ) ) }</span>
 						${ p.status === 'archived' ? `<span class="badge">${ esc( __( 'Archived', 'pikacart' ) ) }</span>` : '' }

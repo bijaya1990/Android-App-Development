@@ -42,9 +42,10 @@ function pvcPrefs() {
 export default function downloadStep( body, P ) {
 	const pid = P.project.id;
 	const pref = pvcPrefs();
+	const cert = !! P.cert;
 	body.innerHTML = `<section class="card dl-card">
 		<div class="dl-head">
-			<h3 data-count>${ esc( __( 'Your cards', 'pikacart' ) ) }</h3>
+			<h3 data-count>${ esc( cert ? __( 'Your certificates', 'pikacart' ) : __( 'Your cards', 'pikacart' ) ) }</h3>
 			<div class="dl-filters">
 				<select data-which aria-label="${ esc( __( 'Which cards', 'pikacart' ) ) }">
 					<option value="all">${ esc( __( 'All people', 'pikacart' ) ) }</option>
@@ -53,17 +54,22 @@ export default function downloadStep( body, P ) {
 					<option value="class">${ esc( __( 'One class / department', 'pikacart' ) ) }</option>
 				</select>
 				<select data-class hidden aria-label="${ esc( __( 'Class or department', 'pikacart' ) ) }"></select>
-				<select data-sides aria-label="${ esc( __( 'Sides', 'pikacart' ) ) }"><option value="both">${ esc( __( 'Front + back', 'pikacart' ) ) }</option><option value="front">${ esc( __( 'Front only', 'pikacart' ) ) }</option><option value="back">${ esc( __( 'Back only', 'pikacart' ) ) }</option></select>
+				<select data-sides ${ cert ? 'hidden' : '' } aria-label="${ esc( __( 'Sides', 'pikacart' ) ) }">${ cert ? '<option value="front" selected></option>' : '' }<option value="both">${ esc( __( 'Front + back', 'pikacart' ) ) }</option><option value="front">${ esc( __( 'Front only', 'pikacart' ) ) }</option><option value="back">${ esc( __( 'Back only', 'pikacart' ) ) }</option></select>
 			</div>
 		</div>
 		${ P.ctx.me.state.watermark ? `<p class="banner banner-trial">${ icon( 'sparkles' ) }<span>${ esc( sprintf( __( 'Free plan: files include the "%s" watermark.', 'pikacart' ), P.ctx.me.watermark.text ) ) } <a href="${ esc( P.ctx.url( 'subscription' ) ) }" data-link>${ esc( __( 'Remove watermark', 'pikacart' ) ) }</a></span></p>` : '' }
 		<div class="dl-choices">
-			<a class="dl-choice is-main" href="${ esc( P.ctx.url( `print/${ pid }` ) ) }" data-link>
+			${ cert ? `<button type="button" class="dl-choice is-main" data-pdf>
+				<span class="dl-ic">${ icon( 'download' ) }</span>
+				<span class="dl-t"><b>${ esc( __( 'Download PDF to print', 'pikacart' ) ) }</b><span>${ esc( __( 'One certificate per page · sharp 300 DPI print quality', 'pikacart' ) ) }</span></span>
+				<span class="dl-ar">${ icon( 'download' ) }</span>
+			</button>` : '' }
+			<a class="dl-choice ${ cert ? '' : 'is-main' }" href="${ esc( P.ctx.url( `print/${ pid }` ) ) }" data-link>
 				<span class="dl-ic">${ icon( 'printer' ) }</span>
-				<span class="dl-t"><b>${ esc( __( 'Print on A4 paper', 'pikacart' ) ) }</b><span>${ esc( __( 'Many cards per page with cut lines · for any printer', 'pikacart' ) ) }</span></span>
+				<span class="dl-t"><b>${ esc( cert ? __( 'Several on one sheet', 'pikacart' ) : __( 'Print on A4 paper', 'pikacart' ) ) }</b><span>${ esc( cert ? __( 'A5, A6 or small certificates: 2, 3 or 4 on one sheet with cut lines', 'pikacart' ) : __( 'Many cards per page with cut lines · for any printer', 'pikacart' ) ) }</span></span>
 				<span class="dl-ar">${ icon( 'chevron-right' ) }</span>
 			</a>
-			<button type="button" class="dl-choice" data-open="pvc" aria-expanded="false">
+			<button type="button" class="dl-choice" data-open="pvc" aria-expanded="false" ${ cert ? 'hidden' : '' }>
 				<span class="dl-ic">${ icon( 'card' ) }</span>
 				<span class="dl-t"><b>${ esc( __( 'PVC card printer', 'pikacart' ) ) }</b><span>${ esc( __( 'Print straight on PVC cards · Evolis, Zebra, Fargo, HiTi', 'pikacart' ) ) }</span></span>
 				<span class="dl-ar">${ icon( 'chevron-down' ) }</span>
@@ -94,7 +100,7 @@ export default function downloadStep( body, P ) {
 			</div>
 			<button type="button" class="dl-choice" data-img="png">
 				<span class="dl-ic">${ icon( 'image' ) }</span>
-				<span class="dl-t"><b>${ esc( __( 'Photos for WhatsApp', 'pikacart' ) ) }</b><span>${ esc( __( 'Each card as an image in a ZIP · share or email', 'pikacart' ) ) }</span></span>
+				<span class="dl-t"><b>${ esc( __( 'Photos for WhatsApp', 'pikacart' ) ) }</b><span>${ esc( cert ? __( 'Each certificate as an image in a ZIP · share or email', 'pikacart' ) : __( 'Each card as an image in a ZIP · share or email', 'pikacart' ) ) }</span></span>
 				<span class="dl-ar">${ icon( 'download' ) }</span>
 			</button>
 			<p class="muted small dl-alt"><button type="button" class="linklike" data-img="jpg">${ esc( __( 'Smaller JPG images instead', 'pikacart' ) ) }</button></p>

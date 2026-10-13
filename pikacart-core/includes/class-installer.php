@@ -45,6 +45,11 @@ class PKC_Installer {
 			PKC_Roles::add_roles();
 			update_option( 'pkc_flush_rewrite', 1 );
 		}
+		// New built-in certificate designs arrive with plugin updates.
+		if ( get_option( 'pkc_designs_version' ) !== PKC_VERSION ) {
+			PKC_Catalog::seed_certificate_designs();
+			update_option( 'pkc_designs_version', PKC_VERSION );
+		}
 	}
 
 	public static function install() {
@@ -206,6 +211,7 @@ class PKC_Installer {
   icon varchar(64) NOT NULL DEFAULT '',
   sort_order int(11) NOT NULL DEFAULT 0,
   is_hidden tinyint(1) NOT NULL DEFAULT 0,
+  kind varchar(20) NOT NULL DEFAULT 'card',
   seo longtext NULL,
   created_at datetime NULL DEFAULT NULL,
   PRIMARY KEY  (id),
@@ -236,6 +242,7 @@ class PKC_Installer {
   note varchar(255) NOT NULL DEFAULT '',
   sort_order int(11) NOT NULL DEFAULT 0,
   is_active tinyint(1) NOT NULL DEFAULT 1,
+  kind varchar(20) NOT NULL DEFAULT 'card',
   PRIMARY KEY  (id)
 ) $c;";
 
@@ -612,6 +619,101 @@ class PKC_Installer {
 				}
 			}
 		}
+
+		self::add_certificates();
+	}
+
+	/**
+	 * Certificates (version 9): page sizes, certificate categories and their
+	 * types, plus the puja / festival committee ID cards. Runs on every
+	 * install and upgrade but adds each piece only once.
+	 */
+	private static function add_certificates() {
+		global $wpdb;
+		$now = pkc_now();
+
+		if ( ! (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . pkc_table( 'sizes' ) . " WHERE kind = 'certificate'" ) ) {
+			// Stored portrait (width < height); landscape turns them round.
+			$pages = array(
+				array( 'A4', 210, 297, 'Most certificates' ),
+				array( 'A5', 148, 210, 'Half A4 · 2 on one A4 sheet' ),
+				array( 'A6', 105, 148, 'Quarter A4 · 4 on one A4 sheet' ),
+				array( 'DL', 99, 210, 'One third of A4 · 3 on one A4 sheet' ),
+				array( 'Letter', 215.9, 279.4, 'US Letter' ),
+				array( 'Legal', 215.9, 355.6, 'US Legal' ),
+				array( 'A3', 297, 420, 'Large · for frames and awards' ),
+				array( 'Tabloid', 279.4, 431.8, 'Ledger / 11 x 17 inch' ),
+				array( 'A2', 420, 594, 'Wall frame / felicitation' ),
+			);
+			foreach ( $pages as $i => $s ) {
+				$wpdb->insert(
+					pkc_table( 'sizes' ),
+					array(
+						'name'       => $s[0],
+						'width_mm'   => $s[1],
+						'height_mm'  => $s[2],
+						'note'       => $s[3],
+						'sort_order' => 100 + $i,
+						'is_active'  => 1,
+						'kind'       => 'certificate',
+					)
+				);
+			}
+		}
+
+		$order = (int) $wpdb->get_var( 'SELECT MAX(sort_order) FROM ' . pkc_table( 'categories' ) );
+		foreach ( self::certificate_seed() as $cat ) {
+			$exists = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'categories' ) . ' WHERE slug = %s', $cat['slug'] ) );
+			if ( $exists ) {
+				continue;
+			}
+			$wpdb->insert(
+				pkc_table( 'categories' ),
+				array(
+					'slug'        => $cat['slug'],
+					'name'        => $cat['name'],
+					'description' => $cat['desc'],
+					'icon'        => $cat['icon'],
+					'sort_order'  => ++$order,
+					'is_hidden'   => 0,
+					'kind'        => $cat['kind'],
+					'seo'         => wp_json_encode( array() ),
+					'created_at'  => $now,
+				)
+			);
+			$cat_id = (int) $wpdb->insert_id;
+			foreach ( $cat['subtypes'] as $j => $sub ) {
+				$wpdb->insert(
+					pkc_table( 'subtypes' ),
+					array(
+						'category_id' => $cat_id,
+						'slug'        => $sub[0],
+						'name'        => $sub[1],
+						'description' => '',
+						'fields'      => wp_json_encode( self::default_fields( $sub[2] ) ),
+						'terms'       => $cat['terms'],
+						'sort_order'  => $j + 1,
+						'is_hidden'   => 0,
+						'seo'         => wp_json_encode( array() ),
+					)
+				);
+			}
+		}
+	}
+
+	private static function certificate_seed() {
+		$cert = 'certificate';
+		$t_puja = "This pass is issued by the committee named on the front and is not transferable.\nPlease wear it during the festival and follow the volunteers' instructions.\nIf found, please return to the committee office.";
+		return array(
+			array( 'kind' => $cert, 'slug' => 'cert-school', 'name' => 'School & College certificates', 'icon' => 'school', 'terms' => '', 'desc' => 'Merit, participation, sports, character and appreciation certificates.', 'subtypes' => array( array( 'merit', 'Merit / Topper', $cert ), array( 'participation', 'Participation', $cert ), array( 'sports', 'Sports', $cert ), array( 'character', 'Character / Conduct', $cert ), array( 'appreciation', 'Appreciation', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-course', 'name' => 'Course & Training', 'icon' => 'book', 'terms' => '', 'desc' => 'Course completion certificates for computer centres, coaching and training institutes.', 'subtypes' => array( array( 'completion', 'Course Completion', $cert ), array( 'computer', 'Computer Course (DCA, PGDCA, Tally)', $cert ), array( 'skill', 'Typing / Skill Test', $cert ), array( 'workshop', 'Workshop / Training', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-festival', 'name' => 'Puja & Festivals', 'icon' => 'sparkles', 'terms' => '', 'desc' => 'Ganesh Puja, Durga Puja, Mahalaxmi Puja, Nuakhai, Rath Yatra and other festival certificates.', 'subtypes' => array( array( 'ganesh-puja', 'Ganesh Puja', $cert ), array( 'durga-puja', 'Durga Puja', $cert ), array( 'mahalaxmi-puja', 'Mahalaxmi / Laxmi Puja', $cert ), array( 'saraswati-puja', 'Saraswati Puja', $cert ), array( 'rath-yatra', 'Rath Yatra', $cert ), array( 'nuakhai', 'Nuakhai', $cert ), array( 'kali-puja', 'Kali Puja / Diwali', $cert ), array( 'festival', 'Other festival', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-competition', 'name' => 'Competition & Sports', 'icon' => 'star', 'terms' => '', 'desc' => 'Winner, runner-up and participation certificates for competitions and tournaments.', 'subtypes' => array( array( 'winner', 'Winner (1st / 2nd / 3rd)', $cert ), array( 'participant', 'Participation', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-corporate', 'name' => 'Company & Internship', 'icon' => 'briefcase', 'terms' => '', 'desc' => 'Internship, training, appreciation and employee of the month certificates.', 'subtypes' => array( array( 'internship', 'Internship', $cert ), array( 'training', 'Training', $cert ), array( 'award', 'Appreciation / Employee award', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-event', 'name' => 'Event & Seminar', 'icon' => 'ticket', 'terms' => '', 'desc' => 'Seminar, conference, webinar and cultural programme certificates.', 'subtypes' => array( array( 'attendee', 'Participation / Attendance', $cert ), array( 'speaker', 'Speaker / Guest', $cert ), array( 'volunteer', 'Volunteer', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-social', 'name' => 'NGO & Social', 'icon' => 'heart', 'terms' => '', 'desc' => 'Volunteer, donor, blood donation and membership certificates.', 'subtypes' => array( array( 'volunteer', 'Volunteer / Sevak', $cert ), array( 'donor', 'Donor / Blood donation', $cert ), array( 'membership', 'Membership', $cert ) ) ),
+			array( 'kind' => 'card', 'slug' => 'puja', 'name' => 'Puja / Festival Committee', 'icon' => 'sparkles', 'terms' => $t_puja, 'desc' => 'Volunteer, sevak, committee member and VIP pass cards for puja pandals and festivals.', 'subtypes' => array( array( 'volunteer', 'Volunteer / Sevak', 'staff' ), array( 'member', 'Committee member', 'staff' ), array( 'vip', 'VIP / Guest pass', 'other' ) ) ),
+		);
 	}
 
 	/**
@@ -666,6 +768,22 @@ class PKC_Installer {
 	 * Field sets by kind of card. "on" means switched on by default.
 	 */
 	public static function default_fields( $kind ) {
+		if ( 'certificate' === $kind ) {
+			return array(
+				array( 'key' => 'photo', 'label' => 'Photo', 'required' => false, 'on' => false ),
+				array( 'key' => 'name', 'label' => 'Full name', 'required' => true, 'on' => true ),
+				array( 'key' => 'id_no', 'label' => 'Certificate No.', 'required' => true, 'on' => true ),
+				array( 'key' => 'guardian', 'label' => 'Father / Guardian name', 'required' => false, 'on' => true ),
+				array( 'key' => 'course', 'label' => 'Course / Event / Competition', 'required' => false, 'on' => true ),
+				array( 'key' => 'grade', 'label' => 'Grade / Position / Rank', 'required' => false, 'on' => true ),
+				array( 'key' => 'duration', 'label' => 'Duration / Session', 'required' => false, 'on' => false ),
+				array( 'key' => 'class', 'label' => 'Class / Batch', 'required' => false, 'on' => false ),
+				array( 'key' => 'roll_no', 'label' => 'Roll / Regd. No.', 'required' => false, 'on' => false ),
+				array( 'key' => 'cert_date', 'label' => 'Date', 'required' => false, 'on' => true ),
+				array( 'key' => 'mobile', 'label' => 'Mobile number', 'required' => false, 'on' => false ),
+				array( 'key' => 'address', 'label' => 'Address / Village', 'required' => false, 'on' => false ),
+			);
+		}
 		$base = array(
 			array( 'key' => 'photo', 'label' => 'Photo', 'required' => true, 'on' => true ),
 			array( 'key' => 'name', 'label' => 'Full name', 'required' => true, 'on' => true ),

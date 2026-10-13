@@ -416,6 +416,49 @@ const STEPS = [
 		},
 	},
 	{
+		key: 'certificate', icon: 'star', route: 'certificate',
+		en: {
+			t: 'Make certificates',
+			s: 'Course, merit, sports, puja and more · Odia, Hindi, English',
+			what: 'Certificates are made just like ID cards: pick the organisation, the certificate type and a design, add the names, then print. Designs come in English, Odia (with Sambalpuri bandha) and festival styles.',
+			how: [
+				'Press "Create certificate" in the left menu.',
+				'Pick the organisation, then the type, e.g. Course Completion, Merit, Sports or Ganesh Puja.',
+				'Tap a design to see it with your own name and logo, then press "Use this design".',
+				'Choose the paper size: A4 for one certificate per page, A5 for 2, DL for 3 or A6 for 4 on one A4 sheet.',
+				'In Details set the certificate date. Certificate numbers (CERT-0001…) are made automatically.',
+				'Add the names one by one or import from Excel (Name, Father name, Course, Grade, Date). Names can be typed in Odia or Hindi; photos are optional.',
+				'Press "Download PDF to print" for one per page, or "Several on one sheet" for small sizes.',
+			],
+			options: [
+				[ 'Odia, Hindi, Urdu text', 'Type names and text in any of these scripts; letters and joined letters (କ୍ଷ, क्ष) print correctly.' ],
+				[ 'QR code', 'Every certificate has a QR code that proves it is genuine.' ],
+				[ 'Fine-tune', 'Change any text, font or language on the design in step 6.' ],
+			],
+			tip: 'Most certificates are A4 landscape. Print at 100% scale on good paper (170 GSM or more) for a premium feel.',
+		},
+		hi: {
+			t: 'सर्टिफ़िकेट बनाएँ',
+			s: 'कोर्स, मेरिट, खेल, पूजा और बहुत कुछ · ଓଡ଼ିଆ, हिंदी, English',
+			what: 'सर्टिफ़िकेट भी ID कार्ड की तरह ही बनते हैं: संस्था चुनें, सर्टिफ़िकेट का टाइप और डिज़ाइन चुनें, नाम जोड़ें, फिर प्रिंट करें। डिज़ाइन English, ओड़िया (संबलपुरी बंधा के साथ) और त्योहार वाले स्टाइल में हैं।',
+			how: [
+				'बाईं ओर मेन्यू में "Create certificate" दबाएँ।',
+				'संस्था चुनें, फिर टाइप, जैसे Course Completion, Merit, Sports या Ganesh Puja।',
+				'किसी डिज़ाइन पर टैप करें, आपके नाम और लोगो के साथ दिखेगा, फिर "Use this design" दबाएँ।',
+				'पेपर साइज़ चुनें: A4 पर एक पेज में एक, A5 में 2, DL में 3 और A6 में 4 सर्टिफ़िकेट एक A4 शीट पर।',
+				'Details में सर्टिफ़िकेट की तारीख़ डालें। सर्टिफ़िकेट नंबर (CERT-0001…) अपने आप बनते हैं।',
+				'नाम एक-एक करके जोड़ें या Excel से (Name, Father name, Course, Grade, Date)। नाम ओड़िया या हिंदी में भी लिख सकते हैं; फ़ोटो ज़रूरी नहीं।',
+				'एक पेज पर एक के लिए "Download PDF to print" दबाएँ, छोटे साइज़ के लिए "Several on one sheet"।',
+			],
+			options: [
+				[ 'ओड़िया, हिंदी, उर्दू', 'नाम और टेक्स्ट इनमें से किसी भी लिपि में लिखें; अक्षर और जुड़े अक्षर (କ୍ଷ, क्ष) सही छपते हैं।' ],
+				[ 'QR कोड', 'हर सर्टिफ़िकेट पर QR कोड होता है जो बताता है कि वह असली है।' ],
+				[ 'Fine-tune', 'स्टेप 6 में डिज़ाइन का कोई भी टेक्स्ट, फ़ॉन्ट या भाषा बदलें।' ],
+			],
+			tip: 'ज़्यादातर सर्टिफ़िकेट A4 landscape होते हैं। प्रीमियम लुक के लिए अच्छे काग़ज़ (170 GSM या ज़्यादा) पर 100% स्केल में प्रिंट करें।',
+		},
+	},
+	{
 		key: 'verify', icon: 'shield', route: 'organisation',
 		en: {
 			t: 'QR code verification',
@@ -513,6 +556,11 @@ const SHOTS = {
 		[ 'download', 'Step 8: A4 paper, PVC card printer or photos for WhatsApp.', 'स्टेप 8: A4 पेपर, PVC कार्ड प्रिंटर या WhatsApp के लिए फ़ोटो।' ],
 		[ 'a4', 'A4 print sheet: cards arranged by themselves, with cut marks.', 'A4 प्रिंट शीट: कार्ड अपने आप सजे, कटिंग निशान के साथ।' ],
 		[ 'pvc', 'PVC printer: card size, both sides or one side, then Print.', 'PVC प्रिंटर: कार्ड साइज़, दोनों साइड या एक साइड, फिर Print।' ],
+	],
+	certificate: [
+		[ 'cert-designs', 'Create certificate → type → ready designs with your own name and logo.', 'Create certificate → टाइप → आपके नाम और लोगो के साथ तैयार डिज़ाइन।' ],
+		[ 'cert-preview', 'Odia Sambalpuri design: tap to see it bigger, then "Use this design".', 'ओड़िया संबलपुरी डिज़ाइन: बड़ा देखने के लिए टैप करें, फिर "Use this design"।' ],
+		[ 'cert-sheet', 'A5 size: two certificates on one A4 sheet with cut marks.', 'A5 साइज़: एक A4 शीट पर दो सर्टिफ़िकेट, कटिंग निशान के साथ।' ],
 	],
 	verify: [
 		[ 'verify', 'The page that opens when the QR code is scanned.', 'QR कोड स्कैन करने पर खुलने वाला पेज।' ],

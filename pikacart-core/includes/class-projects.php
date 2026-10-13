@@ -41,6 +41,28 @@ class PKC_Projects {
 				$on[] = $f['key'];
 			}
 		}
+		if ( $subtype && 'certificate' === PKC_Catalog::kind_of_subtype( $subtype->id ) ) {
+			// Certificates: numbered automatically, QR on the front only, no back-side extras.
+			return array(
+				'on'         => $on,
+				'custom'     => array(),
+				'flags'      => array(
+					'qr_front'  => true,
+					'qr_back'   => false,
+					'bar_front' => false,
+					'bar_back'  => false,
+					'renewal'   => false,
+				),
+				'card_title' => '',
+				'terms'      => '',
+				'session'    => $org && $org->session_year ? $org->session_year : '',
+				'bleed'      => false,
+				'id_auto'    => true,
+				'id_prefix'  => 'CERT-',
+				'id_start'   => 1,
+				'id_digits'  => 4,
+			);
+		}
 		return array(
 			'on'         => $on,
 			'custom'     => array(),
@@ -84,11 +106,15 @@ class PKC_Projects {
 		if ( ! PKC_Catalog::template_allowed( $tpl, $org->id ) ) {
 			return new WP_Error( 'pkc_invalid', __( 'This design is not available.', 'pikacart' ), array( 'status' => 400 ) );
 		}
-		$size   = $wpdb->get_var( 'SELECT id FROM ' . pkc_table( 'sizes' ) . ' WHERE is_active = 1 ORDER BY sort_order ASC, id ASC LIMIT 1' );
+		$doc    = PKC_Catalog::kind_of_subtype( $subtype->id );
+		$size   = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'sizes' ) . ' WHERE is_active = 1 AND kind = %s ORDER BY sort_order ASC, id ASC LIMIT 1', $doc ) );
 		$pals   = array_map( 'intval', pkc_json( $tpl->palettes ) );
 		$name   = $name ? mb_substr( sanitize_text_field( $name ), 0, 120 ) : self::default_name( $org->id, isset( $org->client_id ) ? (int) $org->client_id : 0, (string) $org->name, $subtype->name );
 		$layout = pkc_json( $tpl->layout );
 		$orient = ( ! isset( $layout['recipe'] ) && empty( $layout['portrait'] ) && ! empty( $layout['landscape'] ) ) ? 'landscape' : 'portrait';
+		if ( 'certificate' === $doc && ! empty( $layout['landscape'] ) ) {
+			$orient = 'landscape'; // Most certificates are A4 landscape.
+		}
 		if ( ! empty( $layout['meta']['orientation'] ) ) {
 			// Own artwork is made for one orientation and size.
 			$orient = 'landscape' === $layout['meta']['orientation'] ? 'landscape' : 'portrait';
@@ -153,8 +179,8 @@ class PKC_Projects {
 		foreach ( array( 'custom_w', 'custom_h' ) as $k ) {
 			if ( isset( $in[ $k ] ) ) {
 				$v = (float) $in[ $k ];
-				if ( $v && ( $v < 20 || $v > 330 ) ) {
-					return new WP_Error( 'pkc_invalid', __( 'Custom size must be between 20 and 330 mm.', 'pikacart' ), array( 'status' => 400 ) );
+				if ( $v && ( $v < 20 || $v > 600 ) ) {
+					return new WP_Error( 'pkc_invalid', __( 'Custom size must be between 20 and 600 mm.', 'pikacart' ), array( 'status' => 400 ) );
 				}
 				$data[ $k ] = $v;
 			}
@@ -286,6 +312,7 @@ class PKC_Projects {
 			'card_title' => mb_substr( sanitize_text_field( $s['card_title'] ?? '' ), 0, 60 ),
 			'terms'      => mb_substr( sanitize_textarea_field( $s['terms'] ?? '' ), 0, 1200 ),
 			'session'    => mb_substr( sanitize_text_field( $s['session'] ?? '' ), 0, 40 ),
+			'cert_date'  => mb_substr( sanitize_text_field( $s['cert_date'] ?? '' ), 0, 40 ),
 			'valid_from' => self::clean_date( $s['valid_from'] ?? '' ),
 			'valid_until' => self::clean_date( $s['valid_until'] ?? '' ),
 			'bleed'      => ! empty( $s['bleed'] ),

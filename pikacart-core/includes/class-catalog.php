@@ -57,10 +57,14 @@ class PKC_Catalog {
 		if ( ! $palettes ) {
 			return;
 		}
-		$subtypes = $wpdb->get_results( 'SELECT id, category_id FROM ' . pkc_table( 'subtypes' ) . ' ORDER BY id ASC' );
+		// Built-in ID card designs only; certificates bring their own designs.
+		$subtypes = $wpdb->get_results( 'SELECT s.id, s.category_id FROM ' . pkc_table( 'subtypes' ) . ' s INNER JOIN ' . pkc_table( 'categories' ) . " c ON c.id = s.category_id WHERE c.kind = 'card' ORDER BY s.id ASC" );
 		$recipes  = self::builtin_recipes();
 		$now      = pkc_now();
 		$n        = count( $palettes );
+
+		// Remove ID card designs that an earlier version put under certificate types.
+		$wpdb->query( "DELETE t FROM $table t INNER JOIN " . pkc_table( 'categories' ) . " c ON c.id = t.category_id LEFT JOIN " . pkc_table( 'projects' ) . " p ON p.template_id = t.id WHERE c.kind = 'certificate' AND t.source = 'builtin' AND t.layout LIKE '{\"recipe\"%' AND p.id IS NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL
 
 		foreach ( $subtypes as $si => $sub ) {
 			$has = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE subtype_id = %d AND source = 'builtin'", $sub->id ) );
@@ -100,6 +104,59 @@ class PKC_Catalog {
 		}
 	}
 
+	/**
+	 * Built-in certificate designs: one JSON file per design in
+	 * designs/certificates, each listing the certificate types it suits
+	 * ("targets"). A copy is added for every type; designs already added are
+	 * skipped, so new files arrive with plugin updates.
+	 */
+	public static function seed_certificate_designs() {
+		global $wpdb;
+		$table = pkc_table( 'templates' );
+		$files = glob( PKC_DIR . 'designs/certificates/*.json' );
+		if ( ! $files ) {
+			return;
+		}
+		$palettes = wp_json_encode( array_map( 'intval', $wpdb->get_col( 'SELECT id FROM ' . pkc_table( 'palettes' ) . ' WHERE is_active = 1 ORDER BY sort_order ASC, id ASC LIMIT 6' ) ) );
+		$now      = pkc_now();
+		foreach ( $files as $order => $file ) {
+			$d = json_decode( (string) file_get_contents( $file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			if ( ! is_array( $d ) || empty( $d['layout'] ) || empty( $d['targets'] ) ) {
+				continue;
+			}
+			$base = 'cert-' . sanitize_title( basename( $file, '.json' ) );
+			foreach ( (array) $d['targets'] as $t ) {
+				$sub = $wpdb->get_row( $wpdb->prepare( 'SELECT s.id, s.category_id FROM ' . pkc_table( 'subtypes' ) . ' s INNER JOIN ' . pkc_table( 'categories' ) . ' c ON c.id = s.category_id WHERE c.slug = %s AND s.slug = %s', sanitize_key( $t[0] ), sanitize_key( $t[1] ) ) );
+				if ( ! $sub ) {
+					continue;
+				}
+				$slug = $base . '-' . $sub->id;
+				if ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE slug = %s", $slug ) ) ) {
+					continue;
+				}
+				$wpdb->insert(
+					$table,
+					array(
+						'owner_org_id' => 0,
+						'category_id'  => (int) $sub->category_id,
+						'subtype_id'   => (int) $sub->id,
+						'name'         => sanitize_text_field( $d['name'] ?? 'Certificate' ),
+						'slug'         => $slug,
+						'style_level'  => sanitize_key( $d['level'] ?? 'premium' ),
+						'layout'       => wp_json_encode( $d['layout'] ),
+						'palettes'     => $palettes,
+						'is_featured'  => 'premium' === ( $d['level'] ?? '' ) ? 1 : 0,
+						'status'       => 'published',
+						'source'       => 'builtin',
+						'sort_order'   => 1 + $order,
+						'created_at'   => $now,
+						'updated_at'   => $now,
+					)
+				);
+			}
+		}
+	}
+
 	/** 17 families x 3 variants; the first 50 are used. */
 	public static function builtin_recipes() {
 		$out = array();
@@ -128,6 +185,7 @@ class PKC_Catalog {
 					'h'      => (float) $s->height_mm,
 					'note'   => $s->note,
 					'active' => (bool) $s->is_active,
+					'kind'   => isset( $s->kind ) && $s->kind ? $s->kind : 'card',
 				);
 			},
 			$wpdb->get_results( 'SELECT * FROM ' . pkc_table( 'sizes' ) . " $where ORDER BY sort_order ASC, id ASC" )
@@ -166,10 +224,15 @@ class PKC_Catalog {
 	/**
 	 * Categories with sub-types (and their default fields).
 	 */
-	public static function tree( $include_hidden = false ) {
+	public static function tree( $include_hidden = false, $kind = 'card' ) {
 		global $wpdb;
 		$hidden = $include_hidden ? '' : 'WHERE is_hidden = 0';
-		$cats   = $wpdb->get_results( 'SELECT * FROM ' . pkc_table( 'categories' ) . " $hidden ORDER BY sort_order ASC, id ASC" );
+		$where  = $hidden;
+		if ( 'all' !== $kind ) {
+			// Public pages list ID card categories only; certificates have their own flow.
+			$where .= ( $where ? ' AND ' : 'WHERE ' ) . $wpdb->prepare( 'kind = %s', $kind );
+		}
+		$cats   = $wpdb->get_results( 'SELECT * FROM ' . pkc_table( 'categories' ) . " $where ORDER BY sort_order ASC, id ASC" );
 		$subs   = $wpdb->get_results( 'SELECT * FROM ' . pkc_table( 'subtypes' ) . " $hidden ORDER BY sort_order ASC, id ASC" );
 		$out    = array();
 		foreach ( $cats as $c ) {
@@ -180,6 +243,7 @@ class PKC_Catalog {
 				'description' => (string) $c->description,
 				'icon'        => $c->icon,
 				'hidden'      => (bool) $c->is_hidden,
+				'kind'        => isset( $c->kind ) && $c->kind ? $c->kind : 'card',
 				'subtypes'    => array(),
 			);
 			foreach ( $subs as $s ) {
@@ -192,6 +256,18 @@ class PKC_Catalog {
 		return $out;
 	}
 
+	/** 'certificate' or 'card' for a sub-type (by its category). */
+	public static function kind_of_subtype( $subtype_id ) {
+		global $wpdb;
+		static $cache = array();
+		if ( isset( $cache[ $subtype_id ] ) ) {
+			return $cache[ $subtype_id ];
+		}
+		$k = $wpdb->get_var( $wpdb->prepare( 'SELECT c.kind FROM ' . pkc_table( 'subtypes' ) . ' s INNER JOIN ' . pkc_table( 'categories' ) . ' c ON c.id = s.category_id WHERE s.id = %d', $subtype_id ) );
+		$cache[ $subtype_id ] = 'certificate' === $k ? 'certificate' : 'card';
+		return $cache[ $subtype_id ];
+	}
+
 	public static function subtype_to_app( $s ) {
 		return array(
 			'id'          => (int) $s->id,
@@ -201,6 +277,7 @@ class PKC_Catalog {
 			'fields'      => pkc_json( $s->fields ),
 			'terms'       => (string) $s->terms,
 			'hidden'      => (bool) $s->is_hidden,
+			'doc'         => self::kind_of_subtype( $s->id ),
 		);
 	}
 

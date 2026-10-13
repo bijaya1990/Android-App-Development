@@ -94,6 +94,7 @@ export default function dashboard( el, ctx ) {
 
 	const actions = [
 		[ 'create', 'plus', __( 'New ID card', 'pikacart' ), __( 'Pick a design', 'pikacart' ) ],
+		[ 'certificate', 'star', __( 'New certificate', 'pikacart' ), __( 'Course, merit, puja · Odia & English', 'pikacart' ) ],
 		[ 'members', 'upload', __( 'Import from Excel', 'pikacart' ), __( 'Add many people', 'pikacart' ) ],
 		[ 'print', 'printer', __( 'Print sheet', 'pikacart' ), __( 'Cards with cut marks', 'pikacart' ) ],
 		[ 'designs/request', 'sparkles', __( 'Design on Demand', 'pikacart' ), __( 'We set up your design', 'pikacart' ) ],

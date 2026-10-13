@@ -13,7 +13,7 @@ class PKC_Members {
 	const STATUSES = array( 'draft', 'ready', 'printed', 'expired', 'cancelled', 'pending' );
 
 	/** Field keys a person can have (plus cf1..cf5). */
-	const KEYS = array( 'name', 'id_no', 'roll_no', 'regd_no', 'class', 'section', 'designation', 'department', 'mobile', 'email', 'dob', 'blood_group', 'guardian', 'address', 'emergency', 'valid_from', 'valid_until', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5' );
+	const KEYS = array( 'name', 'id_no', 'roll_no', 'regd_no', 'class', 'section', 'designation', 'department', 'mobile', 'email', 'dob', 'blood_group', 'guardian', 'address', 'emergency', 'valid_from', 'valid_until', 'course', 'grade', 'duration', 'cert_date', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5' );
 
 	public static function status_labels() {
 		return array(

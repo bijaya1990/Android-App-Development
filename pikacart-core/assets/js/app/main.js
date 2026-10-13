@@ -10,7 +10,7 @@ import organisation from './views/organisation.js';
 import subscription from './views/subscription.js';
 import account from './views/account.js';
 import support from './views/support.js';
-import create from './views/create.js';
+import create, { createCertificate } from './views/create.js';
 import projects from './views/projects.js';
 import designs from './views/designs.js';
 import organisations from './views/organisations.js';
@@ -34,6 +34,7 @@ const routes = {
 	welcome: { title: __( 'Welcome', 'pikacart' ), view: onboarding },
 	organisations: { title: __( 'Organisations', 'pikacart' ), view: organisations },
 	create: { title: __( 'Create ID card', 'pikacart' ), view: create },
+	certificate: { title: __( 'Create certificate', 'pikacart' ), view: createCertificate },
 	projects: { title: __( 'My Projects', 'pikacart' ), view: projects( 'projects' ) },
 	members: { title: __( 'Members', 'pikacart' ), view: projects( 'members' ) },
 	print: { title: __( 'Print Sheets', 'pikacart' ), view: projects( 'print' ) },

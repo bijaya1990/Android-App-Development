@@ -85,7 +85,11 @@ async function load() {
 		$( '[data-grid]' ).innerHTML = rows.length ? rows.map( card ).join( '' ) : `<div class="pkc-empty">${ esc( __( 'No designs match these filters.', 'pikacart' ) ) }</div>`;
 		rows.forEach( ( t ) => {
 			const c = $( `.pkc-tpl[data-id="${ t.id }"] canvas` );
-			thumb( c, { template: t, subtype: subtypeOf( t.subtype_id ), orientation: orientationOf( t ), palette: paletteOf( t ), width: 170, index: t.id } );
+			const sub = subtypeOf( t.subtype_id );
+			const o = orientationOf( t );
+			// Certificates preview as A4 pages, ID cards as cards.
+			const page = sub && sub.doc === 'certificate' ? ( o === 'landscape' ? { w: 297, h: 210 } : { w: 210, h: 297 } ) : undefined;
+			thumb( c, { template: t, subtype: sub, orientation: o, palette: paletteOf( t ), width: page && o === 'landscape' ? 240 : 170, index: t.id, size: page } );
 		} );
 		$( '[data-pager]' ).innerHTML = res.pages > 1
 			? `<span class="pkc-muted">${ esc( sprintf( __( '%1$d designs · page %2$d of %3$d', 'pikacart' ), res.total, res.page, res.pages ) ) }</span>
@@ -221,7 +225,10 @@ function pastedDesigns( text ) {
 	if ( ! list.length || list.some( ( d ) => ! d || typeof d !== 'object' || ! d.layout ) ) {
 		throw new Error( __( 'This is not Pikacart design code. Use the code from "Export" or the code you were given.', 'pikacart' ) );
 	}
-	return list;
+	// A design made for several types ("targets") is added once for each type.
+	return list.flatMap( ( d ) => ( Array.isArray( d.targets ) && d.targets.length
+		? d.targets.map( ( t ) => Object.assign( {}, d, { category: { slug: t[ 0 ] }, subtype: { slug: t[ 1 ], name: t[ 1 ] } } ) )
+		: [ d ] ) );
 }
 
 document.querySelector( '[data-paste]' ).addEventListener( 'click', () => {

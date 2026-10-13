@@ -7,7 +7,7 @@
 
 import { api } from '../api.js';
 import { esc, icon, toast, confirmDialog } from '../ui.js';
-import { catalog, orgVars } from '../catalog.js';
+import { catalog, orgVars, catalogFor, isCertificate } from '../catalog.js';
 import { createAutosave, waitForSave } from '../autosave.js';
 import { renderSide } from '../../card/render.js';
 import { thumb } from '../../card/gallery.js';
@@ -99,8 +99,8 @@ export default function project( el, ctx, params ) {
 					</div>
 				</div>
 			</header>
-			<div data-steps>${ journeyBar( stepNo( step ), ( n ) => ( n >= 3 ? ctx.url( `projects/${ id }/${ JOURNEY()[ n - 1 ][ 0 ] }` ) : '' ) ) }</div>
-			${ journeyGuide( stepNo( step ) ) }
+			<div data-steps>${ journeyBar( stepNo( step ), ( n ) => ( n >= 3 ? ctx.url( `projects/${ id }/${ JOURNEY()[ n - 1 ][ 0 ] }` ) : '' ), P.doc ) }</div>
+			${ journeyGuide( stepNo( step ), '', P.doc ) }
 			<div class="proj-body" data-body></div>
 			<nav class="proj-nav" data-nav></nav>
 		</div>`;
@@ -127,8 +127,10 @@ export default function project( el, ctx, params ) {
 		nameInput.addEventListener( 'input', () => P.change( { name: nameInput.value } ) );
 
 		const idx = STEPS.findIndex( ( s ) => s[ 0 ] === step );
-		const prev = STEPS[ idx - 1 ];
-		const next = STEPS[ idx + 1 ];
+		// Certificates say "Names" where ID cards say "People".
+		const label = ( s ) => ( P.cert && s[ 0 ] === 'people' ? __( 'Names', 'pikacart' ) : s[ 1 ]() );
+		const prev = STEPS[ idx - 1 ] && [ STEPS[ idx - 1 ][ 0 ], () => label( STEPS[ idx - 1 ] ) ];
+		const next = STEPS[ idx + 1 ] && [ STEPS[ idx + 1 ][ 0 ], () => label( STEPS[ idx + 1 ] ) ];
 		const nextNo = stepNo( step ) + 1;
 		el.querySelector( '[data-nav]' ).innerHTML = journeyNav(
 			prev ? { href: ctx.url( `projects/${ id }/${ prev[ 0 ] }` ), label: sprintf( __( 'Back: %s', 'pikacart' ), prev[ 1 ]() ) } : null,
@@ -182,10 +184,15 @@ export default function project( el, ctx, params ) {
 /**
  * Project context shared by the steps, the members screen and the print sheet maker.
  */
-export function makeP( ctx, cat, data, sample, getAutosave ) {
+export function makeP( ctx, cat0, data, sample, getAutosave ) {
+	// Certificates see page sizes (A4, A5…), ID cards see card sizes.
+	const cert = isCertificate( data.subtype );
+	const cat = catalogFor( cat0, data.subtype );
 	const P = {
 		ctx,
 		cat,
+		cert,
+		doc: cert ? 'certificate' : 'card',
 		data,
 		sample,
 		get project() {
@@ -265,7 +272,7 @@ export function makeP( ctx, cat, data, sample, getAutosave ) {
 			const lay = P.layout();
 			const size = P.size();
 			for ( const c of canvases ) {
-				const w = Number( c.dataset.width || ( size.w > size.h ? 340 : 230 ) ) * Math.min( 2, devicePixelRatio || 1 );
+				const w = Number( c.dataset.width || ( P.cert ? ( size.w > size.h ? 520 : 360 ) : size.w > size.h ? 340 : 230 ) ) * Math.min( 2, devicePixelRatio || 1 );
 				await renderSide( c, lay[ c.dataset.side ], Object.assign( P.previewOpts( c.dataset.side ), { width: w } ) );
 				c.style.aspectRatio = `${ size.w } / ${ size.h }`;
 			}
@@ -300,7 +307,7 @@ function previewHTML( P ) {
 	const land = P.size().w > P.size().h;
 	return `<aside class="live-preview ${ land ? 'is-landscape' : '' }">
 		<div class="lp-head"><strong>${ esc( __( 'Live preview', 'pikacart' ) ) }</strong><span class="muted small">${ esc( P.sample ? sprintf( __( 'Showing %s', 'pikacart' ), P.sample.name ) : __( 'Sample person', 'pikacart' ) ) }</span></div>
-		<div class="lp-cards"><canvas data-side="front"></canvas><canvas data-side="back"></canvas></div>
+		<div class="lp-cards ${ P.cert ? 'is-doc' : '' }"><canvas data-side="front"></canvas>${ P.cert ? '' : '<canvas data-side="back"></canvas>' }</div>
 	</aside>`;
 }
 
@@ -378,16 +385,16 @@ function setupStep( body, P ) {
 				</div>
 			</section>
 			<section class="card">
-				<div class="card-head"><h3>${ esc( __( 'Card size', 'pikacart' ) ) }</h3><span class="muted small">${ esc( __( 'Match the holder you use', 'pikacart' ) ) }</span></div>
+				<div class="card-head"><h3>${ esc( P.cert ? __( 'Paper size', 'pikacart' ) : __( 'Card size', 'pikacart' ) ) }</h3><span class="muted small">${ esc( P.cert ? __( 'A4 is the usual certificate size', 'pikacart' ) : __( 'Match the holder you use', 'pikacart' ) ) }</span></div>
 				<div class="size-grid">
-					${ cat.sizes.map( ( s ) => `<button type="button" class="size-opt ${ ! isCustomSize && p.size_id === s.id ? 'is-on' : '' }" data-size="${ s.id }"><strong>${ esc( s.w + ' × ' + s.h + ' mm' ) }</strong><small>${ esc( s.note ) }</small></button>` ).join( '' ) }
+					${ cat.sizes.map( ( s ) => `<button type="button" class="size-opt ${ ! isCustomSize && p.size_id === s.id ? 'is-on' : '' }" data-size="${ s.id }"><strong>${ esc( P.cert ? s.name + ' · ' + s.w + ' × ' + s.h + ' mm' : s.w + ' × ' + s.h + ' mm' ) }</strong><small>${ esc( s.note ) }</small></button>` ).join( '' ) }
 					<button type="button" class="size-opt ${ isCustomSize ? 'is-on' : '' }" data-size="custom"><strong>${ esc( __( 'Custom size', 'pikacart' ) ) }</strong><small>${ esc( __( 'Any size in millimetres', 'pikacart' ) ) }</small></button>
 				</div>
 				<div class="grid-2 custom-size" ${ isCustomSize ? '' : 'hidden' }>
-					<div class="field"><label for="cw">${ esc( __( 'Width (mm)', 'pikacart' ) ) }</label><input id="cw" type="number" min="20" max="330" step="0.5" value="${ esc( p.custom_w || 54 ) }"></div>
-					<div class="field"><label for="ch">${ esc( __( 'Height (mm)', 'pikacart' ) ) }</label><input id="ch" type="number" min="20" max="330" step="0.5" value="${ esc( p.custom_h || 86 ) }"></div>
+					<div class="field"><label for="cw">${ esc( __( 'Width (mm)', 'pikacart' ) ) }</label><input id="cw" type="number" min="20" max="600" step="0.5" value="${ esc( p.custom_w || ( P.cert ? 210 : 54 ) ) }"></div>
+					<div class="field"><label for="ch">${ esc( __( 'Height (mm)', 'pikacart' ) ) }</label><input id="ch" type="number" min="20" max="600" step="0.5" value="${ esc( p.custom_h || ( P.cert ? 297 : 86 ) ) }"></div>
 				</div>
-				<label class="check"><input type="checkbox" data-bleed ${ p.fields.bleed ? 'checked' : '' }> ${ esc( __( 'Add 2 mm bleed to downloads (for PVC card printers)', 'pikacart' ) ) }</label>
+				<label class="check" ${ P.cert ? 'hidden' : '' }><input type="checkbox" data-bleed ${ p.fields.bleed ? 'checked' : '' }> ${ esc( __( 'Add 2 mm bleed to downloads (for PVC card printers)', 'pikacart' ) ) }</label>
 			</section>
 			<section class="card">
 				<div class="card-head"><h3>${ esc( __( 'Colours', 'pikacart' ) ) }</h3></div>
@@ -429,11 +436,11 @@ function setupStep( body, P ) {
 	body.querySelectorAll( '#cw, #ch' ).forEach( ( i ) => i.addEventListener( 'change', () => {
 		const w = Number( body.querySelector( '#cw' ).value );
 		const h = Number( body.querySelector( '#ch' ).value );
-		if ( w >= 20 && h >= 20 && w <= 330 && h <= 330 ) {
+		if ( w >= 20 && h >= 20 && w <= 600 && h <= 600 ) {
 			P.change( { custom_w: w, custom_h: h } );
 			refresh();
 		} else {
-			toast( __( 'Custom size must be between 20 and 330 mm.', 'pikacart' ), 'error' );
+			toast( __( 'Custom size must be between 20 and 600 mm.', 'pikacart' ), 'error' );
 		}
 	} ) );
 	body.querySelector( '[data-bleed]' ).addEventListener( 'change', ( e ) => {
@@ -471,7 +478,8 @@ function detailsStep( body, P ) {
 	const f = p.fields;
 	const org = ctx.me.org;
 	const subFields = ( P.data.subtype ? P.data.subtype.fields : [] );
-	const locked = [ 'photo', 'name' ];
+	const cert = P.cert;
+	const locked = cert ? [ 'name' ] : [ 'photo', 'name' ];
 	const flags = flagsOf( p );
 	const missing = [ ! org.logo && __( 'logo', 'pikacart' ), ! org.sign && __( 'signature', 'pikacart' ), ! org.address && __( 'address', 'pikacart' ) ].filter( Boolean );
 
@@ -485,11 +493,16 @@ function detailsStep( body, P ) {
 				</div>
 				${ missing.length ? `<p class="banner banner-info">${ icon( 'info' ) }<span>${ esc( sprintf( __( 'Add your %s in Organisation to complete the cards.', 'pikacart' ), missing.join( ', ' ) ) ) }</span></p>` : '' }
 				<div class="grid-2">
-					<div class="field"><label for="d-title">${ esc( __( 'Card title', 'pikacart' ) ) }</label><input id="d-title" data-k="card_title" value="${ esc( f.card_title ) }" placeholder="${ esc( P.vars().card_title ) }"></div>
+					<div class="field"><label for="d-title">${ esc( cert ? __( 'Certificate heading', 'pikacart' ) : __( 'Card title', 'pikacart' ) ) }</label><input id="d-title" data-k="card_title" value="${ esc( f.card_title ) }" placeholder="${ esc( P.vars().card_title ) }"></div>
 					<div class="field"><label for="d-session">${ esc( __( 'Session / year', 'pikacart' ) ) }</label><input id="d-session" data-k="session" value="${ esc( f.session ) }" placeholder="2026-27"></div>
 				</div>
 			</section>
-			<section class="card">
+			${ cert ? `<section class="card">
+				<div class="card-head"><h3>${ icon( 'calendar' ) } ${ esc( __( 'Certificate date', 'pikacart' ) ) }</h3></div>
+				<p class="muted small">${ esc( __( 'One date for all certificates. A person can still have their own date in Add person or in the Excel.', 'pikacart' ) ) }</p>
+				<div class="field"><label for="d-cd">${ esc( __( 'Date on the certificate', 'pikacart' ) ) }</label><input id="d-cd" data-k="cert_date" value="${ esc( f.cert_date || '' ) }" placeholder="15-08-${ new Date().getFullYear() }"></div>
+			</section>` : '' }
+			<section class="card" ${ cert ? 'hidden' : '' }>
 				<div class="card-head"><h3>${ icon( 'calendar' ) } ${ esc( __( 'Card validity', 'pikacart' ) ) }</h3></div>
 				<p class="muted small">${ esc( __( 'One date for all cards in this project. A person can still have their own date (in Add person or in the Excel); empty ones use this date.', 'pikacart' ) ) }</p>
 				<div class="grid-2">
@@ -498,8 +511,8 @@ function detailsStep( body, P ) {
 				</div>
 			</section>
 			<section class="card" data-idbox>
-				<div class="card-head"><h3>${ icon( 'idcard' ) } ${ esc( __( 'ID numbers', 'pikacart' ) ) }</h3></div>
-				<label class="toggle"><input type="checkbox" data-idauto ${ f.id_auto ? 'checked' : '' }><span class="toggle-ui"></span><span><strong>${ esc( __( 'Make ID numbers automatically', 'pikacart' ) ) }</strong></span></label>
+				<div class="card-head"><h3>${ icon( 'idcard' ) } ${ esc( cert ? __( 'Certificate numbers', 'pikacart' ) : __( 'ID numbers', 'pikacart' ) ) }</h3></div>
+				<label class="toggle"><input type="checkbox" data-idauto ${ f.id_auto ? 'checked' : '' }><span class="toggle-ui"></span><span><strong>${ esc( cert ? __( 'Make certificate numbers automatically', 'pikacart' ) : __( 'Make ID numbers automatically', 'pikacart' ) ) }</strong></span></label>
 				<p class="muted small">${ esc( __( 'On: leave the ID number empty when adding people or in the Excel, and each person gets the next number. Off: you type every ID number yourself.', 'pikacart' ) ) }</p>
 				<div class="id-auto" ${ f.id_auto ? '' : 'hidden' }>
 					<div class="grid-3">
@@ -512,7 +525,7 @@ function detailsStep( body, P ) {
 				<p class="id-preview" data-idoff ${ ( f.on || [] ).includes( 'id_no' ) ? 'hidden' : '' }>${ icon( 'info' ) }<span>${ esc( __( 'ID number is switched off in "Fields on the card", so it is not printed. You do not need to type it: each person still gets a hidden number for the QR code and verification.', 'pikacart' ) ) }</span></p>
 			</section>
 			<section class="card">
-				<div class="card-head"><h3>${ esc( __( 'Fields on the card', 'pikacart' ) ) }</h3></div>
+				<div class="card-head"><h3>${ esc( cert ? __( 'Details on the certificate', 'pikacart' ) : __( 'Fields on the card', 'pikacart' ) ) }</h3></div>
 				<p class="muted small">${ esc( __( 'Switched-off or empty fields disappear from the card with no blank gap.', 'pikacart' ) ) }</p>
 				<div class="toggle-list cols2">
 					${ subFields.map( ( x ) => `<label class="toggle ${ locked.includes( x.key ) ? 'is-locked' : '' }"><input type="checkbox" data-field="${ esc( x.key ) }" ${ ( f.on || [] ).includes( x.key ) || locked.includes( x.key ) ? 'checked' : '' } ${ locked.includes( x.key ) ? 'disabled' : '' }><span class="toggle-ui"></span><span>${ esc( x.label ) }${ x.required && x.key !== 'id_no' ? ' *' : '' }</span></label>` ).join( '' ) }
@@ -528,11 +541,11 @@ function detailsStep( body, P ) {
 				</div>
 			</section>
 			<section class="card">
-				<div class="card-head"><h3>${ esc( __( 'Back side, QR code and barcode', 'pikacart' ) ) }</h3></div>
+				<div class="card-head"><h3>${ esc( cert ? __( 'QR code for checking', 'pikacart' ) : __( 'Back side, QR code and barcode', 'pikacart' ) ) }</h3></div>
 				<div class="toggle-list cols2">
-					${ [ [ 'qr_front', __( 'QR code on front', 'pikacart' ) ], [ 'qr_back', __( 'QR code on back', 'pikacart' ) ], [ 'bar_front', __( 'Barcode on front', 'pikacart' ) ], [ 'bar_back', __( 'Barcode on back', 'pikacart' ) ], [ 'renewal', __( 'Renewal box (session & signature)', 'pikacart' ) ] ].map( ( [ k, l ] ) => `<label class="toggle"><input type="checkbox" data-flag="${ k }" ${ flags[ k ] ? 'checked' : '' }><span class="toggle-ui"></span><span>${ esc( l ) }</span></label>` ).join( '' ) }
+					${ ( cert ? [ [ 'qr_front', __( 'QR code on the certificate', 'pikacart' ) ] ] : [ [ 'qr_front', __( 'QR code on front', 'pikacart' ) ], [ 'qr_back', __( 'QR code on back', 'pikacart' ) ], [ 'bar_front', __( 'Barcode on front', 'pikacart' ) ], [ 'bar_back', __( 'Barcode on back', 'pikacart' ) ], [ 'renewal', __( 'Renewal box (session & signature)', 'pikacart' ) ] ] ).map( ( [ k, l ] ) => `<label class="toggle"><input type="checkbox" data-flag="${ k }" ${ flags[ k ] ? 'checked' : '' }><span class="toggle-ui"></span><span>${ esc( l ) }</span></label>` ).join( '' ) }
 				</div>
-				<div class="field"><label for="d-terms">${ esc( __( 'Terms and conditions (back side)', 'pikacart' ) ) }</label><textarea id="d-terms" data-k="terms" rows="4" placeholder="${ esc( ( P.data.subtype && P.data.subtype.terms ) || '' ) }">${ esc( f.terms ) }</textarea></div>
+				<div class="field" ${ cert ? 'hidden' : '' }><label for="d-terms">${ esc( __( 'Terms and conditions (back side)', 'pikacart' ) ) }</label><textarea id="d-terms" data-k="terms" rows="4" placeholder="${ esc( ( P.data.subtype && P.data.subtype.terms ) || '' ) }">${ esc( f.terms ) }</textarea></div>
 				<p class="muted small">${ icon( 'shield' ) } ${ esc( __( 'The QR code opens a secure verification page. Choose what it shows in Organisation → Verification page privacy.', 'pikacart' ) ) }</p>
 			</section>
 		</div>

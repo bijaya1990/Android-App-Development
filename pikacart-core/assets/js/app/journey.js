@@ -9,7 +9,21 @@ import { esc, icon } from './ui.js';
 const { __, sprintf } = window.wp.i18n;
 
 /** [ key, short label, guide title, guide text, optional? ] */
-export const JOURNEY = () => [
+export const JOURNEY = ( doc = 'card' ) => doc === 'certificate' ? CERT_JOURNEY() : CARD_JOURNEY();
+
+/** The same eight steps, worded for certificates. */
+const CERT_JOURNEY = () => [
+	[ 'org', __( 'Organisation', 'pikacart' ), __( 'Which organisation gives this certificate?', 'pikacart' ), __( 'Pick the school, institute, company or puja committee. Its logo, name and signature are printed on every certificate.', 'pikacart' ) ],
+	[ 'type', __( 'Certificate type', 'pikacart' ), __( 'What is the certificate for?', 'pikacart' ), __( 'Pick the occasion, for example Course Completion, Merit, Sports or Ganesh Puja.', 'pikacart' ) ],
+	[ 'design', __( 'Design', 'pikacart' ), __( 'Choose a design', 'pikacart' ), __( 'Tap a design to see it bigger with your own name and logo, then press "Use this design".', 'pikacart' ) ],
+	[ 'setup', __( 'Size & colour', 'pikacart' ), __( 'Choose the paper size and colours', 'pikacart' ), __( 'A4 is the usual size. A5 prints 2 and A6 prints 4 certificates on one A4 sheet.', 'pikacart' ) ],
+	[ 'details', __( 'Details', 'pikacart' ), __( 'Choose what is printed', 'pikacart' ), __( 'Tick the details you need, such as Course, Grade or Date. Certificate numbers are made automatically.', 'pikacart' ) ],
+	[ 'editor', __( 'Fine-tune', 'pikacart' ), __( 'Fine-tune the certificate (optional)', 'pikacart' ), __( 'Change any text, its language or font, or move things around. If it already looks right, simply press Next.', 'pikacart' ), true ],
+	[ 'people', __( 'Names', 'pikacart' ), __( 'Add the names', 'pikacart' ), __( 'Add one person, or press "Import from Excel" to add everyone at once. Photos are optional.', 'pikacart' ) ],
+	[ 'download', __( 'Print', 'pikacart' ), __( 'Print or download the certificates', 'pikacart' ), __( 'Download a high-quality PDF to print, or images to send on WhatsApp.', 'pikacart' ) ],
+];
+
+const CARD_JOURNEY = () => [
 	[ 'org', __( 'Organisation', 'pikacart' ), __( 'Which organisation is this ID card for?', 'pikacart' ), __( 'Pick the school, college or office. Its logo, address and signature are printed on the cards, and the cards are saved in its folder.', 'pikacart' ) ],
 	[ 'type', __( 'Card type', 'pikacart' ), __( 'What kind of ID card?', 'pikacart' ), __( 'Pick the card type, for example Student, Teacher / Staff or Visitor. Each type has 50 ready designs.', 'pikacart' ) ],
 	[ 'design', __( 'Design', 'pikacart' ), __( 'Choose a design', 'pikacart' ), __( 'Tap a design to see it bigger, then press "Use this design". Every design can be changed later.', 'pikacart' ) ],
@@ -24,15 +38,15 @@ export const TOTAL = 8;
 
 /** Position (1-8) of a step key. */
 export function stepNo( key ) {
-	return JOURNEY().findIndex( ( s ) => s[ 0 ] === key ) + 1;
+	return CARD_JOURNEY().findIndex( ( s ) => s[ 0 ] === key ) + 1;
 }
 
 /**
  * Step bar. href( n ) returns the link for step n, or '' when it cannot be opened.
  */
-export function journeyBar( current, href = () => '' ) {
-	const steps = JOURNEY();
-	return `<nav class="journey" aria-label="${ esc( __( 'Steps to make ID cards', 'pikacart' ) ) }">
+export function journeyBar( current, href = () => '', doc = 'card' ) {
+	const steps = JOURNEY( doc );
+	return `<nav class="journey" aria-label="${ esc( doc === 'certificate' ? __( 'Steps to make certificates', 'pikacart' ) : __( 'Steps to make ID cards', 'pikacart' ) ) }">
 		<p class="journey-now"><span>${ esc( sprintf( __( 'Step %1$d of %2$d', 'pikacart' ), current, TOTAL ) ) }</span><b>${ esc( steps[ current - 1 ][ 1 ] ) }</b></p>
 		<div class="journey-track" aria-hidden="true"><span style="width:${ Math.round( ( ( current - 1 ) / ( TOTAL - 1 ) ) * 100 ) }%"></span></div>
 		<ol class="journey-steps">
@@ -48,8 +62,8 @@ export function journeyBar( current, href = () => '' ) {
 }
 
 /** "Step 5 of 8 · Choose what is printed on the card" with one line of help. */
-export function journeyGuide( current, extra = '' ) {
-	const s = JOURNEY()[ current - 1 ];
+export function journeyGuide( current, extra = '', doc = 'card' ) {
+	const s = JOURNEY( doc )[ current - 1 ];
 	return `<div class="journey-guide">
 		<span class="journey-num">${ current }</span>
 		<div>

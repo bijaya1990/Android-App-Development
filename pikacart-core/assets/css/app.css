@@ -286,7 +286,7 @@ body.pkc-app-page { overflow-x: hidden; }
 	.page-title { font-size: var(--pkc-fs-xl); }
 	.profile-name, .profile-btn > .pkc-i { display: inline-block; }
 	.dash-top { grid-template-columns: minmax(300px, 1fr) 2fr; }
-	.quick { grid-template-columns: repeat(4, 1fr); }
+	.quick { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
 	.dash-cols { grid-template-columns: 2fr 1fr; }
 	.page-grid { grid-template-columns: 2fr 1fr; align-items: start; }
 	.page-side { position: sticky; top: 88px; }
@@ -1147,3 +1147,6 @@ body.pkc-app-page { overflow-x: hidden; }
 	.guide-num { width: 34px; height: 34px; font-size: 15px; }
 	.guide-help { flex-wrap: wrap; }
 }
+.doc-badge { display: inline-block; margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: #FEF3C7; color: #92400E; font-size: 11px; font-style: normal; font-weight: 700; vertical-align: 1px; }
+.lp-cards.is-doc { grid-template-columns: 1fr; }
+.pv.is-doc { grid-template-columns: 1fr; }

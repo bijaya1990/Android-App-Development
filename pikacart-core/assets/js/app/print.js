@@ -67,6 +67,15 @@ export default function printView( el, ctx, pid ) {
 			return;
 		}
 		const card = P.size();
+		if ( P.cert ) {
+			// Certificates: one side only, edge to edge, paper turned whichever way fits most.
+			Object.assign( st, { mode: 'front', margin: 0, gap: 0 } );
+			const fits = ( orient ) => {
+				st.orient = orient;
+				return computeSheet( paper(), card, st ).slots.length;
+			};
+			st.orient = fits( 'landscape' ) > fits( 'portrait' ) ? 'landscape' : 'portrait';
+		}
 		el.innerHTML = `<div class="section-head-row"><div><a class="back-link" href="${ esc( ctx.url( `projects/${ pid }/download` ) ) }" data-link>${ icon( 'chevron-left' ) }${ esc( P.project.name ) }</a><h2 class="h2">${ esc( __( 'Print sheet maker', 'pikacart' ) ) }</h2></div></div>
 		<div class="split sheet-split">
 			<aside class="card sheet-controls">
@@ -76,7 +85,7 @@ export default function printView( el, ctx, pid ) {
 					<div class="field"><label>${ esc( __( 'Height mm', 'pikacart' ) ) }</label><input type="number" data-k="ch" value="297" min="50" max="1000"></div>
 				</div>
 				<div class="seg"><button type="button" data-orient="portrait" class="is-on">${ esc( __( 'Portrait', 'pikacart' ) ) }</button><button type="button" data-orient="landscape">${ esc( __( 'Landscape', 'pikacart' ) ) }</button></div>
-				<div class="field"><label>${ esc( __( 'Which cards', 'pikacart' ) ) }</label><select data-k="which"><option value="all">${ esc( __( 'All people', 'pikacart' ) ) }</option><option value="ready">${ esc( __( 'Ready only', 'pikacart' ) ) }</option><option value="draft">${ esc( __( 'Draft only', 'pikacart' ) ) }</option></select></div>
+				<div class="field"><label>${ esc( P.cert ? __( 'Which certificates', 'pikacart' ) : __( 'Which cards', 'pikacart' ) ) }</label><select data-k="which"><option value="all">${ esc( __( 'All people', 'pikacart' ) ) }</option><option value="ready">${ esc( __( 'Ready only', 'pikacart' ) ) }</option><option value="draft">${ esc( __( 'Draft only', 'pikacart' ) ) }</option></select></div>
 				<div class="field"><label>${ esc( __( 'Layout', 'pikacart' ) ) }</label><select data-k="mode"><option value="pair">${ esc( __( 'Front and back side by side', 'pikacart' ) ) }</option><option value="front">${ esc( __( 'Fronts only', 'pikacart' ) ) }</option><option value="back">${ esc( __( 'Backs only', 'pikacart' ) ) }</option></select></div>
 				<label class="toggle"><input type="checkbox" data-k="fold"><span class="toggle-ui"></span><span>${ esc( __( 'Fold line between front and back', 'pikacart' ) ) }</span></label>
 				<div class="grid-2">
@@ -84,18 +93,30 @@ export default function printView( el, ctx, pid ) {
 					<div class="field"><label>${ esc( __( 'Gap (mm)', 'pikacart' ) ) }</label><input type="number" data-k="gap" value="8" min="0" max="30" step="0.5"></div>
 				</div>
 				<label class="toggle"><input type="checkbox" data-k="marks" checked><span class="toggle-ui"></span><span>${ esc( __( 'Cut marks with scissors', 'pikacart' ) ) }</span></label>
-				<label class="toggle"><input type="checkbox" data-k="border"><span class="toggle-ui"></span><span>${ esc( __( 'Thin border around each card', 'pikacart' ) ) }</span></label>
+				<label class="toggle"><input type="checkbox" data-k="border"><span class="toggle-ui"></span><span>${ esc( P.cert ? __( 'Thin border around each certificate', 'pikacart' ) : __( 'Thin border around each card', 'pikacart' ) ) }</span></label>
 				<div class="sheet-summary" data-summary></div>
 				<div class="btn-col">
 					<button type="button" class="btn btn-primary" data-out="print">${ icon( 'printer' ) }${ esc( __( 'Print', 'pikacart' ) ) }</button>
 					<button type="button" class="btn" data-out="pdf">${ icon( 'download' ) }${ esc( __( 'Download PDF', 'pikacart' ) ) }</button>
 				</div>
 				<p class="muted small">${ icon( 'info' ) } ${ esc( __( 'In the print dialog choose "Actual size" (100% scale) so cards come out at the exact size.', 'pikacart' ) ) }</p>
-				<p class="muted small">${ esc( sprintf( __( 'Card size: %1$s × %2$s mm', 'pikacart' ), card.w, card.h ) ) }</p>
+				<p class="muted small">${ esc( sprintf( P.cert ? __( 'Certificate size: %1$s × %2$s mm', 'pikacart' ) : __( 'Card size: %1$s × %2$s mm', 'pikacart' ), card.w, card.h ) ) }</p>
 			</aside>
 			<section class="sheet-pages" data-pages aria-live="polite"></section>
 		</div>`;
 
+		// Show the starting settings (certificates start differently from cards).
+		el.querySelectorAll( '[data-k]' ).forEach( ( i ) => {
+			if ( ! ( i.dataset.k in st ) ) {
+				return;
+			}
+			if ( i.type === 'checkbox' ) {
+				i.checked = !! st[ i.dataset.k ];
+			} else {
+				i.value = st[ i.dataset.k ];
+			}
+		} );
+		el.querySelectorAll( '[data-orient]' ).forEach( ( b ) => b.classList.toggle( 'is-on', b.dataset.orient === st.orient ) );
 		bind();
 		await loadMembers();
 	} )();
@@ -148,7 +169,7 @@ export default function printView( el, ctx, pid ) {
 		const list = units();
 		const pages = sh.perPage ? Math.ceil( list.length / sh.perPage ) : 0;
 		el.querySelector( '[data-summary]' ).innerHTML = sh.perPage
-			? `<strong>${ esc( sprintf( _n( '%d card per page', '%d cards per page', sh.perPage, 'pikacart' ), sh.perPage ) ) }</strong><span>${ esc( sprintf( _n( '%1$d person · %2$d page', '%1$d people · %2$d pages', list.length, 'pikacart' ), list.length, pages ) ) }</span>`
+			? `<strong>${ esc( sprintf( P.cert ? _n( '%d certificate per page', '%d certificates per page', sh.perPage, 'pikacart' ) : _n( '%d card per page', '%d cards per page', sh.perPage, 'pikacart' ), sh.perPage ) ) }</strong><span>${ esc( sprintf( _n( '%1$d person · %2$d page', '%1$d people · %2$d pages', list.length, 'pikacart' ), list.length, pages ) ) }</span>`
 			: `<strong class="err">${ esc( __( 'The card does not fit on this paper. Choose a bigger paper or smaller margins.', 'pikacart' ) ) }</strong>`;
 		const box = el.querySelector( '[data-pages]' );
 		if ( ! list.length ) {

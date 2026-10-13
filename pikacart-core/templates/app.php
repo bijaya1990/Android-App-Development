@@ -16,6 +16,7 @@ $pkc_nav    = array(
 	array( 'guide', 'book', __( 'Guide · गाइड', 'pikacart' ) ),
 	array( 'organisations', 'building', __( 'Organisations', 'pikacart' ) ),
 	array( 'create', 'plus', __( 'Create ID card', 'pikacart' ) ),
+	array( 'certificate', 'star', __( 'Create certificate', 'pikacart' ) ),
 	array( 'projects', 'folder', __( 'My Projects', 'pikacart' ) ),
 	array( 'members', 'users', __( 'Members', 'pikacart' ) ),
 	array( 'print', 'printer', __( 'Print Sheets', 'pikacart' ) ),

@@ -77,6 +77,7 @@ export function projectInfo( project, subtype ) {
 		subtype_name: subtype ? subtype.name : '',
 		valid_from: f.valid_from || '',
 		valid_until: f.valid_until || '',
+		cert_date: f.cert_date || '',
 	};
 }
 

@@ -56,7 +56,7 @@ class PKC_REST_Cards {
 	public static function catalog() {
 		return PKC_REST::ok(
 			array(
-				'tree'     => PKC_Catalog::tree(),
+				'tree'     => PKC_Catalog::tree( false, 'all' ),
 				'sizes'    => PKC_Catalog::sizes(),
 				'palettes' => PKC_Catalog::palettes(),
 				'levels'   => array_merge( PKC_Catalog::level_labels(), array( 'own' => __( 'Your design', 'pikacart' ) ) ),

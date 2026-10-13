@@ -264,10 +264,25 @@ function measure( ctx, text, ls ) {
 	return ctx.measureText( text ).width + ( ls ? ls * Math.max( 0, [ ...text ].length - 1 ) : 0 );
 }
 
+/*
+ * Indian scripts (Devanagari, Bengali, Gurmukhi, Gujarati, Odia, Tamil, Telugu,
+ * Kannada, Malayalam…) and Arabic/Urdu join letters into clusters (କ୍ଷ, क्ष).
+ * Drawing them one character at a time would break those clusters, so such
+ * text is always drawn as a whole string and letter spacing is skipped.
+ */
+const COMPLEX = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0900-\u0DFF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+const RTL = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+export function isComplexScript( text ) {
+	return COMPLEX.test( String( text || '' ) );
+}
+
 function drawSpaced( ctx, text, x, y, ls, align ) {
-	if ( ! ls ) {
+	if ( ! ls || COMPLEX.test( text ) ) {
 		ctx.textAlign = align;
+		ctx.direction = RTL.test( text ) ? 'rtl' : 'ltr';
 		ctx.fillText( text, x, y );
+		ctx.direction = 'ltr';
 		return;
 	}
 	const total = measure( ctx, text, ls );
@@ -309,7 +324,7 @@ export function fitText( ctx, text, o ) {
 	let res;
 	for ( let k = 0; k < 30; k++ ) {
 		ctx.font = fontCss( { weight: o.weight, size, family: o.family, italic: o.italic } );
-		const ls = ( o.ls || 0 ) * size;
+		const ls = COMPLEX.test( text ) ? 0 : ( o.ls || 0 ) * size;
 		res = wrap( ctx, text, o.maxW, o.maxLines, ls );
 		const widest = Math.max( ...res.lines.map( ( l ) => measure( ctx, l, ls ) ) );
 		const height = res.lines.length * size * o.lh;
@@ -466,6 +481,17 @@ export async function prepare( layoutSide, opts ) {
 	const bg = layoutSide && layoutSide.bg;
 	if ( bg && typeof bg === 'object' && bg.img ) {
 		urls.push( fill( bg.img, vars ) );
+	}
+	// Names or text in Odia, Hindi or Urdu use the fallback fonts: load them too.
+	const all = els.map( ( el ) => fill( [ el.text, el.v, ...( el.rows || [] ).map( ( r ) => r.l + ' ' + r.v ), ...( el.cols || [] ) ].filter( Boolean ).join( ' ' ), vars ) ).join( ' ' );
+	if ( /[\u0B00-\u0B7F]/.test( all ) ) {
+		fonts.push( [ 'Noto Sans Oriya', 400 ], [ 'Noto Sans Oriya', 700 ] );
+	}
+	if ( /[\u0900-\u097F]/.test( all ) ) {
+		fonts.push( [ 'Noto Sans Devanagari', 400 ], [ 'Noto Sans Devanagari', 700 ] );
+	}
+	if ( /[\u0600-\u06FF]/.test( all ) ) {
+		fonts.push( [ 'Noto Naskh Arabic', 400 ], [ 'Noto Naskh Arabic', 700 ] );
 	}
 	await Promise.all( [ ensureFonts( fonts ), ...urls.map( preloadImage ) ] );
 }

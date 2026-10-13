@@ -14,7 +14,7 @@ const { __, _n, sprintf } = window.wp.i18n;
 export default function organisations( el, ctx, params ) {
 	if ( params[ 0 ] === 'new' ) {
 		// organisations/new/card: added while creating an ID card, so go on to the card types.
-		return onboarding( el, ctx, [], { mode: 'new', next: params[ 1 ] === 'card' ? 'create/types' : '' } );
+		return onboarding( el, ctx, [], { mode: 'new', next: params[ 1 ] === 'card' ? 'create/types' : params[ 1 ] === 'cert' ? 'certificate/types' : '' } );
 	}
 
 	let query = '';
