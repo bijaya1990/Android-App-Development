@@ -22,13 +22,11 @@ html,body{margin:0;padding:0;background:#fff}
 .goldline{left:7mm;top:7mm;right:7mm;bottom:7mm;border:1.1mm solid transparent;
   border-image:linear-gradient(135deg,#8a5a12,#f6dc8c 25%,#b8862f 50%,#fff1b8 75%,#8a5a12) 1}
 /* panel */
-#panel{left:58mm;top:49mm;width:181mm;height:146mm;border-radius:3.5mm;
-  background:radial-gradient(120% 95% at 50% 40%,rgba(255,253,246,.80),rgba(255,248,232,.62) 70%,rgba(255,244,222,.50));
+#panel{left:40mm;top:40mm;width:217mm;height:166mm;
+  background:radial-gradient(70% 70% at 50% 50%,rgba(255,253,246,.86),rgba(255,250,238,.74) 60%,rgba(255,248,232,.55));
   -webkit-backdrop-filter:blur(1.6mm) saturate(1.1);backdrop-filter:blur(1.6mm) saturate(1.1);
-  box-shadow:0 0 5mm 1.5mm rgba(255,255,255,.75),0 0 12mm 3mm rgba(255,255,255,.35),0 0 0 .7mm rgba(243,210,122,.95),inset 0 0 6mm rgba(255,255,255,.6)}
-#panel:before{content:"";position:absolute;inset:2.2mm;border:.25mm solid rgba(122,14,18,.35);border-radius:2.2mm}
-#panel:after{content:"";position:absolute;inset:0;border-radius:3.5mm;opacity:.04;
-  background:repeating-radial-gradient(circle at 50% 55%,#8a5a12 0 .25mm,transparent .25mm 3mm)}
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 26mm,#000 calc(100% - 26mm),transparent),linear-gradient(180deg,transparent,#000 14mm,#000 calc(100% - 12mm),transparent);
+  -webkit-mask-composite:source-in;mask-composite:intersect}
 .corner{width:16mm;height:16mm}
 /* title */
 .ttl{left:0;width:297mm;top:18.5mm;text-align:center;font:800 15.5mm/1 "Baloo Bhaina 2";letter-spacing:0}
@@ -83,7 +81,7 @@ html,body{margin:0;padding:0;background:#fff}
   <div class="abs badge" style="left:252mm;top:15mm;width:24mm;height:24mm;background:radial-gradient(circle,#fff6d8,#ffe08a 70%,#f2a900)"></div>
 
   <div class="abs" id="panel"></div>
-    <div class="abs dia" style="left:61.4mm;top:52.4mm;background:#c99a3a"></div><div class="abs dia" style="left:232.4mm;top:52.4mm;background:#c99a3a"></div><div class="abs dia" style="left:61.4mm;top:188.4mm;background:#c99a3a"></div><div class="abs dia" style="left:232.4mm;top:188.4mm;background:#c99a3a"></div>
+    
   <div class="abs tail" id="tl"></div><div class="abs tail" id="tr"></div>
   <div class="abs" id="rib">ଯୋଗ୍ୟତା ପ୍ରମାଣ ପତ୍ର</div>
   <div class="abs lbl" style="left:58mm;width:181mm;top:83.3mm">ମାଏନ୍ତା ଶ୍ରୀ / କୁମାରୀ</div>
