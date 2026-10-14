@@ -89,6 +89,9 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 	</div>
 	<div class="cert-marquee" data-pkc-certs aria-label="<?php esc_attr_e( 'Certificate designs', 'pikacart' ); ?>"></div>
 	<div class="wrap cert-strip-cta">
+		<?php if ( class_exists( 'PKC_Public' ) && method_exists( 'PKC_Public', 'cert_url' ) ) : ?>
+			<a class="t-btn t-btn-ghost t-btn-lg" href="<?php echo esc_url( PKC_Public::cert_url() ); ?>"><?php esc_html_e( 'See all certificate designs', 'pikacart' ); ?></a>
+		<?php endif; ?>
 		<a class="t-btn t-btn-primary t-btn-lg" href="<?php echo esc_url( is_user_logged_in() ? pkc_theme_url( 'app' ) . 'certificate/' : pkc_theme_url( 'register' ) ); ?>"><?php esc_html_e( 'Create certificates', 'pikacart' ); ?></a>
 	</div>
 </section>

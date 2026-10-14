@@ -49,6 +49,8 @@ class PKC_Installer {
 		if ( get_option( 'pkc_designs_version' ) !== PKC_VERSION ) {
 			PKC_Catalog::seed_certificate_designs();
 			update_option( 'pkc_designs_version', PKC_VERSION );
+			// New page addresses (e.g. /certificate/) work right after an update.
+			update_option( 'pkc_flush_rewrite', 1 );
 		}
 	}
 

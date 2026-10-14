@@ -39,6 +39,16 @@ class PKC_SEO {
 		if ( $gal && ! empty( $gal['seo'] ) ) {
 			return $gal['seo'];
 		}
+		if ( $gal && 'certificate' === ( $gal['doc'] ?? '' ) ) {
+			return array(
+				/* translators: %s: business name */
+				'title'       => sprintf( __( 'Certificate Designs for Every Occasion · %s', 'pikacart' ), $site ),
+				'description' => __( 'Free certificate designs for course completion, merit, sports, internships, events, NGOs and festivals like Ganesh Puja, Durga Puja and Nuakhai. English, Odia and Hindi. Print A4 at 300 DPI.', 'pikacart' ),
+				'keywords'    => 'certificate design, certificate maker, course completion certificate, odia certificate, puja certificate',
+				'image'       => '',
+				'canonical'   => PKC_Public::cert_url(),
+			);
+		}
 		if ( $gal ) {
 			return array(
 				/* translators: %s: business name */
@@ -96,6 +106,11 @@ class PKC_SEO {
 			$robots['index']             = true;
 			$robots['follow']            = true;
 			$robots['max-image-preview'] = 'large';
+			// A certificate type without designs yet is not offered to Google until it has some.
+			if ( $gal['category'] && empty( $gal['templates'] ) ) {
+				unset( $robots['index'] );
+				$robots['noindex'] = true;
+			}
 		}
 		return $robots;
 	}
@@ -243,14 +258,15 @@ class PKC_SEO {
 		}
 		$gal = PKC_Public::context();
 		if ( $gal ) {
+			$cert  = 'certificate' === ( $gal['doc'] ?? '' );
 			$items = array(
 				array( __( 'Home', 'pikacart' ), home_url( '/' ) ),
-				array( __( 'ID card designs', 'pikacart' ), PKC_Public::url() ),
+				array( $cert ? __( 'Certificate designs', 'pikacart' ) : __( 'ID card designs', 'pikacart' ), PKC_Public::link() ),
 			);
 			if ( $gal['category'] ) {
-				$items[] = array( $gal['category']['name'], PKC_Public::url( $gal['category']['slug'] ) );
+				$items[] = array( $gal['category']['name'], PKC_Public::link( $gal['category']['slug'] ) );
 				if ( get_query_var( 'pkc_sub' ) ) {
-					$items[] = array( $gal['subtype']['name'], PKC_Public::url( $gal['category']['slug'], $gal['subtype']['slug'] ) );
+					$items[] = array( $gal['subtype']['name'], PKC_Public::link( $gal['category']['slug'], $gal['subtype']['slug'] ) );
 				}
 			}
 			$out[] = array(

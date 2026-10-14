@@ -29,10 +29,35 @@ class PKC_Public {
 		add_rewrite_rule( '^id-card/?$', 'index.php?pkc_idcard=1', 'top' );
 		add_rewrite_rule( '^id-card/([a-z0-9-]+)/?$', 'index.php?pkc_idcard=1&pkc_cat=$matches[1]', 'top' );
 		add_rewrite_rule( '^id-card/([a-z0-9-]+)/([a-z0-9-]+)/?$', 'index.php?pkc_idcard=1&pkc_cat=$matches[1]&pkc_sub=$matches[2]', 'top' );
+		// Certificates use the same gallery: /certificate/, /certificate/{category}/{type}/.
+		add_rewrite_rule( '^certificate/?$', 'index.php?pkc_idcard=1&pkc_doc=certificate', 'top' );
+		add_rewrite_rule( '^certificate/([a-z0-9-]+)/?$', 'index.php?pkc_idcard=1&pkc_doc=certificate&pkc_cat=$matches[1]', 'top' );
+		add_rewrite_rule( '^certificate/([a-z0-9-]+)/([a-z0-9-]+)/?$', 'index.php?pkc_idcard=1&pkc_doc=certificate&pkc_cat=$matches[1]&pkc_sub=$matches[2]', 'top' );
+	}
+
+	/** Is the current gallery the certificate one? */
+	public static function is_certificate() {
+		return 'certificate' === get_query_var( 'pkc_doc' );
+	}
+
+	/** Certificate categories are stored as "cert-course"; their address is just "course". */
+	public static function pub_slug( $slug ) {
+		return preg_replace( '/^cert-/', '', (string) $slug );
+	}
+
+	public static function cert_url( $cat = '', $sub = '' ) {
+		$cat  = $cat ? self::pub_slug( $cat ) : '';
+		$path = 'certificate/' . ( $cat ? $cat . '/' : '' ) . ( $cat && $sub ? $sub . '/' : '' );
+		return home_url( user_trailingslashit( $path ) );
+	}
+
+	/** Address of a gallery page in the current kind (ID cards or certificates). */
+	public static function link( $cat = '', $sub = '' ) {
+		return self::is_certificate() ? self::cert_url( $cat, $sub ) : self::url( $cat, $sub );
 	}
 
 	public static function query_vars( $vars ) {
-		return array_merge( $vars, array( 'pkc_idcard', 'pkc_cat', 'pkc_sub' ) );
+		return array_merge( $vars, array( 'pkc_idcard', 'pkc_cat', 'pkc_sub', 'pkc_doc' ) );
 	}
 
 	public static function url( $cat = '', $sub = '' ) {
@@ -51,17 +76,19 @@ class PKC_Public {
 		if ( ! get_query_var( 'pkc_idcard' ) ) {
 			return null;
 		}
-		$tree     = PKC_Catalog::tree();
+		$cert     = self::is_certificate();
+		$tree     = $cert ? PKC_Catalog::tree( false, 'certificate' ) : PKC_Catalog::tree();
 		$cat_slug = sanitize_key( (string) get_query_var( 'pkc_cat' ) );
 		$sub_slug = sanitize_key( (string) get_query_var( 'pkc_sub' ) );
 		$ctx      = array(
+			'doc'      => $cert ? 'certificate' : 'card',
 			'tree'     => $tree,
 			'category' => null,
 			'subtype'  => null,
 		);
 		if ( $cat_slug ) {
 			foreach ( $tree as $c ) {
-				if ( $c['slug'] === $cat_slug ) {
+				if ( ( $cert ? self::pub_slug( $c['slug'] ) : $c['slug'] ) === $cat_slug ) {
 					$ctx['category'] = $c;
 				}
 			}
@@ -102,6 +129,26 @@ class PKC_Public {
 		$own     = pkc_json( $raw );
 		$count   = count( $ctx['templates'] );
 		$name    = $is_sub ? $cat['name'] . ' ' . $sub['name'] : $cat['name'];
+		if ( 'certificate' === ( $ctx['doc'] ?? '' ) ) {
+			$name    = $is_sub ? $sub['name'] : $cat['name'];
+			$default = array(
+				/* translators: 1: certificate type, 2: number of designs */
+				'title'       => sprintf( __( '%1$s Certificate Design: %2$d Free Templates', 'pikacart' ), $name, $count ),
+				/* translators: 1: certificate type, 2: number */
+				'description' => sprintf( __( '%2$d professional %1$s certificate designs in English, Odia and Hindi. Add your logo, import names from Excel, verify with QR and print A4 at 300 DPI. Free to start.', 'pikacart' ), $name, $count ),
+				'keywords'    => strtolower( $name ) . ' certificate, ' . strtolower( $name ) . ' certificate design, certificate maker, odia certificate',
+				'image'       => '',
+				'text'        => '',
+			);
+			foreach ( $default as $k => $v ) {
+				if ( empty( $own[ $k ] ) ) {
+					$own[ $k ] = $v;
+				}
+			}
+			$own['h1']        = sprintf( /* translators: %s: name */ __( '%s Certificate Designs', 'pikacart' ), $name );
+			$own['canonical'] = $is_sub ? self::cert_url( $cat['slug'], $sub['slug'] ) : self::cert_url( $cat['slug'] );
+			return $own;
+		}
 		$default = array(
 			/* translators: 1: category/sub-type name, 2: number of designs */
 			'title'       => sprintf( __( '%1$s ID Card Design: %2$d Free Templates', 'pikacart' ), $name, $count ),
@@ -153,6 +200,9 @@ class PKC_Public {
 	public static function body_class( $classes ) {
 		if ( get_query_var( 'pkc_idcard' ) && self::context() ) {
 			$classes[] = 'pkc-gallery-page';
+			if ( self::is_certificate() ) {
+				$classes[] = 'pkc-doc-certificate';
+			}
 		}
 		return $classes;
 	}
@@ -310,11 +360,12 @@ class PKC_Public {
 			self::base_payload(),
 			array(
 				'mode'      => $ctx['category'] ? 'gallery' : 'index',
+				'doc'       => $ctx['doc'] ?? 'card',
 				'tree'      => $ctx['tree'],
 				'category'  => $ctx['category'] ? array( 'id' => $ctx['category']['id'], 'slug' => $ctx['category']['slug'], 'name' => $ctx['category']['name'] ) : null,
 				'subtype'   => $ctx['subtype'],
 				'templates' => $ctx['category'] ? $ctx['templates'] : array(),
-				'showcase'  => $ctx['category'] ? array() : PKC_Catalog::showcase( 1 ),
+				'showcase'  => $ctx['category'] ? array() : PKC_Catalog::showcase( 1, $ctx['doc'] ?? 'card' ),
 			)
 		);
 	}
@@ -354,6 +405,34 @@ class PKC_Public {
 				$urls[] = self::url( $c['slug'], $s['slug'] );
 			}
 		}
+		// Certificate pages are listed once they have designs (empty pages stay out of Google).
+		$counts = self::type_counts();
+		$urls[] = self::cert_url();
+		foreach ( PKC_Catalog::tree( false, 'certificate' ) as $c ) {
+			$with = array_filter(
+				$c['subtypes'],
+				function ( $s ) use ( $counts ) {
+					return ! empty( $counts[ $s['id'] ] );
+				}
+			);
+			if ( ! $with ) {
+				continue;
+			}
+			$urls[] = self::cert_url( $c['slug'] );
+			foreach ( $with as $s ) {
+				$urls[] = self::cert_url( $c['slug'], $s['slug'] );
+			}
+		}
 		return $urls;
+	}
+
+	/** Published public designs per sub-type. */
+	public static function type_counts() {
+		global $wpdb;
+		$out = array();
+		foreach ( $wpdb->get_results( 'SELECT subtype_id, COUNT(*) AS n FROM ' . pkc_table( 'templates' ) . " WHERE owner_org_id = 0 AND status = 'published' GROUP BY subtype_id" ) as $r ) {
+			$out[ (int) $r->subtype_id ] = (int) $r->n;
+		}
+		return $out;
 	}
 }

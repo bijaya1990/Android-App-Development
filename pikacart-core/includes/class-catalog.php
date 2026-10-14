@@ -337,10 +337,10 @@ class PKC_Catalog {
 	/**
 	 * Featured designs across categories (homepage showcase).
 	 */
-	public static function showcase( $per_category = 8 ) {
+	public static function showcase( $per_category = 8, $kind = 'card' ) {
 		global $wpdb;
 		$out = array();
-		foreach ( self::tree() as $cat ) {
+		foreach ( self::tree( false, $kind ) as $cat ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT * FROM ' . pkc_table( 'templates' ) . " WHERE category_id = %d AND owner_org_id = 0 AND status = 'published' ORDER BY is_featured DESC, CASE style_level WHEN 'premium' THEN 0 WHEN 'professional' THEN 1 WHEN 'modern' THEN 2 ELSE 3 END, sort_order ASC LIMIT %d",

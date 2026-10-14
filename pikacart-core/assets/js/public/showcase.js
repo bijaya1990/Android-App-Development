@@ -30,6 +30,19 @@ const ORGS = {
 	press: [ 'Daily Bharat News', 'Truth · Every Day', 'Editor' ],
 };
 
+const CERT_ORGS = {
+	'cert-school': [ 'Sunrise Public School', 'Affiliated to CBSE, New Delhi', 'Principal' ],
+	'cert-course': [ 'Kalinga Computer Academy', 'Regd. under Govt. of Odisha', 'Director' ],
+	'cert-festival': [ 'Sarbajanin Puja Committee', 'Sambalpur · Estd. 1985', 'Secretary' ],
+	'cert-competition': [ 'Odisha Sports Association', 'District Level Championship', 'President' ],
+	'cert-corporate': [ 'Orbit Technologies Pvt. Ltd.', 'Software & Cloud Services', 'HR Manager' ],
+	'cert-event': [ 'TechSummit India 2026', 'Bhubaneswar · 12–14 December', 'Event Director' ],
+	'cert-social': [ 'Helping Hands Foundation', 'Registered Charitable Trust', 'Secretary' ],
+};
+
+/* Neutral demo emblem so sample certificates do not show an empty logo ring. */
+const DEMO_LOGO = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#1E3A8A"/><circle cx="60" cy="60" r="47" fill="none" stroke="#F3DE9C" stroke-width="3"/><path d="M30 44l30-14 30 14-30 14z" fill="#F3DE9C"/><path d="M40 52v18c0 7 9 12 20 12s20-5 20-12V52l-20 9z" fill="#fff"/><path d="M86 47v20" stroke="#F3DE9C" stroke-width="3"/><circle cx="86" cy="70" r="3.5" fill="#F3DE9C"/></svg>' );
+
 const subIndex = {};
 ( D.tree || [] ).forEach( ( c ) => c.subtypes.forEach( ( s ) => {
 	subIndex[ s.id ] = { cat: c, sub: s };
@@ -39,11 +52,20 @@ function palette( id ) {
 	return ( D.palettes || [] ).find( ( p ) => p.id === id ) || ( D.palettes || [] )[ 0 ];
 }
 
+const CERT = D.doc === 'certificate';
+
 function sizeFor( orient ) {
+	if ( CERT ) {
+		return orient === 'landscape' ? { w: 297, h: 210 } : { w: 210, h: 297 };
+	}
 	return orient === 'landscape' ? { w: 86, h: 54 } : { w: 54, h: 86 };
 }
 
 function varsFor( sub, catSlug, index ) {
+	if ( CERT || ( sub && sub.doc === 'certificate' ) ) {
+		const c = CERT_ORGS[ catSlug ] || CERT_ORGS[ 'cert-school' ];
+		return demoVars( 'certificate', index, { org_name: c[ 0 ], org_tagline: c[ 1 ], signatory_title: c[ 2 ], subtype_name: sub ? sub.name : '', logo: DEMO_LOGO } );
+	}
 	const o = ORGS[ catSlug ];
 	const org = o ? { org_name: o[ 0 ], org_tagline: o[ 1 ], signatory_title: o[ 2 ], org_website: 'www.' + o[ 0 ].toLowerCase().replace( /[^a-z]+/g, '' ).slice( 0, 14 ) + '.in' } : {};
 	return demoVars( kindOf( sub ), index, Object.assign( { subtype_name: sub ? sub.name : '' }, org ) );
@@ -335,7 +357,7 @@ function catCards() {
 			return;
 		}
 		const t = firstPremium( row );
-		lazy( c, { template: t, orientation: 'portrait', width: 150, index: i * 5 } ).then( () => {
+		lazy( c, { template: t, orientation: CERT ? 'landscape' : 'portrait', width: CERT ? 360 : 150, index: i * 5 } ).then( () => {
 			const fallback = c.parentElement.querySelector( '.sc' );
 			if ( fallback ) {
 				fallback.remove();
@@ -352,14 +374,14 @@ function gallery() {
 	if ( ! grid || ! bar ) {
 		return;
 	}
-	const st = { orientation: 'portrait', level: '', pal: 0 };
+	const st = { orientation: CERT ? 'landscape' : 'portrait', level: '', pal: 0 };
 	const all = D.templates || [];
 	const levels = D.levels || {};
 
 	bar.innerHTML = `
 		<div class="pg-seg" role="group" aria-label="${ esc( __( 'Orientation', 'pikacart' ) ) }">
-			<button type="button" class="is-on" data-o="portrait">${ esc( __( 'Portrait', 'pikacart' ) ) }</button>
-			<button type="button" data-o="landscape">${ esc( __( 'Landscape', 'pikacart' ) ) }</button>
+			<button type="button" class="${ CERT ? '' : 'is-on' }" data-o="portrait">${ esc( __( 'Portrait', 'pikacart' ) ) }</button>
+			<button type="button" class="${ CERT ? 'is-on' : '' }" data-o="landscape">${ esc( __( 'Landscape', 'pikacart' ) ) }</button>
 		</div>
 		<div class="pg-chips" role="group" aria-label="${ esc( __( 'Style level', 'pikacart' ) ) }">
 			<button type="button" class="is-on" data-l="">${ esc( __( 'All styles', 'pikacart' ) ) }</button>
@@ -377,7 +399,7 @@ function gallery() {
 		grid.classList.toggle( 'is-land', st.orientation === 'landscape' );
 		grid.innerHTML = list.map( ( t, i ) => `<article class="pg-item lvl-${ esc( t.level ) }" id="t-${ t.id }">
 			<button type="button" class="pg-thumb" data-open="${ t.id }" aria-label="${ esc( sprintf( __( 'Preview %s', 'pikacart' ), t.name ) ) }">
-				<canvas class="pg-back" data-side="back" aria-hidden="true"></canvas>
+				${ CERT ? '' : '<canvas class="pg-back" data-side="back" aria-hidden="true"></canvas>' }
 				<canvas class="pg-front" data-side="front" aria-hidden="true"></canvas>
 				${ badge( t.level ) }
 			</button>
@@ -387,8 +409,11 @@ function gallery() {
 		list.forEach( ( t, i ) => {
 			const item = grid.querySelector( `#t-${ t.id }` );
 			const pal = st.pal ? palette( st.pal ) : null;
-			const w = st.orientation === 'landscape' ? 250 : 170;
-			lazy( item.querySelector( '.pg-front' ), { template: t, orientation: st.orientation, pal, width: w, index: i } ).then( () => lazy( item.querySelector( '.pg-back' ), { template: t, orientation: st.orientation, pal, width: w * 0.8, index: i, side: 'back' } ) );
+			const w = CERT ? ( st.orientation === 'landscape' ? 300 : 210 ) : st.orientation === 'landscape' ? 250 : 170;
+			const front = lazy( item.querySelector( '.pg-front' ), { template: t, orientation: st.orientation, pal, width: w, index: i } );
+			if ( ! CERT ) {
+				front.then( () => lazy( item.querySelector( '.pg-back' ), { template: t, orientation: st.orientation, pal, width: w * 0.8, index: i, side: 'back' } ) );
+			}
 		} );
 	}
 
@@ -435,19 +460,19 @@ function gallery() {
 		wrap.innerHTML = `<div class="pg-dialog" role="dialog" aria-modal="true" aria-label="${ esc( t.name ) }">
 			<button type="button" class="pg-x" data-close aria-label="${ esc( __( 'Close', 'pikacart' ) ) }">×</button>
 			<div class="pg-dialog-head"><h2>${ esc( t.name ) }</h2>${ badge( t.level ) }</div>
-			<div class="pg-big"><canvas data-side="front"></canvas><canvas data-side="back"></canvas></div>
+			<div class="pg-big ${ CERT ? 'is-doc' : '' }"><canvas data-side="front"></canvas>${ CERT ? '' : '<canvas data-side="back"></canvas>' }</div>
 			<div class="pg-dialog-tools">
 				<div class="pg-seg"><button type="button" data-o="portrait" class="${ orient === 'portrait' ? 'is-on' : '' }">${ esc( __( 'Portrait', 'pikacart' ) ) }</button><button type="button" data-o="landscape" class="${ orient === 'landscape' ? 'is-on' : '' }">${ esc( __( 'Landscape', 'pikacart' ) ) }</button></div>
 				<div class="pg-swatches">${ [ ...own, ...others ].map( ( p ) => `<button type="button" class="pg-sw ${ p.id === pal.id ? 'is-on' : '' }" data-p="${ p.id }" title="${ esc( p.name ) }" style="--a:${ esc( p.p ) };--b:${ esc( p.a ) }"></button>` ).join( '' ) }</div>
 			</div>
 			<div class="pg-dialog-foot">
-				<p>${ esc( __( 'Your logo, signature and people are added in the next step. Sizes from CR80 PVC to 4 × 6 inch.', 'pikacart' ) ) }</p>
+				<p>${ esc( CERT ? __( 'Your logo, signature and names are added in the next step. A4, A5, A6, Letter and more; English, Odia and Hindi.', 'pikacart' ) : __( 'Your logo, signature and people are added in the next step. Sizes from CR80 PVC to 4 × 6 inch.', 'pikacart' ) ) }</p>
 				<button type="button" class="pkc-btn pkc-btn-primary" data-go>${ esc( __( 'Use this design', 'pikacart' ) ) } →</button>
 			</div>
 		</div>`;
 		root.appendChild( wrap );
 		document.body.classList.add( 'pg-lock' );
-		const paint = () => wrap.querySelectorAll( '.pg-big canvas' ).forEach( ( c, i ) => draw( c, { template: t, orientation: orient, pal, width: orient === 'landscape' ? 420 : 300, index: 2, side: c.dataset.side, priority: true } ) );
+		const paint = () => wrap.querySelectorAll( '.pg-big canvas' ).forEach( ( c, i ) => draw( c, { template: t, orientation: orient, pal, width: CERT ? ( orient === 'landscape' ? 760 : 520 ) : orient === 'landscape' ? 420 : 300, index: 2, side: c.dataset.side, priority: true } ) );
 		wrap.querySelector( '.pg-big' ).classList.toggle( 'is-land', orient === 'landscape' );
 		paint();
 		const close = () => {
@@ -492,18 +517,9 @@ function gallery() {
 
 /* ---------- Homepage: moving strip of certificate designs ---------- */
 
-const CERT_ORGS = {
-	'cert-school': [ 'Sunrise Public School', 'Affiliated to CBSE, New Delhi', 'Principal' ],
-	'cert-course': [ 'Kalinga Computer Academy', 'Regd. under Govt. of Odisha', 'Director' ],
-	'cert-festival': [ 'Sarbajanin Puja Committee', 'Sambalpur · Estd. 1985', 'Secretary' ],
-	'cert-competition': [ 'Odisha Sports Association', 'District Level Championship', 'President' ],
-	'cert-corporate': [ 'Orbit Technologies Pvt. Ltd.', 'Software & Cloud Services', 'HR Manager' ],
-	'cert-event': [ 'TechSummit India 2026', 'Bhubaneswar · 12–14 December', 'Event Director' ],
-	'cert-social': [ 'Helping Hands Foundation', 'Registered Charitable Trust', 'Secretary' ],
-};
 
-/* Neutral demo emblem so sample certificates do not show an empty logo ring. */
-const DEMO_LOGO = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#1E3A8A"/><circle cx="60" cy="60" r="47" fill="none" stroke="#F3DE9C" stroke-width="3"/><path d="M30 44l30-14 30 14-30 14z" fill="#F3DE9C"/><path d="M40 52v18c0 7 9 12 20 12s20-5 20-12V52l-20 9z" fill="#fff"/><path d="M86 47v20" stroke="#F3DE9C" stroke-width="3"/><circle cx="86" cy="70" r="3.5" fill="#F3DE9C"/></svg>' );
+
+
 
 /** Draw each design once (A4 landscape), as a small image; one at a time. */
 function certImage( t, index ) {

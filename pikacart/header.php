@@ -39,6 +39,9 @@ defined( 'ABSPATH' ) || exit;
 				echo '<ul class="menu">';
 				echo '<li><a href="' . esc_url( $pkc_home . '#categories' ) . '">' . esc_html__( 'Categories', 'pikacart' ) . '</a></li>';
 				echo '<li><a href="' . esc_url( class_exists( 'PKC_Public' ) ? PKC_Public::url() : $pkc_home . '#designs' ) . '">' . esc_html__( 'Designs', 'pikacart' ) . '</a></li>';
+				if ( class_exists( 'PKC_Public' ) && method_exists( 'PKC_Public', 'cert_url' ) ) {
+					echo '<li><a href="' . esc_url( PKC_Public::cert_url() ) . '">' . esc_html__( 'Certificates', 'pikacart' ) . '</a></li>';
+				}
 				echo '<li><a href="' . esc_url( pkc_theme_page( 'pricing' ) ? pkc_theme_page( 'pricing' ) : $pkc_home . '#pricing' ) . '">' . esc_html__( 'Pricing', 'pikacart' ) . '</a></li>';
 				echo '<li><a href="' . esc_url( $pkc_home . '#how' ) . '">' . esc_html__( 'How it works', 'pikacart' ) . '</a></li>';
 				echo '<li><a href="' . esc_url( pkc_theme_page( 'contact' ) ? pkc_theme_page( 'contact' ) : $pkc_home ) . '">' . esc_html__( 'Contact', 'pikacart' ) . '</a></li>';
