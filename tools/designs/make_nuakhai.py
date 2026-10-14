@@ -71,7 +71,7 @@ def nuakhai(watermark):
     p.rect(0, 0, 297, 210, f=CREAM)
     # photo watermark + soft cream glow so text stays readable
     p.img(9, 9, 279, 192, watermark, fit='cover', op=0.95)
-    p.add('ellipse', 18, 38, 261, 150, f={'g': 'rad', 's': [[0, 'rgba(255,250,238,0.88)'], [0.65, 'rgba(255,250,238,0.62)'], [1, 'rgba(255,250,238,0)']]})
+    p.add('ellipse', 6, 30, 285, 178, f={'g': 'rad', 's': [[0, 'rgba(255,250,238,0.9)'], [0.45, 'rgba(255,250,238,0.78)'], [0.75, 'rgba(255,250,238,0.4)'], [1, 'rgba(255,250,238,0)']]})
     # Sambalpuri border: red, black ikat band, gold rule
     p.frame(0, 0, 297, 210, 3, RED)
     p.frame(3, 3, 291, 204, 6, BLACK)
