@@ -490,6 +490,116 @@ function gallery() {
 	}
 }
 
+/* ---------- Homepage: moving strip of certificate designs ---------- */
+
+const CERT_ORGS = {
+	'cert-school': [ 'Sunrise Public School', 'Affiliated to CBSE, New Delhi', 'Principal' ],
+	'cert-course': [ 'Kalinga Computer Academy', 'Regd. under Govt. of Odisha', 'Director' ],
+	'cert-festival': [ 'Sarbajanin Puja Committee', 'Sambalpur · Estd. 1985', 'Secretary' ],
+	'cert-competition': [ 'Odisha Sports Association', 'District Level Championship', 'President' ],
+	'cert-corporate': [ 'Orbit Technologies Pvt. Ltd.', 'Software & Cloud Services', 'HR Manager' ],
+	'cert-event': [ 'TechSummit India 2026', 'Bhubaneswar · 12–14 December', 'Event Director' ],
+	'cert-social': [ 'Helping Hands Foundation', 'Registered Charitable Trust', 'Secretary' ],
+};
+
+/* Neutral demo emblem so sample certificates do not show an empty logo ring. */
+const DEMO_LOGO = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#1E3A8A"/><circle cx="60" cy="60" r="47" fill="none" stroke="#F3DE9C" stroke-width="3"/><path d="M30 44l30-14 30 14-30 14z" fill="#F3DE9C"/><path d="M40 52v18c0 7 9 12 20 12s20-5 20-12V52l-20 9z" fill="#fff"/><path d="M86 47v20" stroke="#F3DE9C" stroke-width="3"/><circle cx="86" cy="70" r="3.5" fill="#F3DE9C"/></svg>' );
+
+/** Draw each design once (A4 landscape), as a small image; one at a time. */
+function certImage( t, index ) {
+	return new Promise( ( resolve ) => {
+		queue.push( async () => {
+			const o = CERT_ORGS[ t.cat ] || CERT_ORGS[ 'cert-school' ];
+			const vars = demoVars( 'certificate', index, { org_name: o[ 0 ], org_tagline: o[ 1 ], signatory_title: o[ 2 ], subtype_name: t.sub ? t.sub.name : '', logo: DEMO_LOGO } );
+			const orient = ( t.layout && t.layout.landscape ) ? 'landscape' : 'portrait';
+			const size = orient === 'landscape' ? { w: 297, h: 210 } : { w: 210, h: 297 };
+			const layout = layoutFor( t, orient, size.w / size.h, 'certificate' );
+			const c = document.createElement( 'canvas' );
+			const dpr = Math.min( 2, window.devicePixelRatio || 1 );
+			await renderSide( c, layout.front, { sizeMm: size, width: ( orient === 'landscape' ? 300 : 212 ) * dpr, palette: palette( ( t.palettes || [] )[ 0 ] ), vars, demo: true, side: 'front' } );
+			c.toBlob( ( b ) => resolve( b ? URL.createObjectURL( b ) : c.toDataURL( 'image/jpeg', 0.85 ) ), 'image/jpeg', 0.86 );
+		} );
+		pump();
+	} );
+}
+
+function certStrip( root ) {
+	const list = D.certificates || [];
+	if ( ! list.length ) {
+		root.closest( 'section' )?.setAttribute( 'hidden', '' );
+		return;
+	}
+	const item = ( t, i, copy ) => `<button type="button" class="cm-item" data-i="${ i }" ${ copy ? 'aria-hidden="true" tabindex="-1"' : '' }>
+		<span class="cm-paper"><img alt="${ copy ? '' : esc( t.name ) }" data-src-i="${ i }"></span>
+		<span class="cm-name">${ esc( t.name ) }</span>
+	</button>`;
+	// One "set" fills at least the screen width (few designs are repeated);
+	// the set is shown twice in a row, so when the first has moved out the
+	// second is exactly in its place and the line never shows a gap.
+	const build = ( k ) => {
+		let html = '';
+		for ( let r = 0; r < k * 2; r++ ) {
+			html += list.map( ( t, i ) => item( t, i, r > 0 ) ).join( '' );
+		}
+		root.innerHTML = `<div class="cm-track">${ html }</div>`;
+	};
+	build( 1 );
+	const setW = root.querySelector( '.cm-track' ).scrollWidth / 2;
+	const need = Math.ceil( ( root.clientWidth + 200 ) / Math.max( 1, setW ) );
+	if ( need > 1 ) {
+		build( need );
+	}
+	const track = root.querySelector( '.cm-track' );
+
+	// Same speed however many designs there are: the time grows with the length.
+	const SPEED = 38; // pixels per second
+	const setSpeed = () => {
+		const half = track.scrollWidth / 2;
+		track.style.setProperty( '--cm-dur', `${ Math.max( 20, half / SPEED ) }s` );
+	};
+	setSpeed();
+	window.addEventListener( 'resize', setSpeed, { passive: true } );
+	if ( reduceMotion ) {
+		root.classList.add( 'is-still' );
+	}
+
+	let started = false;
+	const start = async () => {
+		if ( started ) {
+			return;
+		}
+		started = true;
+		for ( let i = 0; i < list.length; i++ ) {
+			const url = await certImage( list[ i ], i );
+			root.querySelectorAll( `img[data-src-i="${ i }"]` ).forEach( ( img ) => {
+				img.src = url;
+				img.closest( '.cm-paper' ).classList.add( 'is-ready' );
+			} );
+		}
+		setSpeed();
+	};
+	if ( typeof IntersectionObserver === 'undefined' ) {
+		start();
+	} else {
+		const ob = new IntersectionObserver( ( es ) => {
+			if ( es.some( ( e ) => e.isIntersecting ) ) {
+				ob.disconnect();
+				start();
+			}
+		}, { rootMargin: '300px' } );
+		ob.observe( root );
+	}
+	// Pause the strip while the page is hidden to save the battery.
+	document.addEventListener( 'visibilitychange', () => root.classList.toggle( 'is-paused', document.hidden ) );
+	root.addEventListener( 'click', ( e ) => {
+		const b = e.target.closest( '.cm-item' );
+		if ( b ) {
+			const t = list[ Number( b.dataset.i ) ];
+			useDesign( Object.assign( {}, t, { subtype_id: t.sub ? t.sub.id : t.subtype_id } ), ( t.layout && t.layout.landscape ) ? 'landscape' : 'portrait', null );
+		}
+	} );
+}
+
 /* ---------- Start ---------- */
 
 const sw = document.querySelector( '[data-pkc-showcase]' );
@@ -501,6 +611,24 @@ if ( hero ) {
 	heroFan( hero );
 }
 catCards();
+if ( D.mode === 'home' && ( D.certificates || [] ).length ) {
+	let strip = document.querySelector( '[data-pkc-certs]' );
+	if ( ! strip ) {
+		// Older theme without the section: add it above the categories.
+		const at = document.getElementById( 'categories' );
+		if ( at ) {
+			const sec = document.createElement( 'section' );
+			sec.className = 'section cert-strip-section';
+			sec.id = 'certificates';
+			sec.innerHTML = `<div class="wrap"><div class="section-head"><span class="eyebrow">${ esc( __( 'Certificates', 'pikacart' ) ) }</span><h2>${ esc( __( 'Certificates for every occasion', 'pikacart' ) ) }</h2><p>${ esc( __( 'Course completion, merit, sports, puja and festivals — in English, ଓଡ଼ିଆ and हिंदी. Add the names and print in a minute.', 'pikacart' ) ) }</p></div></div><div class="cert-marquee" data-pkc-certs></div>`;
+			at.parentNode.insertBefore( sec, at );
+			strip = sec.querySelector( '[data-pkc-certs]' );
+		}
+	}
+	if ( strip ) {
+		certStrip( strip );
+	}
+}
 if ( D.mode === 'gallery' ) {
 	gallery();
 }

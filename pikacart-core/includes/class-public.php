@@ -201,11 +201,47 @@ class PKC_Public {
 		return array_merge(
 			self::base_payload(),
 			array(
-				'mode'     => 'home',
-				'tree'     => $tree,
-				'showcase' => $showcase,
+				'mode'         => 'home',
+				'tree'         => $tree,
+				'showcase'     => $showcase,
+				'certificates' => self::certificate_strip(),
 			)
 		);
+	}
+
+	/**
+	 * Every published certificate design, each shown once even when it is
+	 * offered for several certificate types (for the moving strip on the homepage).
+	 */
+	public static function certificate_strip( $limit = 60 ) {
+		global $wpdb;
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.* FROM ' . pkc_table( 'templates' ) . ' t INNER JOIN ' . pkc_table( 'categories' ) . " c ON c.id = t.category_id
+				WHERE c.kind = 'certificate' AND c.is_hidden = 0 AND t.owner_org_id = 0 AND t.status = 'published'
+				ORDER BY t.is_featured DESC, t.sort_order ASC, t.id ASC LIMIT %d",
+				$limit * 8
+			)
+		);
+		$out  = array();
+		$seen = array();
+		foreach ( $rows as $t ) {
+			$key = strtolower( trim( $t->name ) );
+			if ( isset( $seen[ $key ] ) ) {
+				continue;
+			}
+			$seen[ $key ] = true;
+			$sub          = PKC_Catalog::subtype( $t->subtype_id );
+			$cat          = PKC_Catalog::category( $t->category_id );
+			$item         = PKC_Catalog::template_to_app( $t );
+			$item['sub']  = $sub ? array( 'id' => (int) $sub->id, 'name' => $sub->name, 'doc' => 'certificate' ) : null;
+			$item['cat']  = $cat ? $cat->slug : '';
+			$out[]        = $item;
+			if ( count( $out ) >= $limit ) {
+				break;
+			}
+		}
+		return $out;
 	}
 
 	/**

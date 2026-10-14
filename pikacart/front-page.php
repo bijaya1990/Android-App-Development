@@ -78,6 +78,22 @@ $pkc_colors = array( '#1E3A8A', '#9F1239', '#065F46', '#C2410C', '#5B21B6', '#03
 </section>
 <?php endif; ?>
 
+<?php if ( pkc_theme_setting( 'home_certificates', 1 ) ) : ?>
+<section class="section cert-strip-section" id="certificates">
+	<div class="wrap">
+		<div class="section-head">
+			<span class="eyebrow"><?php esc_html_e( 'Certificates', 'pikacart' ); ?></span>
+			<h2><?php echo esc_html( pkc_theme_setting( 'home_certificates_title', __( 'Certificates for every occasion', 'pikacart' ) ) ); ?></h2>
+			<p><?php esc_html_e( 'Course completion, merit, sports, puja and festivals — in English, ଓଡ଼ିଆ and हिंदी. Add the names and print in a minute.', 'pikacart' ); ?></p>
+		</div>
+	</div>
+	<div class="cert-marquee" data-pkc-certs aria-label="<?php esc_attr_e( 'Certificate designs', 'pikacart' ); ?>"></div>
+	<div class="wrap cert-strip-cta">
+		<a class="t-btn t-btn-primary t-btn-lg" href="<?php echo esc_url( is_user_logged_in() ? pkc_theme_url( 'app' ) . 'certificate/' : pkc_theme_url( 'register' ) ); ?>"><?php esc_html_e( 'Create certificates', 'pikacart' ); ?></a>
+	</div>
+</section>
+<?php endif; ?>
+
 <?php if ( $pkc_cats ) : ?>
 <section class="section" id="categories">
 	<div class="wrap">
