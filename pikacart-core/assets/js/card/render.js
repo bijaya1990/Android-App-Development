@@ -46,6 +46,12 @@ export function loadImage( url ) {
 	return p;
 }
 
+/** Built-in artwork ships with the plugin: "{{assets}}img/x.webp" works on any site address. */
+const ASSET_BASE = new URL( '../../', import.meta.url ).href;
+function imgSrc( src, vars ) {
+	return fill( String( src || '' ).replace( /\{\{\s*assets\s*\}\}/gi, ASSET_BASE ), vars );
+}
+
 /** Synchronous lookup once loadImage() has resolved. */
 const ready = new Map();
 async function preloadImage( url ) {
@@ -472,7 +478,7 @@ export async function prepare( layoutSide, opts ) {
 			fonts.push( [ el.font, 700 ] );
 		}
 		if ( el.t === 'img' ) {
-			const src = fill( el.src, vars );
+			const src = imgSrc( el.src, vars );
 			if ( src ) {
 				urls.push( src );
 			}
@@ -699,7 +705,7 @@ function drawImg( ctx, el, b0, u, map, vars, opts ) {
 		const s = Math.min( b0.w, b0.h );
 		b = { x: b0.x + ( b0.w - s ) / 2, y: b0.y + ( b0.h - s ) / 2, w: s, h: s };
 	}
-	const src = fill( el.src, vars );
+	const src = imgSrc( el.src, vars );
 	const isPhoto = /\{\{\s*photo\s*\}\}/.test( el.src || '' );
 	const img = src ? ready.get( src ) : null;
 	const r = ( el.r || 0 ) * u;

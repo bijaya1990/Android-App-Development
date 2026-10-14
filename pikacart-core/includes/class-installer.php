@@ -665,8 +665,28 @@ class PKC_Installer {
 
 		$order = (int) $wpdb->get_var( 'SELECT MAX(sort_order) FROM ' . pkc_table( 'categories' ) );
 		foreach ( self::certificate_seed() as $cat ) {
-			$exists = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'categories' ) . ' WHERE slug = %s', $cat['slug'] ) );
+			$exists = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'categories' ) . ' WHERE slug = %s', $cat['slug'] ) );
 			if ( $exists ) {
+				// Types added in later versions (e.g. Raja Parba, Bali Jatra) join the existing category.
+				foreach ( $cat['subtypes'] as $j => $sub ) {
+					if ( $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . pkc_table( 'subtypes' ) . ' WHERE category_id = %d AND slug = %s', $exists, $sub[0] ) ) ) {
+						continue;
+					}
+					$wpdb->insert(
+						pkc_table( 'subtypes' ),
+						array(
+							'category_id' => $exists,
+							'slug'        => $sub[0],
+							'name'        => $sub[1],
+							'description' => '',
+							'fields'      => wp_json_encode( self::default_fields( $sub[2] ) ),
+							'terms'       => $cat['terms'],
+							'sort_order'  => $j + 1,
+							'is_hidden'   => 0,
+							'seo'         => wp_json_encode( array() ),
+						)
+					);
+				}
 				continue;
 			}
 			$wpdb->insert(
@@ -709,7 +729,7 @@ class PKC_Installer {
 		return array(
 			array( 'kind' => $cert, 'slug' => 'cert-school', 'name' => 'School & College certificates', 'icon' => 'school', 'terms' => '', 'desc' => 'Merit, participation, sports, character and appreciation certificates.', 'subtypes' => array( array( 'merit', 'Merit / Topper', $cert ), array( 'participation', 'Participation', $cert ), array( 'sports', 'Sports', $cert ), array( 'character', 'Character / Conduct', $cert ), array( 'appreciation', 'Appreciation', $cert ) ) ),
 			array( 'kind' => $cert, 'slug' => 'cert-course', 'name' => 'Course & Training', 'icon' => 'book', 'terms' => '', 'desc' => 'Course completion certificates for computer centres, coaching and training institutes.', 'subtypes' => array( array( 'completion', 'Course Completion', $cert ), array( 'computer', 'Computer Course (DCA, PGDCA, Tally)', $cert ), array( 'skill', 'Typing / Skill Test', $cert ), array( 'workshop', 'Workshop / Training', $cert ) ) ),
-			array( 'kind' => $cert, 'slug' => 'cert-festival', 'name' => 'Puja & Festivals', 'icon' => 'sparkles', 'terms' => '', 'desc' => 'Ganesh Puja, Durga Puja, Mahalaxmi Puja, Nuakhai, Rath Yatra and other festival certificates.', 'subtypes' => array( array( 'ganesh-puja', 'Ganesh Puja', $cert ), array( 'durga-puja', 'Durga Puja', $cert ), array( 'mahalaxmi-puja', 'Mahalaxmi / Laxmi Puja', $cert ), array( 'saraswati-puja', 'Saraswati Puja', $cert ), array( 'rath-yatra', 'Rath Yatra', $cert ), array( 'nuakhai', 'Nuakhai', $cert ), array( 'kali-puja', 'Kali Puja / Diwali', $cert ), array( 'festival', 'Other festival', $cert ) ) ),
+			array( 'kind' => $cert, 'slug' => 'cert-festival', 'name' => 'Puja & Festivals', 'icon' => 'sparkles', 'terms' => '', 'desc' => 'Durga Puja, Ganesh Puja, Saraswati Puja, Raja Parba, Vishwakarma Puja, Dhanu Jatra, Bali Jatra, Nuakhai and other festival certificates.', 'subtypes' => array( array( 'ganesh-puja', 'Ganesh Puja', $cert ), array( 'durga-puja', 'Durga Puja', $cert ), array( 'mahalaxmi-puja', 'Mahalaxmi / Laxmi Puja', $cert ), array( 'saraswati-puja', 'Saraswati Puja', $cert ), array( 'rath-yatra', 'Rath Yatra', $cert ), array( 'nuakhai', 'Nuakhai', $cert ), array( 'kali-puja', 'Kali Puja / Diwali', $cert ), array( 'raja-parba', 'Raja Parba', $cert ), array( 'vishwakarma-puja', 'Vishwakarma Puja', $cert ), array( 'dhanu-jatra', 'Dhanu Jatra', $cert ), array( 'bali-jatra', 'Bali Jatra', $cert ), array( 'festival', 'Other festival', $cert ) ) ),
 			array( 'kind' => $cert, 'slug' => 'cert-competition', 'name' => 'Competition & Sports', 'icon' => 'star', 'terms' => '', 'desc' => 'Winner, runner-up and participation certificates for competitions and tournaments.', 'subtypes' => array( array( 'winner', 'Winner (1st / 2nd / 3rd)', $cert ), array( 'participant', 'Participation', $cert ) ) ),
 			array( 'kind' => $cert, 'slug' => 'cert-corporate', 'name' => 'Company & Internship', 'icon' => 'briefcase', 'terms' => '', 'desc' => 'Internship, training, appreciation and employee of the month certificates.', 'subtypes' => array( array( 'internship', 'Internship', $cert ), array( 'training', 'Training', $cert ), array( 'award', 'Appreciation / Employee award', $cert ) ) ),
 			array( 'kind' => $cert, 'slug' => 'cert-event', 'name' => 'Event & Seminar', 'icon' => 'ticket', 'terms' => '', 'desc' => 'Seminar, conference, webinar and cultural programme certificates.', 'subtypes' => array( array( 'attendee', 'Participation / Attendance', $cert ), array( 'speaker', 'Speaker / Guest', $cert ), array( 'volunteer', 'Volunteer', $cert ) ) ),

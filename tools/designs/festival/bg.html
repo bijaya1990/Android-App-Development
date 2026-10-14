@@ -1,0 +1,346 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Festival certificate artwork. Open as bg.html?style=1..5&occ=durga (served next to
+     the plugin) and screenshot #pg at 3.125x for a 300 dpi A4 landscape image.
+     Everything that changes per person (names, dates, logo, QR...) is NOT drawn here:
+     the matching design JSON (make_festival.py) draws it on top. -->
+<link rel="stylesheet" href="/wp-content/plugins/pikacart-core/assets/css/card-fonts.css">
+<style>
+html,body{margin:0;background:#fff}
+#pg{position:relative;width:297mm;height:210mm;overflow:hidden}
+.a{position:absolute;box-sizing:border-box}
+.c{text-align:center}
+.foil{background:linear-gradient(135deg,#7a5212,#f9e08b 24%,#b8862f 48%,#fff3c0 70%,#8a5a12);-webkit-background-clip:text;background-clip:text;color:transparent}
+.foilbg{background:linear-gradient(135deg,#7a5212,#f9e08b 24%,#b8862f 48%,#fff3c0 70%,#8a5a12)}
+svg{display:block;overflow:visible}
+</style></head><body><div id="pg"></div>
+<script>
+const Q = new URLSearchParams(location.search);
+const STYLE = +(Q.get('style') || 1), OCC_KEY = Q.get('occ') || 'durga';
+
+/* ---------------- occasions ---------------- */
+const OCC = {
+  durga:  { name: 'Durga Puja', tag: 'Celebrating the triumph of good over evil', p: '#B71C1C', p2: '#E53935', a: '#FFB300', d: '#3E0606', l: '#FFF3E0', em: 'eyes' },
+  raja:   { name: 'Raja Parba', tag: 'Celebrating Mother Earth, the monsoon and womanhood', p: '#AD1457', p2: '#EC407A', a: '#7CB342', d: '#2A0A1C', l: '#FCE4EC', em: 'swing' },
+  ganesh: { name: 'Ganesh Puja', tag: 'Vighnaharta, the remover of all obstacles', p: '#E65100', p2: '#FB8C00', a: '#FFD54F', d: '#3A1400', l: '#FFF3E0', em: 'ganesha' },
+  saraswati: { name: 'Saraswati Puja', tag: 'Honouring the goddess of knowledge, music and the arts', p: '#D98200', p2: '#F9A825', a: '#1565C0', d: '#3B2A05', l: '#FFFDE7', em: 'veena', s1: '#173A6E' },
+  vishwakarma: { name: 'Vishwakarma Puja', tag: 'Honouring the divine architect and every craftsman', p: '#0D47A1', p2: '#1E88E5', a: '#FF8F00', d: '#06142E', l: '#E3F2FD', em: 'gear' },
+  dhanu:  { name: 'Dhanu Jatra', tag: 'Celebrating the grand open-air theatre of Bargarh', p: '#4A148C', p2: '#7B1FA2', a: '#FFB300', d: '#1A0533', l: '#F3E5F5', em: 'bow' },
+  bali:   { name: 'Bali Jatra', tag: "Celebrating Odisha's glorious maritime heritage", p: '#006064', p2: '#00838F', a: '#FF8F00', d: '#00262A', l: '#E0F7FA', em: 'boita' },
+};
+const O = OCC[OCC_KEY];
+
+/* ---------------- emblems (100 x 100) ---------------- */
+function emblem(kind, c, deep, hi) {
+  hi = hi || '#fff';
+  const S = (b) => `<svg viewBox="0 0 100 100" width="100%" height="100%">${b}</svg>`;
+  switch (kind) {
+    case 'eyes': return S(`
+      <path d="M50 4c7 9 7 21 0 30c-7-9-7-21 0-30z" fill="${c}"/><circle cx="50" cy="19" r="4.2" fill="${deep}"/>
+      <path d="M4 40c14-15 34-15 44-4" fill="none" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M96 40c-14-15-34-15-44-4" fill="none" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M6 56c12-16 32-18 42-4c-10 10-30 12-42 4z" fill="${c}"/><path d="M6 56l-5-6" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+      <path d="M94 56c-12-16-32-18-42-4c10 10 30 12 42 4z" fill="${c}"/><path d="M94 56l5-6" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="30" cy="54" r="7.5" fill="${deep}"/><circle cx="70" cy="54" r="7.5" fill="${deep}"/>
+      <circle cx="32.5" cy="51.5" r="2" fill="${hi}"/><circle cx="72.5" cy="51.5" r="2" fill="${hi}"/>
+      <path d="M50 64c4 6 4 12 0 16c-4-4-4-10 0-16z" fill="${c}"/>
+      <path d="M38 88c8 6 16 6 24 0" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>`);
+    case 'trishul': return S(`
+      <rect x="47.5" y="22" width="5" height="76" rx="2" fill="${c}"/>
+      <path d="M50 2l7 18h-14z" fill="${c}"/>
+      <path d="M22 10c-2 22 8 34 28 36v-6c-14-2-22-12-21-30z" fill="${c}"/>
+      <path d="M78 10c2 22-8 34-28 36v-6c14-2 22-12 21-30z" fill="${c}"/>
+      <rect x="40" y="48" width="20" height="5" rx="2" fill="${c}"/>
+      <ellipse cx="50" cy="66" rx="9" ry="6" fill="${c}"/><path d="M41 66h18" stroke="${deep}" stroke-width="1.5"/>`);
+    case 'swing': return S(`
+      <path d="M8 14h84" stroke="${c}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M14 14l-6 84M86 14l6 84" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      ${[16,28,40,52,64,76,84].map((x,i)=>`<circle cx="${x}" cy="${18+(i%2)*3}" r="${i%2?3.4:4.2}" fill="${i%2?deep:c}"/>`).join('')}
+      <path d="M34 18v50M66 18v50" stroke="${c}" stroke-width="2.2"/>
+      <path d="M28 68h44l-4 8h-36z" fill="${c}"/>
+      ${[38,50,62].map(x=>`<circle cx="${x}" cy="64" r="4.5" fill="${deep}"/><circle cx="${x}" cy="64" r="2" fill="${hi}"/>`).join('')}
+      ${[[22,40],[78,46],[20,64],[80,72],[50,88],[30,86],[70,90]].map(([x,y])=>`<path d="M${x} ${y-5}c3 4 3 7 0 8c-3-1-3-4 0-8z" fill="${c}" opacity=".8"/>`).join('')}`);
+    case 'ganesha': return S(`
+      <ellipse cx="22" cy="46" rx="19" ry="23" fill="${c}"/><ellipse cx="78" cy="46" rx="19" ry="23" fill="${c}"/>
+      <ellipse cx="24" cy="47" rx="12" ry="16" fill="${deep}" opacity=".25"/><ellipse cx="76" cy="47" rx="12" ry="16" fill="${deep}" opacity=".25"/>
+      <ellipse cx="50" cy="44" rx="20" ry="22" fill="${c}"/>
+      <path d="M31 26h38l-5-11-7-6-7-9-7 9-7 6z" fill="${c}"/><path d="M30 27h40" stroke="${deep}" stroke-width="2"/>
+      <circle cx="50" cy="16" r="2.6" fill="${deep}"/>
+      <path d="M44 33q6 6 12 0" fill="none" stroke="${deep}" stroke-width="2"/><path d="M50 30v6" stroke="${deep}" stroke-width="2"/>
+      <ellipse cx="41.5" cy="42" rx="3" ry="2" fill="${deep}"/><ellipse cx="58.5" cy="42" rx="3" ry="2" fill="${deep}"/>
+      <path d="M44 50h12c0 12-4 22-8 30c-4 8-14 10-17 3c3 3 9 2 11-3c3-8 2-20 2-30z" fill="${c}"/>
+      <path d="M45 56h9M45 62h8M44 68h8" stroke="${deep}" stroke-width="1.4" opacity=".6"/>
+      <path d="M58 52l9 7-8-1z" fill="${hi}"/>
+      <circle cx="30" cy="84" r="5" fill="${c}"/><path d="M27 82l3-4 3 4" fill="none" stroke="${deep}" stroke-width="1.2"/>`);
+    case 'veena': return S(`
+      <circle cx="28" cy="72" r="20" fill="${c}"/><circle cx="28" cy="72" r="12" fill="${deep}" opacity=".25"/>
+      <path d="M34 62L86 12" stroke="${c}" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="74" cy="26" r="9" fill="${c}"/>
+      ${[0,1,2,3,4,5,6].map(i=>{const x=44+i*6,y=56-i*6;return `<path d="M${x-4} ${y-4}l8 8" stroke="${deep}" stroke-width="1.6"/>`}).join('')}
+      <path d="M22 76L84 16M26 80L88 20" stroke="${hi}" stroke-width=".9" opacity=".9"/>
+      <path d="M86 12l6-6M88 16l7-3" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+      <path d="M8 96c10-10 30-12 42-4c-12 8-30 10-42 4z" fill="${c}" opacity=".85"/>
+      <path d="M50 92c8-8 26-12 40-6c-12 10-28 12-40 6z" fill="${c}" opacity=".6"/>`);
+    case 'gear': return S(`
+      <g transform="translate(50 50)">${Array.from({length:12},(_,i)=>`<rect x="-6" y="-46" width="12" height="14" rx="2" fill="${c}" transform="rotate(${i*30})"/>`).join('')}
+      <circle r="35" fill="${c}"/><circle r="22" fill="${deep}" opacity=".35"/><circle r="9" fill="${c}"/></g>
+      <g transform="rotate(-40 50 50)"><rect x="46" y="22" width="8" height="66" rx="3" fill="${hi}"/><rect x="34" y="12" width="32" height="14" rx="3" fill="${hi}"/></g>
+      <g transform="rotate(40 50 50)"><rect x="47" y="30" width="6" height="58" rx="3" fill="${hi}" opacity=".85"/><path d="M40 16a12 12 0 1 0 20 0l-4 8h-12z" fill="${hi}" opacity=".85"/></g>`);
+    case 'bow': return S(`
+      <path d="M26 4C70 26 70 74 26 96" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/>
+      <path d="M26 4C62 28 62 72 26 96" fill="none" stroke="${deep}" stroke-width="1.5" opacity=".4"/>
+      <path d="M26 4L26 96" stroke="${c}" stroke-width="1.6"/>
+      <path d="M8 50H90" stroke="${c}" stroke-width="3.2"/><path d="M98 50l-12-7v14z" fill="${c}"/>
+      <path d="M8 50l-6-6M8 50l-6 6M14 50l-6-6M14 50l-6 6" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M58 6l6 10 8-8 4 12 8-6-2 14H62z" fill="${c}"/><circle cx="74" cy="22" r="2.4" fill="${deep}"/>`);
+    case 'boita': return S(`
+      <path d="M50 8v58" stroke="${c}" stroke-width="3"/><path d="M50 8l14 5-14 5z" fill="${c}"/>
+      <path d="M52 20c18 6 24 22 22 40H52z" fill="${c}"/><path d="M48 24c-14 6-20 18-18 34h18z" fill="${c}" opacity=".85"/>
+      <path d="M6 64h88c-4 12-14 18-28 18H32C18 82 10 76 6 64z" fill="${c}"/>
+      <path d="M6 64c-2-6-4-10-2-16 4 6 6 10 8 16zM94 64c2-6 6-10 4-16-4 6-8 10-10 16z" fill="${c}"/>
+      ${[18,30,42,54,66,78].map(x=>`<circle cx="${x}" cy="72" r="2.2" fill="${deep}" opacity=".5"/>`).join('')}
+      <path d="M0 90c8-6 16-6 25 0s17 6 25 0 17-6 25 0 17 6 25 0" fill="none" stroke="${c}" stroke-width="3"/>
+      <path d="M6 98c8-5 15-5 22 0s15 5 22 0 15-5 22 0 15 5 22 0" fill="none" stroke="${c}" stroke-width="2" opacity=".6"/>`);
+  }
+}
+const EM2 = { durga: 'trishul' };
+const em = (k, c, d, h) => emblem(k === 2 ? (EM2[OCC_KEY] || O.em) : O.em, c, d, h);
+
+/* ---------------- shared pieces ---------------- */
+const pg = document.getElementById('pg');
+const put = (html) => pg.insertAdjacentHTML('beforeend', html);
+const box = (x, y, w, h, st = '', inner = '', cls = '') => put(`<div class="a ${cls}" style="left:${x}mm;top:${y}mm;width:${w}mm;height:${h}mm;${st.replace(/"/g, '&quot;')}">${inner}</div>`);
+const txt = (x, y, w, h, t, st, cls = 'c') => box(x, y, w, h, st, t, cls);
+const circ = (cx, cy, r, st, inner = '') => box(cx - r, cy - r, 2 * r, 2 * r, 'border-radius:50%;' + st, inner);
+
+function marigold(cx, cy, r, c1, c2) {
+  let s = '';
+  for (let i = 0; i < 12; i++) { const a = i * 30 * Math.PI / 180; s += `<circle cx="${50 + 30 * Math.cos(a)}" cy="${50 + 30 * Math.sin(a)}" r="20" fill="${i % 2 ? c1 : c2}"/>`; }
+  box(cx - r, cy - r, 2 * r, 2 * r, '', `<svg viewBox="0 0 100 100" width="100%" height="100%">${s}<circle cx="50" cy="50" r="24" fill="${c1}"/><circle cx="50" cy="50" r="12" fill="#b23b00"/></svg>`);
+}
+function toran(y, x0, x1, n, sag) {
+  // marigold strings with mango leaves
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, x = x0 + (x1 - x0) * t, yy = y + Math.sin(t * Math.PI) * sag;
+    if (i % 2 === 0) box(x - 2, yy, 4, 11, `background:linear-gradient(#2e7d32,#1b5e20);clip-path:ellipse(50% 50% at 50% 50%);transform:rotate(${(t - .5) * 20}deg);transform-origin:top`);
+    marigold(x, yy, 3.4, '#FFB300', '#FF6F00');
+  }
+}
+function bottomRow(o) {
+  // o: {date:[cx], sign:[cx], sec:[cx], qr:[x,y], line, label, font}
+  const L = o.line, Y = o.y || 178;
+  [['DATE', o.date], ['PRESIDENT', o.sign], ['SECRETARY', o.sec]].forEach(([lab, cx]) => {
+    if (cx == null) return;
+    box(cx - 20, Y, 40, .45, `background:${L}`);
+    txt(cx - 25, Y + 1.6, 50, 5, lab, `font:700 2.7mm/1 Montserrat;letter-spacing:.35mm;color:${o.label}`);
+  });
+  if (o.qr) {
+    box(o.qr[0], o.qr[1], 21, 21, `background:#fff;border-radius:1.2mm;box-shadow:0 .5mm 1.5mm rgba(0,0,0,.25),0 0 0 .45mm ${o.qrRing || '#c99a3a'}`);
+  }
+}
+function medal(cx, cy, r, ring, inner, ribbonA, ribbonB, caption) {
+  box(cx - r * .55, cy + r * .4, r * .5, r * 1.6, `background:${ribbonA};clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);transform:rotate(16deg)`);
+  box(cx + r * .05, cy + r * .4, r * .5, r * 1.6, `background:${ribbonB};clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);transform:rotate(-16deg)`);
+  let pts = []; for (let i = 0; i < 48; i++) { const rr = i % 2 ? 44 : 50, a = Math.PI * i / 24; pts.push(`${50 + rr * Math.cos(a)},${50 + rr * Math.sin(a)}`); }
+  box(cx - r, cy - r, 2 * r, 2 * r, 'filter:drop-shadow(0 .6mm 1mm rgba(0,0,0,.4))', `<svg viewBox="0 0 100 100" width="100%" height="100%"><defs><linearGradient id="mg${cx}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a5a12"/><stop offset=".45" stop-color="#ffe9a3"/><stop offset="1" stop-color="#8a5a12"/></linearGradient></defs><polygon points="${pts.join(' ')}" fill="url(#mg${cx})"/><circle cx="50" cy="50" r="37" fill="${inner}" stroke="${ring}" stroke-width="1.6"/><circle cx="50" cy="50" r="32" fill="none" stroke="${ring}" stroke-width=".8" stroke-dasharray="2 1.6"/></svg>`);
+  if (caption) txt(cx - r, cy + r * .28, 2 * r, 4, caption, `font:700 ${r * .17}mm/1 Montserrat;letter-spacing:.2mm;color:${ring}`);
+}
+function mandala(cx, cy, r, c, op) {
+  let s = '';
+  for (let k = 0; k < 6; k++) {
+    const rr = 48 - k * 7.5, n = 12 + k * 4;
+    s += `<circle cx="50" cy="50" r="${rr}" fill="none" stroke="${c}" stroke-width=".35"/>`;
+    for (let i = 0; i < n; i++) {
+      const a = 360 * i / n;
+      s += k % 2 ? `<ellipse cx="50" cy="${50 - rr + 3}" rx="1.4" ry="3.4" fill="${c}" transform="rotate(${a} 50 50)"/>`
+                 : `<path d="M50 ${50 - rr} q3 4 0 7 q-3-3 0-7z" fill="${c}" transform="rotate(${a} 50 50)"/>`;
+    }
+  }
+  box(cx - r, cy - r, 2 * r, 2 * r, `opacity:${op}`, `<svg viewBox="0 0 100 100" width="100%" height="100%">${s}<circle cx="50" cy="50" r="5" fill="${c}"/></svg>`);
+}
+const SANS = 'Montserrat', SERIF = '"Playfair Display"';
+
+/* =============== STYLE 1 · Royal Gold (dark) =============== */
+function style1() {
+  box(0, 0, 297, 210, `background:radial-gradient(90% 80% at 50% 45%,${O.s1 || O.p} 0%,${O.s1 ? '#06142E' : O.d} 75%)`);
+  // damask-like pattern
+  box(0, 0, 297, 210, `opacity:.10;background-image:radial-gradient(circle at 50% 50%,#fff 0 .5mm,transparent .6mm),radial-gradient(circle at 0 0,transparent 3.2mm,#fff 3.3mm 3.5mm,transparent 3.6mm);background-size:9mm 9mm`);
+  box(0, 0, 297, 210, 'background:radial-gradient(70% 60% at 50% 45%,transparent 55%,rgba(0,0,0,.45))');
+  // big faint emblem watermark
+  box(98.5, 55, 100, 100, 'opacity:.07', em(1, '#fff', '#fff'));
+  // frames
+  box(7, 7, 283, 196, 'border:1.6mm solid transparent;border-image:linear-gradient(135deg,#7a5212,#f9e08b 24%,#b8862f 48%,#fff3c0 70%,#8a5a12) 1');
+  box(11, 11, 275, 188, 'border:.35mm solid #d9b45a');
+  box(12.6, 12.6, 271.8, 184.8, 'border:.2mm dashed rgba(249,224,139,.6)');
+  // corner filigree
+  [[11, 11, 1, 1], [286, 11, -1, 1], [11, 199, 1, -1], [286, 199, -1, -1]].forEach(([x, y, sx, sy]) => {
+    box(x - (sx < 0 ? 22 : 0), y - (sy < 0 ? 22 : 0), 22, 22, `transform:scale(${sx},${sy})`,
+      `<svg viewBox="0 0 30 30" width="100%" height="100%"><defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a5a12"/><stop offset=".5" stop-color="#f9e08b"/><stop offset="1" stop-color="#8a5a12"/></linearGradient></defs>
+      <path d="M0 26C0 10 10 0 26 0C14 3 6 8 4 20C9 10 14 7 22 6C14 10 9 16 8 24C6 18 4 22 0 26z" fill="url(#fg)"/><circle cx="7" cy="7" r="1.8" fill="url(#fg)"/><path d="M2 2l9 9" stroke="url(#fg)" stroke-width=".7"/></svg>`);
+  });
+  // emblem medallion
+  circ(148.5, 30, 17, 'background:radial-gradient(circle,#fff6d6,#e9c46a 70%,#9a6b1f);box-shadow:0 0 0 .8mm #5a3a0a,0 0 0 1.6mm #f9e08b,0 1.5mm 4mm rgba(0,0,0,.5)');
+  box(136, 17.5, 25, 25, '', em(1, O.p, O.d, '#fff'));
+  // logo ring + medal
+  circ(44, 36, 11.5, 'background:#fff;box-shadow:0 0 0 .8mm #f9e08b,0 0 0 1.4mm #5a3a0a,0 1mm 3mm rgba(0,0,0,.5)');
+  medal(253, 36, 14, '#f9e08b', O.d, O.p2, '#111', 'POSITION');
+  // title
+  txt(20, 64.5, 257, 16, 'CERTIFICATE', 'font:700 14.5mm/1 "Cinzel Decorative";letter-spacing:.6mm;filter:drop-shadow(0 .6mm .8mm rgba(0,0,0,.6))', 'c foil');
+  box(86, 84.5, 32, .4, 'background:#d9b45a'); box(179, 84.5, 32, .4, 'background:#d9b45a');
+  txt(100, 82, 97, 6, 'OF HONOUR', 'font:700 4.2mm/1 Cinzel;letter-spacing:1.4mm;color:#f9e08b');
+  txt(20, 89, 257, 6, 'This certificate is proudly presented to', `font:italic 400 4mm/1 "Cormorant Garamond";color:#f6e7c1`);
+  box(78, 109, 141, .5, '', ''); box(78, 109, 141, .5, 'background:linear-gradient(90deg,transparent,#f9e08b,transparent)');
+  txt(20, 111.5, 257, 6, 'for outstanding achievement in', `font:italic 400 4mm/1 "Cormorant Garamond";color:#f6e7c1`);
+  txt(20, 127, 257, 6, 'on the auspicious occasion of', `font:italic 400 3.8mm/1 "Cormorant Garamond";color:#f6e7c1`);
+  txt(20, 132, 257, 10, O.name.toUpperCase(), 'font:700 7.4mm/1 Cinzel;letter-spacing:.8mm', 'c foil');
+  box(128.5, 143, 40, 7.5, 'border-radius:3.75mm;background:linear-gradient(180deg,#f9e08b,#b8862f);box-shadow:0 .5mm 1.2mm rgba(0,0,0,.5)');
+  txt(20, 151.5, 257, 5, O.tag, `font:500 2.9mm/1 ${SANS};letter-spacing:.25mm;color:rgba(246,231,193,.75)`);
+  // seal centre bottom
+  circ(148.5, 175, 12.5, 'background:radial-gradient(circle,#f9e08b,#b8862f 75%,#7a5212);box-shadow:0 0 0 .6mm #5a3a0a,0 1mm 2.5mm rgba(0,0,0,.5)');
+  box(140.5, 167, 16, 16, 'opacity:.85', em(1, '#5a3a0a', '#f9e08b', '#f9e08b'));
+  bottomRow({ date: 55, sign: 110, sec: 187, qr: [231.5, 160], line: '#f9e08b', label: '#f9e08b', qrRing: '#f9e08b' });
+}
+
+/* =============== STYLE 2 · Festive Glow (vibrant + white card) =============== */
+function style2() {
+  box(0, 0, 297, 210, `background:linear-gradient(135deg,${O.d} 0%,${O.p} 40%,${O.p2} 70%,${O.a} 120%)`);
+  // light rays + bokeh
+  box(-50, -120, 397, 300, `background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.07) 0 6deg,transparent 6deg 14deg);-webkit-mask-image:radial-gradient(circle at 50% 50%,#000,transparent 65%)`);
+  [[30,40,14],[60,150,10],[255,60,16],[270,170,12],[20,190,8],[200,20,7],[100,15,6],[240,120,5],[45,95,5]].forEach(([x,y,r]) =>
+    circ(x, y, r, `background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,255,255,.12) 50%,transparent 70%)`));
+  // big emblem silhouettes at sides
+  box(-18, 60, 90, 90, 'opacity:.16', em(1, '#fff', '#fff'));
+  box(225, 60, 90, 90, 'opacity:.16;transform:scaleX(-1)', em(2, '#fff', '#fff'));
+  // header
+  txt(20, 6.5, 257, 18, O.name, `font:400 16mm/1 "Great Vibes";color:#fff;text-shadow:0 .8mm 2mm rgba(0,0,0,.45),0 0 4mm rgba(255,230,160,.6)`);
+  toran(0, 12, 84, 8, 2.5); toran(0, 213, 285, 8, 2.5);
+  // card
+  box(28, 38, 241, 160, 'border-radius:5mm;background:linear-gradient(180deg,#fff,#fffaf2);box-shadow:0 3mm 10mm rgba(0,0,0,.45),0 0 0 1.2mm rgba(255,255,255,.35)');
+  box(31, 41, 235, 154, `border-radius:3.6mm;border:.35mm solid ${O.p}55`);
+  box(31, 41, 235, 154, `border-radius:3.6mm;opacity:.05;background-image:radial-gradient(circle,${O.p} .5mm,transparent .6mm);background-size:6mm 6mm`);
+  // emblem badge over card top
+  circ(148.5, 39, 13, `background:radial-gradient(circle,#fff,${O.l});box-shadow:0 0 0 1mm ${O.a},0 0 0 1.8mm ${O.p},0 1.5mm 4mm rgba(0,0,0,.35)`);
+  box(139, 29.5, 19, 19, '', em(1, O.p, O.d, '#fff'));
+  // logo + year pill
+  circ(48, 53, 9.5, `background:#fff;box-shadow:0 0 0 .7mm ${O.p},0 .8mm 2mm rgba(0,0,0,.25)`);
+  box(227, 48.5, 30, 9, `border-radius:4.5mm;background:linear-gradient(90deg,${O.p},${O.p2});box-shadow:0 .6mm 1.6mm rgba(0,0,0,.3)`);
+  // title
+  txt(30, 71, 237, 16, 'CERTIFICATE', `font:800 13mm/1 ${SANS};letter-spacing:1.6mm;background:linear-gradient(90deg,${O.d},${O.p} 45%,${O.p2});-webkit-background-clip:text;background-clip:text;color:transparent`);
+  txt(30, 87, 237, 6, '<span style="display:inline-block;width:18mm;height:.4mm;background:' + O.a + ';vertical-align:middle;margin-right:4mm"></span>OF ACHIEVEMENT<span style="display:inline-block;width:18mm;height:.4mm;background:' + O.a + ';vertical-align:middle;margin-left:4mm"></span>', `font:700 4mm/6mm ${SANS};letter-spacing:1.2mm;color:${O.d}`);
+  txt(30, 95, 237, 5, 'This certificate is proudly presented to', `font:italic 400 3.9mm/1 ${SERIF};color:#555`);
+  box(88, 115.5, 121, .5, `background:linear-gradient(90deg,transparent,${O.p},transparent)`);
+  txt(30, 118, 237, 5, 'for outstanding achievement in', `font:italic 400 3.9mm/1 ${SERIF};color:#555`);
+  txt(30, 133.5, 237, 5, `on the auspicious occasion of <b style="color:${O.p}">${O.name}</b>`, `font:italic 400 3.9mm/1 ${SERIF};color:#555`);
+  medal(52, 116, 12, '#ffe9a3', O.p, O.p2, O.d, 'POSITION');
+  // bottom
+  box(141, 166, 15, 15, 'opacity:.9', em(2, O.p, O.d, '#fff'));
+  bottomRow({ date: 62, sign: 110, sec: 187, qr: [231.5, 158], line: O.d, label: O.p, qrRing: O.p });
+}
+
+/* =============== STYLE 3 · Heritage (Odisha pattachitra borders) =============== */
+function style3() {
+  box(0, 0, 297, 210, `background:#fff7e3`);
+  box(0, 0, 297, 210, 'opacity:.35;background:radial-gradient(circle at 30% 20%,#fff,transparent 40%),radial-gradient(circle at 80% 90%,#f0d9a4,transparent 50%)');
+  // border bands
+  const band = (x, y, w, h, vertical) => {
+    box(x, y, w, h, `background:${O.d}`);
+    const tri = vertical ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 0L10 10L0 20z' fill='${encodeURIComponent(O.a)}'/%3E%3Cpath d='M20 0L10 10L20 20z' fill='${encodeURIComponent(O.p2)}'/%3E%3Ccircle cx='10' cy='10' r='2.6' fill='%23fff'/%3E%3C/svg%3E")`
+      : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 0L10 10L20 0z' fill='${encodeURIComponent(O.a)}'/%3E%3Cpath d='M0 20L10 10L20 20z' fill='${encodeURIComponent(O.p2)}'/%3E%3Ccircle cx='10' cy='10' r='2.6' fill='%23fff'/%3E%3C/svg%3E")`;
+    box(x + (vertical ? 1.5 : 0), y + (vertical ? 0 : 1.5), w - (vertical ? 3 : 0), h - (vertical ? 0 : 3), `background-image:${tri};background-size:6mm 6mm`);
+  };
+  band(0, 0, 297, 9); band(0, 201, 297, 9); band(0, 0, 9, 210, 1); band(288, 0, 9, 210, 1);
+  box(9, 9, 279, 192, `border:1.4mm solid ${O.p}`);
+  box(11.8, 11.8, 273.4, 186.4, `border:.4mm solid ${O.d}`);
+  // flower chain inside
+  const flw = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cg fill='${encodeURIComponent(O.p)}'%3E%3Ccircle cx='12' cy='6' r='4'/%3E%3Ccircle cx='12' cy='18' r='4'/%3E%3Ccircle cx='6' cy='12' r='4'/%3E%3Ccircle cx='18' cy='12' r='4'/%3E%3C/g%3E%3Ccircle cx='12' cy='12' r='3.2' fill='${encodeURIComponent(O.a)}'/%3E%3C/svg%3E")`;
+  box(13, 13, 271, 4, `background-image:${flw};background-size:4mm 4mm;opacity:.9`);
+  box(13, 193, 271, 4, `background-image:${flw};background-size:4mm 4mm;opacity:.9`);
+  // corner lotus blocks
+  [[13, 13], [272, 13], [13, 181], [272, 181]].forEach(([x, y]) => box(x, y, 12, 16, `background:${O.d};border:.4mm solid ${O.a}`, `<svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="${O.a}"><path d="M50 15c10 15 10 35 0 50c-10-15-10-35 0-50z"/><path d="M50 65c-20-5-32-20-34-38c16 4 28 18 34 38z"/><path d="M50 65c20-5 32-20 34-38c-16 4-28 18-34 38z"/></g><path d="M20 78h60" stroke="${O.p2}" stroke-width="5"/></svg>`));
+  // temple arch at top centre
+  box(113.5, 13, 70, 46, `background:${O.d};clip-path:path('M0 175 L0 80 C0 40 60 0 132 0 C204 0 264 40 264 80 L264 175 Z');`);
+  box(116.5, 16, 64, 41, `background:radial-gradient(circle at 50% 60%,${O.l},#fff3d0 70%);clip-path:path('M0 155 L0 74 C0 36 55 0 121 0 C187 0 242 36 242 74 L242 155 Z')`);
+  box(134.5, 21, 28, 28, '', em(1, O.p, O.d, '#fff'));
+  box(119, 52, 59, 3, `background:${O.a}`);
+  // logo + year circle
+  circ(46, 36, 11, `background:#fff;box-shadow:0 0 0 .8mm ${O.a},0 0 0 1.5mm ${O.d}`);
+  circ(251, 36, 11, `background:${O.p};box-shadow:0 0 0 .8mm ${O.a},0 0 0 1.5mm ${O.d}`);
+  txt(240, 40.5, 22, 4, 'YEAR', `font:700 2.4mm/1 ${SANS};letter-spacing:.4mm;color:${O.a}`);
+  // title
+  txt(20, 71, 257, 14, 'Certificate of Merit', `font:700 11mm/1 Cinzel;color:${O.d};letter-spacing:.3mm`);
+  box(108, 86, 81, .5, `background:${O.p}`); circ(148.5, 86.25, 1.4, `background:${O.a};box-shadow:0 0 0 .4mm ${O.p}`);
+  txt(20, 89.5, 257, 5, 'This certificate is proudly presented to', `font:italic 400 4mm/1 "Cormorant Garamond";color:#5a4030`);
+  box(78, 109.5, 141, .45, `background:${O.d}55`);
+  txt(20, 112, 257, 5, 'for outstanding achievement in', `font:italic 400 4mm/1 "Cormorant Garamond";color:#5a4030`);
+  txt(20, 128.5, 257, 6, `on the auspicious occasion of <b style="font-family:Cinzel;color:${O.p};letter-spacing:.3mm">${O.name}</b>`, `font:italic 400 4mm/1 "Cormorant Garamond";color:#5a4030`);
+  txt(20, 136, 257, 5, O.tag, `font:500 2.8mm/1 ${SANS};color:${O.d}aa;letter-spacing:.2mm`);
+  medal(46, 117, 12, '#ffe9a3', O.d, O.p, O.a, 'POSITION');
+  // decorative peacock-ish leaves at sides
+  [[30, 150, 1], [267, 150, -1]].forEach(([x, y, s]) => box(x - 10, y - 10, 20, 20, `transform:scaleX(${s})`, `<svg viewBox="0 0 100 100"><g fill="${O.p}" opacity=".85"><path d="M50 95C20 70 20 30 50 5C80 30 80 70 50 95z"/></g><path d="M50 90V12" stroke="${O.a}" stroke-width="3"/><g stroke="${O.a}" stroke-width="2">${[25,40,55,70].map(y=>`<path d="M50 ${y}l-14 -8M50 ${y}l14 -8"/>`).join('')}</g></svg>`));
+  circ(148.5, 175, 11.5, `background:radial-gradient(circle,${O.l},#fff);box-shadow:0 0 0 .8mm ${O.a},0 0 0 1.5mm ${O.d}`);
+  box(140.5, 167, 16, 16, '', em(2, O.p, O.d, '#fff'));
+  bottomRow({ date: 55, sign: 110, sec: 187, qr: [231.5, 158], line: O.d, label: O.d, qrRing: O.d });
+}
+
+/* =============== STYLE 4 · Modern Luxe (side panel) =============== */
+function style4() {
+  box(0, 0, 297, 210, 'background:#fffdf8');
+  box(0, 0, 297, 210, 'opacity:.5;background:radial-gradient(circle at 90% 10%,#f3ead7,transparent 40%)');
+  box(0, 0, 100, 210, `background:linear-gradient(160deg,${O.p2},${O.p} 45%,${O.d});clip-path:polygon(0 0,100% 0,82% 100%,0 100%)`);
+  box(0, 0, 100, 210, `opacity:.12;clip-path:polygon(0 0,100% 0,82% 100%,0 100%);background-image:radial-gradient(circle,#fff .45mm,transparent .55mm);background-size:5mm 5mm`);
+  box(99, 0, 3, 210, 'clip-path:polygon(0 0,100% 0,18% 100%,-82% 100%)', '', 'foilbg');
+  box(79, 0, 22, 210, 'background:linear-gradient(160deg,#f9e08b,#b8862f);clip-path:polygon(95% 0,100% 0,82% 100%,77% 100%)');
+  mandala(46, 72, 44, '#fff', .12);
+  box(16, 42, 60, 60, 'filter:drop-shadow(0 1mm 2mm rgba(0,0,0,.35))', em(1, '#fff', O.d, O.p));
+  circ(46, 23, 10.5, 'background:#fff;box-shadow:0 0 0 .8mm rgba(255,255,255,.35),0 1mm 3mm rgba(0,0,0,.3)');
+  txt(4, 110, 82, 12, O.name, `font:400 10.5mm/1 "Great Vibes";color:#fff;text-shadow:0 .6mm 1.5mm rgba(0,0,0,.35)`);
+  box(26, 136, 40, .4, 'background:rgba(255,255,255,.6)');
+  txt(10, 139, 70, 14, O.tag, `font:600 2.9mm/1.45 ${SANS};color:rgba(255,255,255,.9);letter-spacing:.15mm`);
+  // right side
+  box(108, 13, 2.2, 22, `background:${O.p}`);
+  txt(113, 33, 170, 20, 'CERTIFICATE', `font:800 15.5mm/1 ${SANS};letter-spacing:1.2mm;color:#1d1d1f;text-align:left`, '');
+  txt(113.5, 52.5, 170, 6, 'OF EXCELLENCE', `font:700 4.4mm/1 ${SANS};letter-spacing:2.2mm;color:${O.p};text-align:left`, '');
+  box(113.5, 61, 22, 1.2, '', '', 'foilbg');
+  txt(113.5, 68, 160, 5, 'This certificate is proudly presented to', `font:italic 400 4mm/1 ${SERIF};color:#666;text-align:left`, '');
+  box(113.5, 93, 130, .45, 'background:#d8cfbf');
+  txt(113.5, 96, 160, 5, 'for outstanding achievement in', `font:italic 400 4mm/1 ${SERIF};color:#666;text-align:left`, '');
+  txt(113.5, 112, 170, 5, `held on the auspicious occasion of <b style="color:${O.p}">${O.name}</b>`, `font:italic 400 4mm/1 ${SERIF};color:#666;text-align:left`, '');
+  medal(262, 100, 12.5, '#ffe9a3', O.d, O.p, '#1d1d1f', 'POSITION');
+  box(113.5, 125, 168, .3, 'background:#e7dfd0');
+  // bottom row (left aligned)
+  [['DATE', 133], ['PRESIDENT', 185]].forEach(([l, cx]) => { box(cx - 20, 176, 40, .45, 'background:#1d1d1f'); txt(cx - 25, 177.6, 50, 5, l, `font:700 2.7mm/1 ${SANS};letter-spacing:.35mm;color:${O.p}`); });
+  box(212, 176, 34, .45, 'background:#1d1d1f'); txt(204, 177.6, 50, 5, 'SECRETARY', `font:700 2.7mm/1 ${SANS};letter-spacing:.35mm;color:${O.p}`);
+  box(256, 156, 21, 21, `background:#fff;border-radius:1.2mm;box-shadow:0 .5mm 1.5mm rgba(0,0,0,.2),0 0 0 .45mm ${O.p}`);
+  box(108, 196, 182, 1.2, `background:linear-gradient(90deg,${O.p},${O.a})`);
+}
+
+/* =============== STYLE 5 · Mandala Grand (light, centred) =============== */
+function style5() {
+  box(0, 0, 297, 210, `background:radial-gradient(80% 70% at 50% 45%,#fffef9,${O.l} 80%)`);
+  mandala(0, 105, 105, O.p, .16); mandala(297, 105, 105, O.p, .16);
+  mandala(148.5, 112, 70, O.a, .08);
+  box(8, 8, 281, 194, 'border:1.1mm solid transparent;border-image:linear-gradient(135deg,#7a5212,#f9e08b 24%,#b8862f 48%,#fff3c0 70%,#8a5a12) 1');
+  box(11.5, 11.5, 274, 187, `border:.3mm solid ${O.p}88`);
+  // top crest with rays
+  box(108.5, 4, 80, 50, `background:repeating-conic-gradient(from 0deg at 50% 52%,${O.a}55 0 4deg,transparent 4deg 10deg);-webkit-mask-image:radial-gradient(circle at 50% 52%,#000 20%,transparent 60%)`);
+  circ(148.5, 30, 16.5, `background:radial-gradient(circle,#fff,${O.l});box-shadow:0 0 0 .8mm #c99a3a,0 0 0 1.8mm ${O.p},0 0 0 2.4mm #f9e08b,0 1.5mm 4mm rgba(0,0,0,.25)`);
+  box(136.5, 18, 24, 24, '', em(1, O.p, O.d, '#fff'));
+  circ(40, 32, 11.5, `background:#fff;box-shadow:0 0 0 .8mm #c99a3a,0 0 0 1.4mm ${O.p}`);
+  medal(257, 32, 14, '#ffe9a3', O.p, O.p2, O.d, 'POSITION');
+  txt(20, 62, 257, 20, 'Certificate', `font:400 19mm/1 "Great Vibes";color:${O.d};text-shadow:0 .4mm 0 #f9e08b`);
+  txt(20, 82.5, 257, 6, 'OF APPRECIATION', `font:700 4.2mm/1 Cinzel;letter-spacing:1.6mm;color:${O.p}`);
+  txt(20, 89.5, 257, 5, 'This certificate is proudly presented to', `font:italic 400 4mm/1 "Cormorant Garamond";color:#5a4a3a`);
+  box(78, 109, 141, .5, 'background:linear-gradient(90deg,transparent,#c99a3a,transparent)');
+  txt(20, 111.5, 257, 5, 'for outstanding achievement in', `font:italic 400 4mm/1 "Cormorant Garamond";color:#5a4a3a`);
+  txt(20, 127, 257, 5, 'on the auspicious occasion of', `font:italic 400 3.8mm/1 "Cormorant Garamond";color:#5a4a3a`);
+  txt(20, 132, 257, 10, O.name.toUpperCase(), `font:700 7mm/1 Cinzel;letter-spacing:.8mm;color:${O.p}`);
+  box(128.5, 143, 40, 7.5, `border-radius:3.75mm;background:${O.p};box-shadow:0 .5mm 1.2mm rgba(0,0,0,.25),0 0 0 .4mm #f9e08b`);
+  txt(20, 151.5, 257, 5, O.tag, `font:500 2.9mm/1 ${SANS};letter-spacing:.25mm;color:${O.d}aa`);
+  circ(148.5, 175, 12.5, 'background:radial-gradient(circle,#f9e08b,#b8862f 75%,#7a5212);box-shadow:0 0 0 .6mm #5a3a0a,0 1mm 2.5mm rgba(0,0,0,.3)');
+  box(140.5, 167, 16, 16, 'opacity:.85', em(2, '#5a3a0a', '#f9e08b', '#f9e08b'));
+  bottomRow({ date: 55, sign: 110, sec: 187, qr: [231.5, 160], line: O.d, label: O.p, qrRing: '#c99a3a' });
+}
+
+[style1, style2, style3, style4, style5][STYLE - 1]();
+document.fonts.ready.then(() => { window.done = true; });
+</script></body></html>
