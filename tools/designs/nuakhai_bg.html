@@ -1,0 +1,122 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/wp-content/plugins/pikacart-core/assets/css/card-fonts.css">
+<style>
+html,body{margin:0;padding:0;background:#fff}
+#pg{position:relative;width:297mm;height:210mm;overflow:hidden;background:#3a1606}
+.abs{position:absolute}
+/* photos */
+#paddy{inset:0;background:url(paddy.png) center 38%/cover;filter:blur(1.4mm) saturate(1.25) brightness(1.04)}
+#warm{inset:0;background:radial-gradient(60% 45% at 50% 8%,rgba(255,214,120,.65),rgba(255,170,60,.15) 60%,transparent),linear-gradient(180deg,rgba(80,20,0,.05),rgba(60,15,0,.35))}
+#dancer{left:0;top:0;width:118mm;height:210mm;background:url(dancer.png) 30% top/cover;
+  -webkit-mask-image:linear-gradient(90deg,#000 52%,transparent 96%);filter:saturate(1.15) contrast(1.05)}
+#drum{right:0;top:0;width:118mm;height:210mm;background:url(drum.png) 60% top/cover;
+  -webkit-mask-image:linear-gradient(270deg,#000 52%,transparent 96%);filter:saturate(1.15) contrast(1.05)}
+#vig{inset:0;background:radial-gradient(75% 70% at 50% 50%,transparent 60%,rgba(30,5,0,.45))}
+.bokeh{border-radius:50%;background:radial-gradient(circle,rgba(255,236,170,.9),rgba(255,200,90,.35) 45%,transparent 70%);mix-blend-mode:screen}
+/* border */
+.ikat{background-color:#141414;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 6l3 3h3v3l3 3v4h-3v3h-3l-3 3-3-3h-3v-3h-3v-4l3-3v-3h3z' fill='%23fff'/%3E%3Cpath d='M20 12l2 2v2h2l2 2-2 2h-2v2l-2 2-2-2v-2h-2l-2-2 2-2h2v-2z' fill='%23d81b1b'/%3E%3Crect x='19' y='17' width='2' height='2' fill='%23ffd54f'/%3E%3Cpath d='M0 0l4 4-4 4zM40 0l-4 4 4 4zM0 40l4-4-4-4zM40 40l-4-4 4-4z' fill='%23d81b1b'/%3E%3C/svg%3E");background-size:7mm 7mm}
+.b-t{left:0;top:0;width:297mm;height:7mm}.b-b{left:0;bottom:0;width:297mm;height:7mm}
+.b-l{left:0;top:0;width:7mm;height:210mm}.b-r{right:0;top:0;width:7mm;height:210mm}
+.redline{inset:0;border:1.6mm solid #b3121b}
+.goldline{left:7mm;top:7mm;right:7mm;bottom:7mm;border:1.1mm solid transparent;
+  border-image:linear-gradient(135deg,#8a5a12,#f6dc8c 25%,#b8862f 50%,#fff1b8 75%,#8a5a12) 1}
+/* panel */
+#panel{left:58mm;top:49mm;width:181mm;height:146mm;border-radius:3.5mm;
+  background:radial-gradient(120% 90% at 50% 30%,#fffdf6,#fbf0d6 70%,#f1dfb2);
+  box-shadow:0 2.5mm 7mm rgba(40,8,0,.55),0 0 0 .9mm #c99a3a,0 0 0 1.6mm #7a0e12,0 0 0 2.3mm #f3d27a}
+#panel:before{content:"";position:absolute;inset:2.2mm;border:.25mm solid rgba(122,14,18,.55);border-radius:2.2mm}
+#panel:after{content:"";position:absolute;inset:0;border-radius:3.5mm;opacity:.07;
+  background:repeating-radial-gradient(circle at 50% 55%,#8a5a12 0 .25mm,transparent .25mm 3mm)}
+.corner{width:16mm;height:16mm}
+/* title */
+.ttl{left:0;width:297mm;top:18.5mm;text-align:center;font:800 15.5mm/1 "Baloo Bhaina 2";letter-spacing:0}
+#t-back{color:#5a0000;-webkit-text-stroke:2.2mm #fff6d0;
+  text-shadow:0 .5mm 0 #7a0e12,0 1mm 0 #6a0a0e,0 1.5mm 0 #5a080b,0 2mm 0 #4a0608,0 3mm 4mm rgba(0,0,0,.6),0 0 6mm rgba(255,210,90,.9)}
+#t-front{background:linear-gradient(180deg,#fff3a0 0%,#ffc21a 38%,#ff6a00 62%,#c8100f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:.45mm #6a0000}
+#t-shine{background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0) 45%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#om{left:108.5mm;top:8.8mm;width:80mm;height:6.4mm;border-radius:3.2mm;background:linear-gradient(90deg,#7a0e12,#c62828,#7a0e12);
+  box-shadow:0 .6mm 1.6mm rgba(0,0,0,.45),0 0 0 .35mm #f3d27a;color:#fff3c4;font:700 3.6mm/6.4mm "Noto Serif Oriya";text-align:center}
+#yr{left:209mm;top:36.5mm;width:30mm;height:10mm;border-radius:5mm;background:linear-gradient(180deg,#9b0f14,#5a0508);
+  box-shadow:0 .8mm 2mm rgba(0,0,0,.5),0 0 0 .5mm #f3d27a}
+/* badges */
+.badge{border-radius:50%;background:#fff;box-shadow:0 1mm 3mm rgba(0,0,0,.5),0 0 0 1mm #f3d27a,0 0 0 1.6mm #7a0e12,0 0 0 2.2mm #c99a3a}
+/* ribbon */
+#rib{left:98.5mm;top:68mm;width:100mm;height:12.5mm;border-radius:6.25mm;
+  background:linear-gradient(180deg,#ff5a4a,#d0181d 45%,#8e0a0e);box-shadow:0 1mm 2.4mm rgba(0,0,0,.45),inset 0 .6mm 0 rgba(255,255,255,.45),0 0 0 .5mm #f3d27a,0 0 0 1mm #5a0508;
+  color:#fff;font:800 6.6mm/12.5mm "Baloo Bhaina 2";text-align:center;text-shadow:0 .5mm 0 #5a0508,0 .9mm 1.4mm rgba(0,0,0,.5)}
+.tail{top:70mm;width:14mm;height:9mm;background:linear-gradient(180deg,#a30d12,#5a0508)}
+#tl{left:88mm;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,30% 50%)}
+#tr{left:195mm;clip-path:polygon(0 0,100% 0,70% 50%,100% 100%,0 100%)}
+.lbl{color:#3a1206;font:600 4.2mm/1 "Noto Serif Oriya";text-align:center}
+.jai{color:#c62828;font:800 5.4mm/1 "Baloo Bhaina 2";text-align:center;text-shadow:0 .4mm 0 #f3d27a}
+.rule{height:.6mm;background:linear-gradient(90deg,transparent,#b8862f 15%,#f6dc8c 50%,#b8862f 85%,transparent)}
+.dia{width:3.2mm;height:3.2mm;transform:rotate(45deg);background:#c62828;box-shadow:0 0 0 .4mm #f3d27a}
+#datebox{left:122.5mm;top:141mm;width:52mm;height:10mm;border-radius:5mm;background:#fffdf6;box-shadow:0 .6mm 1.6mm rgba(0,0,0,.25),0 0 0 .5mm #c99a3a,0 0 0 .9mm #7a0e12}
+.pill{width:32mm;height:8mm;border-radius:4mm;background:linear-gradient(180deg,#ff5a4a,#c8161b 50%,#8e0a0e);color:#fff;
+  font:700 3.6mm/8mm "Baloo Bhaina 2";text-align:center;box-shadow:0 .6mm 1.4mm rgba(0,0,0,.4),0 0 0 .4mm #f3d27a;text-shadow:0 .4mm 0 #5a0508}
+.sline{height:.45mm;width:42mm;background:#7a0e12}
+/* medal */
+#medal{left:44mm;top:80mm;width:28mm;height:28mm}
+.rb{top:98mm;width:7mm;height:20mm}
+#qrbox{left:211mm;top:139mm;width:20mm;height:20mm;border-radius:1.2mm;background:#fff;box-shadow:0 .6mm 1.6mm rgba(0,0,0,.3),0 0 0 .5mm #c99a3a}
+</style></head><body>
+<div id="pg">
+  <div class="abs" id="paddy"></div><div class="abs" id="warm"></div>
+  <div class="abs" id="dancer"></div><div class="abs" id="drum"></div><div class="abs" id="vig"></div>
+  <div class="abs bokeh" style="left:70mm;top:14mm;width:9mm;height:9mm"></div>
+  <div class="abs bokeh" style="left:224mm;top:10mm;width:6mm;height:6mm"></div>
+  <div class="abs bokeh" style="left:190mm;top:4mm;width:12mm;height:12mm;opacity:.7"></div>
+  <div class="abs bokeh" style="left:95mm;top:30mm;width:5mm;height:5mm"></div>
+  <div class="abs bokeh" style="left:40mm;top:150mm;width:8mm;height:8mm;opacity:.6"></div>
+  <div class="abs bokeh" style="left:252mm;top:165mm;width:10mm;height:10mm;opacity:.6"></div>
+
+  <div class="abs" id="om">ଓଁ ଓଁ ଶ୍ରୀ ଗଣେଶାୟ ନମଃ</div>
+  <div class="abs ttl" id="t-back">ନୂଆଖାଇ ଭେଟ୍‌ଘାଟ୍</div>
+  <div class="abs ttl" id="t-front">ନୂଆଖାଇ ଭେଟ୍‌ଘାଟ୍</div>
+  <div class="abs ttl" id="t-shine">ନୂଆଖାଇ ଭେଟ୍‌ଘାଟ୍</div>
+  <div class="abs" id="yr"></div>
+
+  <div class="abs badge" style="left:21mm;top:15mm;width:24mm;height:24mm"></div>
+  <div class="abs badge" style="left:252mm;top:15mm;width:24mm;height:24mm;background:radial-gradient(circle,#fff6d8,#ffe08a 70%,#f2a900)"></div>
+
+  <div class="abs" id="panel"></div>
+    <div class="abs dia" style="left:61.4mm;top:52.4mm;background:#c99a3a"></div><div class="abs dia" style="left:232.4mm;top:52.4mm;background:#c99a3a"></div><div class="abs dia" style="left:61.4mm;top:188.4mm;background:#c99a3a"></div><div class="abs dia" style="left:232.4mm;top:188.4mm;background:#c99a3a"></div>
+  <div class="abs tail" id="tl"></div><div class="abs tail" id="tr"></div>
+  <div class="abs" id="rib">ଯୋଗ୍ୟତା ପ୍ରମାଣ ପତ୍ର</div>
+  <div class="abs lbl" style="left:58mm;width:181mm;top:83.3mm">ମାଏନ୍ତା ଶ୍ରୀ / କୁମାରୀ</div>
+  <div class="abs rule" style="left:88mm;width:121mm;top:103.4mm"></div>
+  <div class="abs dia" style="left:146.9mm;top:102.2mm"></div>
+  <div class="abs jai" style="left:58mm;width:181mm;top:130mm">ଜଏ କୋଶଲ ।</div>
+  <div class="abs" id="datebox"></div>
+  <div class="abs" id="qrbox"></div>
+
+  <!-- medal -->
+  <div class="abs rb" style="left:50mm;background:linear-gradient(#d32f2f,#7a0e12);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:rotate(14deg)"></div>
+  <div class="abs rb" style="left:59mm;background:linear-gradient(#222,#000);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:rotate(-14deg)"></div>
+  <svg class="abs" id="medal" viewBox="0 0 28 28"><defs>
+    <radialGradient id="mr"><stop offset="0" stop-color="#e53935"/><stop offset="1" stop-color="#6e0f14"/></radialGradient>
+    <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a5a12"/><stop offset=".45" stop-color="#ffe9a3"/><stop offset="1" stop-color="#8a5a12"/></linearGradient></defs>
+    <polygon id="st" fill="url(#mg)" points=""/>
+    <circle cx="14" cy="14" r="10" fill="url(#mr)" stroke="#ffe082" stroke-width=".5"/>
+    <circle cx="14" cy="14" r="8.8" fill="none" stroke="#ffe082" stroke-width=".25" stroke-dasharray=".6 .5"/>
+  </svg>
+
+  <div class="abs sline" style="left:68mm;top:176mm"></div>
+  <div class="abs sline" style="left:127.5mm;top:176mm"></div>
+  <div class="abs sline" style="left:187mm;top:176mm"></div>
+  <div class="abs pill" style="left:73mm;top:178.5mm">ସଭାପତି</div>
+  <div class="abs pill" style="left:132.5mm;top:178.5mm">ମୁଖ୍ୟ ଅତିଥି</div>
+  <div class="abs pill" style="left:192mm;top:178.5mm">ସଂଯୋଜକ</div>
+
+  <div class="abs ikat b-t"></div><div class="abs ikat b-b"></div><div class="abs ikat b-l"></div><div class="abs ikat b-r"></div>
+  <div class="abs redline"></div>
+  <div class="abs goldline"></div>
+</div>
+<script>
+const pts=[];for(let i=0;i<48;i++){const r=i%2?11.5:13.6,a=Math.PI*i/24-Math.PI/2;pts.push((14+r*Math.cos(a)).toFixed(2)+','+(14+r*Math.sin(a)).toFixed(2))}
+document.getElementById('st').setAttribute('points',pts.join(' '));
+document.fonts.ready.then(()=>{window.done=true});
+</script>
+</body></html>

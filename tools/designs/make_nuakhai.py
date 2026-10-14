@@ -66,88 +66,38 @@ def paddy(p, x, y, s=1.0, flip=1):
     p.rect(x - 2.4 * s, y - 2.2 * s, 4.8 * s, 2.2 * s, r=0.5, f=RED)
 
 
-def nuakhai(watermark):
+def nuakhai(bg):
+    """Photo-rich layout: the artwork is one 300 dpi image (made from
+    nuakhai_bg.html); only the changing details are drawn on top."""
     p = Page(prefix='nk')
-    p.rect(0, 0, 297, 210, f=CREAM)
-    # photo watermark + soft cream glow so text stays readable
-    p.img(9, 9, 279, 192, watermark, fit='cover', op=0.95)
-    p.add('ellipse', 6, 30, 285, 178, f={'g': 'rad', 's': [[0, 'rgba(255,250,238,0.9)'], [0.45, 'rgba(255,250,238,0.78)'], [0.75, 'rgba(255,250,238,0.4)'], [1, 'rgba(255,250,238,0)']]})
-    # Sambalpuri border: red, black ikat band, gold rule
-    p.frame(0, 0, 297, 210, 3, RED)
-    p.frame(3, 3, 291, 204, 6, BLACK)
-    ikat_band_h(p, 8, 289, 6, '#FFFFFF', RED2)
-    ikat_band_h(p, 8, 289, 204, '#FFFFFF', RED2)
-    ikat_band_v(p, 13, 197, 6, RED2, '#FFFFFF')
-    ikat_band_v(p, 13, 197, 291, RED2, '#FFFFFF')
-    p.frame(9, 9, 279, 192, 1.2, GOLD)
-    p.rect(11.5, 11.5, 274, 187, s='rgba(122,14,18,0.5)', sw=0.25, dash=[1, 0.8])
-    sash(p, 10.2, 10.2, 1, 1)
-    sash(p, 286.8, 199.8, -1, -1)
-
-    # invocation + title
-    p.text(70, 13, 157, 7, 'ଓଁ ଓଁ ଶ୍ରୀ ଗଣେଶାୟ ନମଃ', 3.8, font='Noto Serif Oriya', wt=700, c=MAROON, al='center')
-    p.text(70, 19, 157, 21, 'ନୂଆଖାଇ ଭେଟ୍‌ଘାଟ୍', 13.5, font='Baloo Bhaina 2', wt=800,
-           c={'g': 'lin', 'a': 90, 's': [[0, RED2], [1, '#8E0E0E']]}, al='center', min=0.5)
-    p.text(186, 37, 44, 9, '{{session}}', 6.0, font='Baloo Bhaina 2', wt=800, c=MAROON, al='right', min=0.5)
-    # Ganesha medallion, top right
-    p.circle(252, 33, 16.5, f=GOLD, sh=1.0)
-    p.circle(252, 33, 14.8, f={'g': 'rad', 's': [[0, '#FFF6D8'], [0.7, '#FFE08A'], [1, '#F2A900']]}, s=MAROON, sw=0.6)
-    ganesha(p, 252, 34.5, 0.46)
-    # logo, top left (inside the sash corner)
-    p.circle(66, 30, 9.5, f='#FFFFFF', s='#B8862F', sw=0.7, sh=0.6)
-    p.img(58.5, 22.5, 15, 15, '{{logo}}', fit='contain', shape='circle')
+    p.rect(0, 0, 297, 210, f='#3A1606')
+    p.img(0, 0, 297, 210, bg, fit='cover')
+    # logo + Ganesha in the two round badges
+    p.img(23.5, 17.5, 19, 19, '{{logo}}', fit='contain', shape='circle')
+    ganesha(p, 264, 28.6, 0.42)
+    p.text(209, 36.5, 30, 10, '{{session}}', 5.4, font='Baloo Bhaina 2', wt=800, c='#FFE082', al='center', va='middle', min=0.5)
     # committee
-    p.text(40, 46.5, 217, 8, '{{org_name}}', 5.0, font='Baloo Bhaina 2', wt=700, c=INK, al='center', min=0.5)
-    p.text(40, 54.5, 217, 6, '{{org_address}}', 3.6, font='Noto Sans Oriya', wt=600, c='#5A3A20', al='center', min=0.6)
-    # ribbon: Yogyata Praman Patra
-    for sx in (-1, 1):
-        x = CX + sx * 52
-        p.poly([(x, 64.5), (x + sx * 11, 64.5), (x + sx * 7, 69.5), (x + sx * 11, 74.5), (x, 74.5)], f='#8E0E0E')
-    p.rect(CX - 52, 62, 104, 14, r=7, f={'g': 'lin', 'a': 90, 's': [[0, RED2], [1, '#9B0F14']]}, s=BLACK, sw=0.6, sh=0.8)
-    p.rect(CX - 49.5, 63.6, 99, 10.8, r=5.4, s='#FFD54F', sw=0.35)
-    p.text(CX - 48, 62.6, 96, 13, 'ଯୋଗ୍ୟତା ପ୍ରମାଣ ପତ୍ର', 6.6, font='Baloo Bhaina 2', wt=800, c='#FFFFFF', al='center', va='middle')
-
-    # body
-    p.text(40, 80, 217, 7, 'ମାଏନ୍ତା ଶ୍ରୀ / କୁମାରୀ', 4.2, font='Noto Serif Oriya', wt=600, c=INK, al='center')
-    p.text(40, 86.5, 217, 14, '{{name}}', 9.0, font='Baloo Bhaina 2', wt=800, c=RED, al='center', min=0.5)
-    p.rect(88, 101, 121, 0.5, f=GOLD)
-    p.diamond(CX, 101.25, 2.0, 1.4, f=RED)
-    p.text(64, 104.5, 169, 26, '{{course}} ପ୍ରତିଯୋଗିତାରେ {{grade}} ଠାନ୍ ପାଇଛନ୍ । ଇତିର୍ ଲାଗି ଆମର୍ କମିଟି ତରଫ୍ ତାହାକୁ ଧନ୍ୟବାଦ୍ ଜଣଉଛୁ । ଆଏବା ଦିନ୍ ବେ ସେ ଏନ୍ତା ଆଉର୍ ଭି ପରତିଭାଥି ଆହୁରି ଆଗ୍‌କେ ଯିବେ ଆର୍ ନାଁ କରବେ ।',
-           4.3, font='Noto Serif Oriya', c=INK, al='center', lines=4, lh=1.55, min=0.7)
-    p.text(40, 130.5, 217, 8, 'ଜଏ କୋଶଲ ।', 5.0, font='Baloo Bhaina 2', wt=800, c=RED, al='center')
-
-    # position medal (left) and competition chip (right)
-    for sx in (-1, 1):
-        p.poly([(44 + sx * 2, 101), (44 + sx * 7, 116), (44 + sx * 4.3, 114.3), (44 + sx * 2.4, 117.5), (44 + sx * 0.2, 103)], f=RED if sx < 0 else BLACK)
-    p.star(44, 94, 12.5, 10.8, 24, f=GOLD, sh=0.8)
-    p.circle(44, 94, 9.6, f={'g': 'rad', 's': [[0, '#D32F2F'], [1, MAROON]]}, s='#FFE082', sw=0.5)
-    p.text(34, 87.5, 20, 9, '{{grade}}', 5.0, font='Baloo Bhaina 2', wt=800, c='#FFE082', al='center', min=0.45)
-    p.text(34, 96, 20, 5, 'ଠାନ୍', 3.0, font='Noto Sans Oriya', wt=700, c='#FFFFFF', al='center')
-    paddy(p, 252, 112, 0.9, -1)
-
-    # date + QR
-    p.rect(CX - 26, 143, 52, 10, r=5, f='#FFFDF5', s='#B8862F', sw=0.6)
-    p.text(CX - 25, 143.6, 50, 9, 'ତାରିଖ: {{cert_date}}', 3.8, font='Noto Sans Oriya', wt=700, c=MAROON, al='center', va='middle', min=0.6)
-    p.rect(19, 146, 20, 20, r=1, f='#FFFFFF', s='#B8862F', sw=0.5)
-    p.qr(20.5, 147.5, 17, c=BLACK, bg='#FFFFFF')
-    p.text(11, 166.5, 38, 4, 'No. {{id_no}}', 2.3, font='Montserrat', wt=700, c=MAROON, al='center')
-
-    # three signatures with red pill labels
-    for i, label in enumerate(['ସଭାପତି', 'ମୁଖ୍ୟ ଅତିଥି', 'ସଂଯୋଜକ']):
-        x = [72, CX, 225][i]
-        if i == 0:
-            p.img(x - 18, 163, 36, 11, '{{sign}}', fit='contain')
-        p.rect(x - 20, 175, 40, 0.45, f=MAROON)
-        p.rect(x - 15, 177.5, 30, 8, r=4, f={'g': 'lin', 'a': 90, 's': [[0, RED2], [1, '#9B0F14']]}, s='#FFFFFF', sw=0.5, sh=0.5)
-        p.text(x - 15, 177.6, 30, 7.8, label, 3.6, font='Baloo Bhaina 2', wt=700, c='#FFFFFF', al='center', va='middle')
-
+    p.text(66, 52.3, 165, 8, '{{org_name}}', 5.0, font='Baloo Bhaina 2', wt=800, c=MAROON, al='center', min=0.5)
+    p.text(66, 60.2, 165, 5, '{{org_address}}', 3.4, font='Noto Sans Oriya', wt=600, c='#5A3A20', al='center', min=0.6)
+    # person
+    p.text(66, 89, 165, 14, '{{name}}', 9.2, font='Baloo Bhaina 2', wt=800, c=RED, al='center', min=0.5)
+    p.text(68, 106.5, 161, 23, '{{course}} ପ୍ରତିଯୋଗିତାରେ {{grade}} ଠାନ୍ ପାଇଛନ୍ । ଇତିର୍ ଲାଗି ଆମର୍ କମିଟି ତରଫ୍ ତାହାକୁ ଧନ୍ୟବାଦ୍ ଜଣଉଛୁ । ଆଏବା ଦିନ୍ ବେ ସେ ଏନ୍ତା ଆଉର୍ ଭି ପରତିଭାଥି ଆହୁରି ଆଗ୍‌କେ ଯିବେ ଆର୍ ନାଁ କରବେ ।',
+           4.2, font='Noto Serif Oriya', c=INK, al='center', lines=4, lh=1.55, min=0.7)
+    # position in the medal
+    p.text(48.5, 87.6, 19, 8.5, '{{grade}}', 4.8, font='Baloo Bhaina 2', wt=800, c='#FFE082', al='center', va='middle', min=0.45)
+    p.text(48.5, 95.6, 19, 5, 'ଠାନ୍', 2.9, font='Noto Sans Oriya', wt=700, c='#FFFFFF', al='center')
+    # date, QR, signature
+    p.text(124, 141, 49, 10, 'ତାରିଖ: {{cert_date}}', 3.8, font='Noto Sans Oriya', wt=700, c=MAROON, al='center', va='middle', min=0.6)
+    p.qr(212.5, 140.5, 17, c=BLACK, bg='#FFFFFF')
+    p.text(201, 159.8, 40, 4, 'No. {{id_no}}', 2.3, font='Montserrat', wt=700, c=MAROON, al='center')
+    p.img(71, 164, 36, 11.5, '{{sign}}', fit='contain')
     targets = [['cert-festival', 'nuakhai'], ['cert-festival', 'festival'], ['cert-competition', 'winner'], ['cert-competition', 'participant']]
-    return design('Nuakhai Bhetghat · Sambalpuri', 'premium', targets, landscape={'front': p.side(CREAM), 'back': blank()})
+    return design('Nuakhai Bhetghat · Photo', 'premium', targets, landscape={'front': p.side('#3A1606'), 'back': blank()})
 
 
 if __name__ == '__main__':
     out = sys.argv[1]
-    wm = sys.argv[2] if len(sys.argv) > 2 else 'WATERMARK_IMAGE_URL'
+    wm = sys.argv[2] if len(sys.argv) > 2 else 'BACKGROUND_IMAGE_URL'
     os.makedirs(out, exist_ok=True)
     d = nuakhai(wm)
     json.dump(d, open(os.path.join(out, 'nuakhai.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
