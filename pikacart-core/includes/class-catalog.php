@@ -131,7 +131,20 @@ class PKC_Catalog {
 					continue;
 				}
 				$slug = $base . '-' . $sub->id;
-				if ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE slug = %s", $slug ) ) ) {
+				$found = $wpdb->get_row( $wpdb->prepare( "SELECT id, source FROM $table WHERE slug = %s", $slug ) );
+				if ( $found ) {
+					// A plugin update can improve a built-in design: refresh it in place.
+					if ( 'builtin' === $found->source ) {
+						$wpdb->update(
+							$table,
+							array(
+								'name'       => sanitize_text_field( $d['name'] ?? 'Certificate' ),
+								'layout'     => wp_json_encode( $d['layout'] ),
+								'updated_at' => $now,
+							),
+							array( 'id' => (int) $found->id )
+						);
+					}
 					continue;
 				}
 				$wpdb->insert(
