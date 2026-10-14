@@ -23,10 +23,11 @@ html,body{margin:0;padding:0;background:#fff}
   border-image:linear-gradient(135deg,#8a5a12,#f6dc8c 25%,#b8862f 50%,#fff1b8 75%,#8a5a12) 1}
 /* panel */
 #panel{left:58mm;top:49mm;width:181mm;height:146mm;border-radius:3.5mm;
-  background:radial-gradient(120% 90% at 50% 30%,#fffdf6,#fbf0d6 70%,#f1dfb2);
-  box-shadow:0 2.5mm 7mm rgba(40,8,0,.55),0 0 0 .9mm #c99a3a,0 0 0 1.6mm #7a0e12,0 0 0 2.3mm #f3d27a}
-#panel:before{content:"";position:absolute;inset:2.2mm;border:.25mm solid rgba(122,14,18,.55);border-radius:2.2mm}
-#panel:after{content:"";position:absolute;inset:0;border-radius:3.5mm;opacity:.07;
+  background:radial-gradient(120% 95% at 50% 40%,rgba(255,253,246,.80),rgba(255,248,232,.62) 70%,rgba(255,244,222,.50));
+  -webkit-backdrop-filter:blur(1.6mm) saturate(1.1);backdrop-filter:blur(1.6mm) saturate(1.1);
+  box-shadow:0 0 5mm 1.5mm rgba(255,255,255,.75),0 0 12mm 3mm rgba(255,255,255,.35),0 0 0 .7mm rgba(243,210,122,.95),inset 0 0 6mm rgba(255,255,255,.6)}
+#panel:before{content:"";position:absolute;inset:2.2mm;border:.25mm solid rgba(122,14,18,.35);border-radius:2.2mm}
+#panel:after{content:"";position:absolute;inset:0;border-radius:3.5mm;opacity:.04;
   background:repeating-radial-gradient(circle at 50% 55%,#8a5a12 0 .25mm,transparent .25mm 3mm)}
 .corner{width:16mm;height:16mm}
 /* title */
