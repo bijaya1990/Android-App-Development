@@ -1,0 +1,112 @@
+@font-face { font-family: "NotoSerifDeva"; font-weight: 400;
+  src: url("../fonts/noto-serif-devanagari-devanagari-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "NotoSerifDeva"; font-weight: 700;
+  src: url("../fonts/noto-serif-devanagari-devanagari-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "NotoSansDeva"; font-weight: 400;
+  src: url("../fonts/noto-sans-devanagari-devanagari-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "NotoSansDeva"; font-weight: 700;
+  src: url("../fonts/noto-sans-devanagari-devanagari-700-normal.woff2") format("woff2"); }
+
+:root {
+  --ink: #2a211b;
+  --muted: #6f6157;
+  --paper: #fffdf9;
+  --ember: #b5471b;
+  --ember-soft: #f6e3d6;
+  --leaf: #3f8f3a;
+  --leaf-soft: #e6f2e2;
+  --stone: #efe9e2;
+  --rule: #ddd2c7;
+  --src: #2f6a8f;  --src-bg: #e3eff6;
+  --int: #7a5a12;  --int-bg: #f7eed6;
+  --fic: #8a2f5b;  --fic-bg: #f6e2ec;
+  --unc: #555;     --unc-bg: #ececec;
+}
+
+html { background: var(--paper); }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Bitstream Charter", "Caladea", "NotoSerifDeva", serif;
+  font-size: 9.6pt;
+  line-height: 1.45;
+  hyphens: auto;
+  orphans: 3; widows: 3;
+}
+[lang="hi"], .hi { font-family: "NotoSerifDeva", "Bitstream Charter", serif; }
+
+h1, h2, h3, h4 { font-family: "Inter", "NotoSansDeva", sans-serif; color: var(--ink);
+  line-height: 1.2; break-after: avoid; }
+h1 { break-before: page; font-size: 19pt; font-weight: 800; margin: 0 0 4pt;
+  padding-bottom: 6pt; border-bottom: 2.5pt solid var(--ember); letter-spacing: -0.2pt; }
+h1 + p em:only-child { color: var(--muted); }
+h2 { font-size: 12.5pt; font-weight: 700; margin: 16pt 0 5pt; color: var(--ember); }
+h3 { font-size: 10.5pt; font-weight: 700; margin: 12pt 0 4pt; }
+h4 { font-size: 9.6pt; font-weight: 700; margin: 9pt 0 3pt; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.4pt; }
+.mk { font-size: 1px; color: var(--paper); }
+
+p { margin: 0 0 6pt; }
+ul, ol { margin: 0 0 7pt; padding-left: 15pt; }
+li { margin-bottom: 2pt; }
+a { color: var(--src); text-decoration: none; word-break: break-all; }
+strong { font-weight: 700; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 12pt 0; }
+blockquote { margin: 6pt 0; padding: 5pt 9pt; background: var(--stone);
+  border-left: 3pt solid var(--ember); border-radius: 2pt; }
+blockquote p:last-child { margin: 0; }
+code { font-family: "JetBrains Mono", monospace; font-size: 8pt; background: var(--stone);
+  padding: 0 2pt; border-radius: 2pt; }
+
+table { width: 100%; border-collapse: collapse; margin: 4pt 0 9pt; font-size: 8.2pt;
+  line-height: 1.3; break-inside: auto; }
+th { font-family: "Inter", sans-serif; font-weight: 700; text-align: left;
+  background: var(--ember-soft); border-bottom: 1.2pt solid var(--ember); padding: 3pt 4pt; }
+td { border-bottom: 0.6pt solid var(--rule); padding: 3pt 4pt; vertical-align: top; }
+tr { break-inside: avoid; }
+
+.tag { font-family: "Inter", sans-serif; font-size: 6.4pt; font-weight: 700; letter-spacing: 0.4pt;
+  padding: 0.5pt 3.5pt; border-radius: 6pt; white-space: nowrap; vertical-align: 1pt; }
+.tag.src { color: var(--src); background: var(--src-bg); }
+.tag.int { color: var(--int); background: var(--int-bg); }
+.tag.fic { color: var(--fic); background: var(--fic-bg); }
+.tag.unc { color: var(--unc); background: var(--unc-bg); }
+
+/* Contents */
+.toc { margin-top: 8pt; }
+.toc-row { display: flex; align-items: baseline; gap: 4pt; font-family: "Inter", sans-serif;
+  font-size: 9pt; padding: 3pt 0; }
+.toc-row .dots { flex: 1; border-bottom: 0.8pt dotted var(--rule); }
+
+/* Scenes */
+section.scene { border-top: 1.5pt solid var(--leaf);
+  padding-top: 5pt; margin-top: 12pt; }
+section.scene h3 { margin-top: 0; color: var(--leaf); font-size: 10pt; letter-spacing: 0.3pt; }
+section.scene p { margin-bottom: 4pt; }
+.dialogue, section.scene h3 + p { break-inside: avoid; }
+.prompt { margin: 3pt 0 6pt; border: 0.8pt solid var(--rule); border-radius: 3pt;
+  break-inside: avoid; }
+.prompt .plabel { font-family: "Inter", sans-serif; font-size: 6.6pt; font-weight: 700;
+  letter-spacing: 0.5pt; padding: 2pt 6pt; border-bottom: 0.8pt solid var(--rule); }
+.prompt.image .plabel { background: var(--leaf-soft); color: #2d6a2a; }
+.prompt.video .plabel { background: var(--ember-soft); color: var(--ember); }
+.prompt pre { margin: 0; padding: 5pt 6pt; white-space: pre-wrap; word-wrap: break-word;
+  font-family: "JetBrains Mono", "NotoSansDeva", monospace; font-size: 7.4pt; line-height: 1.42;
+  background: #fbf8f4; }
+.dialogue { margin: 3pt 0 6pt; padding: 4pt 8pt; background: var(--leaf-soft);
+  border-left: 3pt solid var(--leaf); border-radius: 2pt; font-size: 10.2pt; line-height: 1.55; }
+.dialogue p { margin: 0 0 2pt; }
+.dl-sp { font-weight: 700; color: #2d6a2a; }
+.dl-note { font-family: "Inter", sans-serif; font-size: 8pt; color: var(--muted); font-style: italic; }
+
+/* Boxes */
+.box { border: 1pt solid var(--rule); background: var(--stone); padding: 7pt 9pt;
+  border-radius: 3pt; margin: 6pt 0 9pt; break-inside: avoid; }
+.box.warn { background: #fdf1e7; border-color: #e9c3a6; }
+.box p:last-child, .box ul:last-child { margin-bottom: 0; }
+.lock { border-left: 3pt solid var(--leaf); background: var(--leaf-soft); }
+.small { font-size: 8.2pt; color: var(--muted); }
+
+.field-block { break-inside: avoid; }
+.field-block > p { margin-bottom: 2pt; }

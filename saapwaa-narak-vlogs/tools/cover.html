@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Cover</title>
+<style>
+@font-face { font-family: "NotoSansDeva"; font-weight: 700;
+  src: url("../fonts/noto-sans-devanagari-devanagari-700-normal.woff2") format("woff2"); }
+html, body { margin: 0; padding: 0; background: #1d0f0c; }
+.page { width: 6in; height: 9in; position: relative; overflow: hidden; }
+svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.t { position: absolute; left: 0; right: 0; text-align: center; color: #fff4e3;
+  font-family: Inter, sans-serif; }
+.kicker { top: 0.42in; font-size: 9pt; letter-spacing: 3pt; font-weight: 600; color: #f3b27a; }
+.title { top: 0.68in; font-size: 33pt; font-weight: 900; line-height: 1; letter-spacing: -0.5pt;
+  text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+.hindi { top: 1.7in; font-family: "NotoSansDeva", sans-serif; font-size: 17pt; font-weight: 700;
+  color: #ffd27a; }
+.sub { bottom: 0.72in; background: linear-gradient(transparent, rgba(20,8,6,.75) 35%); padding-top: 10pt; padding-bottom: 6pt; font-size: 10.5pt; font-weight: 600; padding-left: 0.6in; padding-right: 0.6in; line-height: 1.35;
+  text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+.foot { bottom: 0.35in; font-size: 7.5pt; letter-spacing: 1.5pt; color: #e8a878; font-weight: 600; }
+</style></head>
+<body><div class="page">
+<svg viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a0f10"/><stop offset=".45" stop-color="#6b2416"/>
+      <stop offset=".75" stop-color="#b8521f"/><stop offset="1" stop-color="#3a1810"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffcf73" stop-opacity=".9"/><stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="stripes" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <rect width="16" height="16" fill="#f7f3ee"/><rect width="8" height="16" fill="#d8262e"/>
+    </pattern>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ed957"/><stop offset="1" stop-color="#4ea83a"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="900" fill="url(#sky)"/>
+  <!-- distant cliffs -->
+  <path d="M0 520 L60 470 L120 500 L170 430 L240 480 L300 440 L360 485 L430 420 L500 470 L560 440 L600 470 L600 900 L0 900Z" fill="#3b1a14" opacity=".85"/>
+  <!-- near cliffs with cave homes -->
+  <path d="M0 600 L40 560 L90 575 L130 520 L150 600 L0 660Z" fill="#2a1410"/>
+  <path d="M600 590 L560 545 L520 560 L480 505 L455 600 L600 650Z" fill="#2a1410"/>
+  <g fill="#ffb347">
+    <rect x="58" y="585" width="16" height="20" rx="8"/><rect x="100" y="560" width="12" height="16" rx="6"/>
+    <rect x="520" y="575" width="16" height="22" rx="8"/><rect x="488" y="545" width="11" height="15" rx="5"/>
+  </g>
+  <!-- torches -->
+  <g>
+    <circle cx="150" cy="560" r="40" fill="url(#glow)"/><rect x="146" y="562" width="8" height="70" fill="#4a2a18"/>
+    <path d="M150 530 C140 548 142 560 150 566 C158 560 160 548 150 530Z" fill="#ffcc55"/>
+    <circle cx="455" cy="560" r="40" fill="url(#glow)"/><rect x="451" y="562" width="8" height="70" fill="#4a2a18"/>
+    <path d="M455 530 C445 548 447 560 455 566 C463 560 465 548 455 530Z" fill="#ffcc55"/>
+  </g>
+  <!-- ground and stone path -->
+  <path d="M0 680 Q300 630 600 680 L600 900 L0 900Z" fill="#4a2318"/>
+  <path d="M210 900 Q260 760 300 690 Q340 760 390 900Z" fill="#6b3a26"/>
+  <g fill="#8a5236" opacity=".8">
+    <ellipse cx="300" cy="720" rx="30" ry="8"/><ellipse cx="290" cy="760" rx="40" ry="10"/>
+    <ellipse cx="312" cy="810" rx="50" ry="12"/><ellipse cx="296" cy="868" rx="62" ry="14"/>
+  </g>
+  <!-- ember motes -->
+  <g fill="#ffcf73" opacity=".7">
+    <circle cx="80" cy="300" r="2"/><circle cx="520" cy="340" r="2.5"/><circle cx="450" cy="250" r="1.6"/>
+    <circle cx="140" cy="420" r="1.8"/><circle cx="560" cy="460" r="1.5"/><circle cx="40" cy="470" r="2"/>
+  </g>
+
+  <!-- SAAPWAA -->
+  <g transform="translate(0,20)">
+    <!-- shadow -->
+    <ellipse cx="300" cy="790" rx="150" ry="22" fill="#000" opacity=".35"/>
+    <!-- backpack (behind neck) -->
+    <rect x="318" y="470" width="78" height="92" rx="20" fill="#7a4a26"/>
+    <rect x="328" y="508" width="58" height="34" rx="10" fill="#5e3619"/>
+    <rect x="352" y="470" width="10" height="20" rx="4" fill="#5e3619"/>
+    <!-- coiled body -->
+    <path d="M300 470 C300 560 210 570 205 650 C200 730 300 770 380 745 C450 720 450 650 385 640 C330 632 300 670 330 700"
+          fill="none" stroke="url(#body)" stroke-width="58" stroke-linecap="round"/>
+    <!-- belly stripe on the front curve -->
+    <path d="M280 500 C272 560 222 585 222 650" fill="none" stroke="#f3e2a2" stroke-width="20" stroke-linecap="round"/>
+    <!-- tail going right to selfie stick -->
+    <path d="M410 700 C470 690 490 640 482 590" fill="none" stroke="url(#body)" stroke-width="26" stroke-linecap="round"/>
+    <!-- spots -->
+    <g fill="#2f7a2a" opacity=".85">
+      <ellipse cx="330" cy="760" rx="10" ry="7"/><ellipse cx="390" cy="735" rx="9" ry="6"/>
+      <ellipse cx="425" cy="680" rx="8" ry="6"/><ellipse cx="205" cy="690" rx="8" ry="10"/>
+      <ellipse cx="255" cy="745" rx="9" ry="7"/><ellipse cx="320" cy="545" rx="7" ry="9"/>
+      <ellipse cx="470" cy="660" rx="6" ry="5"/><ellipse cx="350" cy="660" rx="7" ry="5"/>
+    </g>
+    <!-- selfie stick + phone -->
+    <line x1="482" y1="595" x2="508" y2="440" stroke="#c9a46a" stroke-width="7" stroke-linecap="round"/>
+    <rect x="486" y="380" width="52" height="88" rx="9" fill="#1b1b22" transform="rotate(10 512 424)"/>
+    <circle cx="514" cy="398" r="5" fill="#4a5a7a" transform="rotate(10 512 424)"/>
+    <!-- scarf -->
+    <path d="M250 455 C280 478 325 478 352 455 L356 482 C326 506 276 506 246 482Z" fill="url(#stripes)" stroke="#a81c22" stroke-width="2"/>
+    <path d="M262 485 L240 560 L272 552 L288 492Z" fill="url(#stripes)" stroke="#a81c22" stroke-width="2"/>
+    <!-- head -->
+    <ellipse cx="300" cy="390" rx="92" ry="78" fill="url(#body)"/>
+    <ellipse cx="256" cy="350" rx="9" ry="7" fill="#2f7a2a" opacity=".8"/>
+    <ellipse cx="350" cy="342" rx="8" ry="6" fill="#2f7a2a" opacity=".8"/>
+    <ellipse cx="305" cy="322" rx="7" ry="5" fill="#2f7a2a" opacity=".8"/>
+    <!-- snout -->
+    <ellipse cx="300" cy="428" rx="60" ry="34" fill="#f3e2a2"/>
+    <circle cx="286" cy="418" r="3" fill="#6a5a2a"/><circle cx="314" cy="418" r="3" fill="#6a5a2a"/>
+    <!-- smile and fangs -->
+    <path d="M262 438 Q300 470 340 436" fill="none" stroke="#5a2a1a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M284 449 L289 462 L294 451Z" fill="#fff"/><path d="M308 451 L313 462 L318 448Z" fill="#fff"/>
+    <!-- eyes -->
+    <ellipse cx="262" cy="372" rx="28" ry="32" fill="#fff"/><ellipse cx="338" cy="372" rx="28" ry="32" fill="#fff"/>
+    <circle cx="268" cy="378" r="17" fill="#7a4a1f"/><circle cx="344" cy="378" r="17" fill="#7a4a1f"/>
+    <circle cx="270" cy="380" r="8" fill="#1a0f08"/><circle cx="346" cy="380" r="8" fill="#1a0f08"/>
+    <circle cx="275" cy="371" r="5" fill="#fff"/><circle cx="351" cy="371" r="5" fill="#fff"/>
+    <!-- one raised eyebrow: mischief -->
+    <path d="M238 334 Q262 322 284 336" fill="none" stroke="#2f6a26" stroke-width="5" stroke-linecap="round"/>
+    <path d="M318 330 Q342 312 364 326" fill="none" stroke="#2f6a26" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>
+<div class="t kicker">THE COMPLETE PRODUCTION HANDBOOK</div>
+<div class="t title">SAAPWAA’S<br>NARAK VLOGS</div>
+<div class="t hindi">सापवा के नरक व्लॉग्स</div>
+<div class="t sub">The Complete Guide to Exploring Narak with Comedy<br>
+<span style="font-weight:500;font-size:8.5pt;color:#f3c9a0">Source-checked mythology · original comedy · AI image &amp; video prompts</span></div>
+<div class="t foot">PRODUCTION BATCH 1 · WORK IN PROGRESS</div>
+</div></body></html>
