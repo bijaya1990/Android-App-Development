@@ -1,0 +1,182 @@
+## 6 | Hunting One Bar of Signal
+- CAVE | selfie | Zero Bars
+  A: He holds the phone up high on its stick, shakes it, squints at the screen and sighs heavily.
+  S: वेट गाइज, नेटवर्क फिर गायब। यहाँ सिग्नल भी किसी और गुफा में रहता है।
+- LANE | walk | Signal Dowsing
+  A: He slithers slowly with the phone held high on its stick, swaying it left and right like a water diviner.
+  S: पुराने लोग पानी ढूँढते थे, मैं सिग्नल ढूँढ रहा हूँ। तरीका वही, बस इज़्ज़त कम।
+- STEPS | walk | The Climb
+  A: He climbs the cliff steps one coil at a time, panting, the phone held high above his head.
+  S: बस एक डंडा चाहिए… एक डंडा… और थोड़ी ऑक्सीजन।
+- SIGNAL | selfie | One Bar!
+  A: At the top he sees one bar, gasps, and freezes completely still in an awkward twisted pose.
+  S: एक डंडा आया! कोई हिलना मत… मैं भी नहीं हिलूँगा।
+- SIGNAL | selfie | Uploading
+  A: He holds his frozen pose, sweating, as the wind blows his scarf across his face; he refuses to move.
+  S: अपलोड हो रहा है… एक परसेंट… हवा, प्लीज़, अभी नहीं।
+- SIGNAL | selfie | The Time Maths
+  A: He counts on his tail tip, lips moving, and his eyes grow slowly wider.
+  S: किताब में लिखा है, नरक का एक दिन धरती के सौ साल। मैं ग्यारह दिन से यहाँ हूँ… मतलब?
+- SIGNAL | selfie | Followers Panic
+  A: He clutches his face with his tail in shock, then stares into the lens.
+  S: ग्यारह सौ साल! मेरे फ़ॉलोअर्स तो अब परदादा बन चुके होंगे।
+- SIGNAL | selfie | First Comment
+  A: He reads his phone screen, which faces away from the camera, and his face slowly falls.
+  S: एक कमेंट आया है: भाई, ये पुराना वीडियो है क्या? हाँ भाई, ग्यारह सौ साल पुराना।
+- SIGNAL | prop | Signal Lost | KALLU
+  A: Kallu lands on his head; he hears the phone chime as the bar disappears and glares up at the crow.
+  S: कल्लू, उतर जा! तेरे वज़न से सिग्नल चला गया।
+- STEPS | walk | Free Cardio
+  A: He slithers down the cliff steps, tired but grinning.
+  S: अपलोड नहीं हुआ, पर कार्डियो हो गया। नरक का फिटनेस प्लान: सिग्नल ढूँढो।
+
+## 7 | The Bench Nobody Leaves
+- PATH | walk | The Only Shade
+  A: He crosses the hot path and spots a stone bench in the shade, already packed with calm residents.
+  S: पूरे रास्ते में एक ही छाँव है… और उस पे पहले से पूरी कॉलोनी बैठी है।
+- BENCH | selfie | Polite Request | RES
+  A: He politely asks a resident on the bench to move over; the resident just smiles and does not move an inch.
+  S: अंकल, थोड़ा खिसकेंगे?
+  RES: बेटा, मैं यहाँ से तीन साल से नहीं खिसका।
+- BENCH | prop | The Squeeze | RES
+  A: He squeezes into a tiny gap between two residents, stretching himself thin like a rope.
+  S: स्नेक होने का एक फ़ायदा: कहीं भी फ़िट हो जाओ।
+- BENCH | selfie | Bench Rules | RES
+  A: A resident beside him explains the bench rule in a serious whisper; Saapwaa listens carefully.
+  RES: नियम सीधा है। जो उठा, उसकी जगह गई।
+  S: और अगर छींक आए?
+  RES: तो बैठे-बैठे छींको।
+- BENCH | selfie | Snack Temptation | BABLU
+  A: Bablu passes with his snack tray just out of reach; Saapwaa leans out without lifting himself from the bench.
+  S: भैया, इधर! मैं उठ नहीं सकता, सीट चली जाएगी।
+  BABLU: तो लंबे हो जाओ।
+- BENCH | prop | The Long Reach
+  A: He stretches his tail far out along the path to grab a snack packet while the rest of his body stays glued to the bench.
+  S: देखो, बेंच पे भी हूँ और शॉपिंग भी कर ली।
+- BENCH | selfie | Seat Stolen | KALLU
+  A: He leans forward for one second, and Kallu instantly drops into his spot on the bench and settles in.
+  S: एक सेकंड हिला… और कल्लू ने सीट पे कब्ज़ा कर लिया।
+- BENCH | selfie | The Deal | KALLU
+  A: He offers Kallu a snack in exchange for the seat; Kallu eats the snack and stays seated.
+  S: डील: स्नैक लो, सीट दो। अरे! स्नैक भी लिया, सीट भी रखी।
+- BENCH | prop | The Penthouse Seat
+  A: He climbs up and balances his whole body along the top of the bench's backrest, smiling smugly in the shade.
+  S: नीचे जगह नहीं, तो ऊपर सही। ये है पेंटहाउस सीट।
+- BENCH | selfie | Three Hours Later
+  A: He lies draped on the backrest, eyes half closed and totally relaxed, voice slow and sleepy.
+  S: तीन घंटे हो गए गाइज। अब समझ आया, ये लोग क्यों नहीं उठते।
+
+## 8 | Lost in the Pagdandi
+- MAZE | walk | The Shortcut
+  A: He slithers confidently into the maze of paths, pointing ahead with his tail like a tour guide.
+  S: आज शॉर्टकट से चलते हैं। मैं ग्यारह दिन का लोकल हूँ, रास्ता याद है।
+- MAZE | selfie | The Same Rock
+  A: He stops beside a cracked boulder, looks at it, then looks back the way he came, suspicious.
+  S: ये पत्थर मैंने अभी देखा था। या ये उसका जुड़वा भाई है?
+- MAZE | prop | The Mark
+  A: He scratches a small mark on a rock with his fang, then turns and sees the same mark on every rock around him.
+  S: निशान लगा देता हूँ… भाई, यहाँ तो हर पत्थर पे पहले से निशान है।
+- MAZE | selfie | Directions | RES
+  A: He asks a resident for directions; the resident points vaguely past the boulders with total confidence.
+  S: भैया, हाट किधर है?
+  RES: सीधे जाओ, गुस्से वाले पत्थर से बाएँ।
+- MAZE | selfie | The Angry Rock
+  A: He studies a big boulder whose cracks look like a frowning face, and slowly frowns back at it.
+  S: गुस्से वाला पत्थर… ये तो सच में मुझे घूर रहा है।
+- MAZE | walk | Second Opinion | MAUSI
+  A: Gappu Mausi walks by and points in the opposite direction; Saapwaa looks back and forth between the two paths.
+  MAUSI: अरे नहीं बेटा, उदास वाले पत्थर से दाएँ।
+  S: यहाँ पत्थरों के भी मूड होते हैं?
+- MAZE | selfie | Confused Map
+  A: He opens a map on his phone; the screen glow spins and he slowly turns in a full circle with it.
+  S: मैप खोला… और मैप भी कन्फ्यूज़ है। अब हम दोनों घूम रहे हैं।
+- MAZE | prop | Kallu the Guide | KALLU
+  A: Kallu hops ahead along the path, looking back at Saapwaa as if saying follow me.
+  S: कल्लू रास्ता दिखा रहा है? पहली बार कुछ लेने नहीं, देने आया है।
+- MAZE | walk | Full Circle | KALLU
+  A: He follows Kallu around a bend and stops dead in front of the same cracked boulder from before.
+  S: आधा घंटा कल्लू के पीछे… और हम वहीं, जहाँ से शुरू किया था।
+- DOOR | selfie | Home Anyway
+  A: He arrives at his own doorway, exhausted, and flops his head against the door frame.
+  S: हाट नहीं मिला, पर घर मिल गया। आज का अचीवमेंट: रास्ता भटके, पर इज़्ज़त से।
+
+## 9 | Interview with Tapu Chacha
+- LANE | selfie | The Exclusive | CHACHA
+  A: He sets up an interview beside Tapu Chacha, who sits on his step holding a brass lota.
+  S: आज का एक्सक्लूसिव इंटरव्यू: पड़ोस के लेजेंड, तापू चाचा।
+  CHACHA: लेजेंड बाद में, पहले पानी।
+- LANE | prop | Question One | CHACHA
+  A: Saapwaa asks his first question with a serious host face; Tapu Chacha answers slowly, eyes half closed.
+  S: चाचा, आप यहाँ कब से हैं?
+  CHACHA: याद नहीं। कल पूछना, कल से पक्का याद रखूँगा।
+- LANE | selfie | Daily Routine | CHACHA
+  A: Tapu Chacha counts his routine on his fingers very slowly while Saapwaa waits patiently.
+  S: आपका डेली रूटीन?
+  CHACHA: सुबह आराम, दोपहर आराम, शाम को थोड़ा ज़्यादा आराम।
+- LANE | selfie | Advice for the Youth | CHACHA
+  A: Tapu Chacha raises one finger wisely as he shares his life lesson; Saapwaa nods, then pauses, confused.
+  S: नई पीढ़ी के लिए कोई सलाह?
+  CHACHA: जो काम आज हो सकता है, उसे कल पे छोड़ो। कल वाला संभाल लेगा।
+- LANE | prop | The Bucket Question | CHACHA
+  A: Saapwaa points at the copper bucket; Tapu Chacha hugs it tighter and looks away.
+  S: और मेरी बाल्टी?
+  CHACHA: अगला सवाल।
+- LANE | selfie | The Question Back | CHACHA
+  A: Tapu Chacha suddenly asks Saapwaa a question; Saapwaa gets shifty and looks into the lens.
+  CHACHA: तुम यहाँ क्यों आए, बेटा?
+  S: वो लंबी कहानी है, चाचा। अगले एपिसोड में।
+- LANE | selfie | Live Podcast | CHACHA
+  A: Mid-answer Tapu Chacha starts snoring softly; Saapwaa turns to the camera and whispers.
+  S: चाचा ने जवाब देते-देते खर्राटे शुरू कर दिए। ये है असली लाइव पॉडकास्ट।
+- LANE | prop | The Wake-Up Trick | CHACHA
+  A: Saapwaa rattles the copper bucket with his tail; Tapu Chacha wakes instantly and snatches it back.
+  CHACHA: मेरी बाल्टी को हाथ मत लगाओ।
+  S: आपकी बाल्टी?
+- LANE | selfie | Rapid Fire | CHACHA
+  A: Saapwaa fires quick questions; Tapu Chacha answers instantly with sleepy eyes.
+  S: रैपिड फायर। चाय या पानी?
+  CHACHA: चाय।
+  S: आज या कल?
+  CHACHA: कल।
+- LANE | walk | Interview Wrap | CHACHA
+  A: Saapwaa slithers away while behind him Tapu Chacha waves the copper bucket goodbye.
+  S: आज क्या सीखा? सब्र। और ये कि मेरी बाल्टी अब उनके परिवार का हिस्सा है।
+
+## 10 | Haat Day
+- HAAT | walk | Market Day
+  A: He enters the little market excited, shaking a few cowrie shells in his tail tip like a rich man.
+  S: आज हाट का दिन है गाइज। मेरे पास पाँच कौड़ी हैं और बहुत सारा कॉन्फिडेंस।
+- HAAT | selfie | The Leaf Fan | BABLU
+  A: Bablu proudly shows a big green leaf fan from his tray; Saapwaa inspects it suspiciously.
+  BABLU: पंखा ले लो, ओरिजिनल पत्ते वाला।
+  S: यहाँ पेड़ तो दिखा नहीं।
+  BABLU: इसीलिए महँगा है।
+- HAAT | selfie | The Bargain | BABLU
+  A: Saapwaa and Bablu haggle face to face, both trying to look unbothered.
+  S: कितने का?
+  BABLU: चार कौड़ी।
+  S: एक दूँगा।
+  BABLU: एक में सिर्फ़ हवा दिखाऊँगा।
+- HAAT | prop | The Walk-Away Trick
+  A: He dramatically slithers away from the stall, slower and slower, looking back, waiting to be called back.
+  S: मैं जा रहा हूँ… सच में जा रहा हूँ… अरे, कोई रोकेगा नहीं?
+- HAAT | selfie | Didi to the Rescue | DIDI
+  A: Kulhad Didi, passing with a basket, taps the stall and settles the deal; Saapwaa beams at her.
+  DIDI: बबलू, ये मेरा रेगुलर है। तीन में दे दे।
+  S: दीदी, आप तो मेरी वकील निकलीं।
+- HAAT | selfie | Three-Second Fan
+  A: He fans himself with his new leaf fan; it dries, curls and crumbles into dust in his tail.
+  S: तीन कौड़ी का पंखा… तीन सेकंड चला।
+- HAAT | selfie | Warranty Claim | BABLU
+  A: He holds up the crumbs of the fan to Bablu, who shrugs with a big innocent smile.
+  S: भैया, वारंटी?
+  BABLU: पंखे की वारंटी हवा जितनी होती है, भाई।
+- HAAT | prop | The Musical Pot
+  A: He taps clay pots with his tail like testing melons; one rings a sweet note and he plays a little tune.
+  S: मटके चेक करने का तरीका: बजाओ। ये वाला तो सुर में है।
+- HAAT | selfie | Kallu Goes Shopping | KALLU
+  A: Kallu sits on a basket holding a shiny cowrie shell in his beak and stares at Saapwaa proudly.
+  S: कल्लू भी शॉपिंग कर रहा है… मेरी कौड़ी से।
+- LANE | walk | Haul Review
+  A: He slithers home holding up one tiny clay cup as his entire shopping haul.
+  S: हाट हॉल: पाँच कौड़ी गईं, पंखा उड़ गया, ये कुल्हड़ बचा। फिर भी मज़ा आया।

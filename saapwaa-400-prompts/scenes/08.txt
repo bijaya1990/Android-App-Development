@@ -1,0 +1,181 @@
+## 36 | The Cave Makeover
+- CAVE | selfie | Makeover Day
+  A: He looks around his small cave with a designer's eye, framing it with his tail.
+  S: आज गुफा का मेकओवर। फर्नीचर इधर-उधर करेंगे। वैसे फर्नीचर में बस एक पत्थर का बिस्तर है।
+- CAVE | prop | Pushing the Bed
+  A: He pushes the stone bed with his whole body, straining hard; it does not move at all.
+  S: बिस्तर खिसकाओ… ये बिस्तर नहीं, पहाड़ का हिस्सा है।
+- CAVE | selfie | Calling the Expert | PAPPU
+  A: Pehlwan Pappu steps in, rolling up his sleeves; Saapwaa moves aside nervously.
+  PAPPU: हटो, मैं उठाता हूँ।
+  S: पप्पू भाई, ध्यान से, ये ज़मीन से जुड़ा है।
+- CAVE | prop | The Hidden Cool Spot | PAPPU
+  A: Pappu lifts one corner of the stone bed; Saapwaa touches the ground underneath and his eyes go huge.
+  S: रुको! बिस्तर के नीचे की ज़मीन ठंडी है! ख़ज़ाना मिल गया।
+- CAVE | selfie | Under the Bed
+  A: He squeezes into the narrow gap under the stone bed and lies there in pure bliss.
+  S: बिस्तर के ऊपर नहीं, नीचे सोना था। पूरा महीना बर्बाद।
+- CAVE | prop | Dragon Shadow
+  A: He moves the lamp to a new niche, and his shadow on the wall suddenly looks like a huge dragon; he poses.
+  S: दीया यहाँ रखा… और मेरी परछाईं ड्रैगन बन गई। ये तो रखना पड़ेगा।
+- KITCHEN | selfie | Kitchen Vastu
+  A: He rotates the terracotta water pot to face a new direction, then tests the water and sighs.
+  S: मटका उत्तर की तरफ़। सुना है इससे पानी ठंडा रहता है। देखते हैं… नहीं रहता।
+- CAVE | selfie | A Touch of Green
+  A: He hangs a dried green leaf on the rock wall with great care and steps back to admire it.
+  S: सौम्य वाला पत्ता दीवार पे। अब गुफा में भी थोड़ी हरियाली है।
+- DOOR | selfie | Neighbour's Approval | CHACHA
+  A: Tapu Chacha peeks in at the doorway and nods approvingly, hugging the copper bucket.
+  CHACHA: अच्छा सजाया है।
+  S: बस कोने में एक बाल्टी की कमी है, चाचा।
+  CHACHA: कल से पक्का।
+- CAVE | prop | Before and After
+  A: He poses proudly in the rearranged cave, then slides happily back under the bed.
+  S: मेकओवर कम्प्लीट। बिस्तर वहीं, दीया नया, और मैं बिस्तर के नीचे। परफ़ेक्ट।
+
+## 37 | The Missing Tiffin
+- KITCHEN | selfie | The Tiffin Is Gone
+  A: He stares at the empty spot on the kitchen shelf in shock.
+  S: गाइज, मेरा स्टील का टिफ़िन ग़ायब है। तीन डिब्बे, पूरा लंच, और मेरा दिल उसमें था।
+- CAVE | prop | The Search
+  A: He searches frantically, coiling under the bed and poking his head into the lamp niche.
+  S: बिस्तर के नीचे नहीं, दीये के पीछे नहीं… टिफ़िन कहाँ गया?
+- LANE | selfie | Suspect One | KALLU
+  A: Kallu sits on a rooftop edge looking innocent; Saapwaa narrows his eyes at him.
+  S: पहला सस्पेक्ट: कल्लू। पर इसकी आँखें बोल रही हैं, मैं अब सुधर गया हूँ।
+- LANE | selfie | Suspect Two | CHACHA
+  A: He questions Tapu Chacha, who shrugs while hugging the copper bucket.
+  S: चाचा, मेरा टिफ़िन देखा?
+  CHACHA: टिफ़िन नहीं। बाल्टी है, चाहिए तो… कल।
+- ADDA | selfie | Didi's Clue | DIDI
+  A: Kulhad Didi taps her chin, remembering, and points down the path.
+  DIDI: सुबह तू यहाँ चाय पीने आया था, टिफ़िन साथ था।
+  S: दीदी, आप तो चलती-फिरती सीसीटीवी हो!
+- BENCH | prop | Retracing Steps
+  A: He slides along the path to the stone bench and peeks under it, worried.
+  S: सुबह यहाँ बैठा था। अगर बेंच वालों ने लिया, तो मुश्किल है। वो उठते ही नहीं।
+- BENCH | selfie | Found It | RES
+  A: A resident on the bench is resting his head on Saapwaa's steel tiffin like a pillow.
+  RES: ये आपका है? बड़ा अच्छा तकिया है।
+  S: भाई, उसमें मेरा लंच है!
+- BENCH | prop | Overcooked Lunch
+  A: He opens the tiffin and black smoke puffs out of the dark, overcooked food inside.
+  S: लंच सुबह कच्चा था। अब पक भी गया, और जल भी गया।
+- BENCH | selfie | Sharing Anyway | RES
+  A: He offers half of the burnt lunch to the resident, who smiles and pats the tiffin.
+  S: चलो, आधा-आधा। आपने इसकी रखवाली की है।
+  RES: तकिया भी आधा मिलेगा?
+- LANE | walk | Mission Complete
+  A: He slithers home swinging the steel tiffin from his tail.
+  S: टिफ़िन मिला, लंच जला, नया दोस्त मिला। आज का स्कोर: दो-एक।
+
+## 38 | A Guest from Saumya
+- DOOR | selfie | Special Guest | NANU
+  A: Nanu arrives at the doorway leaning on his oar staff; Saapwaa welcomes him with excitement.
+  S: आज मेरे घर स्पेशल गेस्ट आए हैं, नानू!
+  NANU: सुना है तेरा घर बड़ा फ़ेमस है।
+- CAVE | prop | Quick Tidy-Up
+  A: He rushes around the small cave in a blur, straightening the lamp and smoothing the bed.
+  S: एक मिनट नानू! बिस्तर ठीक कर लूँ… वैसे ये ठीक ही रहता है, पत्थर का है।
+- CAVE | selfie | The Iron Guest | NANU
+  A: Nanu sits on the hot stone bed without flinching and smiles; Saapwaa stares in disbelief.
+  NANU: अच्छा गरम है, कमर के लिए बढ़िया।
+  S: नानू, आप तो लोहे के बने हो!
+- KITCHEN | selfie | Tea for the Guest
+  A: He sets a pot of tea on the stones and it boils over almost instantly.
+  S: नानू के लिए चाय… और चाय को भी जल्दी है।
+- CAVE | selfie | Old Stories | NANU
+  A: Nanu looks around the cave fondly as he talks; Saapwaa leans in, curious.
+  NANU: जब मैं नाव चलाता था, तब ये गुफा ख़ाली थी।
+  S: तो मैं पहला किरायेदार हूँ?
+  NANU: नहीं, कल्लू था।
+- DOOR | prop | Old Friends
+  A: A glossy black crow with a bent tail feather flies in and lands affectionately on the top of the doorway; Saapwaa laughs.
+  S: कल्लू नानू को देखते ही आ गया। पुराने किरायेदार का पुराना दोस्त।
+- CAVE | selfie | Nanu's Advice | NANU
+  A: Nanu taps his staff gently and shares his wisdom; Saapwaa answers with a grin.
+  NANU: घर छोटा हो, तो दिल बड़ा रखो।
+  S: नानू, घर छोटा नहीं, लंबा है। मेरे जैसा।
+- DOOR | selfie | Chacha Meets the Guest | CHACHA
+  A: Tapu Chacha peeks in curiously from the lane; Saapwaa introduces his guest off-screen.
+  CHACHA: वो बुज़ुर्ग कौन हैं?
+  S: नानू हैं, आपसे भी बड़े।
+  CHACHA: तो उनसे कल मिलूँगा।
+- DOOR | prop | The Little Boat | NANU
+  A: Nanu gives him a small carved wooden boat; Saapwaa holds it carefully in his tail, touched.
+  NANU: मेरी पहली नाव का छोटा मॉडल।
+  S: नानू… ये मेरी सबसे क़ीमती चीज़ होगी।
+- LANE | walk | Seeing Him Off | NANU
+  A: He walks Nanu down the lane, slowing his pace to match the old man's.
+  S: मेहमान जा रहे हैं, पर घर में अच्छी ख़ुशबू छोड़ गए।
+
+## 39 | Comments and Questions Special
+- SIGNAL | selfie | Q&A Day
+  A: He sits on top of the tall rock holding the phone high, beaming with excitement.
+  S: आज क्यू एंड ए! आपके सवाल, मेरे जवाब। सिग्नल एक डंडा है, तो जवाब भी फ़टाफ़ट।
+- SIGNAL | selfie | How Do You Cook
+  A: He reads the first question from the phone, which faces away from the camera, then answers smugly.
+  S: सवाल: खाना कैसे बनाते हो? जवाब: मैं नहीं, गर्मी बनाती है। मैं बस परोसता हूँ।
+- SIGNAL | selfie | The Best Thing
+  A: He thinks for a moment, eyes up, then answers warmly, counting on his tail.
+  S: सवाल: नरक में सबसे अच्छी चीज़? जवाब: दीदी की चाय, कल्लू की दोस्ती, और रात के दीये।
+- SIGNAL | selfie | The Worst Thing
+  A: His face darkens dramatically as he answers, glancing back toward his home.
+  S: सवाल: सबसे बुरी चीज़? जवाब: वो बिस्तर। उससे प्यार भी करता हूँ, और डरता भी हूँ।
+- SIGNAL | selfie | Why Are You Here
+  A: He reads the question, freezes, and quickly scrolls on with a fake smile.
+  S: सवाल: तुम नरक में क्यों हो? जवाब: वो लंबी कहानी है। अगला सवाल।
+- SIGNAL | selfie | Marriage Plans
+  A: He reads a question, groans, and shouts toward the lane below.
+  S: सवाल: शादी कब करोगे? ये ज़रूर मौसी ने पूछा है। मौसी, फ़ोन रखो!
+- SIGNAL | selfie | The Scarf Question
+  A: He proudly fluffs the knot of his striped scarf with his tail tip as he answers.
+  S: सवाल: स्कार्फ़ कभी उतारते हो? नहीं। ये मेरी पहचान है, और ये भी छुपाता है कि गर्दन कहाँ है।
+- SIGNAL | prop | Kallu Answers | KALLU
+  A: Kallu lands next to him; Saapwaa holds the phone toward the crow, who caws once.
+  S: सवाल: कल्लू का फ़ेवरेट खाना? कल्लू, ख़ुद बता। हाँ… मेरा बिस्किट।
+- SIGNAL | selfie | What Do You Miss
+  A: He gazes into the distance, nostalgic, then answers with growing intensity.
+  S: सवाल: धरती की क्या चीज़ याद आती है? बारिश। और फ़्रिज। और फ़्रिज। और फ़्रिज।
+- SIGNAL | selfie | The Last Question
+  A: He starts reading the final question, then freezes mid-sentence as the signal drops, and laughs.
+  S: आख़िरी सवाल: भाई, बाल्टी कब— और सिग्नल चला गया। कल मिलते हैं गाइज!
+
+## 40 | The Bucket Comes Home
+- CAVE | selfie | A Different Morning
+  A: He wakes on the hot bed, but instead of jumping up he smiles softly at the camera.
+  S: गाइज, आज कुछ अलग फ़ील हो रहा है। बिस्तर उतना ही गरम है, पर दिल थोड़ा ज़्यादा।
+- DOOR | prop | The Knock | CHACHA
+  A: Tapu Chacha stands at his doorway with eyes fully open for the first time, holding the copper bucket.
+  S: चाचा? आपकी आँखें खुली हैं?
+  CHACHA: आज वो कल आ गया, बेटा।
+- DOOR | selfie | The Bucket Returns | CHACHA
+  A: Tapu Chacha hands over the copper bucket; Saapwaa holds it with a trembling tail, eyes watering.
+  CHACHA: ये ले तेरी बाल्टी।
+  S: चाचा… मैं रोऊँगा नहीं… ओके, थोड़ा रोऊँगा।
+- DOOR | selfie | Interest Paid | CHACHA
+  A: Saapwaa looks inside the bucket and finds it full of golden jaggery sweets; he gasps.
+  CHACHA: ख़ाली लौटाना ठीक नहीं लगा।
+  S: बाल्टी भी लौटी, और ब्याज में मिठाई भी!
+- LANE | walk | Breaking News | MAUSI
+  A: Gappu Mausi rushes down the lane announcing the news loudly as Saapwaa follows, holding the bucket high.
+  MAUSI: सुनो सब! चाचा ने बाल्टी लौटा दी!
+  S: मौसी के मुँह से पहली बार सच्ची ख़बर।
+- ADDA | selfie | Celebration Tea | DIDI
+  A: Kulhad Didi pours him a free cup of tea with a rare big smile.
+  DIDI: आज चाय फ्री, बाल्टी की ख़ुशी में।
+  S: दीदी, आज तो ये चाय भी ठंडी लग रही है।
+- WORKSHOP | selfie | Upgrade Offer | LAL
+  A: Lalten Lal eyes the bucket with his goggles down, a screwdriver ready; Saapwaa hugs it protectively.
+  LAL: मैं इसमें मोटर लगा दूँ?
+  S: नहीं लाल भाई! इसे बस बाल्टी ही रहने दो।
+- CHOWK | prop | Group Photo | KALLU
+  A: Saapwaa holds the bucket while Kallu sits on its rim; he raises the phone for a photo.
+  S: ग्रुप फ़ोटो! कल्लू, मुस्कुराओ… कौए मुस्कुराते हैं क्या?
+- CHOWK | selfie | Thank You
+  A: He speaks warmly to the camera, the copper bucket beside him.
+  S: शुक्रिया गाइज, साथ रहने के लिए। गर्मी, चाय और उधार… इस मोहल्ले ने मुझे घर दे दिया।
+- DOOR | selfie | Same Time Tomorrow | CHACHA
+  A: Tapu Chacha comes back to the doorway and asks to borrow something; Saapwaa grins slyly at the camera.
+  CHACHA: बेटा, तेरा लोटा थोड़ी देर के लिए मिलेगा?
+  S: चाचा… कल से पक्का!

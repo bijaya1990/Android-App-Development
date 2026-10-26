@@ -1,0 +1,182 @@
+## 16 | A Day in Saumya
+- PATH | walk | Off to Saumya
+  A: He slithers along the path at dawn-like dim light, bright-eyed and excited, backpack packed.
+  S: आज एक ख़ास जगह जा रहे हैं, सौम्य। सुना है वहाँ छाँव भी है और नदी भी।
+- SAUMYA | walk | The First Green
+  A: He stops at the edge of soft green grass, stunned, and slowly looks from the grass to his own green body.
+  S: गाइज… हरा रंग! बिल्कुल मेरे जैसा! मुझे लगा था मैं अकेला हरा बचा हूँ।
+- SAUMYA | selfie | Shade With No Rules
+  A: He lies in the deep shade of the huge old tree, eyes closed, smiling peacefully.
+  S: ये पुराना बड़ा पेड़… इसकी छाँव पे कोई लाइन नहीं, कोई नियम नहीं।
+- SAUMYA | prop | The River Pushpabhadra | NANU
+  A: Nanu stands by the calm river, pointing gently with his oar staff while Saapwaa listens respectfully.
+  NANU: ये पुष्पभद्रा नदी है, बेटा। ग्रंथ कहते हैं, यहाँ यात्री थोड़ा आराम पाते हैं।
+  S: तो मैं भी थोड़ा आराम कर लूँ?
+- SAUMYA | selfie | Cool Water
+  A: He dips his tail tip into the clear river; his face melts into pure joy and he sighs.
+  S: ठंडा! सच में ठंडा! दीदी, माफ़ करना… आज मैंने आपकी चाय से धोखा कर दिया।
+- SAUMYA | prop | A Quiet Moment | NANU
+  A: Saapwaa and Nanu sit quietly side by side on the riverbank, watching the water, heads slightly bowed.
+  S: कुछ जगहें मज़ाक के लिए नहीं, सुकून के लिए होती हैं।
+  NANU: सही समझे।
+- SAUMYA | selfie | Picnic Share | KALLU
+  A: He opens his steel tiffin; Kallu lands nearby, and this time Saapwaa offers him a piece first.
+  S: आज मूड अच्छा है। ले कल्लू, तेरा हिस्सा। चोरी की ज़रूरत नहीं।
+- SAUMYA | prop | Nap on Cool Ground
+  A: He coils up for a nap on the cool grass under the tree as a few leaves drift down onto him.
+  S: पाँच मिनट की झपकी… ठंडी ज़मीन पे। ये बिस्तर फाइव स्टार है।
+- SAUMYA | selfie | Five More Minutes | NANU
+  A: Nanu taps his oar staff on the ground to signal leaving; Saapwaa clutches the grass, pleading.
+  NANU: चलो, लौटना है।
+  S: नानू, बस दस मिनट! प्लीज़!
+- PATH | walk | A Leaf to Remember
+  A: He slithers home with a green leaf tucked into the knot of his scarf, looking wistful.
+  S: एक पत्ता साथ ले आया हूँ, याद के लिए। अब हर गरम दिन में इसे देखूँगा।
+
+## 17 | The Vaitarani Viewpoint
+- LANE | walk | Nanu's Invitation | NANU
+  A: Nanu leads the way with his oar staff; Saapwaa follows, speaking softly to the camera.
+  S: आज नानू मुझे एक नदी दिखाने ले जा रहे हैं, दूर से। बोले, ध्यान से सुनना।
+  NANU: और मज़ाक कम।
+- STEPS | walk | Climbing with Nanu | NANU
+  A: Nanu climbs the cliff steps easily with his staff while Saapwaa pants behind him.
+  S: नानू, इस उम्र में इतनी स्पीड?
+  NANU: हल्का सामान, हल्का मन।
+- VIEW | selfie | The River Below
+  A: He looks out over the vast misty river far below, his usual grin replaced by quiet awe.
+  S: गाइज… ये वैतरणी है। ग्रंथों में लिखा है, ये सौ योजन की है। यहाँ से इसका किनारा भी नहीं दिखता।
+- VIEW | prop | The Meaning of the Name | NANU
+  A: Nanu explains while gazing at the river; Saapwaa listens closely, head tilted.
+  NANU: इसे वैतरणी कहते हैं, क्योंकि ये वितरण से, यानी दान से पार होती है।
+  S: दान से नदी पार? दिलचस्प।
+- VIEW | selfie | Who Crosses Easily | NANU
+  A: Nanu speaks calmly; Saapwaa slowly realises something about himself and looks guilty.
+  NANU: ग्रंथ कहते हैं, जिन्होंने जीवन में दान किया, वो इसे आसानी से पार करते हैं।
+  S: और जिन्होंने बिस्किट भी शेयर नहीं किया?
+- VIEW | selfie | The Look | KALLU
+  A: Kallu lands beside him on the ridge and stares at him silently; Saapwaa avoids eye contact.
+  S: कल्लू ऐसे क्यों देख रहा है? ठीक है, ठीक है… मैं थोड़ा कंजूस हूँ।
+- VIEW | prop | The First Gift | KALLU
+  A: He takes a whole biscuit from his backpack and places it in front of Kallu; the crow looks surprised.
+  S: ले कल्लू, पूरा बिस्किट। बिना चोरी के। आज से नई शुरुआत।
+- VIEW | selfie | Small Beginnings | NANU
+  A: Nanu smiles warmly and pats Saapwaa's head; Saapwaa beams at the camera.
+  NANU: बड़ी बातें छोटे बिस्किट से शुरू होती हैं।
+  S: नानू, ये लाइन मेरे बायो में जाएगी।
+- VIEW | selfie | Silence
+  A: He looks out at the mist for a long quiet moment, then speaks softly.
+  S: कभी-कभी व्लॉग में शोर नहीं, सन्नाटा चाहिए। बस देखो, और सोचो।
+- STEPS | walk | The Way Down
+  A: He slithers down the steps beside Nanu, thoughtful but smiling.
+  S: आज की सीख: जो दोगे, वही काम आएगा। बस अब कल्लू को रोज़ बिस्किट चाहिए होगा।
+
+## 18 | Narak Stay Review
+- DOOR | selfie | The Hotel Critic
+  A: He adjusts his scarf with great seriousness, posing like a professional hotel reviewer.
+  S: आज मैं बनूँगा होटल क्रिटिक। प्रॉपर्टी: गुफा नंबर तेरह। रिव्यू एकदम ईमानदार।
+- DOOR | prop | Check-in Experience
+  A: He knocks on the empty doorway arch, waits, then shrugs and lets himself in.
+  S: चेक-इन: रिसेप्शन पे कोई नहीं, चाबी भी नहीं। क्योंकि दरवाज़ा ही नहीं है।
+- CAVE | selfie | Rating the Bed
+  A: He presses the stone bed with his tail tip, flinches, and gives his verdict.
+  S: बिस्तर: सख़्त, गरम, हमेशा रेडी। दो स्टार। एक गर्मी का, एक मेरी हिम्मत का।
+- BATH | selfie | Spa Facilities
+  A: He sits under the warm trickle, surrounded by a cloud of steam, like a guest in a spa.
+  S: स्पा फैसिलिटी: फ्री स्टीम बाथ, चौबीस घंटे। माँगो या ना माँगो।
+- DOOR | selfie | Room Service | KALLU
+  A: He calls out for room service; Kallu flies in and drops a bread crumb at his feet.
+  S: रूम सर्विस! अरे, कल्लू आया… और मेरी ही ब्रेड का टुकड़ा वापस लाया।
+- CAVE | prop | Room with a View
+  A: He presents a thin crack in the rock wall that shows a slice of maroon sky, like a luxury window.
+  S: रूम विद अ व्यू। ये दरार देखो, सनसेट जैसा लगता है। बस सूरज नहीं है।
+- LANE | selfie | The Neighbourhood | CHACHA
+  A: He reviews the neighbourhood while Tapu Chacha dozes behind him, hugging the copper bucket.
+  S: पड़ोस: शांत, दोस्ताना… और उधार वाला। रेटिंग बाल्टी लौटने पे बढ़ेगी।
+- ADDA | selfie | Dining | DIDI
+  A: Kulhad Didi serves him tea and leans in to make sure he includes her stall in the review.
+  DIDI: रिव्यू में मेरी चाय का नाम लिखना।
+  S: लिखूँगा दीदी: गरम, सस्ती, और दिल से भी गरम।
+- CAVE | selfie | Wi-Fi Check
+  A: He holds the phone up searching for a network, then deadpans into the lens.
+  S: वाई-फ़ाई: पासवर्ड पूछा, तो चाचा बोले, कल बताऊँगा।
+- DOOR | selfie | Final Stars
+  A: He counts stars on his tail tip and announces the final rating with a proud smile.
+  S: फाइनल रेटिंग: पाँच में से साढ़े तीन। आधा स्टार इसलिए, क्योंकि मैं यहीं रहता हूँ।
+
+## 19 | The Barber Visit
+- LANE | walk | Haircut Day
+  A: He slithers along confidently, then stops and realises something, looking up at his smooth head.
+  S: आज बाल कटवाने चलते हैं। रुको… मेरे तो बाल ही नहीं हैं। फिर भी, सेल्फ़-केयर ज़रूरी है।
+- BARBER | selfie | Meet Ustad | USTAD
+  A: Ustad welcomes him with a flourish of his scissors and points to the stool.
+  USTAD: आओ, बैठो! कौन-सी कटिंग?
+  S: उस्ताद, जो भी हो, बस स्टाइलिश हो।
+- BARBER | prop | The Stool Problem
+  A: He tries to sit on the round wooden stool and keeps sliding off it in different directions.
+  S: स्टूल पे बैठना… स्नेक के लिए ये ओलंपिक है।
+- BARBER | selfie | Searching for Hair | USTAD
+  A: Ustad combs Saapwaa's smooth head and peers closely, searching for any hair at all.
+  USTAD: बाल कहाँ हैं?
+  S: अंदर हैं, उस्ताद। फ़ीलिंग्स में।
+- BARBER | prop | Scissor Show | USTAD
+  A: Ustad clicks his scissors at lightning speed all around Saapwaa's head, cutting nothing at all.
+  S: कट कुछ नहीं रहा, पर आवाज़ से ही स्मार्ट फ़ील हो रहा है।
+- BARBER | selfie | The Shave | USTAD
+  A: Ustad lathers Saapwaa's chin with a big brush of foam; Saapwaa looks at the mirror, amused.
+  USTAD: दाढ़ी बना दूँ?
+  S: दाढ़ी भी नहीं है उस्ताद। पर फ़ोम अच्छा लग रहा है।
+- BARBER | selfie | Scarf Styling | USTAD
+  A: Ustad reties Saapwaa's striped scarf into a dramatic big bow; Saapwaa admires himself in the cracked mirror.
+  S: बालों की जगह स्कार्फ़ स्टाइल। उस्ताद, आप जीनियस हो।
+- BARBER | prop | Head Massage | USTAD
+  A: Ustad gives him a vigorous head massage and Saapwaa's whole body goes limp and floppy with bliss.
+  S: आह… मेरा पूरा शरीर ही सिर जैसा है, तो पूरा मसाज हो गया।
+- BARBER | selfie | The Bill | USTAD
+  A: Ustad holds out his palm; Saapwaa looks back and forth between his bald head and the hand.
+  USTAD: तीन कौड़ी।
+  S: किस चीज़ के?
+  USTAD: बाल ढूँढने की मेहनत के।
+- LANE | walk | The New Look
+  A: He slithers out showing off the big scarf bow, turning his head left and right like a model.
+  S: नया लुक कैसा है? बाल नहीं कटे, पर कॉन्फिडेंस एकदम कट-टू-कट है।
+
+## 20 | The Tailor's Tape
+- TAILOR | selfie | The Order | MASTER
+  A: He shows his striped scarf to Masterji, who looks at it over his thick glasses.
+  S: मास्टरजी, एक नया स्कार्फ़ चाहिए, बिल्कुल ऐसा ही।
+  MASTER: पहले नाप देना पड़ेगा।
+- TAILOR | prop | The Tape Runs Out | MASTER
+  A: Masterji measures along Saapwaa's body and the measuring tape runs out halfway.
+  MASTER: टेप ख़त्म हो गया, तुम ख़त्म नहीं हुए।
+  S: मैं लंबा ही हूँ, मास्टरजी।
+- TAILOR | selfie | Where Is the Neck | MASTER
+  A: Masterji frowns, pointing at different spots on Saapwaa's body, trying to find where the neck ends.
+  MASTER: गर्दन कहाँ ख़त्म होती है, कमर कहाँ शुरू?
+  S: ये सवाल तो मैं ख़ुद से भी पूछता हूँ।
+- TAILOR | selfie | Fabric Choices | MASTER
+  A: Masterji proudly unrolls three bolts of cloth that are all almost the same faded maroon.
+  S: कौन-कौन से कलर हैं?
+  MASTER: मरून, हल्का मरून, और धुआँ-मरून।
+- TAILOR | prop | The Stripes Request | MASTER
+  A: Masterji shakes his head slowly while Saapwaa insists, pointing at his own scarf's stripes.
+  S: मुझे लाल-सफ़ेद धारियाँ चाहिए।
+  MASTER: सफ़ेद यहाँ एक दिन में ग्रे हो जाता है।
+  S: तो रोज़ धोऊँगा।
+- TAILOR | selfie | First Fitting | MASTER
+  A: Masterji wraps a half-made scarf around Saapwaa; it is so long it winds around him five times.
+  S: मास्टरजी, ये स्कार्फ़ है या रज़ाई?
+- TAILOR | prop | Too Short Now | MASTER
+  A: Masterji snips the extra cloth and now the scarf is a tiny bow tie under Saapwaa's chin.
+  S: अब तो ये बो-टाई बन गया। बीच का कोई साइज़ नहीं होता?
+- TAILOR | selfie | The Snack Pocket | MASTER
+  A: Masterji proudly shows a tiny pocket sewn onto the new scarf; Saapwaa's eyes light up.
+  MASTER: स्नैक्स के लिए जेब भी लगा दी।
+  S: अब कल्लू से बचाना आसान होगा।
+- TAILOR | selfie | Delivery Date | MASTER
+  A: Saapwaa asks when it will be ready and narrows his eyes at the answer.
+  S: कब तक मिलेगा?
+  MASTER: कल।
+  S: आप भी तापू चाचा वाला कल बोल रहे हो?
+- LANE | walk | Two-Scarf Rich
+  A: He slithers proudly holding a new folded striped scarf in his tail tip, matching the one he wears.
+  S: नया स्कार्फ़ आ गया, बिल्कुल पुराने जैसा। अब मैं दो स्कार्फ़ वाला अमीर साँप हूँ।

@@ -1,0 +1,19 @@
+@font-face { font-family: "NotoSansDeva"; font-weight: 400; src: url("../fonts/noto-sans-devanagari-devanagari-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "NotoSansDeva"; font-weight: 700; src: url("../fonts/noto-sans-devanagari-devanagari-700-normal.woff2") format("woff2"); }
+html, body { background: #fffdf9; }
+body { margin: 0; color: #2a211b; font-family: "Bitstream Charter", "NotoSansDeva", serif; font-size: 9.4pt; line-height: 1.42; }
+h1 { font-family: Inter, sans-serif; font-size: 18pt; font-weight: 800; margin: 0 0 6pt; padding-bottom: 5pt; border-bottom: 2.5pt solid #b5471b; }
+h1.toc-h { break-before: page; }
+h2.ep { font-family: Inter, "NotoSansDeva", sans-serif; font-size: 12pt; font-weight: 800; color: #fff; background: #b5471b;
+  padding: 5pt 8pt; border-radius: 3pt; margin: 0 0 7pt; break-before: page; break-after: avoid; }
+h3 { font-family: Inter, sans-serif; font-size: 10pt; margin: 9pt 0 3pt; color: #b5471b; }
+p { margin: 0 0 5pt; } ul { margin: 0 0 6pt; padding-left: 14pt; } li { margin-bottom: 2pt; }
+.lock { background: #e6f2e2; border-left: 3pt solid #3f8f3a; padding: 5pt 8pt; border-radius: 2pt; font-family: "JetBrains Mono", monospace; font-size: 7.6pt; }
+.card { border: 0.8pt solid #ddd2c7; border-radius: 3pt; margin: 0 0 7pt; break-inside: avoid; }
+.card .head { display: flex; gap: 6pt; align-items: baseline; font-family: Inter, sans-serif; background: #f6e3d6; padding: 3pt 7pt; border-bottom: 0.8pt solid #ddd2c7; }
+.card .num { font-weight: 800; color: #b5471b; font-size: 9pt; }
+.card .t { font-weight: 700; font-size: 8.4pt; flex: 1; }
+.card .len { font-size: 6.6pt; color: #8a7a6a; }
+.card pre { margin: 0; padding: 5pt 7pt; white-space: pre-wrap; word-wrap: break-word; font-family: "JetBrains Mono", "NotoSansDeva", monospace; font-size: 7.5pt; line-height: 1.45; background: #fbf8f4; }
+.toc-row { display: flex; gap: 4pt; font-family: Inter, sans-serif; font-size: 8.4pt; padding: 1.8pt 0; }
+.toc-row .dots { flex: 1; border-bottom: 0.8pt dotted #ddd2c7; }

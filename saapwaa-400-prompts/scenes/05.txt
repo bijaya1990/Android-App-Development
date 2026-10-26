@@ -1,0 +1,180 @@
+## 21 | Vaidji and the Mystery Itch
+- CAVE | selfie | Itchy Morning
+  A: He rubs his back against the rough cave wall, scratching, with an exaggerated relieved face.
+  S: गाइज, आज पूरी बॉडी में खुजली है। शायद मुझे गर्मी से एलर्जी है… या गर्मी को मुझसे।
+- LANE | walk | Off to the Healer
+  A: He slithers along the lane wriggling every few seconds to scratch himself.
+  S: चलो वैद्यजी के पास। सुना है जड़ी-बूटी से सब ठीक कर देते हैं, बस बिल छोड़कर।
+- VAID | selfie | Finding the Pulse | VAIDJI
+  A: Vaidji runs his fingers along Saapwaa's body, searching in confusion for a wrist.
+  VAIDJI: नब्ज़ कहाँ है?
+  S: वैद्यजी, पूरा मैं ही कलाई हूँ।
+- VAID | prop | The Diagnosis | VAIDJI
+  A: Vaidji inspects Saapwaa's skin through a round lens, then announces calmly; Saapwaa panics.
+  VAIDJI: तुम्हारी स्किन उतरने वाली है।
+  S: क्या? मैं पूरा छिल जाऊँगा?
+  VAIDJI: साँप हो, बेटा। ये नॉर्मल है।
+- VAID | selfie | Free Makeover
+  A: His panic turns into excitement as he thinks it over, eyes sparkling at the camera.
+  S: मतलब मैं नए कपड़े नहीं, नई स्किन पहनने वाला हूँ? ये तो फ्री मेकओवर है।
+- VAID | prop | Herbal Paste | VAIDJI
+  A: Vaidji spreads green herbal paste on Saapwaa's back; it starts sizzling gently in the heat.
+  S: पेस्ट लगाया… और पेस्ट भी पकने लगा।
+- VAID | selfie | Bitter Medicine | VAIDJI
+  A: He drinks a small bowl of dark herbal brew and his whole face scrunches up.
+  VAIDJI: रोज़ एक कटोरी।
+  S: इतना कड़वा? मेरा ज़हर भी इससे मीठा है।
+- CAVE | prop | The Big Shed
+  A: He slides forward out of his old dry skin, which stays behind like a pale ghost copy of him; he turns, amazed.
+  S: हो गया! पुरानी स्किन वहाँ, नया मैं यहाँ। एकदम चमकदार।
+- CAVE | selfie | The Duplicate
+  A: He holds up his shed skin in his tail like a costume and grins mischievously.
+  S: इसे फेंकूँगा नहीं। ये मेरा डुप्लीकेट है। लाइन में अब यही खड़ा होगा।
+- LANE | walk | Version Two | MAUSI
+  A: Gappu Mausi gasps at his shiny new skin; he poses proudly.
+  MAUSI: अरे, तू तो चमक रहा है!
+  S: मौसी, नया वर्ज़न लॉन्च हुआ है।
+
+## 22 | Gym Day with Pehlwan Pappu
+- GYM | walk | Fitness Era
+  A: He slithers into the wrestling yard pumped up, then looks down at his long skinny body, doubtful.
+  S: आज से फिटनेस शुरू। बॉडी बनानी है… वैसे मेरी बॉडी में बनाने लायक है क्या?
+- GYM | selfie | Meet Pappu | PAPPU
+  A: Pehlwan Pappu slaps his own arms proudly and gives the first instruction; Saapwaa looks confused.
+  PAPPU: आओ पहलवान! पहले दंड-बैठक।
+  S: पप्पू भाई, बैठक कैसे करूँ? मैं तो हमेशा लेटा रहता हूँ।
+- GYM | prop | Snake Push-Ups | PAPPU
+  A: He lifts the front of his body up and down like push-ups while Pappu watches, arms crossed.
+  S: एक… दो… पप्पू भाई, ये गिनती में आएगा?
+- GYM | selfie | The Stone Dumbbell | PAPPU
+  A: He coils around a stone dumbbell and strains with all his might; it does not move at all.
+  PAPPU: उठाओ!
+  S: ये पत्थर उठाने के लिए नहीं, देखने के लिए है।
+- GYM | prop | Wrestling Pit | PAPPU
+  A: In the clay pit, Pappu grapples playfully and Saapwaa wraps around his arm like a rope.
+  S: पप्पू भाई, ये दाँव मेरा है या आपका?
+- GYM | selfie | Protein Drink | PAPPU
+  A: Pappu hands him a clay cup of steaming milk; Saapwaa stares at the steam in despair.
+  PAPPU: गरम दूध, बादाम वाला।
+  S: गरम? इस दुनिया में कुछ भी ठंडा नहीं है?
+- GYM | prop | The Club Swing
+  A: He swings a heavy wooden club with his tail, and the club swings him around in a full circle instead.
+  S: गदा मैंने घुमाई… या गदा ने मुझे?
+- GYM | selfie | Flexibility Round | PAPPU
+  A: He ties himself into a perfect pretzel knot with ease; Pappu stares, amazed.
+  PAPPU: ये कैसे किया?
+  S: इसमें तो मैं पैदाइशी चैंपियन हूँ।
+- GYM | selfie | Pappu Gets Stuck | PAPPU
+  A: Pappu tries to copy the twist and gets stuck with his arms tangled; Saapwaa grins at the camera.
+  PAPPU: बेटा, मुझे खोलो!
+  S: अब कौन पहलवान है, पप्पू भाई?
+- GYM | walk | Gym Results
+  A: He slithers out of the yard sweaty and proud.
+  S: आज का रिज़ल्ट: मसल्स ज़ीरो, पसीना सौ। पर एक पहलवान को गाँठ में बाँध दिया।
+
+## 23 | Laundry Day
+- CAVE | selfie | Laundry Day
+  A: He holds up his spare striped scarf, now grey with soot, and wrinkles his nose.
+  S: आज लॉन्ड्री डे है। एक्स्ट्रा स्कार्फ़ धोना है, सफ़ेद धारियाँ धुएँ से ग्रे हो गईं।
+- BATH | prop | Foam Party
+  A: He scrubs the spare scarf in the stone basin; the warm water foams up into a huge mountain of bubbles around him.
+  S: साबुन डाला… और पूरा बाथरूम झाग पार्टी बन गया।
+- ROOF | walk | To the Rooftop
+  A: He carries the dripping spare scarf up onto the flat rooftop toward the washing line.
+  S: कपड़े सुखाने छत पे चलते हैं। धूप नहीं है, पर गर्मी फुल है।
+- ROOF | prop | Instant Dry
+  A: He hangs the wet scarf on the line and it dries and goes stiff in one second, steam puffing off.
+  S: टाँगा… और सूख गया। धोबी यहाँ आएँ तो बेरोज़गार हो जाएँ।
+- ROOF | selfie | Rock Ironing
+  A: He presses the dry scarf flat on a hot rock with his tail and lifts it up perfectly pressed.
+  S: इस्त्री की ज़रूरत नहीं। पत्थर पे रखो, दो सेकंड, परफेक्ट क्रीज़।
+- ROOF | selfie | Mausi's Pile | MAUSI
+  A: Gappu Mausi drops a huge pile of saris next to him and talks nonstop; he slowly backs away.
+  MAUSI: बेटा, मेरी साड़ियाँ भी देख लेना।
+  S: मौसी, मैं व्लॉगर हूँ, धोबी नहीं।
+- ROOF | prop | Flying Laundry
+  A: A hot gust lifts the scarf off the line and he lunges, catching it with his tail tip just in time.
+  S: पकड़ लिया! हवा भी यहाँ चोर है।
+- ROOF | selfie | The Nest Builder | KALLU
+  A: Kallu pulls a small handkerchief off the line and flies away with it; Saapwaa looks around nervously.
+  S: कल्लू मौसी का रुमाल ले गया। अब इल्ज़ाम मुझ पे आएगा।
+- ROOF | selfie | Folding Skills
+  A: He tries to fold the scarf neatly using his tail and ends up with a messy round bundle.
+  S: फ़ोल्डिंग… ये फ़ोल्ड नहीं, गठरी बन गई।
+- CAVE | selfie | Laundry Complete
+  A: He holds up the clean spare scarf proudly while foam still drips from the bathing corner behind him.
+  S: लॉन्ड्री कम्प्लीट। साफ़ स्कार्फ़, साफ़ दिल… और गंदा बाथरूम।
+
+## 24 | The Natural Mud Spa
+- PATH | walk | Spa Rumour
+  A: He slithers along the path rubbing his tail tips together, excited.
+  S: सुना है यहाँ नेचुरल स्पा है, मुफ़्त मड बाथ। आज ख़ुद को पैंपर करते हैं।
+- MUD | selfie | The Mud Pool
+  A: He peers at the bubbling mud pool beside him, unsure, as a big bubble pops.
+  S: ये मड पूल है या दाल का बड़ा पतीला? बुलबुले तो देखो।
+- MUD | prop | Toe Dip
+  A: He dips his tail tip into the mud and his worried face turns into a surprised smile.
+  S: अरे, ये तो सही टेम्परेचर है। पहली बार कुछ सही गरम मिला।
+- MUD | prop | Full Dive
+  A: He slides into the pool until only his head and scarf stay above the mud, sighing with bliss.
+  S: आह… ये है लग्ज़री। बस स्कार्फ़ बचाना है, बाकी सब क़ुर्बान।
+- MUD | selfie | Mud Mask
+  A: He smears mud across his face like a beauty mask and blinks out from it.
+  S: फ़ेस मास्क भी फ्री। अब मैं हरा नहीं, चॉकलेट फ़्लेवर हूँ।
+- MUD | selfie | Spa Neighbour | PAPPU
+  A: Pehlwan Pappu lounges in the mud next to him with his towel on his head.
+  PAPPU: रोज़ आता हूँ। स्किन मुलायम रहती है।
+  S: पप्पू भाई, आपकी मूँछ भी मुलायम लग रही है।
+- MUD | prop | Turbo Bubble
+  A: A big mud bubble bursts right under him and pops him up out of the mud for a second.
+  S: ये बुलबुला था या जकूज़ी का टर्बो मोड?
+- MUD | selfie | Spa Music | KALLU
+  A: Kallu perches on a rock above the pool and caws loudly; Saapwaa conducts with his tail.
+  S: स्पा म्यूज़िक भी है। कल्लू का लाइव कॉन्सर्ट।
+- PATH | prop | Mud Shell
+  A: He climbs out and the mud dries instantly into a hard shell; he cracks out of it like a hatchling.
+  S: बाहर निकला… और कीचड़ का कवच बन गया। अब मैं अंडे से निकल रहा हूँ।
+- PATH | walk | Post-Spa Glow
+  A: He slithers away glossy and clean, then shakes his backpack and dirt pours out.
+  S: स्पा रिव्यू: स्किन चमकदार, मूड बढ़िया। बस बैकपैक में आधा किलो मिट्टी है।
+
+## 25 | Gappu Mausi's Rumours
+- LANE | walk | Everyone Is Whispering
+  A: He slithers past doorways where residents whisper and giggle as he goes by; he glances around suspiciously.
+  S: गाइज, आज सब मुझे देखकर फुसफुसा रहे हैं। कुछ तो गड़बड़ है।
+- LANE | selfie | The Source | MAUSI
+  A: Gappu Mausi waves him over excitedly; he answers, then narrows his eyes.
+  MAUSI: अरे सापवा, सुना है तू किसी राजा का बेटा है?
+  S: मौसी, ये किसने बोला?
+  MAUSI: मैंने।
+- LANE | selfie | Rumour Number Two | MAUSI
+  A: Gappu Mausi points at his phone with wide eyes; he holds it up and shrugs.
+  MAUSI: सुना है तेरे फ़ोन में पूरी दुनिया रहती है।
+  S: मौसी, उसमें तो सिग्नल भी नहीं रहता।
+- ADDA | selfie | Didi Heard Too | DIDI
+  A: Kulhad Didi leans over the counter with a teasing smile; Saapwaa chokes on his tea.
+  DIDI: सुना है तू शादी कर रहा है?
+  S: किससे, दीदी?
+  DIDI: मौसी को पता होगा।
+- LANE | prop | Faster Than Me
+  A: He races from door to door trying to correct people, while residents giggle behind him.
+  S: ये अफ़वाह मुझसे भी तेज़ दौड़ रही है।
+- BENCH | selfie | The Bench Version | RES
+  A: A resident on the bench asks him a question with great interest; Saapwaa laughs.
+  RES: सुना है तेरे पास सौ कौड़ियाँ हैं।
+  S: सौ होतीं, तो बेंच पे नहीं, बेंच का मालिक होता।
+- LANE | selfie | Confronting Mausi | MAUSI
+  A: He confronts Gappu Mausi; she waves her hand casually, unbothered.
+  S: मौसी, ये सब क्यों फैलाया?
+  MAUSI: झूठ नहीं बेटा, कहानी। यहाँ बोरियत बहुत है।
+- LANE | selfie | Counter-Rumour | MAUSI
+  A: He whispers a secret into Gappu Mausi's ear; her eyes light up and she grips her basket.
+  S: मौसी, सुना है दीदी की चाय कल से ठंडी मिलेगी।
+  MAUSI: सच्ची? अभी सबको बताती हूँ!
+- ADDA | selfie | Backfire | DIDI
+  A: Kulhad Didi glares at him with folded arms, kettle in hand; he smiles nervously.
+  DIDI: पूरा मोहल्ला ठंडी चाय माँग रहा है। ये तेरा काम है?
+  S: दीदी, मैं तो बस कहानी सुना रहा था।
+- LANE | walk | Lesson Learned
+  A: He slithers away quickly, glancing back over his shoulder.
+  S: आज की सीख: मौसी को कुछ मत बताओ। और बताओ, तो वायरल होने के लिए तैयार रहो।

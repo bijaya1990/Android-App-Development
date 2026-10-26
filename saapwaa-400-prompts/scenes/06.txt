@@ -1,0 +1,174 @@
+## 26 | Kallu's Secret
+- LANE | walk | The Red Thread | KALLU
+  A: He points his tail at the thin red thread on Kallu's ankle as the crow hops along the lane ahead of him.
+  S: कल्लू के पैर में ये लाल धागा किसी ने बाँधा है। आज पता लगाते हैं, ये किसका कौआ है।
+- LANE | selfie | Detective Saapwaa | KALLU
+  A: He peeks out from behind a rock, whispering, as Kallu hops away down the lane in the background.
+  S: जासूस सापवा ऑन ड्यूटी। आवाज़ मत करना गाइज।
+- ROOF | prop | The Treasure Nest | KALLU
+  A: In a rooftop corner he discovers Kallu's nest full of biscuits, cowrie shells, a handkerchief and a brass spoon; his jaw drops.
+  S: ये रहा ख़ज़ाना! मेरा बिस्किट, मेरी कौड़ी… और मेरी डोरबेल भी!
+- ROOF | selfie | Exhibit A
+  A: He holds up the brass spoon from the nest like courtroom evidence and squints at the lens.
+  S: ये चम्मच मेरी डोरबेल थी। मैं सोच रहा था, गिरकर कहाँ चली गई।
+- LANE | selfie | Questioning Chacha | CHACHA
+  A: He questions Tapu Chacha, who answers lazily while hugging the copper bucket.
+  S: चाचा, कल्लू किसका है?
+  CHACHA: मेरा तो नहीं। मेरा होता, तो बाल्टी भी ले जाता।
+- ADDA | selfie | Didi Knows | DIDI
+  A: Kulhad Didi smiles and drops a crumb on the counter; Kallu lands and pecks it happily; Saapwaa stares.
+  DIDI: धागा मैंने बाँधा था। रोज़ चाय की ख़ुशबू पे आता है।
+  S: दीदी, आपका कौआ मेरा नाश्ता खाता है!
+- ADDA | selfie | The Real Reason | DIDI
+  A: Kulhad Didi explains gently while wiping a clay cup; Saapwaa's angry face slowly softens.
+  DIDI: वो चोर नहीं, बेटा। जिसके पास कम हो, उसके दरवाज़े दाने छोड़ आता है।
+  S: मतलब मेरा बिस्किट… दान में गया?
+- LANE | prop | The Proof | KALLU
+  A: Kallu drops a piece of biscuit on a poor resident's doorstep and flies off; Saapwaa watches from behind a rock, stunned.
+  S: वो सच में बाँट रहा है… और मैं उसे चोर बोल रहा था।
+- LANE | selfie | Sorry, Kallu | KALLU
+  A: Kallu lands in front of him; Saapwaa lowers his head apologetically.
+  S: सॉरी कल्लू। तू चोर नहीं, रॉबिन हुड है। बस अगली बार मुझसे पूछ लेना।
+- DOOR | prop | The New Deal | KALLU
+  A: He places a small leaf plate of crumbs beside his doorway; Kallu hops to it and nods.
+  S: नया सिस्टम: रोज़ एक हिस्सा तेरा। और बदले में मेरी डोरबेल वापस।
+
+## 27 | Saapwaa's Cold Sherbet Business
+- CAVE | selfie | The Business Idea
+  A: He announces his plan with sparkling eyes, tail raised like a startup founder.
+  S: बिज़नेस आइडिया! नरक में ठंडा शरबत बेचूँगा। डिमांड बहुत है, बस सप्लाई की प्रॉब्लम है।
+- KITCHEN | prop | Making Sherbet
+  A: He stirs lemon and sugar into water in a clay pot, and the mixture starts steaming and bubbling.
+  S: नींबू, चीनी, पानी… और भाप। ये शरबत नहीं, गरम काढ़ा बन गया।
+- WORKSHOP | selfie | Cooling Tech | LAL
+  A: Lalten Lal proudly presents a strange clay pot wrapped in wet cloth and brass pipes.
+  LAL: मेरा ठंडा-घड़ा। इसमें पानी पाँच मिनट ठंडा रहता है।
+  S: पाँच मिनट? यहाँ तो ये चमत्कार है!
+- LANE | prop | Grand Opening
+  A: He sets up a tiny stall on a flat rock with the cloth-wrapped pot and clay cups, and spreads his tail proudly.
+  S: सापवा शरबत सेंटर, ओपन! पहला कस्टमर फ्री… अगर कोई आए तो।
+- LANE | selfie | First Customer | CHACHA
+  A: Tapu Chacha holds out his brass lota for sherbet; Saapwaa pours, then pauses at his words.
+  CHACHA: एक शरबत। पैसे कल दूँगा।
+  S: चाचा, बिज़नेस के पहले दिन ही उधार?
+- LANE | selfie | The Rush | MAUSI
+  A: Gappu Mausi hurries over excitedly; Saapwaa raises his tail to stop her.
+  MAUSI: ठंडा शरबत? मैं पूरे मोहल्ले को बुलाती हूँ!
+  S: मौसी, रुको! सिर्फ़ पाँच मिनट तक ठंडा है!
+- LANE | prop | Sherbet Turns Hot
+  A: He pours another cup and steam rises from it; his face falls slowly.
+  S: पाँच मिनट ख़त्म। अब ये शरबत नहीं, दीदी की चाय का कॉम्पिटिशन है।
+- ADDA | selfie | The Competitor | DIDI
+  A: Kulhad Didi raises an eyebrow at him across her counter; he answers sheepishly.
+  DIDI: सुना है तूने ठंडा शरबत खोला।
+  S: खोला था। अब गरम शरबत बेच रहा हूँ।
+  DIDI: उसे चाय कहते हैं।
+- LANE | selfie | Profit and Loss
+  A: He holds up one single cowrie shell and studies it sadly.
+  S: आज की कमाई: एक कौड़ी। ख़र्च: चार कौड़ी। आज बिज़नेस में मैंने बहुत कुछ… सीखा।
+- LANE | walk | Closing Down
+  A: He slithers home dragging the clay pot behind him, smiling bravely.
+  S: शरबत सेंटर बंद। नरक में ठंडा बेचना, रेगिस्तान में बर्फ़ बेचने जैसा है।
+
+## 28 | Rooftop Stargazing
+- ROOF | walk | Stargazing Night
+  A: He slithers onto the rooftop with a blanket on his back, excited and dreamy.
+  S: आज रूफ़टॉप पे स्टारगेज़िंग। तारे गिनेंगे, विश माँगेंगे, बहुत रोमांटिक माहौल।
+- ROOF | selfie | No Stars
+  A: He looks up at the flat smoky maroon sky, blinks, and looks back at the camera, deadpan.
+  S: तारे… कहाँ हैं? यहाँ आसमान भी धुएँ का कंबल ओढ़कर सोया है।
+- ROOF | prop | Homemade Stars | LAL
+  A: Lalten Lal sets down a lantern pierced with tiny holes that throws star-like dots across the rooftop wall.
+  LAL: तारे नहीं, तो मैं बना देता हूँ।
+  S: भाई, दीवार पे तारे!
+- ROOF | selfie | Constellations | LAL
+  A: Saapwaa points at a long wiggly line of dots on the wall; Lalten Lal shrugs.
+  S: ये वाला मेरे जैसा है, लंबा और स्टाइलिश।
+  LAL: वो तो छेद ग़लत हो गया था।
+- ROOF | selfie | The Shooting Star
+  A: A spark from a distant torch shoots up into the sky and he squeezes his eyes shut to make a wish.
+  S: टूटता तारा! जल्दी, विश: ठंडा बिस्तर, ठंडा बिस्तर, ठंडा बिस्तर!
+- ROOF | selfie | Kallu Stargazes | KALLU
+  A: Kallu lands beside him and tilts his head up at the sky too.
+  S: कल्लू भी तारे ढूँढ रहा है। या मेरे चिप्स।
+- ROOF | selfie | Deep Thoughts
+  A: He lies on his back on the rooftop, looking up, voice soft and philosophical.
+  S: कभी सोचा है, ऊपर कोई और व्लॉगर हमें देखकर बोल रहा हो, बेचारा साँप?
+- ROOF | prop | Counting Torches
+  A: He counts distant torches across the neighbourhood with his tail tip; one goes out mid-count.
+  S: तारे नहीं, तो टॉर्च गिनते हैं। एक, दो, तीन… वो बुझ गई। दो।
+- ROOF | selfie | Sleepy
+  A: He yawns hugely, eyes drooping.
+  S: तारे नहीं मिले, पर नींद मिल गई। छत ठंडी नहीं, पर बिस्तर से तो ठंडी है।
+- ROOF | prop | Rooftop Sleep | KALLU
+  A: He coils up asleep on the rooftop and Kallu settles right on top of his head; he opens one eye.
+  S: गुड नाइट गाइज… कल्लू, मेरे सिर से उतर।
+
+## 29 | Talent Night at the Chowk
+- CHOWK | walk | Talent Night
+  A: He slithers into the village square where a stone platform is set up as a stage, looking nervous.
+  S: आज चौक पे टैलेंट नाइट है, और मैं परफ़ॉर्म करूँगा। क्या? ये अभी सोचा नहीं।
+- CHOWK | selfie | The Strongman | PAPPU
+  A: Behind him Pehlwan Pappu lifts a big boulder over his head; Saapwaa gulps.
+  S: पप्पू भाई ने पत्थर उठाया। ये कॉम्पिटिशन नहीं, धमकी है।
+- CHOWK | selfie | Mausi Sings | MAUSI
+  A: Gappu Mausi sings a long high note off-key; Saapwaa winces and covers the side of his head with his tail.
+  MAUSI: आआआ…
+  S: मौसी के सुर से तो कल्लू भी उड़ गया।
+- CHOWK | prop | My Turn
+  A: He slithers onto the stone platform, adjusts his scarf nervously and bows.
+  S: नमस्ते नरक! आज मैं दिखाऊँगा… एक ज़बरदस्त डांस।
+- CHOWK | prop | The Snake Dance
+  A: He dances by swaying his whole body in smooth S-curves to a rhythm, head bobbing, with great style.
+  S: ये है स्नेक डांस, ओरिजिनल वर्ज़न। कॉपी नहीं, असली।
+- CHOWK | selfie | The Knot Finale
+  A: He ties himself into a fancy knot for the finale, then struggles because he cannot untie it.
+  S: और ग्रैंड फ़िनाले, गाँठ ट्रिक! अरे… अब खुल नहीं रही।
+- CHOWK | prop | Pappu Unties Him | PAPPU
+  A: Pehlwan Pappu carefully untangles Saapwaa like a coil of rope.
+  PAPPU: रुको, मैं खोलता हूँ।
+  S: पप्पू भाई, धीरे! मैं रस्सी नहीं हूँ!
+- CHOWK | selfie | The Judge | DIDI
+  A: Kulhad Didi, as judge, holds up four clay cups as his score; Saapwaa looks confused.
+  DIDI: नंबर: चार कुल्हड़।
+  S: चार कुल्हड़ मतलब?
+  DIDI: चार चाय फ्री।
+- CHOWK | selfie | Gold Medal
+  A: He holds four steaming clay cups balanced on his coils, grinning.
+  S: पहला प्राइज़ नहीं मिला, पर चार गरम चाय मिलीं। यहाँ ये गोल्ड मेडल है।
+- CHOWK | walk | Local Celebrity
+  A: He slithers past residents who wave at him; he waves back with his tail like a star.
+  S: अब मोहल्ले में सब मुझे डांसर साँप बोलते हैं। व्लॉगर से भी ज़्यादा फ़ेमस।
+
+## 30 | The Thousand-Step Challenge
+- STEPS | selfie | The Challenge
+  A: At the bottom of the cliff staircase, he looks up at the endless steps and stretches his body.
+  S: आज का चैलेंज: एक हज़ार सीढ़ियाँ, बिना रुके। पप्पू भाई बोले, साँप के बस का नहीं।
+- STEPS | walk | Step One Hundred
+  A: He slithers up the steps fast and confident, grinning.
+  S: सौ सीढ़ियाँ! आसान है गाइज। मेरे घुटने ही नहीं, तो दर्द भी नहीं।
+- STEPS | walk | Step Three Hundred
+  A: He climbs slower now, panting, his tongue flicking out with every breath.
+  S: तीन सौ… घुटने नहीं हैं, पर पूरी बॉडी घुटना बन गई है।
+- STEPS | prop | Water Break
+  A: He sips from a flask; steam comes out with the water and he coughs.
+  S: पानी ब्रेक। गरम पानी से गला ठंडा नहीं, उबला हुआ लगा।
+- STEPS | selfie | Overtaken | CHACHA
+  A: Tapu Chacha slowly walks past him up the steps with his lota, completely relaxed.
+  CHACHA: कल से पक्का रोज़ चढ़ूँगा।
+  S: चाचा, आज तो आप मुझसे तेज़ हो!
+- STEPS | walk | Halfway
+  A: He wobbles up the steps, sweat dripping off his backpack.
+  S: पाँच सौ। आधा रास्ता। अब मेरे बैकपैक का भी पसीना निकल रहा है।
+- STEPS | prop | The Rolling Temptation
+  A: He looks down the long stairs, considers rolling down, then shakes his head firmly.
+  S: एक सेकंड सोचा, लुढ़ककर वापस चला जाऊँ। नहीं, इज़्ज़त का सवाल है।
+- STEPS | selfie | Coach Kallu | KALLU
+  A: Kallu flies alongside him, cawing as if cheering him on.
+  S: कल्लू मेरा कोच बन गया। काँव मतलब चलते रहो… शायद।
+- STEPS | walk | One Thousand
+  A: He drags himself up the very last step and collapses flat at the top, triumphant.
+  S: नौ सौ निन्यानवे… और… एक हज़ार! मैं… जीत… गया।
+- SIGNAL | selfie | Double Victory
+  A: At the top he lifts his phone, sees a signal bar, and celebrates with a tired dance.
+  S: ऊपर दो चीज़ें मिलीं: शानदार व्यू, और एक डंडा सिग्नल। आज डबल जीत!

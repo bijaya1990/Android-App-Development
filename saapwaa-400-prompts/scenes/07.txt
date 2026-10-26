@@ -1,0 +1,181 @@
+## 31 | The Lamp-Oil Crisis
+- LANE | walk | Half Dark
+  A: He slithers along the lane where half the doorway lamps are out, looking around worried.
+  S: गाइज, आज मोहल्ले के आधे दीये बुझे हैं। सुना है तेल की कमी हो गई है।
+- WINDOW | selfie | Ration Window | MUNSHI
+  A: Munshi shakes his head behind the window, pointing to an empty oil jar.
+  MUNSHI: तेल का कोटा ख़त्म। अगला स्टॉक कल।
+  S: कल? आप भी तापू चाचा के स्कूल से पढ़े हो?
+- CAVE | selfie | My Last Oil
+  A: He shakes his small brass oil can; a little oil sloshes inside, and he hugs it protectively.
+  S: मेरे पास थोड़ा तेल बचा है। आज रात के लिए काफ़ी है… सिर्फ़ मेरे लिए।
+- LANE | prop | Chacha in the Dark | CHACHA
+  A: Tapu Chacha sits calmly in his dark doorway beside an unlit lamp; Saapwaa stops in front of him.
+  S: चाचा, आपका दीया भी बुझा है?
+  CHACHA: कोई बात नहीं बेटा, अंधेरे में भी नींद आती है।
+- CAVE | selfie | The Choice
+  A: He looks at the oil can, then into the lens, thinking hard, and finally nods to himself.
+  S: नानू ने कहा था, जो दोगे वही काम आएगा। ठीक है… चलो।
+- LANE | prop | Sharing the Oil | CHACHA
+  A: He pours oil into Tapu Chacha's lamp; the lamp lights up the old man's surprised, smiling face.
+  S: लो चाचा, आधा तेल आपका।
+  CHACHA: तू तो सच में बड़ा हो गया, बेटा।
+- LANE | walk | Chain Reaction | MAUSI
+  A: Gappu Mausi carries her small oil pot to the next dark door; Saapwaa follows, filming in delight.
+  MAUSI: तूने दिया, तो मैं भी दूँगी!
+  S: देखो गाइज, दीये एक-दूसरे से जल रहे हैं।
+- NIGHT | selfie | The Glowing Lane
+  A: Behind him, lamps light up one by one along the whole lane; he turns to watch in wonder.
+  S: पूरा मोहल्ला फिर रोशन। सबके पास थोड़ा-थोड़ा, पर सबके पास।
+- DOOR | selfie | A Sweet Thank You | CHACHA
+  A: Tapu Chacha hands him a lump of jaggery wrapped in a leaf; Saapwaa accepts it warmly.
+  CHACHA: ये ले, गुड़ की डली।
+  S: चाचा, बाल्टी नहीं, पर गुड़ भी चलेगा।
+- CAVENIGHT | selfie | Half Oil, Full Heart
+  A: His own small lamp burns low beside him, and he smiles softly.
+  S: आज मेरा दीया छोटा जल रहा है, पर मोहल्ला बड़ा जल रहा है। अच्छी फ़ीलिंग है।
+
+## 32 | The Sick Day
+- CAVE | selfie | A Cold in Narak
+  A: He sniffles with a red nose, a cloth wrapped around his head, looking pitiful.
+  S: गाइज, मुझे ज़ुकाम हो गया। नरक में ज़ुकाम! शीताढ्य वाली ट्रिप का साइड इफ़ेक्ट।
+- CAVE | prop | The Mighty Sneeze
+  A: He sneezes so hard that the wall lamp flame flickers wildly and nearly goes out.
+  S: आक-छी! मेरी छींक से दीया भी डर गया।
+- CAVE | selfie | Steam Therapy
+  A: He leans over a steaming bowl with a cloth over his head, then peeks out.
+  S: भाप लेने की ज़रूरत नहीं, पूरा घर ही भाप है। फिर भी, पुरानी आदत।
+- DOOR | selfie | Ginger Tea Delivery | DIDI
+  A: Kulhad Didi arrives at his doorway with a steaming clay cup; he takes it gratefully.
+  DIDI: अदरक वाली चाय, बीमारों के लिए।
+  S: दीदी, आज पहली बार गरम चाय अच्छी लग रही है।
+- DOOR | selfie | Soup in a Lota | CHACHA
+  A: Tapu Chacha hands him soup in his small brass lota; Saapwaa peers into it.
+  CHACHA: तेरी दाल का बदला, गरम सूप।
+  S: लोटे में सूप? बाल्टी में लाते तो ज़्यादा आता।
+- CAVE | selfie | Doctor's Orders | VAIDJI
+  A: Vaidji checks him briefly and gives advice with a raised finger; Saapwaa coughs a laugh.
+  VAIDJI: आराम करो, और गरम चीज़ें खाओ।
+  S: वैद्यजी, यहाँ ठंडी चीज़ है ही क्या?
+- CAVE | prop | The Bed Finally Helps
+  A: He lies on the hot stone bed and, for the first time, relaxes completely, soothed by the heat.
+  S: पहली बार ये तवा बिस्तर काम आया। हीटिंग पैड, फ्री में।
+- CAVE | selfie | Nurse Kallu | KALLU
+  A: Kallu hops in and drops a small green leaf beside him like medicine.
+  S: कल्लू भी दवा लाया। पत्ता… पता नहीं किस बीमारी का।
+- CAVE | selfie | Recovering
+  A: He sits up looking better, voice still a bit nasal, smiling.
+  S: बुख़ार उतर गया, ज़ुकाम आधा। पूरा मोहल्ला सेवा में लगा। बीमार होना भी बुरा नहीं।
+- DOOR | walk | Saapwaa Is Back
+  A: He bursts out of his doorway full of energy, scarf flying.
+  S: सापवा इज़ बैक! और अब मैं कभी ठंड नहीं माँगूँगा… शायद।
+
+## 33 | The Lamp Festival
+- LANE | walk | Festival Prep
+  A: He slithers through the lane where residents are setting out rows of small clay lamps.
+  S: आज मोहल्ले का दीप उत्सव है गाइज। हर घर पे सौ दीये जलेंगे।
+- WORKSHOP | selfie | The Lamp Machine | LAL
+  A: Lalten Lal shows off a wooden contraption holding dozens of lamps on a rotating wheel.
+  LAL: ये मशीन एक साथ सौ दीये जलाती है।
+  S: और बुझाती कितने है?
+  LAL: वो भी सौ।
+- DOOR | prop | One Hundred Lamps
+  A: He arranges small clay lamps in rows on his doorstep with his tail, counting under his breath.
+  S: एक, दो, तीन… सौ दीये। गुफा कम, बर्थडे केक ज़्यादा लग रही है।
+- DOOR | selfie | Too Much Glow
+  A: With all the lamps lit, heat shimmer rises around him and he droops, sweating.
+  S: सौ दीये जलाए, और भूल गया कि यहाँ पहले से गर्मी है। मैं ख़ुद पिघल रहा हूँ।
+- ADDA | selfie | Festival Special | DIDI
+  A: Kulhad Didi pours a golden saffron tea into a decorated clay cup for him.
+  DIDI: आज की स्पेशल: केसर वाली चाय।
+  S: दीदी, आज तो चाय भी त्योहार मना रही है।
+- CHOWK | prop | Rangoli Fail
+  A: He draws a rangoli on the ground with coloured powder using his tail; it turns into a big wiggly snake shape.
+  S: रंगोली बनाई… ये फूल नहीं, मेरी सेल्फ़-पोर्ट्रेट बन गई।
+- CHOWK | selfie | Free Laddoos | BABLU
+  A: Bablu hands out round yellow laddoos from his tray; Saapwaa looks at him suspiciously.
+  BABLU: त्योहार का लड्डू, फ्री!
+  S: फ्री? बबलू, तुम ठीक तो हो?
+- CHOWK | selfie | Kallu's Feast | KALLU
+  A: Kallu struggles to carry a laddoo bigger than his own head; Saapwaa laughs.
+  S: कल्लू को सबसे बड़ा लड्डू मिला। आज इसे चोरी की ज़रूरत ही नहीं पड़ी।
+- NIGHT | selfie | The Most Beautiful Night
+  A: Behind him, the dark lane sparkles with hundreds of small lamps; he speaks softly in awe.
+  S: ये देखो… अंधेरे में इतने सारे दीये। यहाँ की सबसे सुंदर रात।
+- NIGHT | walk | Festival Wish
+  A: He slithers slowly through the lamp-lit lane, smiling warmly.
+  S: त्योहार की विश: अगले साल भी सब साथ हों… और थोड़ा ठंडा हो।
+
+## 34 | The Rules of Shade
+- PATH | walk | Shade Hunting
+  A: He slithers across the scorching path, darting his eyes for any patch of shadow.
+  S: दोपहर की गर्मी में एक ही उपाय: किसी की परछाईं में घुस जाओ। पर उसके भी नियम हैं।
+- PATH | selfie | Asking Pappu | PAPPU
+  A: He slides up beside Pehlwan Pappu's big shadow and asks politely; Pappu nods approvingly.
+  S: पप्पू भाई, आपकी परछाईं में दो मिनट?
+  PAPPU: पहले पूछा, ये अच्छी बात है।
+- PATH | prop | Mobile AC | PAPPU
+  A: Pappu walks along the path and Saapwaa follows exactly inside his shadow, matching every step.
+  S: पप्पू भाई चलते हैं, तो मेरा एसी भी चलता है।
+- PATH | selfie | Shadow Rent | PAPPU
+  A: Pappu stops and names his price with a grin; Saapwaa shakes on it with his tail.
+  PAPPU: परछाईं का किराया: कल जिम आना।
+  S: डील। गर्मी से अच्छा, पसीना जिम में।
+- PATH | prop | Kallu's Tiny Shadow | KALLU
+  A: He lowers his head into Kallu's tiny shadow; only one of his eyes fits inside it.
+  S: कल्लू की परछाईं में सिर्फ़ मेरी एक आँख फ़िट हुई। चलो, आँख को तो आराम मिला।
+- PATH | selfie | Mausi's Offer | MAUSI
+  A: Gappu Mausi offers the shade of the basket on her head; he weighs it, then declines.
+  MAUSI: आ जा, टोकरी की छाँव में। पर मेरी बातें सुननी पड़ेंगी।
+  S: मौसी, धूप ही ठीक है।
+- PATH | prop | Chasing His Own Shadow
+  A: He tries to coil into his own shadow and ends up spinning in circles chasing it.
+  S: अपनी परछाईं में ख़ुद कैसे जाऊँ? ये तो मुझसे भी तेज़ है।
+- BENCH | selfie | Shade Booking | RES
+  A: A resident under the bench overhang shows him a palm-leaf booking slip with a serious face.
+  RES: बेंच की छाँव बुक है, अगले हफ़्ते तक।
+  S: छाँव की भी बुकिंग?
+- PATH | selfie | Scarf Umbrella
+  A: He holds his spare scarf up on his selfie stick like a tiny umbrella over his head.
+  S: अपना जुगाड़: स्कार्फ़ छतरी। छाँव छोटी है, पर अपनी है।
+- PATH | walk | Shade Rules Recap
+  A: He slithers along under his scarf umbrella, counting the rules on his tail tip.
+  S: परछाईं के नियम: पहले पूछो, बीच में मत घुसो, और सबसे बड़ी परछाईं पप्पू भाई की।
+
+## 35 | The Bed Cooler
+- WORKSHOP | selfie | The Cooler Unveiled | LAL
+  A: Lalten Lal pulls a cloth off a big contraption of pulleys and a leaf fan; Saapwaa gasps.
+  LAL: मेरा नया आविष्कार: बिस्तर कूलर!
+  S: लाल भाई, ये चला तो मैं आपका फ़ैन बन जाऊँगा।
+- WORKSHOP | prop | How It Works | LAL
+  A: Lalten Lal demonstrates the hand crank that spins the fan, then points at Saapwaa.
+  LAL: बस ये हैंडल घुमाओ, पंखा चलेगा।
+  S: और हैंडल कौन घुमाएगा?
+  LAL: तुम।
+- CAVE | prop | Installation | LAL
+  A: Lalten Lal and Saapwaa fit the contraption over the stone bed, tightening ropes and pulleys.
+  S: इंस्टॉलेशन हो गया। मेरी गुफा अब हाई-टेक है।
+- CAVE | selfie | Cranking in Bed
+  A: He lies on the bed while turning the crank with his tail, getting tired fast.
+  S: सोते-सोते हैंडल घुमाना… ये कूलर है या जिम?
+- CAVE | prop | It Works… Briefly
+  A: The fan spins fast, a breeze ruffles his scarf and he smiles, then the fan flies off its stand.
+  S: हवा आ रही है! ठंडी हवा! अरे… पंखा उड़ गया।
+- CAVE | selfie | The Wet-Cloth Upgrade | LAL
+  A: Lalten Lal ties a wet cloth to the fan blades; Saapwaa looks at it with deep suspicion.
+  LAL: गीला कपड़ा जोड़ दिया, अब पक्का ठंडा।
+  S: वो कपड़ा पिछली बार पापड़ बन गया था।
+- CAVE | prop | The Sauna
+  A: The machine starts blowing thick steam instead of cool air and the whole cave fills with fog.
+  S: बधाई हो लाल भाई, आपने कूलर नहीं, सौना बना दिया।
+- CAVE | selfie | Kallu's Ride | KALLU
+  A: Kallu sits on the slowly turning fan blades, going round and round happily.
+  S: कूलर किसी के तो काम आया। कल्लू का झूला बन गया।
+- WORKSHOP | selfie | Version Three | LAL
+  A: Lalten Lal writes plans on a palm leaf with great seriousness; Saapwaa asks a question.
+  LAL: वर्ज़न तीन में बर्फ़ डालेंगे।
+  S: बर्फ़ कहाँ से लाओगे?
+  LAL: शीताढ्य से, डिलीवरी करवाएँगे।
+- CAVE | selfie | Back to Basics
+  A: He lies on the bed fanning himself with a simple leaf fan, relaxed.
+  S: हाई-टेक फ़ेल, पत्ते वाला पंखा ज़िंदाबाद। कभी-कभी पुराना ही सोना है।
